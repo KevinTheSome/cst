@@ -1,44 +1,41 @@
-import { usePage } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 
-const CONTACT_PAGE_PATHS = ['/kontakti', '/kontekti', '/contact', '/contacts'];
-
-const NAV_GROUPS = [
+const NAV_GROUPS: Array<{
+    title: string;
+    items: Array<{ label: string; href?: string }>;
+}> = [
     {
         title: 'Par mums',
         items: [
-            'Biočipu zinātniskā laboratorija',
-            'Laboratorijas dzīve',
-            'Mūsu grupa',
-            'Pievienojies mums',
+            { label: 'Biočipu zinātniskā laboratorija' },
+            { label: 'Laboratorijas dzīve' },
+            { label: 'Mūsu grupa' },
+            { label: 'Pievienojies mums' },
         ],
     },
     {
         title: 'Pētījumi',
-        items: ['Publikācijas', 'Projekti'],
+        items: [{ label: 'Publikācijas' }, { label: 'Projekti' }],
     },
     {
         title: 'Kontakti',
-        items: ['Kontakti'],
+        items: [{ label: 'Kontakti', href: '/contacts' }],
     },
 ];
 
-const LANGUAGES = [
+const LANGUAGES: Array<{ code: string; label: string; flag: string }> = [
     { code: 'lv', label: 'Latviski', flag: '🇱🇻' },
     { code: 'en_GB', label: 'English', flag: '🇬🇧' },
 ];
 
 export default function Footer() {
-    const { url } = usePage();
-    const currentPath = (url ?? '').split('?')[0].toLowerCase();
-
-    if (CONTACT_PAGE_PATHS.includes(currentPath)) {
-        return null;
-    }
-
     return (
         <footer className="border-t border-[#dfe9e3] bg-[#f7faf8] text-[#1f5e45]">
             <div className="mx-auto flex w-full max-w-6xl flex-col gap-14 px-6 py-14 md:flex-row md:justify-between">
                 <div className="max-w-xl space-y-8">
+                    <h2 className="text-base font-semibold uppercase tracking-[0.2em] text-[#1b4a37]">
+                        Biočipu zinātniskā laboratorija
+                    </h2>
                     <dl className="space-y-6 text-lg leading-relaxed tracking-wide">
                         <div>
                             <dt className="font-semibold text-[#1b4a37]">Telefona numurs:</dt>
@@ -77,8 +74,12 @@ export default function Footer() {
                                 <h3 className="font-semibold text-[#1b4a37]">{group.title}</h3>
                                 <ul className="space-y-2 border-l border-[#c6d9ce] pl-4">
                                     {group.items.map((item) => (
-                                        <li key={item} className="text-[#2c7c5a] hover:text-[#1b4a37]">
-                                            {item}
+                                        <li key={item.label} className="text-[#2c7c5a] hover:text-[#1b4a37]">
+                                            {item.href ? (
+                                                <Link href={item.href}>{item.label}</Link>
+                                            ) : (
+                                                item.label
+                                            )}
                                         </li>
                                     ))}
                                 </ul>
@@ -90,7 +91,7 @@ export default function Footer() {
                         <ul className="space-y-2">
                             {LANGUAGES.map((language) => (
                                 <li key={language.code} className="flex items-center gap-3">
-                                    <span aria-hidden="true" className="text-2xl">
+                                    <span aria-hidden="true" className="text-2xl" role="img">
                                         {language.flag}
                                     </span>
                                     <span className="text-[#2c7c5a]">{language.label}</span>
