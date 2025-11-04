@@ -16,3 +16,4 @@ class TestController extends Controller
         return Inertia::render('testpage');
     }
 }
+
