@@ -6,4 +6,10 @@ use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/test', [TestController::class, 'test'])->name('test');
+Route::get('/test', [\App\Http\Controllers\TestController::class, 'test'])->name('test');
+
+
+Route::get('/contacts', function () {
+    return Inertia::render('contacts');
+})->name('contacts');
+
