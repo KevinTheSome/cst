@@ -1,13 +1,9 @@
 <?php
-
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('welcome');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/musu-grupa', function () {
-    return inertia('MusuGrupa');
-});
-
+Route::get('/test', [TestController::class, 'test'])->name('test');
