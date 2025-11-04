@@ -1,10 +1,11 @@
 <?php
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\App;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 
-class testController extends Controller
+class TestController extends Controller
 {
     public function test()
     {
