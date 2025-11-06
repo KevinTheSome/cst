@@ -48,18 +48,18 @@ export default function Projects() {
                         }`}
                         >
                         <p className="mt-4 text-[18px] leading-relaxed text-gray-800">
-                            Pēcdoktorants/projekta īstenotājs: Uldis Bezriņš
+                            Pēcdoktorants/projekta īstenotājs: Uldis Bērziņš
                         </p>
                         <p className="text-[18px] leading-7 text-gray-800 mt-4">
                             Pētniecības pieteikuma vispārīgais mērķis ir attīstīt pēcdoktoranta prasmes un palielināt
-                            zinātnisko kapacitāti, nodrošinot karjeras uzsākšanas iespējas zinātniskajā institūcijā un
-                            pētniecības kompetenču pilnveidošanu. Tādējādi tiks arī veicināta cilvēkresursu atjaunotne un
-                            kvalificētu speciālistu skaita pieaugums Rīgas Tehniskajā universitātē.
+                             zinātnisko kapacitāti, nodrošinot karjeras uzsākšanas iespējas zinātniskajā institūcijā
+                              un pētniecības kompetenču pilnveidošanu. Tādejādi tiks arī veicināta cilvēkresursu
+                               atjaunotne un kvalificētu speciālistu skaita pieaugums Rīgas Tehniskajā universitātē.
                         </p>
                         <p className="text-[18px] leading-7 text-gray-800 mt-4 ">
-                            Pētniecības pieteikuma zinātniskais mērķis ir optimizēt dielektroforēzes metodi tā, lai to
-                            varētu izmantot, lai atdalītu cilmes šūnas pēc telomēru garuma, dzīvas un neiezīmētas no
-                            heterogēnas cilmes šūnu populācijas mikroplūsmas biočipā.
+                            Pētniecības pieteikuma zinātniskais mērķis ir optimizēt dielektroforēzes metodi tā,
+                             lai to varētu izmantot, lai atdalītu cilmes šūnas pēc telomēru garuma, dzīvas un
+                              neiezīmētas no heterogēnas cilmes šūnu populācijas mikroplūsmas biočipā.
                         </p>
                     </div>
                 </div>
