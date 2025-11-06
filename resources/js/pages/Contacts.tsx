@@ -1,53 +1,75 @@
-import type { ReactNode } from 'react';
-
-import AppLayout from '@/Layouts/AppLayout';
-import { Head } from '@inertiajs/react';
-
-const Contacts = () => {
+export default function Contacts() {
     return (
-        <>
-            <Head title="Kontakti" />
-            <section className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-12 text-[#1b4a37]">
-                <header>
-                    <h1 className="text-4xl font-semibold tracking-tight">Sazinies ar mums</h1>
-                    <p className="mt-2 text-lg text-[#2c7c5a]">
-                        Esam pieejami, lai atbildētu uz visiem jautājumiem par Biočipu zinātnisko laboratoriju.
-                    </p>
-                </header>
-                <dl className="grid gap-8 rounded-3xl border border-[#dfe9e3] bg-[#f7faf8] p-8 shadow-sm lg:grid-cols-2">
-                    <div className="space-y-2">
-                        <dt className="text-sm font-semibold uppercase tracking-[0.2em] text-[#1b4a37]">
-                            Telefona numuri
-                        </dt>
-                        <dd className="space-y-1 text-lg leading-relaxed">
-                            <a className="block text-[#2c7c5a] hover:text-[#1b4a37]" href="tel:+37167089383">
-                                +371 67089383
-                            </a>
-                            <a className="block text-[#2c7c5a] hover:text-[#1b4a37]" href="tel:+37129252975">
-                                +371 29252975
-                            </a>
-                        </dd>
+        <section className="bg-gray-100 py-16 px-6 h-full">
+            {/* Title */}
+            <h1
+                className="font-serif text-bold text-5xl text-green-700 text-center mt-20 mb-20 ">
+                Kontakti
+            </h1>
+
+
+            {/* Main layout */}
+            <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                
+                {/* Left side - contact info */}
+                <div className="space-y-10">
+                    {/* Phones */}
+                    <div className="flex items-start space-x-5">
+                        <img
+                            src="/telefona-ikona-03.svg"
+                            alt="Phone icon"
+                            className="w-10 h-10 mt-5"
+                        />
+                        <div className="space-y-1 text-gray-800 text-lg font-merriweathe">
+                            <p>+371 67089383</p>
+                            <br></br>
+                            <p>+371 29252975</p>
+                        </div>
                     </div>
-                    <div className="space-y-2">
-                        <dt className="text-sm font-semibold uppercase tracking-[0.2em] text-[#1b4a37]">E-pasts</dt>
-                        <dd className="text-lg leading-relaxed">
-                            <a className="text-[#2c7c5a] hover:text-[#1b4a37]" href="mailto:uldis.berzins_4@rtu.lv">
+
+                    {/* Email */}
+                    <div className="flex items-start space-x-5">
+                        <img
+                            src="/epasts-ikona-cerams-ka-ista-01.svg"
+                            alt="Mail icon"
+                            className="w-10 h-10"
+                        />
+                        <p className="text-gray-800 text-lg mt-1 font-merriweathe" >
+                            <a
+                                href="mailto:uldis.berzins.4@rtu.lv"
+                                className="hover:underline"
+                            >
                                 uldis.berzins_4@rtu.lv
                             </a>
-                        </dd>
+                        </p>
                     </div>
-                    <div className="space-y-2 lg:col-span-2">
-                        <dt className="text-sm font-semibold uppercase tracking-[0.2em] text-[#1b4a37]">Adrese</dt>
-                        <dd className="text-lg leading-relaxed text-[#205741]">
+
+                    {/* Address */}
+                    <div className="flex items-start space-x-5">
+                        <img
+                            src="/adreses-ikona.svg"
+                            alt="Map icon"
+                            className="w-10 h-10"
+                        />
+                        <p className="text-gray-800 text-lg font-merriweathe" >
                             Ķīpsalas iela 6B–316, Rīga, LV-1064, Latvija
-                        </dd>
+                        </p>
                     </div>
-                </dl>
-            </section>
-        </>
+                </div>
+
+                {/* Right side - Google map */}
+                <div className="rounded-lg overflow-hidden shadow-md">
+                    <iframe
+                        src="https://www.google.com/maps?q=Ķīpsalas%20iela%206B–316,%20Rīga,%20LV-1064,%20Latvija&output=embed"
+                        width="100%"
+                        height="100%"
+                        loading="lazy"
+                        allowFullScreen
+                        className="border-0 w-full h-[400px]"
+                        title="RTU Location"
+                    ></iframe>
+                </div>
+            </div>
+        </section>
     );
-};
-
-Contacts.layout = (page: ReactNode) => <AppLayout>{page}</AppLayout>;
-
-export default Contacts;
+}
