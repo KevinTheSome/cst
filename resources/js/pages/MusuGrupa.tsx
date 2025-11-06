@@ -89,6 +89,25 @@ export default function MusuGrupa() {
             </p>
           </div>
         </div>
+        {/*---VTDT skolnieki---*/}
+           <div className="flex flex-col md:flex-row items-center md:items-start">
+          <img
+            src=""
+            alt="Erasmus Plus studenti"
+            className="w-72 sm:w-96 md:w-[30rem] h-auto rounded-lg shadow-lg mb-8 md:mb-0 md:mr-10"
+          />
+          <div className="text-center md:text-left max-w-2xl">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-3">
+              Praktikanti no VTDT
+            </h2>
+            <h3 className="text-green-800 text-base sm:text-lg font-medium mb-4 px-2 md:px-0">
+               “Biočipu zinātniskā laboratorija” mājaslapas dizainers
+            </h3>
+            <p className="text-gray-700 text-base sm:text-lg leading-relaxed px-2 md:px-0">
+             Studenti no Vidzemes Tehnoloģiju un dizaina tehnikums, kuri izstrādāja šīs mājaslapas dizainu.
+            </p>
+          </div>
+        </div>
       </section>
     </main>
   );

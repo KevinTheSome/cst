@@ -32,6 +32,11 @@ Route::get('/musu-grupa', function () {
 Route::get('/publikacijas', function () {
     return Inertia::render('publikacijas');
 })->name('publikacijas');
+
+Route::get('/Projects', function () {
+    return Inertia::render('Projects');
+})->name('Projects');
+
 Route::get('/lablife', function () {
     return Inertia::render('lablife');
 })->name('lablife');
