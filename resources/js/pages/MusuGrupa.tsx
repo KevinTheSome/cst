@@ -98,13 +98,13 @@ export default function MusuGrupa() {
           />
           <div className="text-center md:text-left max-w-2xl">
             <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-3">
-              Prakstikanti no VTDT
+              Praktikanti no VTDT
             </h2>
             <h3 className="text-green-800 text-base sm:text-lg font-medium mb-4 px-2 md:px-0">
                “Biočipu zinātniskā laboratorija” mājaslapas dizainers
             </h3>
             <p className="text-gray-700 text-base sm:text-lg leading-relaxed px-2 md:px-0">
-             Stdenti no Vidzemes Tehnoloģiju un dizaina tehnikums, kuri izstrādāja šīs mājaslapas dizainu.
+             Studenti no Vidzemes Tehnoloģiju un dizaina tehnikums, kuri izstrādāja šīs mājaslapas dizainu.
             </p>
           </div>
         </div>
