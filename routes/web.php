@@ -17,7 +17,10 @@ Route::get('/contacts', function () {
     return Inertia::render('contacts');
 })->name('contacts');
 
+Route::get('/pievienojies-mums', function () {
+    return Inertia::render('pievienojies-mums');
+})->name('pievienojies-mums');
+
 Route::get('/musu-grupa', function () {
     return Inertia::render('MusuGrupa');
 })->name('musu-grupa');
-
