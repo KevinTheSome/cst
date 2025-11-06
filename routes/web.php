@@ -24,3 +24,7 @@ Route::get('/pievienojies-mums', function () {
 Route::get('/musu-grupa', function () {
     return Inertia::render('MusuGrupa');
 })->name('musu-grupa');
+
+Route::get('/lablife', function () {
+    return Inertia::render('lablife');
+})->name('lablife');
