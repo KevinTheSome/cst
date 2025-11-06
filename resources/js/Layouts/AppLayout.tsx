@@ -13,7 +13,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
         initialDelayRef.current = setTimeout(() => {
             setLoaderVisible(false);
             initialDelayRef.current = null;
-        }, 5000);
+        }, 1200);
 
         return () => {
             if (initialDelayRef.current) {
