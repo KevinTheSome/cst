@@ -9,13 +9,9 @@ use Inertia\Inertia;
 Route::get('/', function () {
     App::setLocale('lv');
     syncLangFiles('head');
-
+});
 Route::get('/test', [TestController::class, 'test'])->name('test');
 
 Route::get('/contacts', [ContactsController::class, 'contacts'])->name('contacts');
 
 Route::get('/test', [\App\Http\Controllers\TestController::class, 'test'])->name('test');
-
-Route::get('/contacts', function () {
-    return Inertia::render('contacts');
-})->name('contacts');
