@@ -7,15 +7,15 @@ const NAV_GROUPS: Array<{
     {
         title: 'Par mums',
         items: [
-            { label: 'Biočipu zinātniskā laboratorija' },
-            { label: 'Laboratorijas dzīve' },
-            { label: 'Mūsu grupa' },
-            { label: 'Pievienojies mums' },
+            { label: 'Biočipu zinātniskā laboratorija', href: '/biocipu-zinatniska-laboratorija'  },
+            { label: 'Laboratorijas dzīve', href: '/lablife'  },
+            { label: 'Mūsu grupa',href: '/musu-grupa'  },
+            { label: 'Pievienojies mums', href: '/pievienojies-mums'  },
         ],
     },
     {
         title: 'Pētījumi',
-        items: [{ label: 'Publikācijas' }, { label: 'Projekti' }],
+        items: [{ label: 'Publikācijas', href: '/publikacijas' }, { label: 'Projekti', href:''  }],
     },
     {
         title: 'Kontakti',
