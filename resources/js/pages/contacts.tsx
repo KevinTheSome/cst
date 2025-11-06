@@ -3,7 +3,7 @@ export default function Contacts() {
         <section className="bg-gray-100 py-16 px-6 h-full">
             {/* Title */}
             <h1
-                className="font-serif text-bold text-5xl text-green-700 text-center mt-20 mb-20 ">
+                className="font-semibold text-bold text-5xl text-green-700 text-center mt-20 mb-20 ">
                 Kontakti
             </h1>
 
