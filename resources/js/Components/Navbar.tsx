@@ -1,17 +1,25 @@
+import { Link } from '@inertiajs/react';
+
 function Navbar() {
     return (
         <nav className="flex items-center justify-between bg-white px-8 py-6 shadow-sm">
             <div className="flex items-center gap-6">
-                <a href="/" className="flex items-center gap-4">
-                    <img src="/bzl-site-icon-01.png" alt="Biočipu zinātniskā laboratorija" className="h-20 w-auto" />
+                <Link href="/" className="flex items-center gap-4">
+                    <img
+                        src="/bzl-site-icon-01.png"
+                        alt="Biočipu zinātniskā laboratorija"
+                        className="h-20 w-auto"
+                    />
                     <span className="text-2xl leading-tight font-semibold text-green-700">
                         Biočipu zinātniskā
                         <br />
                         laboratorija
                     </span>
-                </a>
+                </Link>
             </div>
+
             <ul className="m-0 flex list-none items-center gap-4 p-0">
+                {/* PAR MUMS */}
                 <li>
                     <div className="dropdown-hover group dropdown btn dropdown-end dropdown-bottom btn-ghost">
                         <label
@@ -31,28 +39,42 @@ function Navbar() {
                         </label>
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
-                                <a href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                <Link
+                                    href="/biocipu-zinatniska-laboratorija"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
                                     Biočipu zinātniskā laboratorija
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                <Link
+                                    href="/lablife"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
                                     Laboratorijas dzīve
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                <Link
+                                    href="/musu-grupa"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
                                     Mūsu grupa
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                <Link
+                                    href="/pievienojies-mums"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
                                     Pievienojies mums
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     </div>
                 </li>
+
+                {/* PĒTĪJUMI (routes not defined yet in web.php, so keeping as # for now) */}
                 <li>
                     <div className="dropdown-hover group dropdown btn dropdown-end dropdown-bottom btn-ghost">
                         <label
@@ -72,23 +94,36 @@ function Navbar() {
                         </label>
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
-                                <a href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                <a
+                                    href="#"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
                                     Publikācijas
                                 </a>
                             </li>
                             <li>
-                                <a href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                <a
+                                    href="#"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
                                     Projekti
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
+
+                {/* Contacts */}
                 <li>
-                    <a href="#" className="btn text-lg font-semibold text-green-700 btn-ghost transition hover:text-orange-400 md:text-xl">
+                    <Link
+                        href="/contacts"
+                        className="btn btn-ghost text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                    >
                         KONTAKTI
-                    </a>
+                    </Link>
                 </li>
+
+                {/* Language flags – still placeholders */}
                 <li>
                     <a href="#" title="Latviski" className="ml-4">
                         <span className="text-xl">🇱🇻</span>
