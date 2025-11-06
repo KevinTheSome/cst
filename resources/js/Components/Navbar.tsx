@@ -1,21 +1,21 @@
-import { useState } from 'react';
 import { Link } from '@inertiajs/react';
+import { useState } from 'react';
 
 function Navbar() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     return (
         <nav className="z-50 flex w-full flex-col items-start justify-between bg-white px-4 py-4 shadow-sm md:flex-row md:items-center md:px-8 md:py-6">
             <div className="flex w-full items-center justify-between gap-6 md:w-auto">
-                <a href="/" className="flex items-center gap-4">
+                <Link href="/" className="flex items-center gap-4">
                     <img src="/bzl-site-icon-01.png" alt="Biočipu zinātniskā laboratorija" className="h-16 w-auto md:h-20" />
                     <span className="text-xl leading-tight font-semibold text-green-700 md:text-2xl">
                         Biočipu zinātniskā
                         <br />
                         laboratorija
                     </span>
-                </a>
+                </Link>
                 {/* Hamburger menu for mobile */}
-                <button className="z-30 p-2 md:hidden" aria-label="Open menu" onClick={() => setSidebarOpen(true)}>
+                <button className="btn z-30 p-2 md:hidden" aria-label="Open menu" onClick={() => setSidebarOpen(true)}>
                     <svg className="h-7 w-7 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
@@ -50,18 +50,12 @@ function Navbar() {
                                 </Link>
                             </li>
                             <li>
-                                <Link
-                                    href="/lablife"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
-                                >
+                                <Link href="/lablife" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
                                     Laboratorijas dzīve
                                 </Link>
                             </li>
                             <li>
-                                <Link
-                                    href="/musu-grupa"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
-                                >
+                                <Link href="/musu-grupa" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
                                     Mūsu grupa
                                 </Link>
                             </li>
@@ -97,20 +91,17 @@ function Navbar() {
                         </label>
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
-                                <a
-                                    href="#"
+                                <Link
+                                    href="/publikacijas"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
                                 >
                                     Publikācijas
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a
-                                    href="#"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
-                                >
+                                <Link href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
                                     Projekti
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     </div>
@@ -118,10 +109,7 @@ function Navbar() {
 
                 {/* Contacts */}
                 <li>
-                    <Link
-                        href="/contacts"
-                        className="btn btn-ghost text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
-                    >
+                    <Link href="/contacts" className="btn text-lg font-semibold text-green-700 btn-ghost transition hover:text-orange-400 md:text-xl">
                         KONTAKTI
                     </Link>
                 </li>
@@ -142,12 +130,12 @@ function Navbar() {
             {sidebarOpen && (
                 <div className="fixed inset-0 z-40 flex md:hidden">
                     {/* Overlay */}
-                    <div className="bg-opacity-30 absolute inset-0 bg-black" onClick={() => setSidebarOpen(false)}></div>
+                    {/* <div className="bg-opacity-30 absolute inset-0 bg-black" onClick={() => setSidebarOpen(false)}></div> */}
                     {/* Sidebar with animation from left */}
                     <aside className="animate-slide-in-sidebar-left relative flex h-full w-80 max-w-full translate-x-0 flex-col bg-white text-green-700 shadow-lg transition-transform duration-300 ease-in-out">
                         <div className="flex items-center justify-between border-b border-green-700/10 px-6 py-4">
                             <img src="/bzl-site-icon-01.png" alt="Logo" className="h-8 w-auto" />
-                            <button className="btn text-green-700 btn-ghost btn-sm" aria-label="Close menu" onClick={() => setSidebarOpen(false)}>
+                            <button className="btn text-green-700 btn-sm" aria-label="Close menu" onClick={() => setSidebarOpen(false)}>
                                 ✕
                             </button>
                         </div>
@@ -166,24 +154,27 @@ function Navbar() {
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
-                                                <a href="#" className="block w-full text-green-700 hover:text-orange-400">
+                                                <Link
+                                                    href="/biocipu-zinatniska-laboratorija"
+                                                    className="block w-full text-green-700 hover:text-orange-400"
+                                                >
                                                     Biočipu zinātniskā laboratorija
-                                                </a>
+                                                </Link>
                                             </li>
                                             <li>
-                                                <a href="#" className="block w-full text-green-700 hover:text-orange-400">
+                                                <Link href="/lablife" className="block w-full text-green-700 hover:text-orange-400">
                                                     Laboratorijas dzīve
-                                                </a>
+                                                </Link>
                                             </li>
                                             <li>
-                                                <a href="#" className="block w-full text-green-700 hover:text-orange-400">
+                                                <Link href="/musu-grupa" className="block w-full text-green-700 hover:text-orange-400">
                                                     Mūsu grupa
-                                                </a>
+                                                </Link>
                                             </li>
                                             <li>
-                                                <a href="#" className="block w-full text-green-700 hover:text-orange-400">
+                                                <Link href="/pievienojies-mums" className="block w-full text-green-700 hover:text-orange-400">
                                                     Pievienojies mums
-                                                </a>
+                                                </Link>
                                             </li>
                                         </ul>
                                     </details>
@@ -201,27 +192,27 @@ function Navbar() {
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
-                                                <a href="#" className="block w-full text-green-700 hover:text-orange-400">
+                                                <Link href="/publikacijas" className="block w-full text-green-700 hover:text-orange-400">
                                                     Publikācijas
-                                                </a>
+                                                </Link>
                                             </li>
                                             <li>
-                                                <a href="#" className="block w-full text-green-700 hover:text-orange-400">
+                                                <Link href="#" className="block w-full text-green-700 hover:text-orange-400">
                                                     Projekti
-                                                </a>
+                                                </Link>
                                             </li>
                                         </ul>
                                     </details>
                                 </li>
                                 <li>
-                                    <a href="#" className="flex w-full items-center gap-3 px-3 py-2 text-lg font-semibold">
+                                    <Link href="/contacts" className="flex w-full items-center gap-3 px-3 py-2 text-lg font-semibold">
                                         {/* Mail/Contact icon: Lucide style */}
                                         <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                                             <rect x="3" y="5" width="18" height="14" rx="2" />
                                             <polyline points="3 7 12 13 21 7" />
                                         </svg>
                                         KONTAKTI
-                                    </a>
+                                    </Link>
                                 </li>
                                 <li className="mt-2 flex w-full gap-2 px-3">
                                     <a href="#" title="Latviski" className="w-full text-center text-xl">
