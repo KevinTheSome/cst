@@ -1,8 +1,9 @@
-import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import { router } from '@inertiajs/react';
+import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 
 import BioChipLoader from '@/Components/BioChipLoader';
 import Footer from '@/Components/Footer';
+import Navbar from '@/components/Navbar';
 
 export default function AppLayout({ children }: PropsWithChildren) {
     const [loaderVisible, setLoaderVisible] = useState(true);
@@ -69,16 +70,18 @@ export default function AppLayout({ children }: PropsWithChildren) {
     }, []);
 
     return (
-        <div className="relative flex min-h-screen flex-col bg-[#fdfdfc] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#ededec]">
+        <>
             <BioChipLoader visible={loaderVisible} />
-
-            <div
-                aria-busy={loaderVisible}
-                className={`flex flex-1 flex-col transition-opacity duration-500 ${loaderVisible ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
-            >
-                <main className="flex-1">{children}</main>
-                <Footer />
+            <div className="relative flex min-h-screen flex-col bg-[#fdfdfc] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#ededec]">
+                <div
+                    aria-busy={loaderVisible}
+                    className={`flex flex-1 flex-col transition-opacity duration-500 ${loaderVisible ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+                >
+                    <Navbar />
+                    <main className="flex-1">{children}</main>
+                    <Footer />
+                </div>
             </div>
-        </div>
+        </>
     );
 }
