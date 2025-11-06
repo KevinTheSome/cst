@@ -13,4 +13,11 @@ Route::get('/', function () {
 });
 Route::get('/test', [TestController::class, 'test'])->name('test');
 
-Route::get('/contacts', [ContactsController::class, 'contacts'])->name('contacts');
+Route::get('/contacts', function () {
+    return Inertia::render('contacts');
+})->name('contacts');
+
+Route::get('/musu-grupa', function () {
+    return Inertia::render('MusuGrupa');
+})->name('musu-grupa');
+
