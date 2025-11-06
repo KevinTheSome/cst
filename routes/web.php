@@ -28,3 +28,7 @@ Route::get('/biocipu-zinatniska-laboratorija', function () {
 Route::get('/musu-grupa', function () {
     return Inertia::render('MusuGrupa');
 })->name('musu-grupa');
+
+Route::get('/lablife', function () {
+    return Inertia::render('lablife');
+})->name('lablife');
