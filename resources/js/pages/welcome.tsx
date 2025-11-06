@@ -92,7 +92,7 @@ export default function Welcome() {
                         <p className="text-base leading-relaxed text-[#3a4955] sm:text-lg">– studentus un jaunos pētniekus ar pētniecisko praksi.</p>
                         <Link
                             className="rounded-full bg-[#1f675b] px-6 py-3 text-sm font-semibold tracking-[0.25em] text-white uppercase transition hover:bg-[#184f46]"
-                            href="/test"
+                            href="/biocipu-zinatniska-laboratorija"
                         >
                             Uzzināt vairāk
                         </Link>

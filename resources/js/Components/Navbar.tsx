@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from '@inertiajs/react';
 
 function Navbar() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -41,28 +42,42 @@ function Navbar() {
                         </label>
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
-                                <a href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                <Link
+                                    href="/biocipu-zinatniska-laboratorija"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
                                     Biočipu zinātniskā laboratorija
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                <Link
+                                    href="/lablife"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
                                     Laboratorijas dzīve
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                <Link
+                                    href="/musu-grupa"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
                                     Mūsu grupa
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                <Link
+                                    href="/pievienojies-mums"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
                                     Pievienojies mums
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     </div>
                 </li>
+
+                {/* PĒTĪJUMI (routes not defined yet in web.php, so keeping as # for now) */}
                 <li>
                     <div className="dropdown-hover group dropdown btn dropdown-end dropdown-bottom btn-ghost md:w-auto">
                         <label
@@ -82,23 +97,36 @@ function Navbar() {
                         </label>
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
-                                <a href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                <a
+                                    href="#"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
                                     Publikācijas
                                 </a>
                             </li>
                             <li>
-                                <a href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                <a
+                                    href="#"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
                                     Projekti
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
+
+                {/* Contacts */}
                 <li>
-                    <a href="#" className="btn text-lg font-semibold text-green-700 btn-ghost transition hover:text-orange-400 md:text-xl">
+                    <Link
+                        href="/contacts"
+                        className="btn btn-ghost text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                    >
                         KONTAKTI
-                    </a>
+                    </Link>
                 </li>
+
+                {/* Language flags – still placeholders */}
                 <li>
                     <a href="#" title="Latviski" className="ml-4">
                         <span className="text-xl">🇱🇻</span>
