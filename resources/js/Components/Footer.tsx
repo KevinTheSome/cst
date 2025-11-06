@@ -15,7 +15,7 @@ const NAV_GROUPS: Array<{
     },
     {
         title: 'Pētījumi',
-        items: [{ label: 'Publikācijas', href: '/publikacijas' }, { label: 'Projekti', href:''  }],
+        items: [{ label: 'Publikācijas', href: '/publikacijas' }, { label: 'Projekti', href:'/Projects'}],
     },
     {
         title: 'Kontakti',
