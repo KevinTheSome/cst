@@ -29,6 +29,9 @@ Route::get('/musu-grupa', function () {
     return Inertia::render('MusuGrupa');
 })->name('musu-grupa');
 
+Route::get('/publikacijas', function () {
+    return Inertia::render('publikacijas');
+})->name('publikacijas');
 Route::get('/lablife', function () {
     return Inertia::render('lablife');
 })->name('lablife');
