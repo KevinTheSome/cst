@@ -1,9 +1,67 @@
 @import 'tailwindcss';
-
+@plugin "daisyui";
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans:
+        'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* keep the pulse if you like */
+@keyframes bio-chip-logo-pulse {
+    0%,
+    100% {
+        transform: scale(0.9);
+        opacity: 0.6;
+    }
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@layer components {
+    .bio-chip-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        transition:
+            opacity 300ms ease,
+            visibility 300ms ease;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    .bio-chip-overlay--visible {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    .bio-chip-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: clamp(120px, 18vw, 220px);
+        height: clamp(120px, 18vw, 220px);
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        animation: bio-chip-logo-pulse 2s ease-in-out infinite;
+    }
+
+    .bio-chip-logo__image {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: contain;
+        background: transparent;
+        filter: none;
+    }
 }

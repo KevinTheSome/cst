@@ -1,15 +1,23 @@
 <?php
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\ContactsController;
+
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
-
-Route::get('/test', [\App\Http\Controllers\TestController::class, 'test'])->name('test');
-
+Route::get('/', function () {
+    App::setLocale('lv');
+    syncLangFiles('head');
+    return Inertia::render('welcome');
+});
+Route::get('/test', [TestController::class, 'test'])->name('test');
 
 Route::get('/contacts', function () {
     return Inertia::render('contacts');
 })->name('contacts');
+
+Route::get('/musu-grupa', function () {
+    return Inertia::render('MusuGrupa');
+})->name('musu-grupa');
 

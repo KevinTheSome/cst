@@ -1,108 +1,75 @@
-import React from 'react';
-import { Head } from '@inertiajs/react';
-
-const Contacts: React.FC = () => {
+export default function Contacts() {
     return (
-        <>
-            <Head title="Kontakti" />
+        <section className="bg-gray-100 py-16 px-6 h-full">
+            {/* Title */}
+            <h1
+                className="font-serif text-bold text-5xl text-green-700 text-center mt-20 mb-20 ">
+                Kontakti
+            </h1>
 
-            {/* Full-page light background */}
-            <div className="min-h-screen w-full bg-[#f7faf8] text-[#1b4a37]">
-                <section className="mx-auto w-full max-w-5xl px-6 py-16">
-                    <header className="mb-10 text-center">
-                        <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
-                            Kontakti
-                        </h1>
-                        <p className="mt-3 text-sm md:text-base text-[#9fb5aa]">
-                            Sazinies ar mums par Biočipu zinātnisko laboratoriju.
-                        </p>
-                    </header>
 
-                    {/* White card in the middle */}
-                    <div className="mx-auto max-w-3xl rounded-[32px] bg-white px-8 py-10 shadow-md ring-1 ring-[#dfe9e3] md:px-12 md:py-12">
-                        <dl className="space-y-8">
-                            {/* Phone */}
-                            <div className="flex items-start gap-5">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f7faf8] ring-1 ring-[#dfe9e3]">
-                                    <img
-                                        src="/telefona-ikona-03.svg"
-                                        alt="Telefona ikona"
-                                        className="h-6 w-6"
-                                    />
-                                </div>
-                                <div>
-                                    <dt className="text-xs font-semibold uppercase tracking-[0.25em] text-[#1b4a37]">
-                                        Telefona numuri
-                                    </dt>
-                                    <dd className="mt-3 space-y-1 text-lg leading-relaxed">
-                                        <a
-                                            className="block text-[#2c7c5a] transition-colors hover:text-[#1b4a37]"
-                                            href="tel:+37167089383"
-                                        >
-                                            +371 67089383
-                                        </a>
-                                        <a
-                                            className="block text-[#2c7c5a] transition-colors hover:text-[#1b4a37]"
-                                            href="tel:+37129252975"
-                                        >
-                                            +371 29252975
-                                        </a>
-                                    </dd>
-                                </div>
-                            </div>
-
-                            <div className="h-px bg-[#e3efe8]" />
-
-                            {/* Email */}
-                            <div className="flex items-start gap-5">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f7faf8] ring-1 ring-[#dfe9e3]">
-                                    <img
-                                        src="/epasts-ikona-cerams-ka-ista-2-01.svg"
-                                        alt="E-pasta ikona"
-                                        className="h-6 w-6"
-                                    />
-                                </div>
-                                <div>
-                                    <dt className="text-xs font-semibold uppercase tracking-[0.25em] text-[#1b4a37]">
-                                        E-pasts
-                                    </dt>
-                                    <dd className="mt-3 text-lg leading-relaxed">
-                                        <a
-                                            className="text-[#2c7c5a] transition-colors hover:text-[#1b4a37]"
-                                            href="mailto:uldis.berzins_4@rtu.lv"
-                                        >
-                                            uldis.berzins_4@rtu.lv
-                                        </a>
-                                    </dd>
-                                </div>
-                            </div>
-
-                            <div className="h-px bg-[#e3efe8]" />
-
-                            {/* Address */}
-                            <div className="flex items-start gap-5">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f7faf8] ring-1 ring-[#dfe9e3]">
-                                    <img
-                                        src="/adreses-ikona.svg"
-                                        alt="Adreses ikona"
-                                        className="h-6 w-6"
-                                    />
-                                </div>
-                                <div>
-                                    <dt className="text-xs font-semibold uppercase tracking-[0.25em] text-[#1b4a37]">
-                                        Adrese
-                                    </dt>
-                                    <dd className="mt-3 text-lg leading-relaxed text-[#205741]">
-                                        Ķīpsalas iela 6B–316, Rīga, LV-1064, Latvija
-                                    </dd>
-                                </div>
-                            </div>
-                        </dl>
+            {/* Main layout */}
+            <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                
+                {/* Left side - contact info */}
+                <div className="space-y-10">
+                    {/* Phones */}
+                    <div className="flex items-start space-x-5">
+                        <img
+                            src="/telefona-ikona-03.svg"
+                            alt="Phone icon"
+                            className="w-10 h-10 mt-5"
+                        />
+                        <div className="space-y-1 text-gray-800 text-lg font-merriweathe">
+                            <p>+371 67089383</p>
+                            <br></br>
+                            <p>+371 29252975</p>
+                        </div>
                     </div>
-                </section>
-            </div>
-        </>
-    );
-};
 
-export default Contacts;
+                    {/* Email */}
+                    <div className="flex items-start space-x-5">
+                        <img
+                            src="/epasts-ikona-cerams-ka-ista-01.svg"
+                            alt="Mail icon"
+                            className="w-10 h-10"
+                        />
+                        <p className="text-gray-800 text-lg mt-1 font-merriweathe" >
+                            <a
+                                href="mailto:uldis.berzins.4@rtu.lv"
+                                className="hover:underline"
+                            >
+                                uldis.berzins_4@rtu.lv
+                            </a>
+                        </p>
+                    </div>
+
+                    {/* Address */}
+                    <div className="flex items-start space-x-5">
+                        <img
+                            src="/adreses-ikona.svg"
+                            alt="Map icon"
+                            className="w-10 h-10"
+                        />
+                        <p className="text-gray-800 text-lg font-merriweathe" >
+                            Ķīpsalas iela 6B–316, Rīga, LV-1064, Latvija
+                        </p>
+                    </div>
+                </div>
+
+                {/* Right side - Google map */}
+                <div className="rounded-lg overflow-hidden shadow-md">
+                    <iframe
+                        src="https://www.google.com/maps?q=Ķīpsalas%20iela%206B–316,%20Rīga,%20LV-1064,%20Latvija&output=embed"
+                        width="100%"
+                        height="100%"
+                        loading="lazy"
+                        allowFullScreen
+                        className="border-0 w-full h-[400px]"
+                        title="RTU Location"
+                    ></iframe>
+                </div>
+            </div>
+        </section>
+    );
+}
