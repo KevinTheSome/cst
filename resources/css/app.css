@@ -4,7 +4,7 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @theme {
-        'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
     'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
@@ -28,8 +28,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    /* was: background: #ffffff; */
-    background: transparent;                 /* ⬅️ no white page cover */
+    background: transparent;                 
     transition: opacity 300ms ease, visibility 300ms ease;
     opacity: 0;
     visibility: hidden;
@@ -48,10 +47,10 @@
     justify-content: center;
     width: clamp(120px, 18vw, 220px);
     height: clamp(120px, 18vw, 220px);
-    border-radius: 0;                        /* ⬅️ no rounded “tile” */
-    background: transparent;                 /* ⬅️ ensure no fill */
-    box-shadow: none;                        /* ⬅️ kill glow/tile */
-    animation: bio-chip-logo-pulse 2s ease-in-out infinite; /* keep only pulse */
+    border-radius: 0;                        
+    background: transparent;                 
+    box-shadow: none;                        
+    animation: bio-chip-logo-pulse 2s ease-in-out infinite; 
   }
 
   .bio-chip-logo__image {
@@ -60,8 +59,6 @@
     display: block;
     object-fit: contain;
     background: transparent;
-    filter: none;                            /* ⬅️ no drop shadow edge */
-    /* optional: if your PNG has a white box baked in, this won’t remove it */
-    /* mix-blend-mode: multiply; */
+    filter: none;                            
   }
 }
