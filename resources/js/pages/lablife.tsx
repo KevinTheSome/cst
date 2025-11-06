@@ -8,30 +8,33 @@ export default function LabLife() {
 
     return (
         <>
-            <Head title="Lab dzīve">
-                <link rel="preconnect" href="https://fonts.bunny.net" />
-                <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-            </Head>
-            <div className="flex flex-col items-center justify-center bg-gray-100 py-20">
-                <h1 className="text-4xl font-bold text-gray-800">Laboratorijas dzīve</h1>
-                <p className="text-lg text-gray-600">"Laboratorijas dzīve" lapa ir progresā. Pašlaik tiek vākta un uzlabota informācija par laboratorijas dzīvi un laboratorijas izbraucieniem.</p>
-                <div className="flex flex-col md:flex-row items-center md:items-start">
-                    <img
-                        src="\IMG_3160-scaled.jpg"
-                        alt="Ralfs Žagars"
-                        className="w-96 h-auto rounded-lg shadow-lg mb-10 md:mb-0 md:mr-16"
-                    />
-                    <div className="text-center md:text-left max-w-2xl">
-                        <h2 className="text-3xl font-semibold text-gray-900 mb-3">
-                        Ralfs Žagars
-                        </h2>
-                        <h3 className="text-green-800 text-lg font-medium mb-4">
-                        “Biočipu zinātniskā laboratorija” mājaslapas dizainers
-                        </h3>
-                        <p className="text-gray-700 text-lg leading-relaxed">
-                        Ralfs Žagars ir Rīgas mākslas un mediju tehnikuma multimediju dizaina
-                        specialitātes audzēknis, kurš izstrādāja šīs mājaslapas dizainu.
+            <Head title="Laboratorijas dzīve"/>
+
+            <div className="bg-[#f4f4f2] py-16">
+                <div className="mx-auto flex w-full max-w-5xl flex-col gap-12 px-4 text-center sm:px-10">
+                    <div className="flex flex-col gap-6 text-[#2f3c37]">
+                        <h1 className="text-3xl font-semibold text-[#1f513c] sm:text-4xl">Laboratorijas dzīve</h1>
+                        <p className="text-lg leading-relaxed text-[#3d4b43]">
+                            "Laboratorijas dzīve" lapa ir progresā. Pašlaik tiek vākta un uzlabota informācija par laboratorijas
+                            dzīvi un laboratorijas izbraucieniem.
                         </p>
+                    </div>
+                    <div className="flex flex-col items-center gap-12 text-left text-[#3d4b43]">
+                        <div className="w-full overflow-hidden rounded-2xl">
+                            <img
+                                alt="Komanda laboratorijā"
+                                className="h-full w-full object-cover"
+                                src="/bzl-7.jpg"
+                            />
+                        </div>
+                        <br/>
+                        <div className="w-full overflow-hidden rounded-2xl">
+                            <img
+                                alt="Erasmus Plus Studenti"
+                                className="h-full w-full object-cover"
+                                src="/cst-rumanijas-studenti.jpeg"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
