@@ -24,3 +24,7 @@ Route::get('/pievienojies-mums', function () {
 Route::get('/musu-grupa', function () {
     return Inertia::render('MusuGrupa');
 })->name('musu-grupa');
+
+Route::get('/publikacijas', function () {
+    return Inertia::render('publikacijas');
+})->name('publikacijas');
