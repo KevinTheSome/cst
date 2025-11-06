@@ -76,11 +76,16 @@ export default function AppLayout({ children }: PropsWithChildren) {
             <div className="relative flex min-h-screen flex-col bg-[#fdfdfc] text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#ededec]">
                 <div
                     aria-busy={loaderVisible}
-                    className={`flex flex-1 flex-col transition-opacity duration-500 ${loaderVisible ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+                    className={`flex flex-1 flex-col transition-opacity duration-500 ${
+                        loaderVisible ? 'pointer-events-none opacity-0' : 'opacity-100'
+                    }`}
                 >
                     <Navbar />
                     <main className="flex-1">{children}</main>
                     <Footer />
+
+                    {/* <<< add this */}
+                    <CookieConsent />
                 </div>
             </div>
         </>

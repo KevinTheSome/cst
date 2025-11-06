@@ -21,6 +21,10 @@ Route::get('/pievienojies-mums', function () {
     return Inertia::render('pievienojies-mums');
 })->name('pievienojies-mums');
 
+Route::get('/biocipu-zinatniska-laboratorija', function () {
+    return Inertia::render('biocipu-zinatniska-laboratorija');
+})->name('biocipu-zinatniska-laboratorija');
+
 Route::get('/musu-grupa', function () {
     return Inertia::render('MusuGrupa');
 })->name('musu-grupa');
@@ -28,3 +32,6 @@ Route::get('/musu-grupa', function () {
 Route::get('/publikacijas', function () {
     return Inertia::render('publikacijas');
 })->name('publikacijas');
+Route::get('/lablife', function () {
+    return Inertia::render('lablife');
+})->name('lablife');
