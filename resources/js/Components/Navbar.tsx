@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 function Navbar() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+
     return (
         <nav className="z-50 flex w-full flex-col items-start justify-between bg-white px-4 py-4 shadow-sm md:flex-row md:items-center md:px-8 md:py-6">
             <div className="flex w-full items-center justify-between gap-6 md:w-auto">
@@ -24,7 +25,7 @@ function Navbar() {
             {/* Desktop nav */}
             <ul className="m-0 hidden w-auto list-none flex-row items-center gap-4 p-0 md:flex">
                 <li>
-                    <div className="dropdown-hover group dropdown btn dropdown-end dropdown-bottom btn-ghost md:w-auto">
+                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost md:w-auto">
                         <label
                             tabIndex={0}
                             className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 md:text-xl"
@@ -73,7 +74,7 @@ function Navbar() {
 
                 {/* PĒTĪJUMI (routes not defined yet in web.php, so keeping as # for now) */}
                 <li>
-                    <div className="dropdown-hover group dropdown btn dropdown-end dropdown-bottom btn-ghost md:w-auto">
+                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost md:w-auto">
                         <label
                             tabIndex={0}
                             className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 md:text-xl"
@@ -99,7 +100,7 @@ function Navbar() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                <Link href="/Projects" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
                                     Projekti
                                 </Link>
                             </li>
@@ -157,22 +158,35 @@ function Navbar() {
                                                 <Link
                                                     href="/biocipu-zinatniska-laboratorija"
                                                     className="block w-full text-green-700 hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
                                                 >
                                                     Biočipu zinātniskā laboratorija
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/lablife" className="block w-full text-green-700 hover:text-orange-400">
+                                                <Link
+                                                    href="/lablife"
+                                                    className="block w-full text-green-700 hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Laboratorijas dzīve
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/musu-grupa" className="block w-full text-green-700 hover:text-orange-400">
+                                                <Link
+                                                    href="/musu-grupa"
+                                                    className="block w-full text-green-700 hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Mūsu grupa
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/pievienojies-mums" className="block w-full text-green-700 hover:text-orange-400">
+                                                <Link
+                                                    href="/pievienojies-mums"
+                                                    className="block w-full text-green-700 hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Pievienojies mums
                                                 </Link>
                                             </li>
@@ -192,12 +206,20 @@ function Navbar() {
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
-                                                <Link href="/publikacijas" className="block w-full text-green-700 hover:text-orange-400">
+                                                <Link
+                                                    href="/publikacijas"
+                                                    className="block w-full text-green-700 hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Publikācijas
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="#" className="block w-full text-green-700 hover:text-orange-400">
+                                                <Link
+                                                    href="/Projects"
+                                                    className="block w-full text-green-700 hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Projekti
                                                 </Link>
                                             </li>
@@ -205,7 +227,11 @@ function Navbar() {
                                     </details>
                                 </li>
                                 <li>
-                                    <Link href="/contacts" className="flex w-full items-center gap-3 px-3 py-2 text-lg font-semibold">
+                                    <Link
+                                        onClick={() => setSidebarOpen(false)}
+                                        href="/contacts"
+                                        className="flex w-full items-center gap-3 px-3 py-2 text-lg font-semibold"
+                                    >
                                         {/* Mail/Contact icon: Lucide style */}
                                         <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                                             <rect x="3" y="5" width="18" height="14" rx="2" />
