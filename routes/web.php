@@ -2,6 +2,7 @@
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\ContactsController;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -11,6 +12,19 @@ Route::get('/', function () {
     syncLangFiles('head');
     return Inertia::render('welcome');
 });
+
+Route::post('/locale', function (Request $request) {
+    $request->validate([
+        'locale' => 'required|in:en,lv', // Validate supported locales
+    ]);
+
+    $locale = $request->input('locale');
+    session(['locale' => $locale]);
+    App::setLocale($locale);
+
+    return response()->json(['success' => true]); // JSON for Inertia SPA handling
+})->name('locale.switch');
+
 Route::get('/test', [TestController::class, 'test'])->name('test');
 
 Route::get('/contacts', function () {
