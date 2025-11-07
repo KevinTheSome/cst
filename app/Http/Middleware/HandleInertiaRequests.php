@@ -4,7 +4,10 @@ namespace App\Http\Middleware;
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Lang;
 use Inertia\Middleware;
+
 
 class HandleInertiaRequests extends Middleware
 {
@@ -34,17 +37,26 @@ class HandleInertiaRequests extends Middleware
      *
      * @return array<string, mixed>
      */
-    public function share(Request $request): array
-    {
-        [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
+     public function share(Request $request): array
+     {
+         // Set locale from session (with fallback) to ensure translations use it
+         $locale = $request->session()->get('locale', config('app.locale'));
+         App::setLocale($locale);
 
-        return [
-            ...parent::share($request),
-            'name' => config('app.name'),
-            'quote' => ['message' => trim($message), 'author' => trim($author)],
-            'auth' => [
-                'user' => $request->user(),
-            ],
-        ];
-    }
+         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
+
+         return [
+             ...parent::share($request),
+             'locale' => $locale,
+             'lang' => [
+                 'test' => Lang::get('test'),  // Dynamically load test lang file for the current locale
+                 // Add more as needed, e.g., 'head' => Lang::get('head'),
+             ],
+             'name' => config('app.name'),
+             'quote' => ['message' => trim($message), 'author' => trim($author)],
+             'auth' => [
+                 'user' => $request->user(),
+             ],
+         ];
+     }
 }
