@@ -81,10 +81,10 @@ export default function Welcome() {
 
                     {/* Text content */}
                     <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-8 py-10 text-center">
-                        <h1 className="text-3xl font-semibold text-[#1f2a33] sm:text-4xl">
+                        <h2 className="text-2xl leading-relaxed text-[#3a4955]">
                             Rīgas Tehniskās universitātes, Mašīnzinību, transporta un aeronautikas fakultātes, Biomedicīnas inženierzinātņu un
                             nanotehnoloģiju institūta, Biočipu zinātniskā laboratorija.
-                        </h1>
+                        </h2>
                         <p className="text-base leading-relaxed text-[#3a4955] sm:text-lg">Laboratorija nodrošina:</p>
                         <p className="text-base leading-relaxed text-[#3a4955] sm:text-lg">
                             – pētījumus biomikrotehnoloģijās un nanotehnoloģijās, medicīnas inženierijas un nanoinženierijas jomās,
