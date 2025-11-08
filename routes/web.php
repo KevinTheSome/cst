@@ -1,6 +1,7 @@
 <?php
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\ContactsController;
+use App\Http\Controllers\ContactController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -34,6 +35,10 @@ Route::get('/contacts', function () {
 Route::get('/pievienojies-mums', function () {
     return Inertia::render('pievienojies-mums');
 })->name('pievienojies-mums');
+
+Route::post('/contact', [ContactController::class, 'store'])
+    ->name('contact.store')
+    ->middleware('throttle:contact');
 
 Route::get('/biocipu-zinatniska-laboratorija', function () {
     return Inertia::render('biocipu-zinatniska-laboratorija');
