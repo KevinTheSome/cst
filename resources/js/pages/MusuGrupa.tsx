@@ -1,4 +1,60 @@
+import { useState } from "react";
+
 export default function MusuGrupa() {
+  const [showVtdtStudents, setShowVtdtStudents] = useState(false);
+
+  const vtdtStudents = [
+    {
+      name: "Kevins ",
+      title: "SCRUM Master",
+      description:
+        "Iteratīvi pielāgo lietotāja saskarni un rūpējas, lai lapas kods būtu uzturams un pieejams.",
+      image: "/bzl-1.jpg",
+    },
+    {
+      name: "Elvis ",
+      title: "Chill guy, for the vibes",
+      description:
+        "Veido prototipus un vizuālās vadlīnijas, kas saskaņo laboratorijas zīmolu ar digitālo pieredzi.",
+      image: "/bzl-2.jpg",
+    },
+    {
+      name: "kristiāns ",
+      title: "Satura redaktore",
+      description:
+        "Strādā ar stāstiem un attēliem, nodrošinot, ka katrs teksts ir saprotams un iedvesmojošs.",
+      image: "/bzl-3.jpg",
+    },
+    {
+      name: "Adrians Raitums",
+      title: "UI/UX Dizainers Front-end izstrādātājs",
+      description:
+        "Izdomāt dizainu kā piesaistīt lietotājus uz Tīmekļa vietni.",
+      image: "/Adrians_Raitums.jpeg",
+    },
+    {
+      name: "Jānis Mārtiņš Bramanis",
+      title: "Grafiskā dizainere",
+      description:
+        "Izstrādā ilustrācijas un ikonas, saglabājot vienotu vizuālo valodu visā lapā.",
+      image: "/bzl-5.jpg",
+    },
+    {
+      name: "Kristers Skrastiņš",
+      title: "Testēšanas koordinators",
+      description:
+        "Pārbauda funkcionalitāti dažādās ierīcēs un apkopo ieteikumus uzlabojumiem.",
+      image: "/bzl-6.jpg",
+    },
+    {
+      name: "Kristaps Imants",
+      title: "Projektu koordinatore",
+      description:
+        "Vada komunikāciju ar laboratorijas komandu un nodrošina, ka termiņi tiek ievēroti.",
+      image: "/bzl-7.jpg",
+    },
+  ];
+
   return (
     <main className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-20">
       {/* Title */}
@@ -51,27 +107,78 @@ export default function MusuGrupa() {
             </div>
           </div>
         </div>
-
-        {/* --- Ralfs --- */}
-        <div className="flex flex-col md:flex-row items-center md:items-start">
-          <img
-            src="\IMG_3160-scaled.jpg"
-            alt="Ralfs Žagars"
-            className="w-64 sm:w-80 md:w-96 h-auto rounded-lg shadow-lg mb-8 md:mb-0 md:mr-10"
-          />
-          <div className="text-center md:text-left max-w-2xl">
-            <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-3">
-              Ralfs Žagars
-            </h2>
-            <h3 className="text-green-800 text-base sm:text-lg font-medium mb-4 px-2 md:px-0">
-              “Biočipu zinātniskā laboratorija” mājaslapas dizainers
-            </h3>
-            <p className="text-gray-700 text-base sm:text-lg leading-relaxed px-2 md:px-0">
-              Ralfs Žagars ir Rīgas mākslas un mediju tehnikuma multimediju dizaina
-              specialitātes audzēknis, kurš izstrādāja šīs mājaslapas dizainu.
-            </p>
+        {/*---VTDT skolnieki---*/}
+        <div className="space-y-10">
+          <div className="flex flex-col md:flex-row items-center md:items-start">
+            <img
+              src="\vtdt.png"
+              alt="Erasmus Plus studenti"
+              className="w-72 sm:w-96 md:w-[30rem] h-auto rounded-lg shadow-lg mb-8 md:mb-0 md:mr-10"
+            />
+            <div className="text-center md:text-left max-w-2xl">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-3">
+                Praktikanti no VTDT
+              </h2>
+              <h3 className="text-green-800 text-base sm:text-lg font-medium mb-4 px-2 md:px-0">
+                “Biočipu zinātniskā laboratorija” mājaslapas dizainers
+              </h3>
+              <p className="text-gray-700 text-base sm:text-lg leading-relaxed px-2 md:px-0">
+                Studenti no Vidzemes Tehnoloģiju un dizaina tehnikums, kuri izstrādāja šīs mājaslapas
+                dizainu.
+              </p>
+              <div className="mt-6 flex justify-center md:justify-start px-2 md:px-0">
+                <button
+                  type="button"
+                  aria-expanded={showVtdtStudents}
+                  aria-controls="vtdt-students"
+                  onClick={() => setShowVtdtStudents((prev) => !prev)}
+                  className="inline-flex items-center rounded-md bg-green-700 px-6 py-3 text-base font-semibold text-white shadow hover:bg-green-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 transition"
+                >
+                  {showVtdtStudents ? "Paslēpt praktikantu komandu" : "Parādīt praktikantu komandu"}
+                  <svg
+                    className={`ml-3 h-5 w-5 transition-transform ${
+                      showVtdtStudents ? "rotate-180" : ""
+                    }`}
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
+
+          {showVtdtStudents && (
+            <div
+              id="vtdt-students"
+              className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {vtdtStudents.map((student) => (
+                <article
+                  key={student.name}
+                  className="rounded-2xl bg-white shadow-md ring-1 ring-gray-100 transition hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <img
+                    src={student.image}
+                    alt={student.name}
+                    className="h-48 w-full object-cover rounded-t-2xl"
+                  />
+                  <div className="p-5 text-center">
+                    <h4 className="text-xl font-semibold text-gray-900">{student.name}</h4>
+                    <p className="text-green-700 font-medium mt-1">{student.title}</p>
+                    <p className="text-gray-600 text-sm leading-relaxed mt-3">{student.description}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
+
 
         {/* --- Erasmus Plus --- */}
         <div className="flex flex-col md:flex-row items-center md:items-start">
@@ -89,22 +196,26 @@ export default function MusuGrupa() {
             </p>
           </div>
         </div>
-        {/*---VTDT skolnieki---*/}
-           <div className="flex flex-col md:flex-row items-center md:items-start">
+        
+
+
+         {/* --- Ralfs --- */}
+        <div className="flex flex-col md:flex-row items-center md:items-start">
           <img
-            src=""
-            alt="Erasmus Plus studenti"
-            className="w-72 sm:w-96 md:w-[30rem] h-auto rounded-lg shadow-lg mb-8 md:mb-0 md:mr-10"
+            src="\IMG_3160-scaled.jpg"
+            alt="Ralfs Žagars"
+            className="w-64 sm:w-80 md:w-96 h-auto rounded-lg shadow-lg mb-8 md:mb-0 md:mr-10"
           />
           <div className="text-center md:text-left max-w-2xl">
             <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-3">
-              Praktikanti no VTDT
+              Ralfs Žagars
             </h2>
             <h3 className="text-green-800 text-base sm:text-lg font-medium mb-4 px-2 md:px-0">
-               “Biočipu zinātniskā laboratorija” mājaslapas dizainers
+              “Biočipu zinātniskā laboratorija” mājaslapas dizainers
             </h3>
             <p className="text-gray-700 text-base sm:text-lg leading-relaxed px-2 md:px-0">
-             Studenti no Vidzemes Tehnoloģiju un dizaina tehnikums, kuri izstrādāja šīs mājaslapas dizainu.
+              Ralfs Žagars ir Rīgas mākslas un mediju tehnikuma multimediju dizaina
+              specialitātes audzēknis, kurš izstrādāja šīs mājaslapas dizainu.
             </p>
           </div>
         </div>
