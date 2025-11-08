@@ -36,6 +36,10 @@ Route::get('/pievienojies-mums', function () {
     return Inertia::render('pievienojies-mums');
 })->name('pievienojies-mums');
 
+Route::get('/anketa', function () {
+    return Inertia::render('anketa');
+})->name('anketa');
+
 Route::post('/contact', [ContactController::class, 'store'])
     ->name('contact.store')
     ->middleware('throttle:contact');

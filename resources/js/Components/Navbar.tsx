@@ -124,6 +124,16 @@ function Navbar() {
                     </div>
                 </li>
 
+                {/* Questionnaire */}
+                <li>
+                    <Link
+                        href="/anketa"
+                        className="btn text-lg font-semibold text-green-700 btn-outline border-green-600 transition hover:bg-green-600 hover:text-white md:text-xl"
+                    >
+                        ANKETA
+                    </Link>
+                </li>
+
                 {/* Contacts */}
                 <li>
                     <Link href="/contacts" className="btn text-lg font-semibold text-green-700 btn-ghost transition hover:text-orange-400 md:text-xl">
@@ -254,6 +264,19 @@ function Navbar() {
                                             </li>
                                         </ul>
                                     </details>
+                                </li>
+                                <li>
+                                    <Link
+                                        href="/anketa"
+                                        className="flex w-full items-center gap-3 px-3 py-2 text-lg font-semibold"
+                                        onClick={() => setSidebarOpen(false)}
+                                    >
+                                        <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                            <path d="M5 4h14v16H5z" />
+                                            <path d="M9 8h6M9 12h6M9 16h3" />
+                                        </svg>
+                                        ANKETA
+                                    </Link>
                                 </li>
                                 <li>
                                     <Link
