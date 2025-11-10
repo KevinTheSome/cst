@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -48,19 +48,43 @@ Route::get('/', function (Request $request) {
     ]);
 })->name('home');
 
-/*
-|--------------------------------------------------------------------------
-| Other static & controller routes
-|--------------------------------------------------------------------------
-| These render Inertia pages directly or use controllers.
-*/
-Route::get('/test', [TestController::class, 'test'])->name('test');
+Route::get('/', function () {
+    App::setLocale('lv');
+    syncLangFiles('head');
+    return Inertia::render('welcome');
+});
+
+Route::post('/locale', function (Request $request) {
+    $request->validate([
+        'locale' => 'required|in:en,lv', // Validate supported locales
+    ]);
+
+    $locale = $request->input('locale');
+    session(['locale' => $locale]);
+    App::setLocale($locale);
+
+    return response()->json(['success' => true]); // JSON for Inertia SPA handling
+})->name('locale.switch');
+
+Route::get('/test', [TestController::class, 'test'])
+    ->middleware(CountryBlocker::class)
+    ->name('test');
 
 Route::get('/contacts', fn() => Inertia::render('contacts'))->name('contacts');
 
 Route::get('/pievienojies-mums', fn() => Inertia::render('pievienojies-mums'))->name('pievienojies-mums');
 
-Route::get('/biocipu-zinatniska-laboratorija', fn() => Inertia::render('biocipu-zinatniska-laboratorija'))->name('biocipu-zinatniska-laboratorija');
+Route::get('/anketa', function () {
+    return Inertia::render('anketa');
+})->name('anketa');
+
+Route::post('/contact', [ContactController::class, 'store'])
+    ->name('contact.store')
+    ->middleware('throttle:contact');
+
+Route::get('/biocipu-zinatniska-laboratorija', function () {
+    return Inertia::render('biocipu-zinatniska-laboratorija');
+})->name('biocipu-zinatniska-laboratorija');
 
 Route::get('/musu-grupa', fn() => Inertia::render('MusuGrupa'))->name('musu-grupa');
 

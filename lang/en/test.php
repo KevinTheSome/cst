@@ -14,5 +14,6 @@ return [
     */
 
     'message' => 'This is a test file for translite',
+    'description' => 'This is a test descritpion',
 
 ];

@@ -1,4 +1,5 @@
-import { Link } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import axios from 'axios';
 
 const NAV_GROUPS: Array<{
     title: string;
@@ -7,15 +8,18 @@ const NAV_GROUPS: Array<{
     {
         title: 'Par mums',
         items: [
-            { label: 'Biočipu zinātniskā laboratorija', href: '/biocipu-zinatniska-laboratorija'  },
-            { label: 'Laboratorijas dzīve', href: '/lablife'  },
-            { label: 'Mūsu grupa',href: '/musu-grupa'  },
-            { label: 'Pievienojies mums', href: '/pievienojies-mums'  },
+            { label: 'Biočipu zinātniskā laboratorija', href: '/biocipu-zinatniska-laboratorija' },
+            { label: 'Laboratorijas dzīve', href: '/lablife' },
+            { label: 'Mūsu grupa', href: '/musu-grupa' },
+            { label: 'Pievienojies mums', href: '/pievienojies-mums' },
         ],
     },
     {
         title: 'Pētījumi',
-        items: [{ label: 'Publikācijas', href: '/publikacijas' }, { label: 'Projekti', href:'/Projects'}],
+        items: [
+            { label: 'Publikācijas', href: '/publikacijas' },
+            { label: 'Projekti', href: '/Projects' },
+        ],
     },
     {
         title: 'Kontakti',
@@ -29,13 +33,25 @@ const LANGUAGES: Array<{ code: string; label: string; flag: string }> = [
 ];
 
 export default function Footer() {
+    const { props } = usePage();
+    const currentLocale = props.locale || 'lv';
+
+    const switchLanguage = async (locale: string) => {
+        if (currentLocale === locale) return;
+
+        try {
+            await axios.post('/locale', { locale });
+            router.reload({ only: ['lang', 'locale'] });
+        } catch (error) {
+            console.error('Language switch failed:', error);
+            alert('Failed to switch language. Please try again.');
+        }
+    };
     return (
         <footer className="border-t border-[#dfe9e3] bg-[#f7faf8] text-[#1f5e45]">
             <div className="mx-auto flex w-full max-w-6xl flex-col gap-14 px-6 py-14 md:flex-row md:justify-between">
                 <div className="max-w-xl space-y-8">
-                    <h2 className="text-base font-semibold uppercase tracking-[0.2em] text-[#1b4a37]">
-                        Biočipu zinātniskā laboratorija
-                    </h2>
+                    <h2 className="text-base font-semibold tracking-[0.2em] text-[#1b4a37] uppercase">Biočipu zinātniskā laboratorija</h2>
                     <dl className="space-y-6 text-lg leading-relaxed tracking-wide">
                         <div>
                             <dt className="font-semibold text-[#1b4a37]">Telefona numurs:</dt>
@@ -51,19 +67,14 @@ export default function Footer() {
                         <div>
                             <dt className="font-semibold text-[#1b4a37]">E-pasts:</dt>
                             <dd className="mt-2">
-                                <a
-                                    className="text-[#2c7c5a] hover:text-[#1b4a37]"
-                                    href="mailto:uldis.berzins_4@rtu.lv"
-                                >
+                                <a className="text-[#2c7c5a] hover:text-[#1b4a37]" href="mailto:uldis.berzins_4@rtu.lv">
                                     uldis.berzins_4@rtu.lv
                                 </a>
                             </dd>
                         </div>
                         <div>
                             <dt className="font-semibold text-[#1b4a37]">Adrese:</dt>
-                            <dd className="mt-2 text-[#205741]">
-                                Ķīpsalas iela 6B–316, Rīga, LV-1064, Latvija
-                            </dd>
+                            <dd className="mt-2 text-[#205741]">Ķīpsalas iela 6B–316, Rīga, LV-1064, Latvija</dd>
                         </div>
                     </dl>
                 </div>
@@ -75,11 +86,7 @@ export default function Footer() {
                                 <ul className="space-y-2 border-l border-[#c6d9ce] pl-4">
                                     {group.items.map((item) => (
                                         <li key={item.label} className="text-[#2c7c5a] hover:text-[#1b4a37]">
-                                            {item.href ? (
-                                                <Link href={item.href}>{item.label}</Link>
-                                            ) : (
-                                                item.label
-                                            )}
+                                            {item.href ? <Link href={item.href}>{item.label}</Link> : item.label}
                                         </li>
                                     ))}
                                 </ul>
@@ -89,14 +96,18 @@ export default function Footer() {
                     <div className="space-y-3 text-lg leading-relaxed">
                         <h3 className="font-semibold text-[#1b4a37]">Valodas</h3>
                         <ul className="space-y-2">
-                            {LANGUAGES.map((language) => (
-                                <li key={language.code} className="flex items-center gap-3">
-                                    <span aria-hidden="true" className="text-2xl" role="img">
-                                        {language.flag}
-                                    </span>
-                                    <span className="text-[#2c7c5a]">{language.label}</span>
-                                </li>
-                            ))}
+                            <li className="btn gap-3 btn-ghost" onClick={() => switchLanguage('lv')}>
+                                <span aria-hidden="true" className="text-2xl" role="img">
+                                    🇱🇻
+                                </span>
+                                <span className="text-[#2c7c5a]">Latviešu</span>
+                            </li>
+                            <li className="btn gap-3 btn-ghost" onClick={() => switchLanguage('en')}>
+                                <span aria-hidden="true" className="text-2xl" role="img">
+                                    🇬🇧
+                                </span>
+                                <span className="text-[#2c7c5a]">English</span>
+                            </li>
                         </ul>
                     </div>
                 </div>
