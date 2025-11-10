@@ -12,4 +12,6 @@ return [
     // Default locale and default fallback country
     'default_locale' => 'lv',
     'default_country' => env('DEFAULT_COUNTRY', 'LV'),
+
+    'blocked_countries' => ['RU', 'CN', 'US'], // test with these
 ];

@@ -1,13 +1,16 @@
 <?php
+use App\Http\Middleware\TestBlockCountries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\ContactController;
 
 
-if (! function_exists('findPageComponent')) {
+
+
+if (!function_exists('findPageComponent')) {
     function findPageComponent(string $name): string
     {
         $base = resource_path('js/Pages') . DIRECTORY_SEPARATOR;
@@ -22,6 +25,21 @@ if (! function_exists('findPageComponent')) {
         return 'welcome';
     }
 }
+
+Route::middleware(TestBlockCountries::class)->group(function () {
+
+    Route::get('/test', [TestController::class, 'test'])->name('test');
+
+
+});
+
+// Route::get('/test', [TestController::class, 'test'])
+//     ->middleware(TestBlockCountries::class)
+//     ->name('test');
+
+
+
+
 
 
 Route::get('/', function (Request $request) {
@@ -66,9 +84,6 @@ Route::post('/locale', function (Request $request) {
     return response()->json(['success' => true]); // JSON for Inertia SPA handling
 })->name('locale.switch');
 
-Route::get('/test', [TestController::class, 'test'])
-    ->middleware(CountryBlocker::class)
-    ->name('test');
 
 Route::get('/contacts', fn() => Inertia::render('contacts'))->name('contacts');
 
