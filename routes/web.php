@@ -2,6 +2,7 @@
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\ContactController;
+use App\Http\Middleware\CountryBlocker;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -26,7 +27,9 @@ Route::post('/locale', function (Request $request) {
     return response()->json(['success' => true]); // JSON for Inertia SPA handling
 })->name('locale.switch');
 
-Route::get('/test', [TestController::class, 'test'])->name('test');
+Route::get('/test', [TestController::class, 'test'])
+    ->middleware(CountryBlocker::class)
+    ->name('test');
 
 Route::get('/contacts', function () {
     return Inertia::render('contacts');
