@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import type { FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 
 type ContactForm = {
     name: string;
@@ -33,9 +33,17 @@ export default function PievienojiesMums() {
         website: '',
     });
     const errorEntries = Object.entries(errors).filter(([, message]) => Boolean(message));
+    const [clientError, setClientError] = useState<string | null>(null);
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+        if (!data.email.trim() || !data.message.trim()) {
+            setClientError('Lūdzu, aizpildiet e-pasta adresi un ziņas saturu.');
+            return;
+        }
+
+        setClientError(null);
 
         post(resolveContactRoute(), {
             preserveScroll: true,
@@ -49,24 +57,29 @@ export default function PievienojiesMums() {
         <>
             <Head title="Pievienojies mums" />
 
-            <div className="bg-gradient-to-b from-[#eff5f3] via-[#ebf2ef] to-[#e0e8e4] py-20">
-                <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-4 sm:px-8">
+            <div className="relative overflow-hidden bg-gradient-to-br from-[#ecf1ff] via-[#f6fbf8] to-[#eef8f0] py-20">
+                <div className="absolute inset-0 opacity-60">
+                    <div className="absolute -top-10 right-[-80px] h-60 w-60 rounded-full bg-[#c6d8ff] blur-3xl" />
+                    <div className="absolute bottom-10 left-[-60px] h-72 w-72 rounded-full bg-[#adefd1] blur-3xl" />
+                </div>
+
+                <div className="relative mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 sm:px-8">
                     <header className="text-center">
-                        <p className="text-sm uppercase tracking-[0.3em] text-green-700">Sazinies</p>
-                        <h1 className="mt-2 text-3xl font-semibold text-[#1f513c] sm:text-4xl">Pievienojies mums</h1>
-                        <p className="mt-4 text-lg text-[#3a4955]">
-                            Aizpildi formu, un laboratorija saņems tavu ziņu pa e-pastu.
+                        <p className="text-sm uppercase tracking-[0.3em] text-emerald-600">Sazinies</p>
+                        <h1 className="mt-2 text-3xl font-semibold text-slate-900 sm:text-4xl">Pievienojies mums</h1>
+                        <p className="mt-4 text-lg text-slate-600">
+                            Aizpildi formu un pastāsti, kā vari palīdzēt laboratorijai. Atbildēsim uz e-pastu tiklīdz iespējams.
                         </p>
                     </header>
 
                     {recentlySuccessful && (
-                        <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900">
+                        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 shadow">
                             Paldies! Jūsu ziņa ir nosūtīta.
                         </div>
                     )}
 
                     {errorEntries.length > 0 && (
-                        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">
+                        <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 shadow">
                             <p className="font-semibold">Lūdzu, pārbaudiet ievadīto informāciju:</p>
                             <ul className="mt-2 list-inside list-disc space-y-1">
                                 {errorEntries.map(([field, message]) => (
@@ -76,9 +89,15 @@ export default function PievienojiesMums() {
                         </div>
                     )}
 
+                    {clientError && (
+                        <div className="rounded-2xl border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-900 shadow">
+                            {clientError}
+                        </div>
+                    )}
+
                     <form
                         onSubmit={handleSubmit}
-                        className="rounded-2xl bg-white/95 p-6 shadow-xl ring-1 ring-green-50 backdrop-blur-sm sm:p-10"
+                        className="rounded-3xl border border-white/50 bg-white/80 p-6 shadow-2xl shadow-slate-200 backdrop-blur-md sm:p-12"
                     >
                         <input
                             type="text"
@@ -91,8 +110,8 @@ export default function PievienojiesMums() {
                             aria-hidden="true"
                         />
 
-                        <div className="grid gap-6 sm:grid-cols-2">
-                            <label className="flex flex-col text-left text-sm font-medium text-[#1f513c]">
+                        <div className="grid gap-8 sm:grid-cols-2">
+                            <label className="flex flex-col text-left text-sm font-semibold text-slate-700">
                                 Vārds un uzvārds
                                 <input
                                     name="name"
@@ -100,13 +119,13 @@ export default function PievienojiesMums() {
                                     value={data.name}
                                     onChange={(event) => setData('name', event.target.value)}
                                     placeholder="Elīna Ozola"
-                                    className="mt-2 rounded-xl border border-[#c4d9cf] bg-[#f8fbfa] px-4 py-3 text-base text-[#243038] outline-none transition focus:border-[#1f675b] focus:ring-2 focus:ring-[#99d5c8]"
+                                    className="mt-2 rounded-2xl border border-slate-200 bg-white/60 px-4 py-3 text-base text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                                     aria-invalid={Boolean(errors.name)}
                                 />
                                 {errors.name && <span className="mt-1 text-sm text-red-600">{errors.name}</span>}
                             </label>
 
-                            <label className="flex flex-col text-left text-sm font-medium text-[#1f513c]">
+                            <label className="flex flex-col text-left text-sm font-semibold text-slate-700">
                                 E-pasts <span className="text-red-600">*</span>
                                 <input
                                     name="email"
@@ -114,14 +133,14 @@ export default function PievienojiesMums() {
                                     value={data.email}
                                     onChange={(event) => setData('email', event.target.value)}
                                     placeholder="jusu.vards@example.com"
-                                    className="mt-2 rounded-xl border border-[#c4d9cf] bg-[#f8fbfa] px-4 py-3 text-base text-[#243038] outline-none transition focus:border-[#1f675b] focus:ring-2 focus:ring-[#99d5c8]"
+                                    className="mt-2 rounded-2xl border border-slate-200 bg-white/60 px-4 py-3 text-base text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                                     aria-invalid={Boolean(errors.email)}
                                     required
                                 />
                                 {errors.email && <span className="mt-1 text-sm text-red-600">{errors.email}</span>}
                             </label>
 
-                            <label className="sm:col-span-2 flex flex-col text-left text-sm font-medium text-[#1f513c]">
+                            <label className="sm:col-span-2 flex flex-col text-left text-sm font-semibold text-slate-700">
                                 Temats
                                 <input
                                     name="subject"
@@ -129,13 +148,13 @@ export default function PievienojiesMums() {
                                     value={data.subject}
                                     onChange={(event) => setData('subject', event.target.value)}
                                     placeholder="Par sadarbības iespējām"
-                                    className="mt-2 rounded-xl border border-[#c4d9cf] bg-[#f8fbfa] px-4 py-3 text-base text-[#243038] outline-none transition focus:border-[#1f675b] focus:ring-2 focus:ring-[#99d5c8]"
+                                    className="mt-2 rounded-2xl border border-slate-200 bg-white/60 px-4 py-3 text-base text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                                     aria-invalid={Boolean(errors.subject)}
                                 />
                                 {errors.subject && <span className="mt-1 text-sm text-red-600">{errors.subject}</span>}
                             </label>
 
-                            <label className="sm:col-span-2 flex flex-col text-left text-sm font-medium text-[#1f513c]">
+                            <label className="sm:col-span-2 flex flex-col text-left text-sm font-semibold text-slate-700">
                                 Ziņa <span className="text-red-600">*</span>
                                 <textarea
                                     name="message"
@@ -143,7 +162,7 @@ export default function PievienojiesMums() {
                                     value={data.message}
                                     onChange={(event) => setData('message', event.target.value)}
                                     placeholder="Pastāsti par sevi vai ideju..."
-                                    className="mt-2 rounded-xl border border-[#c4d9cf] bg-[#f8fbfa] px-4 py-3 text-base text-[#243038] outline-none transition focus:border-[#1f675b] focus:ring-2 focus:ring-[#99d5c8]"
+                                    className="mt-2 rounded-2xl border border-slate-200 bg-white/60 px-4 py-3 text-base text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                                     aria-invalid={Boolean(errors.message)}
                                     required
                                 />
@@ -153,12 +172,12 @@ export default function PievienojiesMums() {
                             </label>
                         </div>
 
-                        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                            <p className="text-sm text-[#4f5e68]">Ziņa tiks nosūtīta uz laboratorijas e-pastu.</p>
+                        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                            <p className="text-sm text-slate-600">Ziņa tiks nosūtīta uz laboratorijas e-pastu uldis.berzins_4@rtu.lv.</p>
                             <button
                                 type="submit"
                                 disabled={isDisabled}
-                                className="inline-flex items-center justify-center rounded-full bg-[#1f675b] px-8 py-3 text-base font-semibold text-white shadow-lg shadow-[#1f675b]/40 transition hover:bg-[#1b5a50] disabled:cursor-not-allowed disabled:opacity-70"
+                                className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 px-8 py-3 text-base font-semibold text-white shadow-lg shadow-emerald-600/40 transition hover:from-emerald-700 hover:to-teal-600 disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 {processing ? 'Sūtām...' : 'Nosūtīt ziņu'}
                             </button>
