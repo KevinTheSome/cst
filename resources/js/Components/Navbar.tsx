@@ -1,8 +1,24 @@
-import { Link } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import axios from 'axios';
 import { useState } from 'react';
 
 function Navbar() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    const { props } = usePage();
+    const currentLocale = props.locale || 'lv';
+
+    const switchLanguage = async (locale: string) => {
+        if (currentLocale === locale) return;
+
+        try {
+            await axios.post('/locale', { locale });
+            router.reload({ only: ['lang', 'locale'] });
+        } catch (error) {
+            console.error('Language switch failed:', error);
+            alert('Failed to switch language. Please try again.');
+        }
+    };
 
     return (
         <nav className="z-50 flex w-full flex-col items-start justify-between bg-white px-4 py-4 shadow-sm md:flex-row md:items-center md:px-8 md:py-6">
@@ -108,23 +124,46 @@ function Navbar() {
                     </div>
                 </li>
 
+                {/* Questionnaire */}
+                <li>
+                    <Link
+                        href="/anketa"
+                        className="btn text-lg font-semibold text-green-700 btn-outline border-green-600 transition hover:bg-green-600 hover:text-white md:text-xl"
+                    >
+                        ANKETA
+                    </Link>
+                </li>
+
                 {/* Contacts */}
                 <li>
                     <Link href="/contacts" className="btn text-lg font-semibold text-green-700 btn-ghost transition hover:text-orange-400 md:text-xl">
                         KONTAKTI
                     </Link>
                 </li>
-
-                {/* Language flags – still placeholders */}
-                <li>
-                    <a href="#" title="Latviski" className="ml-4">
+                {/* Language buttons styled like KONTAKTI, with selected using Tailwind utility classes */}
+                <li className="flex items-center gap-1">
+                    <button
+                        className={`btn flex h-10 min-h-0 w-10 items-center justify-center border-none p-0 text-lg font-semibold btn-ghost transition md:text-xl ${
+                            currentLocale === 'lv' ? 'btn btn-success' : 'text-green-700 hover:text-orange-400'
+                        }`}
+                        onClick={() => switchLanguage('lv')}
+                        disabled={currentLocale === 'lv'}
+                        aria-current={currentLocale === 'lv' ? 'page' : undefined}
+                        title="Latviešu"
+                    >
                         <span className="text-xl">🇱🇻</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" title="English" className="ml-2">
+                    </button>
+                    <button
+                        className={`btn flex h-10 min-h-0 w-10 items-center justify-center border-none p-0 text-lg font-semibold btn-ghost transition md:text-xl ${
+                            currentLocale === 'en' ? 'btn btn-success' : 'text-green-700 hover:text-orange-400'
+                        }`}
+                        onClick={() => switchLanguage('en')}
+                        disabled={currentLocale === 'en'}
+                        aria-current={currentLocale === 'en' ? 'page' : undefined}
+                        title="English"
+                    >
                         <span className="text-xl">🇬🇧</span>
-                    </a>
+                    </button>
                 </li>
             </ul>
             {/* DaisyUI sidebar for mobile */}
@@ -228,6 +267,19 @@ function Navbar() {
                                 </li>
                                 <li>
                                     <Link
+                                        href="/anketa"
+                                        className="flex w-full items-center gap-3 px-3 py-2 text-lg font-semibold"
+                                        onClick={() => setSidebarOpen(false)}
+                                    >
+                                        <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                            <path d="M5 4h14v16H5z" />
+                                            <path d="M9 8h6M9 12h6M9 16h3" />
+                                        </svg>
+                                        ANKETA
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
                                         onClick={() => setSidebarOpen(false)}
                                         href="/contacts"
                                         className="flex w-full items-center gap-3 px-3 py-2 text-lg font-semibold"
@@ -240,13 +292,29 @@ function Navbar() {
                                         KONTAKTI
                                     </Link>
                                 </li>
-                                <li className="mt-2 flex w-full gap-2 px-3">
-                                    <a href="#" title="Latviski" className="w-full text-center text-xl">
-                                        🇱🇻
-                                    </a>
-                                    <a href="#" title="English" className="w-full text-center text-xl">
-                                        🇬🇧
-                                    </a>
+                                <li className="mt-4 ml-4 flex w-full flex-row gap-2">
+                                    <button
+                                        className={`btn flex h-10 min-h-0 w-10 items-center justify-center border-none p-0 text-lg font-semibold btn-ghost transition md:text-xl ${
+                                            currentLocale === 'lv' ? 'btn btn-success' : 'text-green-700 hover:text-orange-400'
+                                        }`}
+                                        onClick={() => switchLanguage('lv')}
+                                        disabled={currentLocale === 'lv'}
+                                        aria-current={currentLocale === 'lv' ? 'page' : undefined}
+                                        title="Latviešu"
+                                    >
+                                        <span className="text-xl">🇱🇻</span>
+                                    </button>
+                                    <button
+                                        className={`btn flex h-10 min-h-0 w-10 items-center justify-center border-none p-0 text-lg font-semibold btn-ghost transition md:text-xl ${
+                                            currentLocale === 'en' ? 'btn btn-success' : 'text-green-700 hover:text-orange-400'
+                                        }`}
+                                        onClick={() => switchLanguage('en')}
+                                        disabled={currentLocale === 'en'}
+                                        aria-current={currentLocale === 'en' ? 'page' : undefined}
+                                        title="English"
+                                    >
+                                        <span className="text-xl">🇬🇧</span>
+                                    </button>
                                 </li>
                             </ul>
                         </nav>
