@@ -208,7 +208,21 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
                                 </button>
                             </div>
                         </div>
-                        {mobileNavOpen && <div className="mt-4 rounded-3xl border border-white/10 bg-slate-900/50 p-5">{renderNavSections()}</div>}
+                        {mobileNavOpen && (
+                            <div className="mt-4 space-y-4 rounded-3xl border border-white/10 bg-slate-900/50 p-5">
+                                {renderNavSections()}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setMobileNavOpen(false);
+                                        router.visit('/admin/logout');
+                                    }}
+                                    className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-left text-sm font-semibold text-white transition hover:border-rose-300/40 hover:bg-rose-500/10"
+                                >
+                                    Log out
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     <aside className="hidden w-72 flex-shrink-0 flex-col rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur lg:flex">
@@ -222,10 +236,19 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
                             </div>
                         </div>
                         <div className="flex-1 overflow-y-auto pr-1">{renderNavSections()}</div>
-                        <div className="mt-8 rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/0 p-4 text-sm text-white/80">
-                            <p className="text-xs uppercase tracking-[0.4em] text-white/50">Focus</p>
-                            <p className="mt-2 text-sm font-semibold text-white">Next sync 15:30</p>
-                            <p className="text-xs text-white/60">Labs leadership update</p>
+                        <div className="mt-8 space-y-4">
+                            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/0 p-4 text-sm text-white/80">
+                                <p className="text-xs uppercase tracking-[0.4em] text-white/50">Focus</p>
+                                <p className="mt-2 text-sm font-semibold text-white">Next sync 15:30</p>
+                                <p className="text-xs text-white/60">Labs leadership update</p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => router.visit('/admin/logout')}
+                                className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-left text-sm font-semibold text-white transition hover:border-rose-300/40 hover:bg-rose-500/10"
+                            >
+                                Log out
+                            </button>
                         </div>
                     </aside>
 
