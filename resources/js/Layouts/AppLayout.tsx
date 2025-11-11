@@ -2,9 +2,9 @@ import { router } from '@inertiajs/react';
 import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 
 import BioChipLoader from '@/Components/BioChipLoader';
+import CookieConsent from '@/Components/CookieConsent';
 import Footer from '@/Components/Footer';
 import Navbar from '@/components/Navbar';
-import CookieConsent from '@/Components/CookieConsent';
 
 export default function AppLayout({ children }: PropsWithChildren) {
     const [loaderVisible, setLoaderVisible] = useState(true);
@@ -84,7 +84,6 @@ export default function AppLayout({ children }: PropsWithChildren) {
                     <main className="flex-1">{children}</main>
                     <Footer />
 
-                    {/* <<< add this */}
                     <CookieConsent />
                 </div>
             </div>
