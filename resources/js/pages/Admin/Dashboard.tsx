@@ -5,6 +5,7 @@ export default function Dashboard() {
     return (
         <>
             <Head title="Admin Dashboard" />
+            <p>Admin Dashboard</p>
         </>
     );
 }
