@@ -114,4 +114,14 @@ Route::get('/lablife', function () {
     return Inertia::render('lablife');
 })->name('lablife');
 
-Route::get('/admin', [AdminController::class, 'index']);
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/missions', [AdminController::class, 'missions'])->name('missions');
+    Route::get('/insights', [AdminController::class, 'insights'])->name('insights');
+    Route::get('/content-studio', [AdminController::class, 'contentStudio'])->name('content');
+    Route::get('/requests', [AdminController::class, 'requests'])->name('requests');
+    Route::get('/team-heatmap', [AdminController::class, 'teamHeatmap'])->name('team');
+    Route::get('/integrations', [AdminController::class, 'integrations'])->name('integrations');
+    Route::get('/security', [AdminController::class, 'security'])->name('security');
+    Route::get('/workspace', [AdminController::class, 'workspace'])->name('workspace');
+});
