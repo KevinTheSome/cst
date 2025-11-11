@@ -11,6 +11,11 @@ class AdminController extends Controller
         return Inertia::render('Admin/Dashboard');
     }
 
+    public function adminLogin()
+    {
+        return Inertia::render('Admin/Login');
+    }
+
     public function missions()
     {
         return Inertia::render('Admin/Missions');

@@ -116,6 +116,7 @@ Route::get('/lablife', function () {
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/login', [AdminController::class, 'adminLogin'])->name('login');
     Route::get('/missions', [AdminController::class, 'missions'])->name('missions');
     Route::get('/insights', [AdminController::class, 'insights'])->name('insights');
     Route::get('/content-studio', [AdminController::class, 'contentStudio'])->name('content');
