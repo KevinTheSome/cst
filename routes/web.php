@@ -3,6 +3,7 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\ContactController;
 use App\Http\Middleware\CountryBlocker;
+use App\Http\Controllers\AdminController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -66,3 +67,5 @@ Route::get('/Projects', function () {
 Route::get('/lablife', function () {
     return Inertia::render('lablife');
 })->name('lablife');
+
+Route::get('/admin', [AdminController::class, 'index']);
