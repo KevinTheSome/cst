@@ -185,7 +185,7 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
     );
 
     return (
-        <div className="relative flex min-h-screen bg-slate-950 text-white">
+        <div className="relative flex min-h-screen overflow-x-hidden overscroll-y-none bg-slate-950 text-white">
             <BioChipLoader visible={loaderVisible} />
             <div
                 aria-busy={loaderVisible}
