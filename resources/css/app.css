@@ -65,3 +65,20 @@
         filter: none;
     }
 }
+
+@layer base {
+    html,
+    body {
+        @apply bg-slate-950 text-white antialiased;
+        min-height: 100%;
+        overscroll-behavior: none;
+    }
+
+    body {
+        @apply overflow-x-hidden;
+    }
+
+    #app {
+        @apply min-h-screen bg-slate-950 text-white;
+    }
+}
