@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\AdminController;
+use App\Http\Middleware\AdminMiddleware;
 
 
 if (! function_exists('findPageComponent')) {
@@ -64,7 +66,17 @@ Route::get('/projects', fn() => Inertia::render('Projects'))->name('projects');
 
 Route::get('/lablife', fn() => Inertia::render('lablife'))->name('lablife');
 
-Route::middleware('admin')->prefix('admin')->group(function () {
+Route::get('/admin/login', fn() => Inertia::render('Admin/Login'))
+    ->name('admin.login');
+
+Route::post('/admin/login', [AdminController::class, 'login']);
+
+Route::get('/admin/logout', function () {
+    session()->forget('is_admin');   // remove the admin flag
+    return redirect()->route('admin.login');
+})->name('admin.logout');
+
+Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/', fn() => Inertia::render('Admin/Dashboard'))->name('admin.dashboard');
     Route::get('/content-studio', fn() => Inertia::render('Admin/ContentStudio'))->name('admin.content');
     Route::get('/insights', fn() => Inertia::render('Admin/Insights'))->name('admin.insights');
@@ -75,3 +87,4 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/team-heatmap', fn() => Inertia::render('Admin/TeamHeatmap'))->name('admin.team-heatmap');
     Route::get('/workspace', fn() => Inertia::render('Admin/Workspace'))->name('admin.workspace');
 });
+
