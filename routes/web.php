@@ -6,8 +6,6 @@ use App\Http\Controllers\ContactController;
 use App\Http\Middleware\CountryBlocker;
 use App\Http\Controllers\AdminController;
 use App\Http\Middleware\TestBlockCountries;
-use App\Http\Controllers\TestController;
-use App\Http\Controllers\ContactController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
