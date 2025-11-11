@@ -1,13 +1,16 @@
 <?php
+
+use App\Http\Controllers\TestController;
+use App\Http\Controllers\ContactsController;
+use App\Http\Controllers\ContactController;
+use App\Http\Middleware\CountryBlocker;
+use App\Http\Controllers\AdminController;
 use App\Http\Middleware\TestBlockCountries;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\TestController;
-use App\Http\Controllers\ContactController;
-
-
 
 
 if (!function_exists('findPageComponent')) {
@@ -107,4 +110,8 @@ Route::get('/publikacijas', fn() => Inertia::render('publikacijas'))->name('publ
 
 Route::get('/projects', fn() => Inertia::render('Projects'))->name('projects');
 
-Route::get('/lablife', fn() => Inertia::render('lablife'))->name('lablife');
+Route::get('/lablife', function () {
+    return Inertia::render('lablife');
+})->name('lablife');
+
+Route::get('/admin', [AdminController::class, 'index']);
