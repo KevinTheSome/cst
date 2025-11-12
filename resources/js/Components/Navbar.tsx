@@ -126,12 +126,41 @@ function Navbar() {
 
                 {/* Questionnaire */}
                 <li>
-                    <Link
-                        href="/anketa"
-                        className="btn text-lg font-semibold text-green-700 btn-outline border-green-600 transition hover:bg-green-600 hover:text-white md:text-xl"
-                    >
-                        ANKETA
-                    </Link>
+                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost md:w-auto">
+                        <label
+                            tabIndex={0}
+                            className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 md:text-xl"
+                        >
+                            ANKETAS{' '}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </label>
+                        <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
+                            <li>
+                                <Link
+                                    href="/Publiskā-anketa"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
+                                    Publiskā anketa
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/Koda-anketa"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
+                                    Koda anketa
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
 
                 {/* Contacts */}
