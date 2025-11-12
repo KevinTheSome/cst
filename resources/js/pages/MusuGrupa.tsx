@@ -30,9 +30,9 @@ export default function MusuGrupa() {
         },
         {
             name: 'Jānis Mārtiņš Bramanis',
-            title: 'Grafiskā dizainere',
-            description: 'Izstrādā ilustrācijas un ikonas, saglabājot vienotu vizuālo valodu visā lapā.',
-            image: '/bzl-5.jpg',
+            title: 'Vietnes satura un privātuma politikas redaktors',
+            description: 'Rediģē lapu saturu un sīkdatņu politiku, rūpējoties par skaidru, saprotamu un lietotājam draudzīgu informāciju.',
+            image: '/janka.jpg',
         },
         {
             name: 'Kristers Skrastiņš',
