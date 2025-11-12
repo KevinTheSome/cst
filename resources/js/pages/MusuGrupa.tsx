@@ -11,7 +11,7 @@ export default function MusuGrupa() {
             image: '/bzl-1.jpg',
         },
         {
-            name: 'Elvis ',
+            name: 'Elvis Pujāts',
             title: 'Chill guy, for the vibes',
             description: 'Veido prototipus un vizuālās vadlīnijas, kas saskaņo laboratorijas zīmolu ar digitālo pieredzi.',
             image: '/bzl-2.jpg',
