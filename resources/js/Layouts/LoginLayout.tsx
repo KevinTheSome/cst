@@ -191,71 +191,9 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
                 aria-busy={loaderVisible}
                 className={`flex flex-1 transition-opacity duration-500 ${loaderVisible ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
             >
-                <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 pb-12 pt-10 sm:px-6 lg:flex-row lg:px-12">
-                    <div className="lg:hidden">
-                        <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-white/5 to-white/0 px-6 py-5">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-xs uppercase tracking-[0.3em] text-white/60">Command center</p>
-                                    <p className="text-xl font-semibold text-white">{cardTitle}</p>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={() => setMobileNavOpen((prev) => !prev)}
-                                    className="rounded-2xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white"
-                                >
-                                    {mobileNavOpen ? 'Hide menu' : 'Open menu'}
-                                </button>
-                            </div>
-                        </div>
-                        {mobileNavOpen && (
-                            <div className="mt-4 space-y-4 rounded-3xl border border-white/10 bg-slate-900/50 p-5">
-                                {renderNavSections()}
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setMobileNavOpen(false);
-                                        router.visit('/admin/logout');
-                                    }}
-                                    className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-left text-sm font-semibold text-white transition hover:border-rose-300/40 hover:bg-rose-500/10"
-                                >
-                                    Log out
-                                </button>
-                            </div>
-                        )}
-                    </div>
-
-                    <aside className="hidden w-72 flex-shrink-0 flex-col rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur lg:flex">
-                        <div className="mb-8 flex items-center gap-3">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400/40 to-sky-500/40 text-lg font-semibold text-white">
-                                CST
-                            </div>
-                            <div>
-                                <p className="text-sm font-semibold text-white">Control Surface</p>
-                                <p className="text-xs text-white/60">Realtime admin board</p>
-                            </div>
-                        </div>
-                        <div className="flex-1 overflow-y-auto pr-1">{renderNavSections()}</div>
-                        <div className="mt-8 space-y-4">
-                            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/0 p-4 text-sm text-white/80">
-                                <p className="text-xs uppercase tracking-[0.4em] text-white/50">Focus</p>
-                                <p className="mt-2 text-sm font-semibold text-white">Next sync 15:30</p>
-                                <p className="text-xs text-white/60">Labs leadership update</p>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => router.visit('/admin/logout')}
-                                className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-left text-sm font-semibold text-white transition hover:border-rose-300/40 hover:bg-rose-500/10"
-                            >
-                                Log out
-                            </button>
-                        </div>
-                    </aside>
-
-                    <main className="flex-1">
-                        <div className="mx-auto w-full max-w-6xl sm:max-w-7xl">{children}</div>
-                    </main>
-                </div>
+                <main className="flex-1">
+                    <div className="mx-auto w-full max-w-6xl sm:max-w-7xl">{children}</div>
+                </main>
             </div>
         </div>
     );
