@@ -115,19 +115,6 @@ export default function Welcome() {
                             <p className="text-sm tracking-[0.28em] text-[#74838f] uppercase">Mēs radām nākotnes tehnoloģijas</p>
                         </div>
                     </div>
-
-                    <div className="overflow-hidden rounded-3xl">
-                        <div className="aspect-video w-full">
-                            <iframe
-                                className="h-full w-full"
-                                src="https://www.youtube-nocookie.com/embed/0WnkYZsxrU0?start=1&rel=0&modestbranding=1&playsinline=1"
-                                loading="lazy"
-                                referrerPolicy="strict-origin-when-cross-origin"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowFullScreen
-                            />
-                        </div>
-                    </div>
                 </section>
             </div>
         </>
