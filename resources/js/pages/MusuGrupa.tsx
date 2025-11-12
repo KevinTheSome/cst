@@ -5,7 +5,7 @@ export default function MusuGrupa() {
 
     const vtdtStudents = [
         {
-            name: 'Kevins ',
+            name: 'Kevins Markuss Kanalis',
             title: 'SCRUM Master',
             description: 'Uzdevumu sadalīšanas, koda parskatīšanas un izstrādes vadītājs.',
             image: '/bzl-1.jpg',
