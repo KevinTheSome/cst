@@ -21,7 +21,6 @@ export default function Contacts() {
                             className="w-10 h-10 mt-5"
                         />
                         <div className="space-y-1 text-gray-800 text-lg font-merriweathe">
-                            <p>+371 67089383</p>
                             <br></br>
                             <p>+371 29252975</p>
                         </div>
