@@ -66,6 +66,8 @@ Route::get('/projects', fn() => Inertia::render('Projects'))->name('projects');
 
 Route::get('/lablife', fn() => Inertia::render('lablife'))->name('lablife');
 
+Route::get('/questions', fn() => Inertia::render('questions'))->name('questions');
+
 Route::get('/admin/login', fn() => Inertia::render('Admin/Login'))
     ->name('admin.login');
 
