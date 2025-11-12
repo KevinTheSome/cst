@@ -17,9 +17,9 @@ export default function MusuGrupa() {
             image: '/bzl-2.jpg',
         },
         {
-            name: 'kristiāns ',
-            title: 'Satura redaktore',
-            description: 'Strādā ar stāstiem un attēliem, nodrošinot, ka katrs teksts ir saprotams un iedvesmojošs.',
+            name: 'Kristians Miķelsons',
+            title: 'Programmētājs',
+            description: 'Iztrādā uzdevumus, ko vadtītājs ir uzdevis izpildīt',
             image: '/bzl-3.jpg',
         },
         {
@@ -36,14 +36,14 @@ export default function MusuGrupa() {
         },
         {
             name: 'Kristers Skrastiņš',
-            title: 'Testēšanas koordinators',
-            description: 'Pārbauda funkcionalitāti dažādās ierīcēs un apkopo ieteikumus uzlabojumiem.',
+            title: 'Programmētājs',
+            description: 'Realizē uzdevumus, izstrādā nepieceišamo funkcionalitāti.',
             image: '/bzl-6.jpg',
         },
         {
-            name: 'Kristaps Imants',
-            title: 'Projektu koordinatore',
-            description: 'Vada komunikāciju ar laboratorijas komandu un nodrošina, ka termiņi tiek ievēroti.',
+            name: 'Kristaps Imants Liepiņs',
+            title: 'Programmētājs',
+            description: 'Izpilda uzdotos programmēšanas uzdevumus.',
             image: '/bzl-7.jpg',
         },
     ];
