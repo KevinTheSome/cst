@@ -17,7 +17,7 @@ export default function MusuGrupa() {
             image: '/bzl-2.jpg',
         },
         {
-            name: 'kristians Miķelsons',
+            name: 'Kristians Miķelsons',
             title: 'Programmētājs',
             description: 'Iztrādā uzdevumus, ko vadtītājs ir uzdevis izpildīt',
             image: '/bzl-3.jpg',
@@ -30,9 +30,9 @@ export default function MusuGrupa() {
         },
         {
             name: 'Jānis Mārtiņš Bramanis',
-            title: 'Programmētājs',
-            description: 'Izstrādā ilustrācijas un ikonas, saglabājot vienotu vizuālo valodu visā lapā.',
-            image: '/bzl-5.jpg',
+            title: 'Vietnes satura un privātuma politikas redaktors',
+            description: 'Rediģē lapu saturu un sīkdatņu politiku, rūpējoties par skaidru, saprotamu un lietotājam draudzīgu informāciju.',
+            image: '/janka.jpg',
         },
         {
             name: 'Kristers Skrastiņš',
