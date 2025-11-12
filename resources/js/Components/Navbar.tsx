@@ -144,18 +144,12 @@ function Navbar() {
                         </label>
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
-                                <Link
-                                    href="/Publiskā-anketa"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
-                                >
+                                <Link href="/anketa" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
                                     Publiskā anketa
                                 </Link>
                             </li>
                             <li>
-                                <Link
-                                    href="/Koda-anketa"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
-                                >
+                                <Link href="/questions" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
                                     Koda anketa
                                 </Link>
                             </li>
