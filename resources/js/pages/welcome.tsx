@@ -27,7 +27,7 @@ export default function Welcome() {
 
     return (
         <>
-            <Head title={__('head.title')} />
+            <Head title={__('Sākumlapa')} />
 
             <div className="bg-[#f4f4f2]">
                 <section className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 pt-12 pb-16 sm:px-10">
