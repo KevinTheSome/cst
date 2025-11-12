@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
 
-const COOKIE_NAME = 'cookie_consent';
+const SESSION_KEY = 'cookie_consent_session_choice';
 
 const CookieConsent = () => {
     const [visible, setVisible] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
 
     useEffect(() => {
-        const consent = Cookies.get(COOKIE_NAME);
+        const consent = typeof window !== 'undefined' ? sessionStorage.getItem(SESSION_KEY) : null;
         if (!consent) {
             setVisible(true);
             document.body.style.overflow = 'hidden';
@@ -19,7 +18,9 @@ const CookieConsent = () => {
     }, []);
 
     const setConsent = (value: 'accepted' | 'declined') => {
-        Cookies.set(COOKIE_NAME, value, { expires: 365 });
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem(SESSION_KEY, value);
+        }
         setVisible(false);
         document.body.style.overflow = '';
     };
@@ -27,7 +28,7 @@ const CookieConsent = () => {
     if (!visible) return null;
 
     return (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 px-3 md:px-6">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/85 px-3 md:px-6">
             <div className="flex h-[80vh] w-full max-w-4xl flex-col rounded-[32px] bg-white p-8 shadow-2xl md:p-10">
                 <div className="flex-1 space-y-4 overflow-y-auto pr-1 md:space-y-5">
                     <h2 className="text-2xl font-semibold text-[#123626] md:text-3xl">
@@ -114,11 +115,11 @@ const CookieConsent = () => {
                                             </td>
                                         </tr>
                                         <tr className="border-b border-[#e0ebe4]/70">
-                                            <td className="py-2 pr-4">{COOKIE_NAME}</td>
-                                            <td className="py-2 pr-4">Preferenču</td>
-                                            <td className="py-2 pr-4">1 gads</td>
+                                            <td className="py-2 pr-4">{SESSION_KEY}</td>
+                                            <td className="py-2 pr-4">Preferenču (sesija)</td>
+                                            <td className="py-2 pr-4">Sesija</td>
                                             <td className="py-2 pr-4">
-                                                Saglabā jūsu izvēli par sīkdatņu izmantošanu (piekrīts vai noraidīts).
+                                                Saglabā jūsu izvēli par sīkdatņu izmantošanu pašreizējā pārlūkošanas sesijā.
                                             </td>
                                         </tr>
                                         <tr>
