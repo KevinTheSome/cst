@@ -9,12 +9,12 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        return Inertia::render('Admin/Dashboard');
+        return Inertia::render('Admin/dashboard');
     }
 
     public function adminLogin()
     {
-        return Inertia::render('Admin/Login');
+        return Inertia::render('Admin/login');
     }
 
     public function login(Request $request)
@@ -44,41 +44,41 @@ class AdminController extends Controller
 
     public function missions()
     {
-        return Inertia::render('Admin/Missions');
+        return Inertia::render('Admin/missions');
     }
 
     public function insights()
     {
-        return Inertia::render('Admin/Insights');
+        return Inertia::render('Admin/insights');
     }
 
     public function contentStudio()
     {
-        return Inertia::render('Admin/ContentStudio');
+        return Inertia::render('Admin/contentStudio');
     }
 
     public function requests()
     {
-        return Inertia::render('Admin/Requests');
+        return Inertia::render('Admin/requests');
     }
 
     public function teamHeatmap()
     {
-        return Inertia::render('Admin/TeamHeatmap');
+        return Inertia::render('Admin/teamHeatmap');
     }
 
     public function integrations()
     {
-        return Inertia::render('Admin/Integrations');
+        return Inertia::render('Admin/integrations');
     }
 
     public function security()
     {
-        return Inertia::render('Admin/Security');
+        return Inertia::render('Admin/security');
     }
 
     public function workspace()
     {
-        return Inertia::render('Admin/Workspace');
+        return Inertia::render('Admin/workspace');
     }
 }
