@@ -116,7 +116,7 @@ function Navbar() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/Projects" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                <Link href="/projects" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
                                     Projekti
                                 </Link>
                             </li>
@@ -278,7 +278,7 @@ function Navbar() {
                                             </li>
                                             <li>
                                                 <Link
-                                                    href="/Projects"
+                                                    href="/projects"
                                                     className="block w-full text-green-700 hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >

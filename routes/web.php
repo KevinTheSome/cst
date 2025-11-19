@@ -54,24 +54,21 @@ Route::get('/test', [TestController::class, 'test'])->name('test');
 
 Route::get('/contacts', fn() => Inertia::render('contacts'))->name('contacts');
 
-Route::get('/pievienojies-mums', fn() => Inertia::render('pievienojies-mums'))->name('pievienojies-mums');
+Route::get('/pievienojies-mums', fn() => Inertia::render('pievienojiesMums'))->name('pievienojies-mums');
 
-Route::get('/biocipu-zinatniska-laboratorija', fn() => Inertia::render('biocipu-zinatniska-laboratorija'))->name('biocipu-zinatniska-laboratorija');
+Route::get('/biocipu-zinatniska-laboratorija', fn() => Inertia::render('biocipuZinatniskaLaboratorija'))->name('biocipu-zinatniska-laboratorija');
 
-Route::get('/musu-grupa', fn() => Inertia::render('MusuGrupa'))->name('musu-grupa');
+Route::get('/musu-grupa', fn() => Inertia::render('musuGrupa'))->name('musu-grupa');
 
 Route::get('/publikacijas', fn() => Inertia::render('publikacijas'))->name('publikacijas');
 
-Route::get('/projects', fn() => Inertia::render('Projects'))->name('projects');
+Route::get('/projects', fn() => Inertia::render('projects'))->name('projects');
 
-Route::get('/lablife', fn() => Inertia::render('lablife'))->name('lablife');
+Route::get('/lablife', fn() => Inertia::render('labLife'))->name('lablife');
 
 Route::get('/anketa', fn() => Inertia::render('anketa'))->name('anketa');
 
 Route::get('/questions', fn() => Inertia::render('questions'))->name('questions');
-
-Route::get('/admin/login', fn() => Inertia::render('Admin/Login'))
-    ->name('admin.login');
 
 Route::post('/admin/login', [AdminController::class, 'login']);
 
@@ -81,14 +78,14 @@ Route::get('/admin/logout', function () {
 })->name('admin.logout');
 
 Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
-    Route::get('/', fn() => Inertia::render('Admin/Dashboard'))->name('admin.dashboard');
-    Route::get('/content-studio', fn() => Inertia::render('Admin/ContentStudio'))->name('admin.content');
-    Route::get('/insights', fn() => Inertia::render('Admin/Insights'))->name('admin.insights');
-    Route::get('/integrations', fn() => Inertia::render('Admin/Integrations'))->name('admin.integrations');
-    Route::get('/missions', fn() => Inertia::render('Admin/Missions'))->name('admin.missions');
-    Route::get('/requests', fn() => Inertia::render('Admin/Requests'))->name('admin.requests');
-    Route::get('/security', fn() => Inertia::render('Admin/Security'))->name('admin.security');
-    Route::get('/team-heatmap', fn() => Inertia::render('Admin/TeamHeatmap'))->name('admin.team-heatmap');
-    Route::get('/workspace', fn() => Inertia::render('Admin/Workspace'))->name('admin.workspace');
+    Route::get('/', fn() => Inertia::render('Admin/dashboard'))->name('admin.dashboard');
+    Route::get('/content-studio', fn() => Inertia::render('Admin/contentStudio'))->name('admin.content');
+    Route::get('/insights', fn() => Inertia::render('Admin/insights'))->name('admin.insights');
+    Route::get('/integrations', fn() => Inertia::render('Admin/integrations'))->name('admin.integrations');
+    Route::get('/missions', fn() => Inertia::render('Admin/missions'))->name('admin.missions');
+    Route::get('/requests', fn() => Inertia::render('Admin/requests'))->name('admin.requests');
+    Route::get('/security', fn() => Inertia::render('Admin/security'))->name('admin.security');
+    Route::get('/team-heatmap', fn() => Inertia::render('Admin/teamHeatmap'))->name('admin.team-heatmap');
+    Route::get('/workspace', fn() => Inertia::render('Admin/workspace'))->name('admin.workspace');
 });
 

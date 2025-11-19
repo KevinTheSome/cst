@@ -4,7 +4,7 @@ import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import BioChipLoader from '@/Components/BioChipLoader';
 import CookieConsent from '@/Components/CookieConsent';
 import Footer from '@/Components/Footer';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/Components/Navbar';
 
 export default function AppLayout({ children }: PropsWithChildren) {
     const [loaderVisible, setLoaderVisible] = useState(true);
