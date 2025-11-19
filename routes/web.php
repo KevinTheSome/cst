@@ -25,14 +25,24 @@ if (! function_exists('findPageComponent')) {
     }
 }
 
+Route::post('/locale', function (Request $request) {
+    $request->validate(['locale' => 'required|in:lv,en']); // adjust allowed locales
+    session(['locale' => $request->locale]);
+    app()->setLocale($request->locale);
+
+    // Return JSON so axios resolves successfully
+    return response()->json(['locale' => $request->locale]);
+})->name('locale.switch');
 
 Route::get('/', function (Request $request) {
     // Country code provided by DetectCountry middleware
     $country = $request->attributes->get('geo_country', config('geo.default_country', 'US'));
 
     // Determine locale based on country map
-    $locale = config('geo.map')[$country] ?? config('geo.default_locale', 'en');
-    App::setLocale($locale);
+    $locale = session('locale') 
+    ?? (config('geo.map')[$country] ?? config('geo.default_locale', 'lv'));
+
+    app()->setLocale($locale);
 
     // Optional sync (keep if your app needs it)
     if (function_exists('syncLangFiles')) {
