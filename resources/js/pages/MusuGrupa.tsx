@@ -5,21 +5,21 @@ export default function MusuGrupa() {
 
     const vtdtStudents = [
         {
-            name: 'Kevins ',
+            name: 'Kevins Markuss Kanalis',
             title: 'SCRUM Master',
             description: 'Uzdevumu sadalīšanas, koda parskatīšanas un izstrādes vadītājs.',
             image: '/bzl-1.jpg',
         },
         {
-            name: 'Elvis ',
+            name: 'Elvis Pujāts',
             title: 'Chill guy, for the vibes',
             description: 'Veido prototipus un vizuālās vadlīnijas, kas saskaņo laboratorijas zīmolu ar digitālo pieredzi.',
             image: '/bzl-2.jpg',
         },
         {
-            name: 'kristiāns ',
-            title: 'Satura redaktore',
-            description: 'Strādā ar stāstiem un attēliem, nodrošinot, ka katrs teksts ir saprotams un iedvesmojošs.',
+            name: 'Kristians Miķelsons',
+            title: 'Programmētājs',
+            description: 'Iztrādā uzdevumus, ko vadītājs ir uzdevis izpildīt',
             image: '/bzl-3.jpg',
         },
         {
@@ -30,20 +30,20 @@ export default function MusuGrupa() {
         },
         {
             name: 'Jānis Mārtiņš Bramanis',
-            title: 'Grafiskā dizainere',
-            description: 'Izstrādā ilustrācijas un ikonas, saglabājot vienotu vizuālo valodu visā lapā.',
-            image: '/bzl-5.jpg',
+            title: 'Vietnes satura un privātuma politikas redaktors',
+            description: 'Rediģē lapu saturu un sīkdatņu politiku, rūpējoties par skaidru, saprotamu un lietotājam draudzīgu informāciju.',
+            image: '/janka.jpg',
         },
         {
             name: 'Kristers Skrastiņš',
-            title: 'Testēšanas koordinators',
-            description: 'Pārbauda funkcionalitāti dažādās ierīcēs un apkopo ieteikumus uzlabojumiem.',
+            title: 'Programmētājs',
+            description: 'Realizē uzdevumus, izstrādā nepieceišamo funkcionalitāti.',
             image: '/bzl-6.jpg',
         },
         {
-            name: 'Kristaps Imants',
-            title: 'Projektu koordinatore',
-            description: 'Vada komunikāciju ar laboratorijas komandu un nodrošina, ka termiņi tiek ievēroti.',
+            name: 'Kristaps Imants Liepiņs',
+            title: 'Programmētājs',
+            description: 'Izpilda uzdotos programmēšanas uzdevumus.',
             image: '/bzl-7.jpg',
         },
     ];

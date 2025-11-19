@@ -56,9 +56,6 @@ export default function Footer() {
                         <div>
                             <dt className="font-semibold text-[#1b4a37]">Telefona numurs:</dt>
                             <dd className="mt-2 space-y-1">
-                                <a className="block text-[#2c7c5a] hover:text-[#1b4a37]" href="tel:+37167089383">
-                                    +371 67089383
-                                </a>
                                 <a className="block text-[#2c7c5a] hover:text-[#1b4a37]" href="tel:+37129252975">
                                     +371 29252975
                                 </a>

@@ -116,7 +116,7 @@ function Navbar() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/Projects" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                <Link href="/projects" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
                                     Projekti
                                 </Link>
                             </li>
@@ -126,12 +126,35 @@ function Navbar() {
 
                 {/* Questionnaire */}
                 <li>
-                    <Link
-                        href="/anketa"
-                        className="btn text-lg font-semibold text-green-700 btn-outline border-green-600 transition hover:bg-green-600 hover:text-white md:text-xl"
-                    >
-                        ANKETA
-                    </Link>
+                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost md:w-auto">
+                        <label
+                            tabIndex={0}
+                            className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 md:text-xl"
+                        >
+                            ANKETAS{' '}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </label>
+                        <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
+                            <li>
+                                <Link href="/anketa" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                    Publiskā anketa
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/questions" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                    Koda anketa
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
 
                 {/* Contacts */}
@@ -255,7 +278,7 @@ function Navbar() {
                                             </li>
                                             <li>
                                                 <Link
-                                                    href="/Projects"
+                                                    href="/projects"
                                                     className="block w-full text-green-700 hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
@@ -266,17 +289,36 @@ function Navbar() {
                                     </details>
                                 </li>
                                 <li>
-                                    <Link
-                                        href="/anketa"
-                                        className="flex w-full items-center gap-3 px-3 py-2 text-lg font-semibold"
-                                        onClick={() => setSidebarOpen(false)}
-                                    >
-                                        <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                            <path d="M5 4h14v16H5z" />
-                                            <path d="M9 8h6M9 12h6M9 16h3" />
-                                        </svg>
-                                        ANKETA
-                                    </Link>
+                                    <details className="w-full">
+                                        <summary className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-lg font-semibold">
+                                            {/* Questionnaire icon: Custom style */}
+                                            <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                                <rect x="3" y="4" width="18" height="16" rx="2" />
+                                                <path d="M16 2v4M8 2v4M3 10h18" />
+                                            </svg>
+                                            ANKETAS
+                                        </summary>
+                                        <ul className="mt-1 ml-6 w-full">
+                                            <li>
+                                                <Link
+                                                    href="/anketa"
+                                                    className="block w-full text-green-700 hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
+                                                    Publiskā anketa
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link
+                                                    href="/questions"
+                                                    className="block w-full text-green-700 hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
+                                                    Koda anketa
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </details>
                                 </li>
                                 <li>
                                     <Link
