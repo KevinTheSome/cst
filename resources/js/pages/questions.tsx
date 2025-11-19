@@ -435,7 +435,9 @@ export default function Anketa() {
                                 {codeDigits.map((d, i) => (
                                     <input
                                         key={i}
-                                        ref={(el) => (inputRefs.current[i] = el)}
+                                        ref={(el) => {
+                                            inputRefs.current[i] = el;
+                                        }}
                                         inputMode="numeric"
                                         pattern="[0-9]*"
                                         maxLength={1}
