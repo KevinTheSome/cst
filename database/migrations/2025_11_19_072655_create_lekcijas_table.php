@@ -13,10 +13,9 @@ return new class extends Migration
 
             $table->string('code')->unique();
             $table->unsignedInteger('uses')->default(0);
-            $table->timestampTz('expiration_date');
+            $table->timestamp('expiration_date');
 
             $table->string('lekcijas');
-            $table->index('lekcijas');
 
             $table->timestamps();
 
