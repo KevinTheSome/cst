@@ -70,7 +70,8 @@ Route::get('/anketa', fn() => Inertia::render('anketa'))->name('anketa');
 
 Route::get('/questions', fn() => Inertia::render('questions'))->name('questions');
 
-Route::post('/admin/login', [AdminController::class, 'login']);
+Route::get('/admin/login', fn() => Inertia::render('Admin/login'))->name('admin.login');
+Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
 
 Route::get('/admin/logout', function () {
     session()->forget('is_admin');   // remove the admin flag
