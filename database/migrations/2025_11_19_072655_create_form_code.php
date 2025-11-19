@@ -16,7 +16,6 @@ return new class extends Migration {
             $table->string('code')->unique();
             $table->integer('user_created');
             $table->date('expiration_date');
-            $table->date('created_at');
             $table->integer('uses');
         });
     }
