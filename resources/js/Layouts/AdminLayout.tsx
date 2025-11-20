@@ -40,12 +40,28 @@ const navSections: NavSection[] = [
         ],
     },
     {
-        label: 'Operations',
+        label: 'Anketas',
         items: [
             { id: 'content', label: 'Content studio', description: 'Posts, blogs, media', href: '/admin/content-studio', badge: '12 drafts', badgeTone: 'sky' },
             { id: 'requests', label: 'Requests', description: 'Approvals & forms', href: '/admin/requests', badge: '3 pending', badgeTone: 'amber' },
             { id: 'form-codes', label: 'Form codes', description: 'Survey code generator', href: '/admin/form-codes' },
             { id: 'team', label: 'Team heatmap', description: 'Availability & focus', href: '/admin/team-heatmap' },
+            {
+                id: 'surveys-public',
+                label: 'Publiskās',
+                description: 'Publiskās anketas',
+                href: '/admin/Anketa/publiskas',
+                badge: 'Jaunas',
+                badgeTone: 'sky',
+            },
+            {
+                id: 'surveys-private',
+                label: 'Privātās',
+                description: 'Privātās anketas',
+                href: '/admin/anketas/privatas',
+                badge: 'Drošas',
+                badgeTone: 'amber',
+            },
         ],
     },
     {
