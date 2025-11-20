@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\FormCodeController;
 use App\Http\Middleware\AdminMiddleware;
 
 
@@ -81,6 +82,8 @@ Route::get('/anketa', fn() => Inertia::render('anketa'))->name('anketa');
 
 Route::get('/questions', fn() => Inertia::render('questions'))->name('questions');
 
+Route::post('/form-codes/verify', [FormCodeController::class, 'verify'])->name('formCodes.verify');
+
 Route::get('/admin/login', fn() => Inertia::render('Admin/login'))->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
 
@@ -99,7 +102,12 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/security', fn() => Inertia::render('Admin/security'))->name('admin.security');
     Route::get('/team-heatmap', fn() => Inertia::render('Admin/teamHeatmap'))->name('admin.team-heatmap');
     Route::get('/workspace', fn() => Inertia::render('Admin/workspace'))->name('admin.workspace');
+    Route::get('/form-codes', [\App\Http\Controllers\FormCodeController::class, 'index'])->name('admin.formCodes');
+    Route::post('/form-codes', [\App\Http\Controllers\FormCodeController::class, 'store'])->name('admin.formCodes.store');
 
-    Route::get('/admin/anketa/create', [AnketaController::class, 'create'])->name('admin.anketa.create');
+    Route::get('/anketa/create', [AnketaController::class, 'create'])->name('admin.anketa.create');
+    Route::post('/anketa/store', [AnketaController::class, 'store'])->name('admin.anketa.store');
+    Route::get('/anketa', [AnketaController::class, 'show'])->name('admin.anketa');
+    Route::get('/anketa/show/{id}', [AnketaController::class, 'showAnketu'])->name('admin.anketa.show');
 
 });

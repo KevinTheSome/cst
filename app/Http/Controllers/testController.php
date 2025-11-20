@@ -11,6 +11,6 @@ class TestController extends Controller
     {
         syncLangFiles('test');
         syncLangFiles('contect');
-        return Inertia::render('testpage');
+        return Inertia::render('testPage');
     }
 }
