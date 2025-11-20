@@ -85,18 +85,19 @@ Route::get('/admin/logout', function () {
 })->name('admin.logout');
 
 Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
-    Route::get('/', fn() => Inertia::render('Admin/Dashboard'))->name('admin.dashboard');
-    Route::get('/content-studio', fn() => Inertia::render('Admin/ContentStudio'))->name('admin.content');
-    Route::get('/insights', fn() => Inertia::render('Admin/Insights'))->name('admin.insights');
-    Route::get('/integrations', fn() => Inertia::render('Admin/Integrations'))->name('admin.integrations');
-    Route::get('/missions', fn() => Inertia::render('Admin/Missions'))->name('admin.missions');
-    Route::get('/requests', fn() => Inertia::render('Admin/Requests'))->name('admin.requests');
-    Route::get('/security', fn() => Inertia::render('Admin/Security'))->name('admin.security');
-    Route::get('/team-heatmap', fn() => Inertia::render('Admin/TeamHeatmap'))->name('admin.team-heatmap');
+    Route::get('/', fn() => Inertia::render('Admin/dashboard'))->name('admin.dashboard');
+    Route::get('/content-studio', fn() => Inertia::render('Admin/contentStudio'))->name('admin.content');
+    Route::get('/insights', fn() => Inertia::render('Admin/insights'))->name('admin.insights');
+    Route::get('/integrations', fn() => Inertia::render('Admin/integrations'))->name('admin.integrations');
+    Route::get('/missions', fn() => Inertia::render('Admin/missions'))->name('admin.missions');
+    Route::get('/requests', fn() => Inertia::render('Admin/requests'))->name('admin.requests');
+    Route::get('/security', fn() => Inertia::render('Admin/security'))->name('admin.security');
+    Route::get('/team-heatmap', fn() => Inertia::render('Admin/teamHeatmap'))->name('admin.team-heatmap');
     Route::get('/workspace', fn() => Inertia::render('Admin/workspace'))->name('admin.workspace');
-    Route::get('/form-codes', [\App\Http\Controllers\FormCodeController::class, 'index'])->name('admin.formCodes');
-    Route::post('/form-codes', [\App\Http\Controllers\FormCodeController::class, 'store'])->name('admin.formCodes.store');
+    Route::get('/form-codes', [FormCodeController::class, 'index'])->name('admin.formCodes');
+    Route::post('/form-codes', [FormCodeController::class, 'store'])->name('admin.formCodes.store');
 
+    Route::get('/anketa', [AnketaController::class, 'index'])->name('admin.anketa.index');
     Route::get('/anketa/create', [AnketaController::class, 'create'])->name('admin.anketa.create');
     Route::post('/anketa/store', [AnketaController::class, 'store'])->name('admin.anketa.store');
 
@@ -110,5 +111,3 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     // DELETE
     Route::delete('/anketa/destroy/{id}', [AnketaController::class, 'destroy'])->name('admin.anketa.destroy');
 });
-
-
