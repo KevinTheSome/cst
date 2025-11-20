@@ -13,55 +13,85 @@ class TestBlockCountries
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-
-
-        //http://localhost:8000Allowed (no debug)
-        //http://localhost:8000?debug_ip=8.8.8.8&debug_country=US BLOCKED (if US blocked)
-        // http://localhost:8000?debug_ip=1.2.3.4&debug_country=CN BLOCKED
-        // http://localhost:8000?debug_ip=5.6.7.8&debug_country=LV Allowed (Latvia)
-
-
-
-        // === DEBUG MODE: Simulate IP & Country via URL ===
+        // Debug simulation via query string (works in prod too)
         if ($request->has('debug_ip')) {
-            $ip = $request->get('debug_ip');
-            $country = $request->get('debug_country', 'XX'); // default unknown
+            $ip = (string) $request->query('debug_ip');
+            $country = (string) $request->query('debug_country', 'XX'); // default unknown
         } else {
-            // Normal flow
-            $ip = $request->header('CF-Connecting-IP')
-                ?? $request->header('X-Forwarded-For')
-                ?? $request->ip();
+            // Extract client IP safely
+            $ip = $this->resolveClientIp($request);
 
-            if (app()->environment('local') || in_array($ip, ['127.0.0.1', '::1'])) {
-                return $next($request); // skip on real localhost
+            // Skip on true localhost/dev
+            if (in_array($ip, ['127.0.0.1', '::1'], true) || app()->environment('local')) {
+                return $next($request);
             }
 
-            $country = Cache::remember("country_{$ip}", 24 * 60 * 60, function () use ($ip) {
+            // Cache country per IP
+            $cacheKey = "country_{$ip}";
+            $ttlSeconds = 24 * 60 * 60; // 24h
+
+            $country = Cache::remember($cacheKey, $ttlSeconds, function () use ($ip) {
                 try {
-                    $response = Http::get("http://ip-api.com/json/{$ip}?fields=countryCode");
-                    return $response->json('countryCode') ?? null;
-                } catch (\Exception $e) {
+                    // Use HTTPS, small timeout, and only needed field
+                    $resp = Http::timeout(3)
+                        ->acceptJson()
+                        ->get("https://ip-api.com/json/{$ip}?fields=countryCode,status");
+
+                    if (!$resp->ok()) {
+                        return null;
+                    }
+
+                    if (($resp->json('status') ?? '') !== 'success') {
+                        return null;
+                    }
+
+                    return $resp->json('countryCode') ?: null;
+                } catch (\Throwable $e) {
+                    // Network failure -> treat as unknown
                     return null;
                 }
             });
         }
 
-        // === BLOCK LOGIC ===
-        $blockedCountries = config('geo.blocked_countries', ['RU', 'CN']);
+        // Config-driven block list
+        $blockedCountries = (array) config('geo.blocked_countries', ['RU', 'CN']);
 
-        if (in_array($country, $blockedCountries)) {
-            return response('
-            <h1>Access Blocked</h1>
-            <p>Country <strong>' . $country . '</strong> is not allowed.</p>
-            <p>IP: ' . $ip . '</p>
-            <small>Remove ?debug_ip=... from URL to disable simulation.</small>
-        ', 403);
+        if ($country !== null && in_array($country, $blockedCountries, true)) {
+             return response('
+                <h1>Access Blocked</h1>
+                <p>Country <strong>' . $country . '</strong> is not allowed.</p>
+                <p>IP: ' . $ip . '</p>
+                <small>Remove ?debug_ip=... from URL to disable simulation.</small>
+            ', 403);
         }
 
+        // Optional: if country lookup failed (null), you can choose to block by default:
+        // if ($country === null) { return response('Unable to determine country', 403); }
+
         return $next($request);
+    }
+
+    private function resolveClientIp(Request $request): string
+    {
+        // Prefer Cloudflare header
+        $cfIp = $request->header('CF-Connecting-IP');
+        if (is_string($cfIp) && $cfIp !== '') {
+            return $cfIp;
+        }
+
+        // Parse X-Forwarded-For : first IP is the client
+        $xff = $request->header('X-Forwarded-For');
+        if (is_string($xff) && $xff !== '') {
+            $first = trim(explode(',', $xff)[0]);
+            if ($first !== '') {
+                return $first;
+            }
+        }
+
+        return $request->ip();
     }
 }

@@ -1,15 +1,17 @@
 <?php
 
+use App\Http\Controllers\AnketaController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\FormCodeController;
 use App\Http\Middleware\AdminMiddleware;
 
 
-if (! function_exists('findPageComponent')) {
+if (!function_exists('findPageComponent')) {
     function findPageComponent(string $name): string
     {
         $base = resource_path('js/Pages') . DIRECTORY_SEPARATOR;
@@ -39,8 +41,8 @@ Route::get('/', function (Request $request) {
     $country = $request->attributes->get('geo_country', config('geo.default_country', 'US'));
 
     // Determine locale based on country map
-    $locale = session('locale') 
-    ?? (config('geo.map')[$country] ?? config('geo.default_locale', 'lv'));
+    $locale = session('locale')
+        ?? (config('geo.map')[$country] ?? config('geo.default_locale', 'lv'));
 
     app()->setLocale($locale);
 
@@ -98,4 +100,9 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/security', fn() => Inertia::render('Admin/security'))->name('admin.security');
     Route::get('/team-heatmap', fn() => Inertia::render('Admin/teamHeatmap'))->name('admin.team-heatmap');
     Route::get('/workspace', fn() => Inertia::render('Admin/workspace'))->name('admin.workspace');
+    Route::get('/form-codes', [\App\Http\Controllers\FormCodeController::class, 'index'])->name('admin.formCodes');
+    Route::post('/form-codes', [\App\Http\Controllers\FormCodeController::class, 'store'])->name('admin.formCodes.store');
+
+    Route::get('/admin/anketa/create', [AnketaController::class, 'create'])->name('admin.anketa.create');
+
 });
