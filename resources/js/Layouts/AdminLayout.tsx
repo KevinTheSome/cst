@@ -52,14 +52,7 @@ const navSections: NavSection[] = [
                 badgeTone: 'emerald',
             },
 
-            {
-                id: 'content',
-                label: 'Content studio',
-                description: 'Posts, blogs, media',
-                href: '/admin/content-studio',
-                badge: '12 drafts',
-                badgeTone: 'sky',
-            },
+            { id: 'content', label: 'Content studio', description: 'Posts, blogs, media', href: '/admin/content-studio', badge: '12 drafts', badgeTone: 'sky' },
             { id: 'requests', label: 'Requests', description: 'Approvals & forms', href: '/admin/requests', badge: '3 pending', badgeTone: 'amber' },
             { id: 'form-codes', label: 'Form codes', description: 'Survey code generator', href: '/admin/form-codes' },
             { id: 'team', label: 'Team heatmap', description: 'Availability & focus', href: '/admin/team-heatmap' },
@@ -97,6 +90,7 @@ const navSections: NavSection[] = [
         ],
     },
 ];
+
 
 export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWithChildren<AdminLayoutProps>) {
     const [loaderVisible, setLoaderVisible] = useState(true);

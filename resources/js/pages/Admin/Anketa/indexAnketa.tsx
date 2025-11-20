@@ -1,8 +1,8 @@
 // resources/js/Pages/Admin/Anketa/indexAnketa.tsx
 
-import AdminLayout from '@/Layouts/AdminLayout';
-import { Head, router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import { Head, router } from '@inertiajs/react';
+import AdminLayout from '@/Layouts/AdminLayout';
 
 interface FormResultType {
     id: number;
@@ -52,9 +52,11 @@ function FormsList({ formResults }: FormsListProps) {
                 <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-slate-900/80 via-slate-900/40 to-slate-900/10 px-6 py-5 shadow-inner shadow-black/20">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <p className="text-xs tracking-[0.3em] text-white/60 uppercase">Anketas</p>
+                            <p className="text-xs uppercase tracking-[0.3em] text-white/60">Anketas</p>
                             <h1 className="mt-1 text-2xl font-semibold text-white">Visas anketas</h1>
-                            <p className="mt-1 text-sm text-white/70">Pārskats par visām publiskajām un privātajām formām.</p>
+                            <p className="mt-1 text-sm text-white/70">
+                                Pārskats par visām publiskajām un privātajām formām.
+                            </p>
                         </div>
 
                         <a
@@ -70,8 +72,10 @@ function FormsList({ formResults }: FormsListProps) {
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <p className="text-xs tracking-[0.3em] text-white/60 uppercase">Formu saraksts</p>
-                            <p className="text-sm text-white/70">Klikšķini uz skatīt, lai atvērtu formu, vai rediģē / dzēs.</p>
+                            <p className="text-xs uppercase tracking-[0.3em] text-white/60">Formu saraksts</p>
+                            <p className="text-sm text-white/70">
+                                Klikšķini uz skatīt, lai atvērtu formu, vai rediģē / dzēs.
+                            </p>
                         </div>
                     </div>
 
@@ -83,7 +87,9 @@ function FormsList({ formResults }: FormsListProps) {
                             >
                                 <div>
                                     <p className="text-xs text-white/40">ID: {form.id}</p>
-                                    <h2 className="mt-1 text-lg font-semibold text-white">{form.title || form.results?.title || 'Untitled form'}</h2>
+                                    <h2 className="mt-1 text-lg font-semibold text-white">
+                                        {form.title || form.results?.title || 'Untitled form'}
+                                    </h2>
                                     <p className="text-xs text-white/60">Code: {form.code}</p>
                                 </div>
 
@@ -111,7 +117,11 @@ function FormsList({ formResults }: FormsListProps) {
                             </div>
                         ))}
 
-                        {forms.length === 0 && <p className="col-span-full py-8 text-center text-xs text-white/60">Šobrīd nav nevienas anketas.</p>}
+                        {forms.length === 0 && (
+                            <p className="col-span-full py-8 text-center text-xs text-white/60">
+                                Šobrīd nav nevienas anketas.
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>
@@ -119,6 +129,8 @@ function FormsList({ formResults }: FormsListProps) {
     );
 }
 
-(FormsList as any).layout = (page: React.ReactNode) => <AdminLayout title="Anketas">{page}</AdminLayout>;
+(FormsList as any).layout = (page: React.ReactNode) => (
+    <AdminLayout title="Anketas">{page}</AdminLayout>
+);
 
 export default FormsList;

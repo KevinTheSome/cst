@@ -1,8 +1,8 @@
 // resources/js/Pages/Admin/Anketa/updateAnketa.tsx
 
-import AdminLayout from '@/Layouts/AdminLayout';
-import { router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import { router } from '@inertiajs/react';
+import AdminLayout from '@/Layouts/AdminLayout';
 
 type FieldType = 'radio' | 'checkbox' | 'dropdown';
 type Visibility = 'public' | 'private';
@@ -100,7 +100,11 @@ export default function UpdateAnketa({ formResult }: { formResult: FormResult })
             />
 
             {/* Visibility Dropdown */}
-            <select className="select-bordered select mb-4 w-full" value={visibility} onChange={(e) => setVisibility(e.target.value as Visibility)}>
+            <select
+                className="select-bordered select mb-4 w-full"
+                value={visibility}
+                onChange={(e) => setVisibility(e.target.value as Visibility)}
+            >
                 <option value="public">Public — anyone with the link can answer</option>
                 <option value="private">Private — restricted access</option>
             </select>
@@ -153,7 +157,12 @@ export default function UpdateAnketa({ formResult }: { formResult: FormResult })
                         <button
                             className="btn btn-sm btn-secondary"
                             type="button"
-                            onClick={() => updateField(field.id, 'options', [...field.options, `Option ${field.options.length + 1}`])}
+                            onClick={() =>
+                                updateField(field.id, 'options', [
+                                    ...field.options,
+                                    `Option ${field.options.length + 1}`,
+                                ])
+                            }
                         >
                             Add Option
                         </button>
@@ -161,11 +170,18 @@ export default function UpdateAnketa({ formResult }: { formResult: FormResult })
                 </div>
             ))}
 
-            <button className={`btn w-full btn-success ${saving ? 'btn-disabled' : ''}`} type="button" onClick={handleSave} disabled={saving}>
+            <button
+                className={`btn w-full btn-success ${saving ? 'btn-disabled' : ''}`}
+                type="button"
+                onClick={handleSave}
+                disabled={saving}
+            >
                 {saving ? 'Saving...' : 'Save changes'}
             </button>
         </div>
     );
 }
 
-(UpdateAnketa as any).layout = (page: React.ReactNode) => <AdminLayout title="Anketas">{page}</AdminLayout>;
+(UpdateAnketa as any).layout = (page: React.ReactNode) => (
+    <AdminLayout title="Anketas">{page}</AdminLayout>
+);
