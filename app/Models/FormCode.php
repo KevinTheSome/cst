@@ -25,8 +25,8 @@ class FormCode extends Model
      * The admin user who created this code.
      * Note: we store the user id in `user_created` (not standard `user_id`), so specify the foreign key.
      */
-    public function user(): BelongsTo
+    public function admin(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\User::class, 'user_created');
+        return $this->belongsTo(\App\Models\Admin::class, 'user_created');
     }
 }

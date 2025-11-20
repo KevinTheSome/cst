@@ -7,16 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB; // <- added
+use Illuminate\Support\Facades\DB;
 
 class FormCodeController extends Controller
 {
     public function index()
     {
-        // eager load the user relation so frontend can show email
-        $codes = FormCode::with('user')->orderBy('created_at', 'desc')->get();
+        $codes = FormCode::with('admin')->orderBy('created_at', 'desc')->get();
 
-        // Map to simple arrays to avoid sending entire Eloquent objects (optional but cleaner)
         $payload = $codes->map(function ($c) {
             return [
                 'id' => $c->id,
@@ -25,8 +23,10 @@ class FormCodeController extends Controller
                 'user_created' => $c->user_created,
                 'expiration_date' => $c->expiration_date ? $c->expiration_date->toDateTimeString() : null,
                 'created_at' => $c->created_at ? $c->created_at->toDateTimeString() : null,
-                // include the creator email if available
-                'user' => $c->user ? ['id' => $c->user->id, 'email' => $c->user->email] : null,
+                'admin' => $c->admin ? [
+                    'id' => $c->admin->id,
+                    'email' => $c->admin->email,
+                ] : null,
             ];
         });
 
@@ -44,17 +44,18 @@ class FormCodeController extends Controller
 
         $expiration = now()->addHours($request->expiration_hours);
 
+        $userId = session('admin_id');
+
         $code = FormCode::create([
             'code' => strtoupper(Str::random(12)),
-            'user_created' => auth()->id() ?? 0,
+            'user_created' => $userId,
             'expiration_date' => $expiration,
             'uses' => $request->uses,
         ]);
 
-        // load the user relation (will be null if user_created == 0)
-        $code->load('user');
+        // load user relation
+        $code->load('admin');
 
-        // return a plain array similar to index mapping
         $response = [
             'id' => $code->id,
             'code' => $code->code,
@@ -62,7 +63,10 @@ class FormCodeController extends Controller
             'user_created' => $code->user_created,
             'expiration_date' => $code->expiration_date ? $code->expiration_date->toDateTimeString() : null,
             'created_at' => $code->created_at ? $code->created_at->toDateTimeString() : null,
-            'user' => $code->user ? ['id' => $code->user->id, 'email' => $code->user->email] : null,
+            'admin' => $code->admin ? [
+                'id' => $code->admin->id,
+                'email' => $code->admin->email,
+            ] : null,
         ];
 
         return response()->json([
