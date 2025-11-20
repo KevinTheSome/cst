@@ -20,16 +20,14 @@ class TestBlockCountries
         ) 
         $country = $this->lookupCountry($ip);
 
-        // Decision logic
         $blocked = config('geo.blocked_countries', ['RU', 'CN', 'US']);
         $blockOnNull = config('geo.block_on_null', false);
 
         if (($country === null && $blockOnNull) || ($country && in_array($country, $blocked))) {
-            Log::notice("[GeoBlock] BLOCK → IP={$ip}, Country={$country}");
             return $this->blockedResponse($ip, $country);
         }
 
-        Log::info("[GeoBlock] ALLOW → IP={$ip}, Country={$country}");
+        $request->merge(['country' => $country]);
         return $next($request);
     }
 
@@ -41,7 +39,7 @@ class TestBlockCountries
         }
 
         try {
-            // Use ipwho.is (free + HTTPS)
+            // Use ipwho.is
             $resp = Http::timeout(3)
                 ->acceptJson()
                 ->get("https://ipwho.is/{$ip}?fields=country_code");
@@ -51,7 +49,6 @@ class TestBlockCountries
 
             if ($code) {
                 Cache::put($cacheKey, $code, now()->addHours(24));
-                Log::info("[GeoBlock] Lookup success → {$ip} → {$code}");
                 return $code;
             }
 
