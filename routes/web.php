@@ -100,6 +100,9 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/team-heatmap', fn() => Inertia::render('Admin/teamHeatmap'))->name('admin.team-heatmap');
     Route::get('/workspace', fn() => Inertia::render('Admin/workspace'))->name('admin.workspace');
 
-    Route::get('/admin/anketa/create', [AnketaController::class, 'create'])->name('admin.anketa.create');
+    Route::get('/anketa/create', [AnketaController::class, 'create'])->name('admin.anketa.create');
+    Route::post('/anketa/store', [AnketaController::class, 'store'])->name('admin.anketa.store');
+    Route::get('/anketa', [AnketaController::class, 'show'])->name('admin.anketa');
+    Route::get('/anketa/show/{id}', [AnketaController::class, 'showAnketu'])->name('admin.anketa.show');
 
 });
