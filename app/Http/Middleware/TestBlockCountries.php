@@ -51,8 +51,8 @@ class TestBlockCountries
             // Use ipwho.is
             $resp = Http::timeout(3)
                 ->acceptJson()
-                ->get("https://ipwho.is/{$ip}?fields=country_code");
-
+                ->get("https://freeipapi.com/api/json/{$ip}?fields=countryCode");
+                
             $code = $resp->json('country_code');
             $code = $code ? strtoupper($code) : null;
 
