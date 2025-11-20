@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\FormCodeController;
 use App\Http\Middleware\AdminMiddleware;
 
 
@@ -98,4 +99,6 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/security', fn() => Inertia::render('Admin/security'))->name('admin.security');
     Route::get('/team-heatmap', fn() => Inertia::render('Admin/teamHeatmap'))->name('admin.team-heatmap');
     Route::get('/workspace', fn() => Inertia::render('Admin/workspace'))->name('admin.workspace');
+    Route::get('/form-codes', [\App\Http\Controllers\FormCodeController::class, 'index'])->name('admin.formCodes');
+    Route::post('/form-codes', [\App\Http\Controllers\FormCodeController::class, 'store'])->name('admin.formCodes.store');
 });
