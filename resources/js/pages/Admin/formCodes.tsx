@@ -9,6 +9,7 @@ type FormCode = {
   code: string;
   uses: number;
   user_created: number | string;
+  user?: { id: number; email: string } | null;
   expiration_date: string;
   created_at: string;
 };
@@ -160,7 +161,13 @@ export default function FormCodes({ codes: initialCodes }: Props) {
               <tr key={code.id}>
                 <td className="border p-2 font-mono">{code.code}</td>
                 <td className="border p-2">{code.uses}</td>
-                <td className="border p-2">{code.user_created}</td>
+                <td className="border p-2">
+                  {code.user?.email
+                    ? code.user.email
+                    : (typeof code.user_created === 'number' && code.user_created === 0)
+                      ? 'System'
+                      : String(code.user_created)}
+                </td>
                 <td className="border p-2">{new Date(code.expiration_date).toLocaleString()}</td>
                 <td className="border p-2">{new Date(code.created_at).toLocaleString()}</td>
               </tr>
