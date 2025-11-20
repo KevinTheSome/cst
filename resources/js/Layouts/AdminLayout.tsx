@@ -42,6 +42,16 @@ const navSections: NavSection[] = [
     {
         label: 'Anketas',
         items: [
+            // 🔹 NEW – link to forms list / CRUD
+            {
+                id: 'all-forms',
+                label: 'Visas anketas',
+                description: 'Formu saraksts un CRUD',
+                href: '/admin/anketa',
+                badge: 'CRUD',
+                badgeTone: 'emerald',
+            },
+
             { id: 'content', label: 'Content studio', description: 'Posts, blogs, media', href: '/admin/content-studio', badge: '12 drafts', badgeTone: 'sky' },
             { id: 'requests', label: 'Requests', description: 'Approvals & forms', href: '/admin/requests', badge: '3 pending', badgeTone: 'amber' },
             { id: 'form-codes', label: 'Form codes', description: 'Survey code generator', href: '/admin/form-codes' },
@@ -50,7 +60,7 @@ const navSections: NavSection[] = [
                 id: 'surveys-public',
                 label: 'Publiskās',
                 description: 'Publiskās anketas',
-                href: '/admin/Anketa/publiskas',
+                href: '/admin/Anketa/publiskas', // you can adjust this later to whatever route you add
                 badge: 'Jaunas',
                 badgeTone: 'sky',
             },
@@ -58,7 +68,7 @@ const navSections: NavSection[] = [
                 id: 'surveys-private',
                 label: 'Privātās',
                 description: 'Privātās anketas',
-                href: '/admin/anketas/privatas',
+                href: '/admin/anketas/privatas', // same here – placeholder until you make those routes
                 badge: 'Drošas',
                 badgeTone: 'amber',
             },
@@ -73,6 +83,7 @@ const navSections: NavSection[] = [
         ],
     },
 ];
+
 
 export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWithChildren<AdminLayoutProps>) {
     const [loaderVisible, setLoaderVisible] = useState(true);
