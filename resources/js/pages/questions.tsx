@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { Head } from '@inertiajs/react';
 import { FormEvent, useMemo, useRef, useState } from 'react';
 
@@ -11,8 +12,6 @@ type Questionnaire = {
     severity: string;
     therapy: string;
 };
-
-const REQUIRED_CODE = '123456'; // <-- change this to your real 6-digit code
 
 const genderOptions = ['Vīrietis', 'Sieviete', 'Citi / Nevēlos norādīt'];
 const ageGroups = ['0–18', '19–35', '36–50', '51+'];
@@ -44,10 +43,10 @@ export default function Anketa() {
     const [isFinished, setIsFinished] = useState(false);
 
     // ----- code gate state -----
-    const [codeDigits, setCodeDigits] = useState<string[]>(['', '', '', '', '', '']);
+    const [codeInput, setCodeInput] = useState<string>('');
     const [codeError, setCodeError] = useState<string | null>(null);
     const [isCodeVerified, setIsCodeVerified] = useState(false);
-    const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+    const [verifying, setVerifying] = useState(false);
 
     // convenience to set fields
     const setField = (field: keyof Questionnaire, value: string) => {
@@ -326,87 +325,50 @@ export default function Anketa() {
     const isLastStep = currentStep === slides.length - 1;
     const progress = ((currentStep + 1) / slides.length) * 100;
 
-    // ----- code input handlers -----
-    const focusInput = (index: number) => {
-        inputRefs.current[index]?.focus();
-        inputRefs.current[index]?.select();
-    };
-
-    const handleCodeChange = (value: string, index: number) => {
-        // keep only digits, single char
-        const digit = value.replace(/\D/g, '').slice(0, 1);
-        setCodeDigits((prev) => {
-            const next = [...prev];
-            next[index] = digit;
-            return next;
-        });
-
-        if (digit && index < 5) {
-            // move next
-            focusInput(index + 1);
-        }
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-        if (e.key === 'Backspace') {
-            if (codeDigits[index]) {
-                // clear current
-                setCodeDigits((prev) => {
-                    const next = [...prev];
-                    next[index] = '';
-                    return next;
-                });
-            } else if (index > 0) {
-                // move back and clear previous
-                focusInput(index - 1);
-                setCodeDigits((prev) => {
-                    const next = [...prev];
-                    next[index - 1] = '';
-                    return next;
-                });
-            }
-        } else if (e.key === 'ArrowLeft' && index > 0) {
-            focusInput(index - 1);
-        } else if (e.key === 'ArrowRight' && index < 5) {
-            focusInput(index + 1);
-        }
-    };
-
-    const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-        const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-        if (!pasted) return;
-        const chars = pasted.split('');
-        const next = [...codeDigits];
-        for (let i = 0; i < 6; i++) {
-            next[i] = chars[i] ?? '';
-        }
-        setCodeDigits(next);
-        // focus after last pasted char or last input
-        const focusIndex = Math.min(pasted.length, 5);
-        focusInput(focusIndex);
-    };
-
-    const verifyCode = () => {
-        const joined = codeDigits.join('');
-        if (joined.length < 6) {
-            setCodeError('Lūdzu ievadiet 6 ciparus.');
+    const verifyCode = async () => {
+        const raw = (codeInput || '').trim();
+        if (!raw) {
+            setCodeError('Lūdzu ievadiet kodu.');
             return false;
         }
 
-        if (joined === REQUIRED_CODE) {
-            setCodeError(null);
-            setIsCodeVerified(true);
-            return true;
-        }
+        // normalize: remove extra spaces, upper-case
+        const normalized = raw.toUpperCase();
 
-        setCodeError('Neatbilstošs kods. Mēģiniet vēlreiz.');
-        return false;
-    };
-
-    const resetCode = () => {
-        setCodeDigits(['', '', '', '', '', '']);
+        setVerifying(true);
         setCodeError(null);
-        inputRefs.current[0]?.focus();
+
+        try {
+            const resp = await axios.post('/form-codes/verify', {
+                code: normalized,
+            });
+
+            if (resp.data?.success) {
+                setIsCodeVerified(true);
+                setCodeError(null);
+                return true;
+            } else {
+                setCodeError(resp.data?.message ?? 'Kods nav derīgs.');
+                return false;
+            }
+        } catch (err: any) {
+            if (axios.isAxiosError(err)) {
+                const status = err.response?.status;
+                const data = err.response?.data;
+                if (status === 422 && data?.message) {
+                    setCodeError(data.message);
+                } else if (data?.message) {
+                    setCodeError(data.message);
+                } else {
+                    setCodeError('Servera kļūda. Mēģiniet vēlāk.');
+                }
+            } else {
+                setCodeError('Neparedzēta kļūda.');
+            }
+            return false;
+        } finally {
+            setVerifying(false);
+        }
     };
 
     return (
@@ -426,51 +388,52 @@ export default function Anketa() {
 
                     {/* CODE GATE */}
                     {!isCodeVerified && (
-                        <div className="mb-8 flex flex-col items-center gap-6">
-                            <p className="text-center text-slate-700 max-w-xl">
-                                Lai piekļūtu anketai, lūdzu ievadiet 6 ciparu kodu, ko saņēmāt no mūsu komandas.
-                            </p>
+                    <div className="mb-8 flex flex-col items-center gap-6">
+                        <p className="text-center text-slate-700 max-w-xl">
+                        Lai piekļūtu anketai, lūdzu ievadiet kodu, ko saņēmāt no mūsu komandas.
+                        </p>
 
-                            <div className="flex gap-3">
-                                {codeDigits.map((d, i) => (
-                                    <input
-                                        key={i}
-                                        ref={(el) => {
-                                            inputRefs.current[i] = el;
-                                        }}
-                                        inputMode="numeric"
-                                        pattern="[0-9]*"
-                                        maxLength={1}
-                                        value={d}
-                                        onChange={(e) => handleCodeChange(e.target.value, i)}
-                                        onKeyDown={(e) => handleKeyDown(e, i)}
-                                        onPaste={handlePaste}
-                                        className="h-14 w-12 text-center rounded-lg border border-slate-300 bg-white text-xl font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                        aria-label={`code-digit-${i + 1}`}
-                                    />
-                                ))}
-                            </div>
+                        <div className="flex w-full max-w-md items-center gap-3">
+                        <input
+                            type="text"
+                            inputMode="text" 
+                            value={codeInput}
+                            onChange={(e) => setCodeInput(e.target.value)}
+                            placeholder="Ievadiet kodu (piem., 38879AFKY5YP)"
+                            className="flex-1 h-12 rounded-lg border border-slate-300 bg-white px-4 text-center text-lg font-mono text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500"
+                            aria-label="form-code-input"
+                            disabled={verifying}
+                        />
 
-                            {codeError && <p className="text-sm text-red-600">{codeError}</p>}
-
-                            <div className="flex gap-3">
-                                <button
-                                    type="button"
-                                    onClick={verifyCode}
-                                    className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow hover:bg-emerald-700"
-                                >
-                                    Iesniegt kodu
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={resetCode}
-                                    className="inline-flex items-center justify-center rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-                                >
-                                    Notīrīt
-                                </button>
-                            </div>
+                        <button
+                            type="button"
+                            onClick={verifyCode}
+                            disabled={verifying}
+                            className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow hover:bg-emerald-700 disabled:opacity-60"
+                        >
+                            {verifying ? (
+                            <>
+                                <svg className="animate-spin w-4 h-4 mr-2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /></svg>
+                                Pārbaudīt...
+                            </>
+                            ) : (
+                            'Iesniegt kodu'
+                            )}
+                        </button>
                         </div>
+
+                        {codeError && <p className="text-sm text-red-600 mt-2">{codeError}</p>}
+
+                        <div className="flex gap-3 mt-2">
+                        <button
+                            type="button"
+                            onClick={() => { setCodeInput(''); setCodeError(null); }}
+                            className="inline-flex items-center justify-center rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                        >
+                            Notīrīt
+                        </button>
+                        </div>
+                    </div>
                     )}
 
                     {/* QUESTIONNAIRE */}

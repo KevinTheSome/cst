@@ -56,7 +56,6 @@ const navSections: NavSection[] = [
             { id: 'requests', label: 'Requests', description: 'Approvals & forms', href: '/admin/requests', badge: '3 pending', badgeTone: 'amber' },
             { id: 'form-codes', label: 'Form codes', description: 'Survey code generator', href: '/admin/form-codes' },
             { id: 'team', label: 'Team heatmap', description: 'Availability & focus', href: '/admin/team-heatmap' },
-
             {
                 id: 'surveys-public',
                 label: 'Publiskās',

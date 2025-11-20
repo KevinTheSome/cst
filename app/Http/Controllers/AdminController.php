@@ -30,6 +30,7 @@ class AdminController extends Controller
 
     if ($admin && Hash::check($request->password, $admin->password)) {
         $request->session()->put('is_admin', true);
+        $request->session()->put('admin_id', $admin->id); 
 
         return response()->json([
             'message' => 'Logged in!',
