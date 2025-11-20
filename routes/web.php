@@ -10,7 +10,6 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FormCodeController;
 use App\Http\Middleware\AdminMiddleware;
 
-
 if (!function_exists('findPageComponent')) {
     function findPageComponent(string $name): string
     {
@@ -58,29 +57,22 @@ Route::get('/', function (Request $request) {
     // Render page and pass plain data
     return Inertia::render($component, [
         'detectedCountry' => $country,
-        'locale' => $locale,
+        'locale'          => $locale,
     ]);
 })->name('home');
 
 Route::get('/test', [TestController::class, 'test'])->name('test');
 
-Route::get('/contacts', fn() => Inertia::render('contacts'))->name('contacts');
+Route::get('/contacts', fn () => Inertia::render('contacts'))->name('contacts');
+Route::get('/pievienojies-mums', fn () => Inertia::render('pievienojiesMums'))->name('pievienojies-mums');
+Route::get('/biocipu-zinatniska-laboratorija', fn () => Inertia::render('biocipuZinatniskaLaboratorija'))->name('biocipu-zinatniska-laboratorija');
+Route::get('/musu-grupa', fn () => Inertia::render('musuGrupa'))->name('musu-grupa');
+Route::get('/publikacijas', fn () => Inertia::render('publikacijas'))->name('publikacijas');
+Route::get('/projects', fn () => Inertia::render('projects'))->name('projects');
+Route::get('/lablife', fn () => Inertia::render('labLife'))->name('lablife');
 
-Route::get('/pievienojies-mums', fn() => Inertia::render('pievienojiesMums'))->name('pievienojies-mums');
-
-Route::get('/biocipu-zinatniska-laboratorija', fn() => Inertia::render('biocipuZinatniskaLaboratorija'))->name('biocipu-zinatniska-laboratorija');
-
-Route::get('/musu-grupa', fn() => Inertia::render('musuGrupa'))->name('musu-grupa');
-
-Route::get('/publikacijas', fn() => Inertia::render('publikacijas'))->name('publikacijas');
-
-Route::get('/projects', fn() => Inertia::render('projects'))->name('projects');
-
-Route::get('/lablife', fn() => Inertia::render('labLife'))->name('lablife');
-
-Route::get('/anketa', fn() => Inertia::render('anketa'))->name('anketa');
-
-Route::get('/questions', fn() => Inertia::render('questions'))->name('questions');
+Route::get('/anketa', fn () => Inertia::render('anketa'))->name('anketa');
+Route::get('/questions', fn () => Inertia::render('questions'))->name('questions');
 
 Route::post('/form-codes/verify', [FormCodeController::class, 'verify'])->name('formCodes.verify');
 
@@ -107,7 +99,16 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
     Route::get('/anketa/create', [AnketaController::class, 'create'])->name('admin.anketa.create');
     Route::post('/anketa/store', [AnketaController::class, 'store'])->name('admin.anketa.store');
-    Route::get('/anketa', [AnketaController::class, 'show'])->name('admin.anketa');
-    Route::get('/anketa/show/{id}', [AnketaController::class, 'showAnketu'])->name('admin.anketa.show');
 
+    // SHOW ONE
+    Route::get('/anketa/show/{id}', [AnketaController::class, 'show'])->name('admin.anketa.show');
+
+    // EDIT + UPDATE
+    Route::get('/anketa/edit/{id}', [AnketaController::class, 'edit'])->name('admin.anketa.edit');
+    Route::put('/anketa/update/{id}', [AnketaController::class, 'update'])->name('admin.anketa.update');
+
+    // DELETE
+    Route::delete('/anketa/destroy/{id}', [AnketaController::class, 'destroy'])->name('admin.anketa.destroy');
 });
+
+
