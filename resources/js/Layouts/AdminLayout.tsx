@@ -78,7 +78,14 @@ const navSections: NavSection[] = [
         label: 'Systems',
         items: [
             { id: 'integrations', label: 'Integrations', description: 'APIs & automations', href: '/admin/integrations' },
-            { id: 'security', label: 'Security', description: 'Roles, audit trail', href: '/admin/security', badge: 'Shielded', badgeTone: 'emerald' },
+            {
+                id: 'security',
+                label: 'Security',
+                description: 'Roles, audit trail',
+                href: '/admin/security',
+                badge: 'Shielded',
+                badgeTone: 'emerald',
+            },
             { id: 'workspace', label: 'Workspace', description: 'Brand, preferences', href: '/admin/workspace' },
         ],
     },
@@ -167,7 +174,7 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
         <div className="space-y-8">
             {navSections.map((section) => (
                 <div key={section.label} className="space-y-4">
-                    <p className="text-xs uppercase tracking-[0.25em] text-white/50">{section.label}</p>
+                    <p className="text-xs tracking-[0.25em] text-white/50 uppercase">{section.label}</p>
                     <div className="space-y-3">
                         {section.items.map((item) => {
                             const isActive = url === item.href || (item.href !== '/admin' && url.startsWith(item.href));
@@ -197,7 +204,7 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
                                         </div>
                                         {item.badge && item.badgeTone && (
                                             <span
-                                                className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${badgeToneClasses[item.badgeTone]}`}
+                                                className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold tracking-wide uppercase ${badgeToneClasses[item.badgeTone]}`}
                                             >
                                                 {item.badge}
                                             </span>
@@ -219,12 +226,12 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
                 aria-busy={loaderVisible}
                 className={`flex flex-1 transition-opacity duration-500 ${loaderVisible ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
             >
-                <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 pb-12 pt-10 sm:px-6 lg:flex-row lg:px-12">
+                <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 pt-10 pb-12 sm:px-6 lg:flex-row lg:px-12">
                     <div className="lg:hidden">
                         <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-white/5 to-white/0 px-6 py-5">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-xs uppercase tracking-[0.3em] text-white/60">Command center</p>
+                                    <p className="text-xs tracking-[0.3em] text-white/60 uppercase">Command center</p>
                                     <p className="text-xl font-semibold text-white">{cardTitle}</p>
                                 </div>
                                 <button
@@ -266,7 +273,7 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
                         <div className="flex-1 overflow-y-auto pr-1">{renderNavSections()}</div>
                         <div className="mt-8 space-y-4">
                             <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/0 p-4 text-sm text-white/80">
-                                <p className="text-xs uppercase tracking-[0.4em] text-white/50">Focus</p>
+                                <p className="text-xs tracking-[0.4em] text-white/50 uppercase">Focus</p>
                                 <p className="mt-2 text-sm font-semibold text-white">Next sync 15:30</p>
                                 <p className="text-xs text-white/60">Labs leadership update</p>
                             </div>
