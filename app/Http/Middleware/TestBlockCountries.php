@@ -13,6 +13,15 @@ class TestBlockCountries
 {
     public function handle(Request $request, Closure $next): Response
     {
+
+        if ($request->has('debug_country')) {
+            $country = strtoupper($request->query('debug_country'));
+            $ip = $request->query('debug_ip', '127.0.0.1'); // optional IP param
+                    
+            $request->merge(['country' => $country]);
+            return $next($request);
+        }
+
         $ip = $this->resolveClientIp($request);
         if (
             (in_array($ip, ['127.0.0.1', '::1']) || app()->environment('local')) &&
