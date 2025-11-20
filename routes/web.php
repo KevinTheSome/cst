@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AnketaController;
 use App\Http\Middleware\AdminMiddleware;
 
 
@@ -39,7 +40,7 @@ Route::get('/', function (Request $request) {
     $country = $request->attributes->get('geo_country', config('geo.default_country', 'US'));
 
     // Determine locale based on country map
-    $locale = session('locale') 
+    $locale = session('locale')
     ?? (config('geo.map')[$country] ?? config('geo.default_locale', 'lv'));
 
     app()->setLocale($locale);
@@ -98,4 +99,19 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/security', fn() => Inertia::render('Admin/security'))->name('admin.security');
     Route::get('/team-heatmap', fn() => Inertia::render('Admin/teamHeatmap'))->name('admin.team-heatmap');
     Route::get('/workspace', fn() => Inertia::render('Admin/workspace'))->name('admin.workspace');
+    Route::get('/form-codes', [\App\Http\Controllers\FormCodeController::class, 'index'])->name('admin.formCodes');
+    Route::post('/form-codes', [\App\Http\Controllers\FormCodeController::class, 'store'])->name('admin.formCodes.store');
+    Route::get('/anketa', [AnketaController::class, 'index'])->name('admin.anketa');
+    Route::get('/anketa/create', [AnketaController::class, 'create'])->name('admin.anketa.create');
+    Route::post('/anketa/store', [AnketaController::class, 'store'])->name('admin.anketa.store');
+
+    // SHOW ONE
+    Route::get('/anketa/show/{id}', [AnketaController::class, 'show'])->name('admin.anketa.show');
+
+    // EDIT + UPDATE
+    Route::get('/anketa/edit/{id}', [AnketaController::class, 'edit'])->name('admin.anketa.edit');
+    Route::put('/anketa/update/{id}', [AnketaController::class, 'update'])->name('admin.anketa.update');
+
+    // DELETE
+    Route::delete('/anketa/destroy/{id}', [AnketaController::class, 'destroy'])->name('admin.anketa.destroy');
 });
