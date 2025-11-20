@@ -97,7 +97,7 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/form-codes', [FormCodeController::class, 'index'])->name('admin.formCodes');
     Route::post('/form-codes', [FormCodeController::class, 'store'])->name('admin.formCodes.store');
 
-    Route::get('/anketa', [AnketaController::class, 'index'])->name('admin.anketa.index');
+    Route::get('/anketa', [AnketaController::class, 'index'])->name('admin.anketa');
     Route::get('/anketa/create', [AnketaController::class, 'create'])->name('admin.anketa.create');
     Route::post('/anketa/store', [AnketaController::class, 'store'])->name('admin.anketa.store');
 
