@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FormCode extends Model
 {
@@ -14,4 +15,18 @@ class FormCode extends Model
         'expiration_date',
         'uses'
     ];
+
+    protected $casts = [
+        'expiration_date' => 'datetime',
+        'uses' => 'integer',
+    ];
+
+    /**
+     * The admin user who created this code.
+     * Note: we store the user id in `user_created` (not standard `user_id`), so specify the foreign key.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\User::class, 'user_created');
+    }
 }
