@@ -7,91 +7,107 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class TestBlockCountries
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
-     */
     public function handle(Request $request, Closure $next): Response
     {
-        // Debug simulation via query string (works in prod too)
-        if ($request->has('debug_ip')) {
-            $ip = (string) $request->query('debug_ip');
-            $country = (string) $request->query('debug_country', 'XX'); // default unknown
-        } else {
-            // Extract client IP safely
-            $ip = $this->resolveClientIp($request);
 
-            // Skip on true localhost/dev
-            if (in_array($ip, ['127.0.0.1', '::1'], true) || app()->environment('local')) {
-                return $next($request);
+        if ($request->has('debug_country')) {
+            $country = strtoupper($request->query('debug_country'));
+            $ip = $request->query('debug_ip', '127.0.0.1'); // optional IP param
+                    
+            $request->merge(['country' => $country]);
+            return $next($request);
+        }
+
+        $ip = $this->resolveClientIp($request);
+        if (
+            (in_array($ip, ['127.0.0.1', '::1']) || app()->environment('local')) &&
+            !config('geo.force_block_local', false)
+        ) 
+        $country = $this->lookupCountry($ip);
+
+        $blocked = config('geo.blocked_countries', ['RU', 'CN', 'US']);
+        $blockOnNull = config('geo.block_on_null', false);
+
+        if (($country === null && $blockOnNull) || ($country && in_array($country, $blocked))) {
+            return $this->blockedResponse($ip, $country);
+        }
+
+        $request->merge(['country' => $country]);
+        return $next($request);
+    }
+
+    private function lookupCountry(string $ip): ?string
+    {
+        $cacheKey = "country_{$ip}";
+        if ($cached = Cache::get($cacheKey)) {
+            return $cached;
+        }
+
+        try {
+            // Use ipwho.is
+            $resp = Http::timeout(3)
+                ->acceptJson()
+                ->get("https://ipwho.is/{$ip}?fields=country_code");
+
+            $code = $resp->json('country_code');
+            $code = $code ? strtoupper($code) : null;
+
+            if ($code) {
+                Cache::put($cacheKey, $code, now()->addHours(24));
+                return $code;
             }
 
-            // Cache country per IP
-            $cacheKey = "country_{$ip}";
-            $ttlSeconds = 24 * 60 * 60; // 24h
-
-            $country = Cache::remember($cacheKey, $ttlSeconds, function () use ($ip) {
-                try {
-                    // Use HTTPS, small timeout, and only needed field
-                    $resp = Http::timeout(3)
-                        ->acceptJson()
-                        ->get("https://ip-api.com/json/{$ip}?fields=countryCode,status");
-
-                    if (!$resp->ok()) {
-                        return null;
-                    }
-
-                    if (($resp->json('status') ?? '') !== 'success') {
-                        return null;
-                    }
-
-                    return $resp->json('countryCode') ?: null;
-                } catch (\Throwable $e) {
-                    // Network failure -> treat as unknown
-                    return null;
-                }
-            });
+            Log::warning("[GeoBlock] Lookup returned no country_code for IP={$ip}");
+        } catch (\Throwable $e) {
+            Log::error("[GeoBlock] Lookup error for IP={$ip}: {$e->getMessage()}");
         }
 
-        // Config-driven block list
-        $blockedCountries = (array) config('geo.blocked_countries', ['RU', 'CN']);
+        return null;
+    }
 
-        if ($country !== null && in_array($country, $blockedCountries, true)) {
-             return response('
-                <h1>Access Blocked</h1>
-                <p>Country <strong>' . $country . '</strong> is not allowed.</p>
-                <p>IP: ' . $ip . '</p>
-                <small>Remove ?debug_ip=... from URL to disable simulation.</small>
-            ', 403);
-        }
+    private function blockedResponse(string $ip, ?string $country): Response
+    {
+        $country = $country ?? 'Unknown';
 
-        // Optional: if country lookup failed (null), you can choose to block by default:
-        // if ($country === null) { return response('Unable to determine country', 403); }
+        $html = <<<HTML
+        <!doctype html>
+        <html lang="en"><head><meta charset="utf-8">
+        <title>Access Blocked</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <style>
+            body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif; margin: 2rem; color:#222; }
+            .card { max-width: 720px; margin: auto; padding: 1.5rem; border: 1px solid #eee; border-radius: 10px; }
+            h1 { margin: 0 0 .5rem }
+            .muted { color:#666 }
+            code { background:#f6f8fa; padding:.2rem .4rem; border-radius:6px; }
+        </style>
+        </head><body>
+        <div class="card">
+            <h1>Access Blocked</h1>
+            <p>Country <strong>{$country}</strong> is not allowed.</p>
+            <p class="muted">IP: <code>{$ip}</code></p>
+        </div>
+        </body></html>
+        HTML;
 
-        return $next($request);
+        return response($html, 403)->header('Content-Type', 'text/html; charset=utf-8');
     }
 
     private function resolveClientIp(Request $request): string
     {
-        // Prefer Cloudflare header
-        $cfIp = $request->header('CF-Connecting-IP');
-        if (is_string($cfIp) && $cfIp !== '') {
-            return $cfIp;
+        if ($cf = $request->header('CF-Connecting-IP')) {
+            return trim($cf);
         }
-
-        // Parse X-Forwarded-For : first IP is the client
-        $xff = $request->header('X-Forwarded-For');
-        if (is_string($xff) && $xff !== '') {
+        if ($xff = $request->header('X-Forwarded-For')) {
             $first = trim(explode(',', $xff)[0]);
             if ($first !== '') {
                 return $first;
             }
         }
-
         return $request->ip();
     }
 }
