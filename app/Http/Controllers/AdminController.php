@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Admin;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
 
 class AdminController extends Controller
 {
@@ -18,30 +20,27 @@ class AdminController extends Controller
     }
 
     public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required',
-            'password' => 'required',
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
 
-        // TEMP TEST ADMIN
-        $testEmail = "admin@test.com";
-        $testPassword = "secret123"; // plaintext for now
+    $admin = Admin::where('email', $request->email)->first();
 
-        if ($request->email === $testEmail && $request->password === $testPassword) {
-            $request->session()->put('is_admin', true);
-
-            return response()->json([
-                'message' => 'Logged in!',
-                'redirect' => route('admin.dashboard')
-            ]);
-        }
+    if ($admin && Hash::check($request->password, $admin->password)) {
+        $request->session()->put('is_admin', true);
 
         return response()->json([
-            'message' => 'Invalid credentials.'
-        ], 401);
+            'message' => 'Logged in!',
+            'redirect' => route('admin.dashboard')
+        ]);
     }
 
+    return response()->json([
+        'message' => 'Invalid credentials.'
+    ], 401);
+}
     public function missions()
     {
         return Inertia::render('Admin/missions');
