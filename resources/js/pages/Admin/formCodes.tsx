@@ -25,6 +25,8 @@ export default function FormCodes({ codes: initialCodes }: Props) {
   const [expirationHours, setExpirationHours] = useState<number>(24); // default 24 hours (1 day)
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string[] | undefined>>({});
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<FormCode | null>(null);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -46,18 +48,14 @@ export default function FormCodes({ codes: initialCodes }: Props) {
         // fallback: refresh list if backend didn't return code object
         // optionally you could reload via Inertia.visit or fetch a fresh list
       }
-
-      // reset form
       setUses(1);
       setExpirationHours(24);
     } catch (err: any) {
       if (axios.isAxiosError(err)) {
         const resp = err.response;
         if (resp && resp.status === 422 && resp.data?.errors) {
-          // validation errors from Laravel
           setErrors(resp.data.errors);
         } else {
-          // generic error - you might want to toast this
           console.error('Submission error', resp?.data ?? err.message);
         }
       } else {
@@ -65,6 +63,21 @@ export default function FormCodes({ codes: initialCodes }: Props) {
       }
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function confirmDelete() {
+    if (!pendingDelete || deletingId) return;
+
+    try {
+      setDeletingId(pendingDelete.id);
+      await axios.delete(`/admin/form-codes/${pendingDelete.id}`);
+      setCodes((prev) => prev.filter((codeItem) => codeItem.id !== pendingDelete.id));
+      setPendingDelete(null);
+    } catch (error) {
+      console.error('Unable to delete code', error);
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -77,99 +90,187 @@ export default function FormCodes({ codes: initialCodes }: Props) {
   ];
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Survey Codes</h1>
-        <Link href="/admin" className="text-sm underline">Admin</Link>
+    <div className="mx-auto max-w-5xl space-y-8 px-6 py-10 text-white">
+      <div className="rounded-[32px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900/60 to-slate-900/30 p-8 shadow-2xl shadow-black/40">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.4em] text-white/50">Code vault</p>
+            <h1 className="mt-2 text-3xl font-semibold">Piekļuves kodi anketai</h1>
+            <p className="mt-3 max-w-2xl text-sm text-white/70">
+              Ģenerējiet un pārraugiet laika ierobežotus piekļuves kodus, lai kontrolētu, kurš var redzēt pacientu anketu.
+            </p>
+          </div>
+          <Link
+            href="/admin"
+            className="inline-flex items-center rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white/80 transition hover:text-white"
+          >
+            ← Atpakaļ uz paneli
+          </Link>
+        </div>
       </div>
 
-      <form onSubmit={submit} className="space-y-4 mb-8">
-        <div>
-          <label className="block text-sm font-semibold">Uses</label>
-          <input
-            type="number"
-            value={uses}
-            onChange={(e) => setUses(Number(e.target.value))}
-            min={1}
-            className="border p-2 rounded w-full"
-            disabled={submitting}
-          />
-          {errors.uses && <p className="text-rose-300 text-sm mt-1">{errors.uses.join(', ')}</p>}
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold">Expiration (hours)</label>
-
-          <div className="flex gap-2 mb-2">
-            {presetButtons.map((p) => (
-              <button
-                key={p.value}
-                type="button"
-                className={`text-sm px-3 py-1 rounded border ${expirationHours === p.value ? 'bg-white/10 border-white/30' : 'bg-white/0 border-white/5'}`}
-                onClick={() => setExpirationHours(p.value)}
-                disabled={submitting}
-              >
-                {p.label}
-              </button>
-            ))}
+      <div className="grid gap-6 lg:grid-cols-[1.1fr,0.9fr]">
+        <form onSubmit={submit} className="space-y-6 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl shadow-black/30">
+          <div>
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-white">Izveidot jaunu kodu</h2>
+              <span className="text-xs uppercase tracking-[0.3em] text-white/50">1. solis</span>
+            </div>
+            <p className="mt-2 text-sm text-white/70">Norādiet maksimālo izmantošanas reižu skaitu un derīguma ilgumu.</p>
           </div>
 
-          <input
-            type="number"
-            value={expirationHours}
-            onChange={(e) => setExpirationHours(Number(e.target.value))}
-            min={1}
-            className="border p-2 rounded w-full"
-            disabled={submitting}
-          />
-          <p className="text-xs text-gray-300 mt-1">Enter how many hours this code should be valid for (e.g., 24 = 1 day)</p>
-          {errors.expiration_hours && <p className="text-rose-300 text-sm mt-1">{errors.expiration_hours.join(', ')}</p>}
-        </div>
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-white/80">Maksimālās izmantošanas reizes</label>
+            <input
+              type="number"
+              value={uses}
+              onChange={(e) => setUses(Number(e.target.value))}
+              min={1}
+              className="w-full rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+              disabled={submitting}
+            />
+            {errors.uses && <p className="text-sm text-rose-300">{errors.uses.join(', ')}</p>}
+          </div>
 
-        <div>
+          <div className="space-y-3">
+            <label className="text-sm font-semibold text-white/80">Derīgums stundās</label>
+            <div className="flex flex-wrap gap-2">
+              {presetButtons.map((p) => (
+                <button
+                  key={p.value}
+                  type="button"
+                  className={`rounded-full px-3 py-2 text-sm font-semibold transition ${
+                    expirationHours === p.value ? 'bg-emerald-500/20 text-emerald-200 ring-2 ring-emerald-400/50' : 'bg-white/5 text-white/70 hover:bg-white/10'
+                  }`}
+                  onClick={() => setExpirationHours(p.value)}
+                  disabled={submitting}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+            <input
+              type="number"
+              value={expirationHours}
+              onChange={(e) => setExpirationHours(Number(e.target.value))}
+              min={1}
+              className="w-full rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+              disabled={submitting}
+            />
+            <p className="text-xs text-white/60">Piemēram, 24 = 24 stundas, 48 = 2 dienas.</p>
+            {errors.expiration_hours && <p className="text-sm text-rose-300">{errors.expiration_hours.join(', ')}</p>}
+          </div>
+
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2"
+            className="inline-flex items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-slate-900 shadow-lg shadow-emerald-500/30 transition hover:bg-emerald-400 disabled:opacity-60"
             disabled={submitting}
           >
             {submitting ? (
               <>
-                <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /></svg>
-                Creating…
+                <svg className="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                </svg>
+                Veido kodu…
               </>
             ) : (
-              'Create Code'
+              'Ģenerēt kodu'
             )}
           </button>
+        </form>
+
+        <div className="space-y-4 rounded-3xl border border-white/10 bg-slate-950/60 p-6 shadow-xl shadow-black/30">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-white/60">Statistika</p>
+              <p className="text-lg font-semibold text-white">Visu kodu kopskats</p>
+            </div>
+            <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-white/70">{codes.length} kodi</span>
+          </div>
+          <div className="space-y-3 text-sm text-white/70">
+            <p>Vidējais atļauto izmantošanas reižu skaits: {codes.length ? Math.round(codes.reduce((sum, c) => sum + c.uses, 0) / codes.length) : 0}</p>
+            <p>Pēdējais izveidotais kods: {codes[0] ? new Date(codes[0].created_at).toLocaleString() : '—'}</p>
+          </div>
+          <p className="rounded-2xl border border-white/10 bg-emerald-500/10 px-4 py-3 text-xs text-emerald-100">
+            Kodus var kopīgot ar pacientiem, lai viņi aizpildītu anketu noteiktā laika periodā.
+          </p>
         </div>
-      </form>
-
-      <h2 className="text-xl font-bold mb-2">Existing Codes</h2>
-
-      <div className="overflow-x-auto">
-        <table className="w-full mt-2 border text-left">
-          <thead>
-            <tr>
-              <th className="border p-2">Code</th>
-              <th className="border p-2">Uses</th>
-              <th className="border p-2">Creator</th>
-              <th className="border p-2">Expires</th>
-              <th className="border p-2">Created</th>
-            </tr>
-          </thead>
-          <tbody>
-            {codes.map((code) => (
-              <tr key={code.id}>
-                <td className="border p-2 font-mono">{code.code}</td>
-                <td className="border p-2">{code.uses}</td>
-                <td className="border p-2">{code.admin?.email ?? ''}</td>
-                <td className="border p-2">{new Date(code.expiration_date).toLocaleString()}</td>
-                <td className="border p-2">{new Date(code.created_at).toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
+
+      <div className="space-y-4 rounded-[32px] border border-white/10 bg-white/5 p-6 shadow-xl shadow-black/30">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-white/60">Eksistējošie kodi</p>
+            <h2 className="text-2xl font-semibold text-white">Aktīvo kodu saraksts</h2>
+          </div>
+          <p className="text-sm text-white/60">Sakārtots pēc jaunākā</p>
+        </div>
+        <div className="overflow-hidden rounded-2xl border border-white/10">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-slate-950/50 text-xs uppercase tracking-[0.25em] text-white/50">
+                <th className="px-4 py-3 text-left font-semibold">Kods</th>
+                <th className="px-4 py-3 text-left font-semibold">Izmantošanas reizes</th>
+                <th className="px-4 py-3 text-left font-semibold">Izveidoja</th>
+                <th className="px-4 py-3 text-left font-semibold">Derīgs līdz</th>
+                <th className="px-4 py-3 text-left font-semibold">Izveidots</th>
+                <th className="px-4 py-3 text-right font-semibold">Darbība</th>
+              </tr>
+            </thead>
+            <tbody>
+              {codes.map((code, index) => (
+                <tr key={code.id} className={`text-sm ${index % 2 === 0 ? 'bg-white/5' : 'bg-white/[0.02]'}`}>
+                  <td className="px-4 py-3 font-mono text-base text-white">{code.code}</td>
+                  <td className="px-4 py-3 text-white/80">{code.uses}</td>
+                  <td className="px-4 py-3 text-white/80">{code.admin?.email ?? '—'}</td>
+                  <td className="px-4 py-3 text-white/80">{new Date(code.expiration_date).toLocaleString()}</td>
+                  <td className="px-4 py-3 text-white/80">{new Date(code.created_at).toLocaleString()}</td>
+                  <td className="px-4 py-3 text-right">
+                    <button
+                      type="button"
+                      onClick={() => setPendingDelete(code)}
+                      disabled={deletingId === code.id}
+                      className="inline-flex items-center rounded-full border border-red-400/40 px-3 py-1 text-xs font-semibold text-red-200 transition hover:bg-red-500/10 disabled:opacity-60"
+                    >
+                      Dzēst
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {pendingDelete && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 px-4">
+          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-slate-950/90 p-6 text-white shadow-2xl shadow-black/50">
+            <h3 className="text-xl font-semibold">Dzēst kodu?</h3>
+            <p className="mt-2 text-sm text-white/70">
+              Jūs gatavojaties neatgriezeniski dzēst kodu <span className="font-mono text-white">{pendingDelete.code}</span>. Lietotāji ar šo kodu
+              vairs nevarēs piekļūt anketei.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => setPendingDelete(null)}
+                disabled={deletingId === pendingDelete.id}
+                className="inline-flex flex-1 items-center justify-center rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/5"
+              >
+                Atcelt
+              </button>
+              <button
+                type="button"
+                onClick={confirmDelete}
+                disabled={deletingId === pendingDelete.id}
+                className="inline-flex flex-1 items-center justify-center rounded-full bg-red-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-red-500/40 transition hover:bg-red-400 disabled:opacity-60"
+              >
+                {deletingId === pendingDelete.id ? 'Dzēš…' : 'Apstiprināt dzēšanu'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

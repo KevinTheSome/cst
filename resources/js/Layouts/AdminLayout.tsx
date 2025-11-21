@@ -239,7 +239,7 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
                         )}
                     </div>
 
-                    <aside className="hidden w-72 flex-shrink-0 flex-col rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur lg:flex">
+                    <aside className="hidden w-72 flex-shrink-0 flex-col rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur lg:flex lg:sticky lg:top-10 lg:max-h-[calc(100vh-5rem)]">
                         <div className="mb-8 flex items-center gap-3">
                             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400/40 to-sky-500/40 text-lg font-semibold text-white">
                                 CST
