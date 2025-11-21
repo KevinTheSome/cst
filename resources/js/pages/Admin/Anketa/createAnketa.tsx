@@ -118,7 +118,7 @@ export default function CreateAnketa() {
             visibility,
             schema: {
                 title,
-                fields,
+                fields: Array.isArray(fields) ? fields : [],   // FIX
             },
         };
 
