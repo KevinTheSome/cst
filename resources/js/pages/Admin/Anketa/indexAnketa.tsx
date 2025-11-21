@@ -41,30 +41,7 @@ function LanguageSwitcher() {
         }
     };
 
-    return (
-        <div className="mb-2 flex gap-2">
-            <button
-                onClick={() => switchLanguage('lv')}
-                className={`rounded px-4 py-2 text-xs font-semibold transition disabled:opacity-50 ${
-                    currentLocale === 'lv'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-200 text-gray-700 hover:bg-green-200'
-                }`}
-            >
-                🇱🇻 Latviešu
-            </button>
-            <button
-                onClick={() => switchLanguage('en')}
-                className={`rounded px-4 py-2 text-xs font-semibold transition disabled:opacity-50 ${
-                    currentLocale === 'en'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-200 text-gray-700 hover:bg-green-200'
-                }`}
-            >
-                🇬🇧 English
-            </button>
-        </div>
-    );
+    
 }
 
 function FormsList({ formResults }: FormsListProps) {
@@ -101,7 +78,7 @@ function FormsList({ formResults }: FormsListProps) {
             <div className="space-y-6 text-white">
                 {/* Language switcher at top-right */}
                 <div className="flex justify-end">
-                    <LanguageSwitcher />
+                   
                 </div>
 
                 {/* Header */}

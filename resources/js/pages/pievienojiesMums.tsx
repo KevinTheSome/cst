@@ -21,7 +21,7 @@ const resolveContactRoute = () => {
         }
     }
 
-    return '/contact';
+    return '/pievienojies-mums';
 };
 
 export default function PievienojiesMums() {
@@ -53,11 +53,13 @@ export default function PievienojiesMums() {
 
     const isDisabled = processing || !data.email.trim() || !data.message.trim();
 
+    const gradientBackground = 'bg-gradient-to-br from-[#ecf1ff] via-[#f6fbf8] to-[#eef8f0]';
+
     return (
         <>
             <Head title="Pievienojies mums" />
 
-            <div className="relative overflow-hidden bg-gradient-to-br from-[#ecf1ff] via-[#f6fbf8] to-[#eef8f0] py-20">
+            <div className={`relative min-h-screen overflow-hidden ${gradientBackground} py-20`}>
                 <div className="absolute inset-0 opacity-60">
                     <div className="absolute -top-10 right-[-80px] h-60 w-60 rounded-full bg-[#c6d8ff] blur-3xl" />
                     <div className="absolute bottom-10 left-[-60px] h-72 w-72 rounded-full bg-[#adefd1] blur-3xl" />
