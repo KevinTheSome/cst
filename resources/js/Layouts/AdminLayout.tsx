@@ -35,14 +35,12 @@ const navSections: NavSection[] = [
         label: 'Command',
         items: [
             { id: 'dashboard', label: 'Control room', description: 'Live signals & status', href: '/admin', badge: 'Live', badgeTone: 'emerald' },
-            { id: 'Tracker', label: 'Tracker', description: 'See what users are looking more in web', href: '/admin/missions', badge: 'Live', badgeTone: 'violet' },
-            { id: 'insights', label: 'Insights', description: 'Intelligence briefings', href: '/admin/insights' },
+            { id: 'Tracker', label: 'Tracker', description: 'See what users are looking more in web', href: '/admin/missions', badge: 'Live', badgeTone: 'violet' }
         ],
     },
     {
         label: 'Anketas',
         items: [
-            // 🔹 NEW – link to forms list / CRUD
             {
                 id: 'all-forms',
                 label: 'Visas anketas',
@@ -53,31 +51,13 @@ const navSections: NavSection[] = [
             },
 
             { id: 'content', label: 'Content studio', description: 'Posts, blogs, media', href: '/admin/content-studio', badge: '12 drafts', badgeTone: 'sky' },
-            { id: 'requests', label: 'Requests', description: 'Approvals & forms', href: '/admin/requests', badge: '3 pending', badgeTone: 'amber' },
             { id: 'form-codes', label: 'Form codes', description: 'Survey code generator', href: '/admin/form-codes' },
-            { id: 'team', label: 'Team heatmap', description: 'Availability & focus', href: '/admin/team-heatmap' },
-            {
-                id: 'surveys-public',
-                label: 'Publiskās',
-                description: 'Publiskās anketas',
-                href: '/admin/Anketa/publiskas', // you can adjust this later to whatever route you add
-                badge: 'Jaunas',
-                badgeTone: 'sky',
-            },
-            {
-                id: 'surveys-private',
-                label: 'Privātās',
-                description: 'Privātās anketas',
-                href: '/admin/anketas/privatas', // same here – placeholder until you make those routes
-                badge: 'Drošas',
-                badgeTone: 'amber',
-            },
+
         ],
     },
     {
-        label: 'Systems',
+        label: 'Users',
         items: [
-            { id: 'integrations', label: 'Integrations', description: 'APIs & automations', href: '/admin/integrations' },
             {
                 id: 'security',
                 label: 'Security',
@@ -86,7 +66,6 @@ const navSections: NavSection[] = [
                 badge: 'Shielded',
                 badgeTone: 'emerald',
             },
-            { id: 'workspace', label: 'Workspace', description: 'Brand, preferences', href: '/admin/workspace' },
         ],
     },
 ];
