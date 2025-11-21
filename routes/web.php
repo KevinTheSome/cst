@@ -76,7 +76,7 @@ Route::get('/questions', fn () => Inertia::render('questions'))->name('questions
 
 Route::post('/form-codes/verify', [FormCodeController::class, 'verify'])->name('formCodes.verify');
 
-Route::get('/admin/login', fn() => Inertia::render('Admin/Login'))->name('admin.login');
+Route::get('/admin/login', fn() => Inertia::render('Admin/login'))->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
 
 Route::get('/admin/logout', function () {

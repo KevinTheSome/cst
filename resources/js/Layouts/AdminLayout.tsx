@@ -1,5 +1,6 @@
 import { router, usePage } from '@inertiajs/react';
 import { PropsWithChildren, useEffect, useMemo, useRef, useState } from 'react';
+import axios from 'axios';
 
 import BioChipLoader from '@/Components/BioChipLoader';
 
@@ -76,7 +77,23 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
     const [mobileNavOpen, setMobileNavOpen] = useState(false);
     const initialDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const hideDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const { url } = usePage();
+
+    // <-- Single usePage call INSIDE the component
+    const { url, props } = usePage<any>();
+    const currentLocale = props?.locale || 'lv';
+
+    // <-- switchLanguage also INSIDE the component
+    const switchLanguage = async (locale: string) => {
+        if (currentLocale === locale) return;
+
+        try {
+            await axios.post('/locale', { locale });
+            router.reload({ only: ['lang', 'locale'] });
+        } catch (error) {
+            console.error('Language switch failed:', error);
+            alert('Failed to switch language. Please try again.');
+        }
+    };
 
     useEffect(() => {
         initialDelayRef.current = setTimeout(() => {
@@ -255,6 +272,32 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
                                 <p className="text-xs tracking-[0.4em] text-white/50 uppercase">Focus</p>
                                 <p className="mt-2 text-sm font-semibold text-white">Next sync 15:30</p>
                                 <p className="text-xs text-white/60">Labs leadership update</p>
+                            </div>
+                            {/* Language switcher */}
+                            <div className="flex gap-3">
+                                <button
+                                    className={`btn flex h-10 min-h-0 w-10 items-center justify-center border-none p-0 text-lg font-semibold btn-ghost transition md:text-xl ${
+                                        currentLocale === 'lv' ? 'btn btn-success' : 'text-green-700 hover:text-orange-400'
+                                    }`}
+                                    onClick={() => switchLanguage('lv')}
+                                    disabled={currentLocale === 'lv'}
+                                    aria-current={currentLocale === 'lv' ? 'page' : undefined}
+                                    title="Latviešu"
+                                >
+                                    <span className="text-xl">🇱🇻</span>
+                                </button>
+
+                                <button
+                                    className={`btn flex h-10 min-h-0 w-10 items-center justify-center border-none p-0 text-lg font-semibold btn-ghost transition md:text-xl ${
+                                        currentLocale === 'en' ? 'btn btn-success' : 'text-green-700 hover:text-orange-400'
+                                    }`}
+                                    onClick={() => switchLanguage('en')}
+                                    disabled={currentLocale === 'en'}
+                                    aria-current={currentLocale === 'en' ? 'page' : undefined}
+                                    title="English"
+                                >
+                                    <span className="text-xl">🇬🇧</span>
+                                </button>
                             </div>
                             <button
                                 type="button"
