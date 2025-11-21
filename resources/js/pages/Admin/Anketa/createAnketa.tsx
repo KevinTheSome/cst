@@ -99,7 +99,7 @@ export default function CreateAnketa() {
                                 Nosakiet virsrakstu, pamaniet redzamību un pievienojiet jautājumus ar dažādiem inputiem. Saglabājiet koplietošanai ar komandu.
                             </p>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center gap-3">
                             <Link
                                 href="/admin/anketa"
                                 className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:border-white/40 hover:bg-white/20"
@@ -258,7 +258,7 @@ export default function CreateAnketa() {
                 </div>
             </div>
         </div>
-    );
+    )
 }
 
 CreateAnketa.layout = (page: ReactNode) => <AdminLayout title="Anketas">{page}</AdminLayout>;

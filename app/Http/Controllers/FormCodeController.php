@@ -13,6 +13,8 @@ class FormCodeController extends Controller
 {
     public function index()
     {
+        syncLangFiles('formcodes');
+
         $codes = FormCode::with('admin')->orderBy('created_at', 'desc')->get();
 
         $payload = $codes->map(function ($c) {
