@@ -54,7 +54,6 @@ class AnketaController extends Controller
             'visibility' => 'required|string',
             'schema.fields' => 'array',
         ]);
-
         FormResult::create([
             'code' => $data['visibility'],
             'title' => $data['title'],
