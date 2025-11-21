@@ -49,13 +49,16 @@ class AnketaController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request;
-
+        $data = $request->validate([
+            'title' => 'required',
+            'visibility' => 'required|string',
+            'schema.fields' => 'array|nullable',
+        ]);
         FormResult::create([
             'code' => $data['visibility'],
             'title' => $data['title'],
             'results' => [
-                'fields' => $data['schema']['fields'] ?? [],
+                'fields' => data_get($data, 'schema.fields', []),
             ],
         ]);
 
