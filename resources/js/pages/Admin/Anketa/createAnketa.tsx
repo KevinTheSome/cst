@@ -1,36 +1,29 @@
+import { Link } from '@inertiajs/react';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
+import AdminLayout from '../../../Layouts/AdminLayout';
 
 type FieldType = 'radio' | 'checkbox' | 'dropdown';
 type Visibility = 'public' | 'private';
 
 interface Field {
     id: string;
-    label: {
-        lv: string;
-        en: string;
-    };
+    label: string;
     type: FieldType;
-    options: {
-        lv: string[];
-        en: string[];
-    };
+    options: string[];
 }
 
 export default function CreateAnketa() {
-    const [title, setTitle] = useState({ lv: '', en: '' });
+    const [title, setTitle] = useState('');
     const [visibility, setVisibility] = useState<Visibility>('public');
     const [fields, setFields] = useState<Field[]>([]);
 
     const addField = () => {
         const newField: Field = {
             id: crypto.randomUUID(),
-            label: { lv: '', en: '' },
+            label: '',
             type: 'radio',
-            options: {
-                lv: ['Opcija 1'],
-                en: ['Option 1'],
-            },
+            options: ['Option 1'],
         };
 
         setFields((prev) => [...prev, newField]);
@@ -40,155 +33,232 @@ export default function CreateAnketa() {
         setFields((prev) => prev.map((field) => (field.id === id ? { ...field, [key]: value } : field)));
     };
 
-    const updateOption = (id: string, lang: 'lv' | 'en', index: number, newValue: string) => {
+    const removeField = (id: string) => {
+        setFields((prev) => prev.filter((field) => field.id !== id));
+    };
+
+    const updateOption = (fieldId: string, index: number, value: string) => {
         setFields((prev) =>
             prev.map((field) => {
-                if (field.id !== id) return field;
-
-                const updated = { ...field };
-                updated.options[lang][index] = newValue;
-                return updated;
+                if (field.id !== fieldId) return field;
+                const options = [...field.options];
+                options[index] = value;
+                return { ...field, options };
             }),
         );
     };
 
-    const addOption = (id: string) => {
+    const removeOption = (fieldId: string, index: number) => {
         setFields((prev) =>
             prev.map((field) => {
-                if (field.id !== id) return field;
-
-                return {
-                    ...field,
-                    options: {
-                        lv: [...field.options.lv, `Opcija ${field.options.lv.length + 1}`],
-                        en: [...field.options.en, `Option ${field.options.en.length + 1}`],
-                    },
-                };
+                if (field.id !== fieldId) return field;
+                const options = field.options.filter((_, idx) => idx !== index);
+                return { ...field, options: options.length ? options : ['Option 1'] };
             }),
         );
     };
 
     const submitForm = async () => {
+        // JSON payload
         const payload = {
-            visibility,
+            title,
+            visibility, // <-- NEW FIELD
             schema: {
-                title,
                 fields,
             },
         };
 
         console.log('Submitting payload:', payload);
-
+        let res: { ok: boolean; status: number; data?: any };
         try {
-            await axios.post('/admin/anketa/store', payload, {
+            const response = await axios.post('/admin/anketa/store', payload, {
                 headers: { 'Content-Type': 'application/json' },
             });
-            alert('Form created!');
-        } catch (err) {
-            alert('Error creating form.');
+            res = { ok: response.status >= 200 && response.status < 300, status: response.status, data: response.data };
+        } catch (err: any) {
             console.error(err);
+            res = { ok: false, status: err?.response?.status ?? 0, data: err?.response?.data ?? null };
+        }
+
+        if (res.ok) {
+            alert('Form created!');
+        } else {
+            alert('Error creating form.');
         }
     };
 
     return (
-        <div className="mx-auto max-w-3xl p-6 text-black">
-            <h1 className="mb-4 text-3xl font-bold">Create New Form</h1>
+        <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950/80 to-slate-900 py-12 text-white">
+            <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6">
+                <div className="rounded-[32px] border border-white/10 bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-slate-900/30 p-8 shadow-2xl shadow-black/40">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                            <p className="text-xs uppercase tracking-[0.4em] text-emerald-300">Anketu studija</p>
+                            <h1 className="mt-2 text-3xl font-semibold text-white">Izveidot jaunu anketu</h1>
+                            <p className="mt-3 max-w-2xl text-sm text-white/70">
+                                Nosakiet virsrakstu, pamaniet redzamību un pievienojiet jautājumus ar dažādiem inputiem. Saglabājiet koplietošanai ar komandu.
+                            </p>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3">
+                            <Link
+                                href="/admin/anketa"
+                                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:border-white/40 hover:bg-white/20"
+                            >
+                                ← Atpakaļ
+                            </Link>
+                            <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-2 text-sm text-white/70 shadow-inner shadow-black/30">
+                                {fields.length} jautājumi
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            {/* MULTILINGUAL TITLE */}
-            <input
-                type="text"
-                placeholder="Form Title (Latvian)"
-                className="input-bordered input mb-2 w-full"
-                value={title.lv}
-                onChange={(e) => setTitle({ ...title, lv: e.target.value })}
-            />
-
-            <input
-                type="text"
-                placeholder="Form Title (English)"
-                className="input-bordered input mb-4 w-full"
-                value={title.en}
-                onChange={(e) => setTitle({ ...title, en: e.target.value })}
-            />
-
-            {/* VISIBILITY */}
-            <select className="select-bordered select mb-4 w-full" value={visibility} onChange={(e) => setVisibility(e.target.value as Visibility)}>
-                <option value="public">Public — anyone with the link can answer</option>
-                <option value="private">Private — restricted access</option>
-            </select>
-
-            <button className="btn mb-6 btn-primary" onClick={addField}>
-                Add Question
-            </button>
-
-            {/* FIELDS */}
-            {fields.map((field) => (
-                <div key={field.id} className="mb-4 rounded-lg bg-base-200 p-4 shadow">
-                    {/* LABELS */}
-                    <h3 className="font-bold">Label</h3>
-
-                    <input
-                        type="text"
-                        placeholder="Label (LV)"
-                        className="input-bordered input mb-2 w-full"
-                        value={field.label.lv}
-                        onChange={(e) => {
-                            const updated = { ...field.label, lv: e.target.value };
-                            updateField(field.id, 'label', updated);
-                        }}
-                    />
-
-                    <input
-                        type="text"
-                        placeholder="Label (EN)"
-                        className="input-bordered input mb-3 w-full"
-                        value={field.label.en}
-                        onChange={(e) => {
-                            const updated = { ...field.label, en: e.target.value };
-                            updateField(field.id, 'label', updated);
-                        }}
-                    />
-
-                    {/* TYPE */}
-                    <select
-                        className="select-bordered select mb-3 w-full"
-                        value={field.type}
-                        onChange={(e) => updateField(field.id, 'type', e.target.value as FieldType)}
-                    >
-                        <option value="radio">Multiple Choice (Radio)</option>
-                        <option value="checkbox">Select Multiple (Checkbox)</option>
-                        <option value="dropdown">Dropdown</option>
-                    </select>
-
-                    {/* OPTIONS */}
-                    <h3 className="mb-2 font-bold">Options</h3>
-
-                    {field.options.lv.map((_, idx) => (
-                        <div key={idx} className="mb-2 grid grid-cols-2 gap-2">
+                <div className="grid gap-6 lg:grid-cols-[1.1fr,0.9fr]">
+                    <div className="space-y-6 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl shadow-black/30">
+                        <div className="space-y-3">
+                            <label className="text-sm font-semibold text-white/80">Anketas nosaukums</label>
                             <input
-                                className="input-bordered input w-full"
-                                placeholder="Option (LV)"
-                                value={field.options.lv[idx]}
-                                onChange={(e) => updateOption(field.id, 'lv', idx, e.target.value)}
-                            />
-                            <input
-                                className="input-bordered input w-full"
-                                placeholder="Option (EN)"
-                                value={field.options.en[idx]}
-                                onChange={(e) => updateOption(field.id, 'en', idx, e.target.value)}
+                                type="text"
+                                placeholder="Piem., Pacientu simptomi 2024"
+                                className="w-full rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
                             />
                         </div>
-                    ))}
 
-                    <button className="btn btn-sm btn-secondary" onClick={() => addOption(field.id)}>
-                        Add Option LV/EN
-                    </button>
+                        <div className="space-y-3">
+                            <label className="text-sm font-semibold text-white/80">Redzamība</label>
+                            <select
+                                className="w-full rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                                value={visibility}
+                                onChange={(e) => setVisibility(e.target.value as Visibility)}
+                            >
+                                <option value="public" className="text-black">
+                                    Publiska — ikviens ar saiti var atbildēt
+                                </option>
+                                <option value="private" className="text-black">
+                                    Privāta — tikai ar kodu vai uzaicinājumu
+                                </option>
+                            </select>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={addField}
+                            className="inline-flex w-full items-center justify-center rounded-2xl border border-dashed border-emerald-400/60 bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-200 transition hover:border-emerald-500 hover:bg-emerald-500/20"
+                        >
+                            + Pievienot jautājumu
+                        </button>
+
+                        <div className="space-y-4">
+                            {fields.length === 0 && <p className="text-sm text-white/60">Pagaidām nav jautājumu. Pievienojiet vismaz vienu, lai sāktu.</p>}
+                            {fields.map((field, idx) => (
+                                <div key={field.id} className="rounded-2xl border border-white/10 bg-slate-950/50 p-5 shadow-inner shadow-black/20">
+                                    <div className="mb-4 flex items-center justify-between gap-3">
+                                        <div>
+                                            <p className="text-xs uppercase tracking-[0.3em] text-white/60">Jautājums {idx + 1}</p>
+                                            <p className="text-sm text-white/70">
+                                                {field.type === 'radio' ? 'Vienas atbildes izvēle' : field.type === 'checkbox' ? 'Vairākas atbildes' : 'Izvēlne'}
+                                            </p>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => removeField(field.id)}
+                                            className="rounded-full border border-white/15 px-3 py-1 text-xs font-semibold text-white/70 transition hover:border-rose-300/40 hover:bg-rose-500/10 hover:text-white"
+                                        >
+                                            Dzēst
+                                        </button>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <input
+                                            type="text"
+                                            placeholder="Jautājuma teksts"
+                                            className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                                            value={field.label}
+                                            onChange={(e) => updateField(field.id, 'label', e.target.value)}
+                                        />
+
+                                        <select
+                                            className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                                            value={field.type}
+                                            onChange={(e) => updateField(field.id, 'type', e.target.value as FieldType)}
+                                        >
+                                            <option value="radio" className="text-black">
+                                                Multiple Choice (Radio)
+                                            </option>
+                                            <option value="checkbox" className="text-black">
+                                                Select Multiple (Checkbox)
+                                            </option>
+                                            <option value="dropdown" className="text-black">
+                                                Dropdown
+                                            </option>
+                                        </select>
+
+                                        <div className="space-y-2">
+                                            <p className="text-xs uppercase tracking-[0.3em] text-white/50">Opcijas</p>
+                                            {field.options.map((opt, optionIndex) => (
+                                                <div key={optionIndex} className="flex items-center gap-2">
+                                                    <input
+                                                        type="text"
+                                                        className="flex-1 rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                                                        value={opt}
+                                                        onChange={(e) => updateOption(field.id, optionIndex, e.target.value)}
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeOption(field.id, optionIndex)}
+                                                        className="rounded-2xl border border-white/10 px-3 py-2 text-xs text-white/70 transition hover:border-rose-300/40 hover:bg-rose-500/10"
+                                                    >
+                                                        Noņemt
+                                                    </button>
+                                                </div>
+                                            ))}
+                                            <button
+                                                type="button"
+                                                onClick={() => updateField(field.id, 'options', [...field.options, `Opcija ${field.options.length + 1}`])}
+                                                className="mt-2 inline-flex items-center rounded-full border border-dashed border-white/20 px-4 py-2 text-xs font-semibold text-white/80 transition hover:border-white/40"
+                                            >
+                                                + Pievienot opciju
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="space-y-4 rounded-3xl border border-white/10 bg-slate-950/60 p-6 shadow-xl shadow-black/30">
+                        <p className="text-xs uppercase tracking-[0.3em] text-white/60">Rezumējums</p>
+                        <div className="space-y-4 text-sm text-white/70">
+                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <p className="text-xs text-white/60">Nosaukums</p>
+                                <p className="text-lg font-semibold text-white">{title || '—'}</p>
+                            </div>
+                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <p className="text-xs text-white/60">Redzamība</p>
+                                <p className="text-lg font-semibold text-white">{visibility === 'public' ? 'Publiska' : 'Privāta'}</p>
+                            </div>
+                            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                                <p className="text-xs text-white/60">Jautājumu skaits</p>
+                                <p className="text-lg font-semibold text-white">{fields.length}</p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={submitForm}
+                            className="mt-4 w-full rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/30 transition hover:bg-emerald-400"
+                        >
+                            Saglabāt anketu
+                        </button>
+                        <p className="text-xs text-white/60">
+                            Saglabāšana izveidos jaunu struktūru ar piesaistītajiem jautājumiem. Vēlāk to varēsiet rediģēt sadaļā “Visas anketas”.
+                        </p>
+                    </div>
                 </div>
-            ))}
-
-            <button className="btn w-full btn-success" onClick={submitForm}>
-                Save Form
-            </button>
+            </div>
         </div>
-    );
+    )
 }
+
+CreateAnketa.layout = (page: ReactNode) => <AdminLayout title="Anketas">{page}</AdminLayout>;
