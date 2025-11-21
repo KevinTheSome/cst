@@ -35,7 +35,7 @@ const navSections: NavSection[] = [
         label: 'Command',
         items: [
             { id: 'dashboard', label: 'Control room', description: 'Live signals & status', href: '/admin', badge: 'Live', badgeTone: 'emerald' },
-            { id: 'missions', label: 'Missions', description: 'Campaign orchestration', href: '/admin/missions', badge: '6', badgeTone: 'violet' },
+            { id: 'Tracker', label: 'Tracker', description: 'See what users are looking more in web', href: '/admin/missions', badge: 'Live', badgeTone: 'violet' },
             { id: 'insights', label: 'Insights', description: 'Intelligence briefings', href: '/admin/insights' },
         ],
     },
