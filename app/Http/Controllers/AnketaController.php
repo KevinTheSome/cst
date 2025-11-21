@@ -52,12 +52,13 @@ class AnketaController extends Controller
         $data = $request->all();
 
         FormResult::create([
-            'code'    => $data['visibility'], // "public" / "private"
-            'title'   => $data['title'],
-            'results' => $data['schema'],     // { fields: [...] }
+            'code' => $data['visibility'],
+            'title' => $data['schema']['title'],
+            'results' => [
+                'fields' => $data['schema']['fields']
+            ],
         ]);
 
-        // redirect back to list
         return redirect()->route('admin.anketa');
     }
 
@@ -85,8 +86,8 @@ class AnketaController extends Controller
         $formResult = FormResult::findOrFail($id);
 
         $formResult->update([
-            'code'    => $data['visibility'],
-            'title'   => $data['title'],
+            'code' => $data['visibility'],
+            'title' => $data['title'],
             'results' => $data['schema'],
         ]);
 
