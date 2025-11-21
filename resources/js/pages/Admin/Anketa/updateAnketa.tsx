@@ -1,5 +1,8 @@
-import axios from 'axios';
-import { useState } from 'react';
+// resources/js/Pages/Admin/Anketa/updateAnketa.tsx
+
+import { useEffect, useState } from 'react';
+import { router } from '@inertiajs/react';
+import AdminLayout from '@/Layouts/AdminLayout';
 
 type FieldType = 'radio' | 'checkbox' | 'dropdown';
 type Visibility = 'public' | 'private';
@@ -11,10 +14,31 @@ interface Field {
     options: string[];
 }
 
-export default function CreateAnketa() {
+interface FormResult {
+    id: number;
+    code: string; // "public" / "private"
+    title: string;
+    results: {
+        title: string;
+        fields?: Field[];
+    };
+}
+
+export default function UpdateAnketa({ formResult }: { formResult: FormResult }) {
     const [title, setTitle] = useState('');
     const [visibility, setVisibility] = useState<Visibility>('public');
     const [fields, setFields] = useState<Field[]>([]);
+    const [saving, setSaving] = useState(false);
+
+    useEffect(() => {
+        if (!formResult) return;
+
+        setTitle(formResult.results?.title || formResult.title || '');
+
+        const initialVis = (formResult.code === 'private' ? 'private' : 'public') as Visibility;
+        setVisibility(initialVis);
+        setFields(formResult.results?.fields ?? []);
+    }, [formResult]);
 
     const addField = () => {
         const newField: Field = {
@@ -31,38 +55,40 @@ export default function CreateAnketa() {
         setFields((prev) => prev.map((field) => (field.id === id ? { ...field, [key]: value } : field)));
     };
 
-    const submitForm = async () => {
-        // JSON payload
+    const handleSave = () => {
+        setSaving(true);
+
         const payload = {
             title,
-            visibility, // <-- NEW FIELD
+            visibility,
             schema: {
                 fields,
             },
         };
 
-        console.log('Submitting payload:', payload);
-        let res: { ok: boolean; status: number; data?: any };
-        try {
-            const response = await axios.post('/admin/anketa/store', payload, {
-                headers: { 'Content-Type': 'application/json' },
-            });
-            res = { ok: response.status >= 200 && response.status < 300, status: response.status, data: response.data };
-        } catch (err: any) {
-            console.error(err);
-            res = { ok: false, status: err?.response?.status ?? 0, data: err?.response?.data ?? null };
-        }
+        console.log('Update payload:', payload);
 
-        if (res.ok) {
-            alert('Form created!');
-        } else {
-            alert('Error creating form.');
-        }
+        router.put(`/admin/anketa/update/${formResult.id}`, payload, {
+            onSuccess: () => {
+                alert('Anketa atjaunināta!');
+                setSaving(false);
+                // Inertia already redirected via controller -> admin.anketa
+            },
+            onError: (errors) => {
+                console.error('Update error:', errors);
+                alert('Kļūda saglabājot izmaiņas.');
+                setSaving(false);
+            },
+        });
     };
 
     return (
         <div className="mx-auto max-w-3xl p-6 text-black">
-            <h1 className="mb-4 text-3xl font-bold">Create New Form</h1>
+            <a href="/admin/anketa" className="btn mb-6 btn-outline btn-sm">
+                ← Back to list
+            </a>
+
+            <h1 className="mb-4 text-3xl font-bold">Edit Form</h1>
 
             {/* Title */}
             <input
@@ -74,13 +100,17 @@ export default function CreateAnketa() {
             />
 
             {/* Visibility Dropdown */}
-            <select className="select-bordered select mb-4 w-full" value={visibility} onChange={(e) => setVisibility(e.target.value as Visibility)}>
+            <select
+                className="select-bordered select mb-4 w-full"
+                value={visibility}
+                onChange={(e) => setVisibility(e.target.value as Visibility)}
+            >
                 <option value="public">Public — anyone with the link can answer</option>
                 <option value="private">Private — restricted access</option>
             </select>
 
             {/* Add field button */}
-            <button className="btn mb-6 btn-primary" onClick={addField}>
+            <button className="btn mb-6 btn-primary" type="button" onClick={addField}>
                 Add Question
             </button>
 
@@ -126,7 +156,13 @@ export default function CreateAnketa() {
 
                         <button
                             className="btn btn-sm btn-secondary"
-                            onClick={() => updateField(field.id, 'options', [...field.options, `Option ${field.options.length + 1}`])}
+                            type="button"
+                            onClick={() =>
+                                updateField(field.id, 'options', [
+                                    ...field.options,
+                                    `Option ${field.options.length + 1}`,
+                                ])
+                            }
                         >
                             Add Option
                         </button>
@@ -134,9 +170,18 @@ export default function CreateAnketa() {
                 </div>
             ))}
 
-            <button className="btn w-full btn-success" onClick={submitForm}>
-                Save Form
+            <button
+                className={`btn w-full btn-success ${saving ? 'btn-disabled' : ''}`}
+                type="button"
+                onClick={handleSave}
+                disabled={saving}
+            >
+                {saving ? 'Saving...' : 'Save changes'}
             </button>
         </div>
     );
 }
+
+(UpdateAnketa as any).layout = (page: React.ReactNode) => (
+    <AdminLayout title="Anketas">{page}</AdminLayout>
+);

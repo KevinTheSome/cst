@@ -1,5 +1,6 @@
+import axios from 'axios';
 import { Head } from '@inertiajs/react';
-import { FormEvent, useMemo, useRef, useState } from 'react';
+import { ClipboardEvent, FormEvent, KeyboardEvent, useMemo, useRef, useState } from 'react';
 
 type Questionnaire = {
     gender: string;
@@ -11,8 +12,6 @@ type Questionnaire = {
     severity: string;
     therapy: string;
 };
-
-const REQUIRED_CODE = '123456'; // <-- change this to your real 6-digit code
 
 const genderOptions = ['Vīrietis', 'Sieviete', 'Citi / Nevēlos norādīt'];
 const ageGroups = ['0–18', '19–35', '36–50', '51+'];
@@ -26,6 +25,25 @@ const diseaseOptions = [
     'Cita',
 ];
 const severityLevels = ['Viegls', 'Vidējs', 'Smags'];
+const CODE_LENGTH = 12;
+const CODE_GROUP_SIZE = 4;
+const highlightCards = [
+    {
+        title: 'Soli pa solim',
+        accent: '3 tematiskas sadaļas',
+        description: 'Koncentrējieties uz vienu tēmu vienlaikus, redzot precīzu progresu.',
+    },
+    {
+        title: 'Datu drošība',
+        accent: 'Šifrēta sūtīšana',
+        description: 'Jūsu sensitīvie dati tiek apstrādāti droši un konfidenciāli.',
+    },
+    {
+        title: 'Atbalsts',
+        accent: 'Rūpes par pacientu',
+        description: 'Mūsu komanda palīdz interpretēt atbildes un sniedz personalizētus ieteikumus.',
+    },
+];
 
 export default function Anketa() {
     // ----- questionnaire state -----
@@ -44,9 +62,10 @@ export default function Anketa() {
     const [isFinished, setIsFinished] = useState(false);
 
     // ----- code gate state -----
-    const [codeDigits, setCodeDigits] = useState<string[]>(['', '', '', '', '', '']);
+    const [codeDigits, setCodeDigits] = useState<string[]>(() => Array(CODE_LENGTH).fill(''));
     const [codeError, setCodeError] = useState<string | null>(null);
     const [isCodeVerified, setIsCodeVerified] = useState(false);
+    const [verifying, setVerifying] = useState(false);
     const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
     // convenience to set fields
@@ -308,6 +327,87 @@ export default function Anketa() {
         return true;
     };
 
+    const focusInput = (index: number) => {
+        const clamped = Math.min(Math.max(index, 0), CODE_LENGTH - 1);
+        const input = inputRefs.current[clamped];
+        input?.focus();
+        input?.select();
+    };
+
+    const handleCodeChange = (value: string, index: number) => {
+        const char = value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 1);
+        setCodeDigits((prev) => {
+            const next = [...prev];
+            next[index] = char;
+            return next;
+        });
+
+        if (char && index < CODE_LENGTH - 1) {
+            focusInput(index + 1);
+        }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>, index: number) => {
+        if (event.key === 'Backspace') {
+            event.preventDefault();
+            if (codeDigits[index]) {
+                setCodeDigits((prev) => {
+                    const next = [...prev];
+                    next[index] = '';
+                    return next;
+                });
+            } else if (index > 0) {
+                focusInput(index - 1);
+                setCodeDigits((prev) => {
+                    const next = [...prev];
+                    next[index - 1] = '';
+                    return next;
+                });
+            }
+            return;
+        }
+
+        if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            focusInput(index - 1);
+            return;
+        }
+
+        if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            focusInput(index + 1);
+            return;
+        }
+
+        if (event.key === ' ') {
+            event.preventDefault();
+        }
+    };
+
+    const handlePaste = (event: ClipboardEvent<HTMLInputElement>, index: number) => {
+        event.preventDefault();
+        const pasted = event.clipboardData.getData('text').toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (!pasted) {
+            return;
+        }
+
+        setCodeDigits((prev) => {
+            const next = [...prev];
+            let cursor = index;
+            for (const char of pasted) {
+                if (cursor >= CODE_LENGTH) {
+                    break;
+                }
+                next[cursor] = char;
+                cursor += 1;
+            }
+            return next;
+        });
+
+        const focusIndex = Math.min(index + pasted.length, CODE_LENGTH - 1);
+        focusInput(focusIndex);
+    };
+
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (!validateStep(currentStep)) {
@@ -326,87 +426,57 @@ export default function Anketa() {
     const isLastStep = currentStep === slides.length - 1;
     const progress = ((currentStep + 1) / slides.length) * 100;
 
-    // ----- code input handlers -----
-    const focusInput = (index: number) => {
-        inputRefs.current[index]?.focus();
-        inputRefs.current[index]?.select();
-    };
+    const filledCode = codeDigits.join('');
+    const charactersRemaining = CODE_LENGTH - filledCode.length;
 
-    const handleCodeChange = (value: string, index: number) => {
-        // keep only digits, single char
-        const digit = value.replace(/\D/g, '').slice(0, 1);
-        setCodeDigits((prev) => {
-            const next = [...prev];
-            next[index] = digit;
-            return next;
-        });
-
-        if (digit && index < 5) {
-            // move next
-            focusInput(index + 1);
-        }
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-        if (e.key === 'Backspace') {
-            if (codeDigits[index]) {
-                // clear current
-                setCodeDigits((prev) => {
-                    const next = [...prev];
-                    next[index] = '';
-                    return next;
-                });
-            } else if (index > 0) {
-                // move back and clear previous
-                focusInput(index - 1);
-                setCodeDigits((prev) => {
-                    const next = [...prev];
-                    next[index - 1] = '';
-                    return next;
-                });
-            }
-        } else if (e.key === 'ArrowLeft' && index > 0) {
-            focusInput(index - 1);
-        } else if (e.key === 'ArrowRight' && index < 5) {
-            focusInput(index + 1);
-        }
-    };
-
-    const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-        const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-        if (!pasted) return;
-        const chars = pasted.split('');
-        const next = [...codeDigits];
-        for (let i = 0; i < 6; i++) {
-            next[i] = chars[i] ?? '';
-        }
-        setCodeDigits(next);
-        // focus after last pasted char or last input
-        const focusIndex = Math.min(pasted.length, 5);
-        focusInput(focusIndex);
-    };
-
-    const verifyCode = () => {
-        const joined = codeDigits.join('');
-        if (joined.length < 6) {
-            setCodeError('Lūdzu ievadiet 6 ciparus.');
+    const verifyCode = async () => {
+        const normalized = filledCode.toUpperCase();
+        if (normalized.length < CODE_LENGTH) {
+            setCodeError('Pilnais kods satur 12 simbolus (cipari un lielie burti).');
+            focusInput(normalized.length);
             return false;
         }
 
-        if (joined === REQUIRED_CODE) {
-            setCodeError(null);
-            setIsCodeVerified(true);
-            return true;
-        }
+        setVerifying(true);
+        setCodeError(null);
 
-        setCodeError('Neatbilstošs kods. Mēģiniet vēlreiz.');
-        return false;
+        try {
+            const resp = await axios.post('/form-codes/verify', {
+                code: normalized,
+            });
+
+            if (resp.data?.success) {
+                setIsCodeVerified(true);
+                setCodeError(null);
+                return true;
+            } else {
+                setCodeError(resp.data?.message ?? 'Kods nav derīgs.');
+                return false;
+            }
+        } catch (err: any) {
+            if (axios.isAxiosError(err)) {
+                const status = err.response?.status;
+                const data = err.response?.data;
+                if (status === 422 && data?.message) {
+                    setCodeError(data.message);
+                } else if (data?.message) {
+                    setCodeError(data.message);
+                } else {
+                    setCodeError('Servera kļūda. Mēģiniet vēlāk.');
+                }
+            } else {
+                setCodeError('Neparedzēta kļūda.');
+            }
+            return false;
+        } finally {
+            setVerifying(false);
+        }
     };
 
     const resetCode = () => {
-        setCodeDigits(['', '', '', '', '', '']);
+        setCodeDigits(Array(CODE_LENGTH).fill(''));
         setCodeError(null);
-        inputRefs.current[0]?.focus();
+        focusInput(0);
     };
 
     return (
@@ -414,61 +484,115 @@ export default function Anketa() {
             <Head title="Anketa" />
 
             <section className="bg-gradient-to-br from-[#f1f5f9] via-white to-[#e8f6ef] py-16 px-4 sm:px-6 lg:px-12">
-                <div className="mx-auto max-w-5xl">
-                    <header className="text-center mb-12">
-                        <p className="text-sm uppercase tracking-[0.3em] text-emerald-600">Pieteikuma forma</p>
-                        <h1 className="mt-3 text-3xl sm:text-4xl font-semibold text-slate-900">Anketa pacientiem</h1>
-                        <p className="mt-4 text-lg text-slate-700">
-                            Aizpildiet anketu pa soļiem — katrs slaids uzdod konkrētus jautājumus, lai mēs varētu sagatavot personalizētu
-                            piedāvājumu.
-                        </p>
-                    </header>
+                <div className="mx-auto max-w-6xl space-y-10">
+                    <div className="relative overflow-hidden rounded-[32px] border border-white/60 bg-white/70 p-8 shadow-2xl shadow-emerald-100/80 backdrop-blur">
+                        <div className="absolute inset-0 pointer-events-none">
+                            <div className="absolute -top-10 right-4 h-32 w-32 rounded-full bg-emerald-100/70 blur-3xl" />
+                            <div className="absolute bottom-0 left-6 h-24 w-24 rounded-full bg-teal-100/60 blur-2xl" />
+                        </div>
+                        <header className="relative text-center">
+                            <p className="text-sm uppercase tracking-[0.3em] text-emerald-600">Pieteikuma forma</p>
+                            <h1 className="mt-3 text-3xl sm:text-4xl font-semibold text-slate-900">Anketa pacientiem</h1>
+                            <p className="mt-4 text-lg text-slate-700">
+                                Aizpildiet anketu pa soļiem — katra sadaļa palīdz mums sagatavot personalizētu piedāvājumu un saprast jūsu
+                                vajadzības.
+                            </p>
+                        </header>
+
+                        <div className="relative mt-10 grid gap-4 md:grid-cols-3">
+                            {highlightCards.map((card) => (
+                                <div
+                                    key={card.title}
+                                    className="rounded-2xl border border-emerald-100 bg-emerald-50/30 px-4 py-5 text-left shadow-sm shadow-emerald-50"
+                                >
+                                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-500">{card.accent}</p>
+                                    <h3 className="mt-2 text-lg font-semibold text-slate-900">{card.title}</h3>
+                                    <p className="mt-2 text-sm text-slate-600">{card.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
 
                     {/* CODE GATE */}
                     {!isCodeVerified && (
-                        <div className="mb-8 flex flex-col items-center gap-6">
-                            <p className="text-center text-slate-700 max-w-xl">
-                                Lai piekļūtu anketai, lūdzu ievadiet 6 ciparu kodu, ko saņēmāt no mūsu komandas.
+                        <div className="mx-auto max-w-4xl rounded-[28px] border border-emerald-100/80 bg-white/90 p-8 text-center shadow-xl shadow-emerald-100">
+                            <p className="text-sm font-semibold uppercase tracking-[0.4em] text-emerald-500">Droša piekļuve</p>
+                            <h2 className="mt-3 text-2xl font-semibold text-slate-900">Atbloķējiet anketu ar 12 simbolu kodu</h2>
+                            <p className="mt-3 text-base text-slate-600">
+                                Kodā ir iekļauti 12 cipari vai lielie burti. Ievadiet to blokos ērtākai pārbaudei un spiediet pogu, lai
+                                sāktu aizpildīt anketu.
                             </p>
 
-                            <div className="flex gap-3">
-                                {codeDigits.map((d, i) => (
-                                    <input
-                                        key={i}
-                                        ref={(el) => {
-                                            inputRefs.current[i] = el;
-                                        }}
-                                        inputMode="numeric"
-                                        pattern="[0-9]*"
-                                        maxLength={1}
-                                        value={d}
-                                        onChange={(e) => handleCodeChange(e.target.value, i)}
-                                        onKeyDown={(e) => handleKeyDown(e, i)}
-                                        onPaste={handlePaste}
-                                        className="h-14 w-12 text-center rounded-lg border border-slate-300 bg-white text-xl font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                        aria-label={`code-digit-${i + 1}`}
-                                    />
-                                ))}
-                            </div>
+                            <div
+                                className="mt-8 flex flex-col items-center gap-5"
+                                onClick={() => {
+                                    const emptyIndex = codeDigits.findIndex((digit) => !digit);
+                                    focusInput(emptyIndex === -1 ? CODE_LENGTH - 1 : emptyIndex);
+                                }}
+                            >
+                                <div className="flex flex-wrap items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+                                    {codeDigits.map((digit, index) => (
+                                        <div key={index} className="flex items-center">
+                                            <input
+                                                ref={(el) => {
+                                                    inputRefs.current[index] = el;
+                                                }}
+                                                type="text"
+                                                inputMode="text"
+                                                autoComplete="off"
+                                                autoCorrect="off"
+                                                spellCheck={false}
+                                                maxLength={1}
+                                                value={digit}
+                                                onChange={(e) => handleCodeChange(e.target.value, index)}
+                                                onKeyDown={(e) => handleKeyDown(e, index)}
+                                                onPaste={(e) => handlePaste(e, index)}
+                                                disabled={verifying}
+                                                className="h-14 w-12 rounded-xl border border-slate-300 bg-white text-center text-xl font-semibold tracking-widest text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                                                aria-label={`code-digit-${index + 1}`}
+                                            />
+                                            {(index + 1) % CODE_GROUP_SIZE === 0 && index < CODE_LENGTH - 1 && (
+                                                <span className="mx-2 text-lg font-bold text-slate-400">-</span>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
 
-                            {codeError && <p className="text-sm text-red-600">{codeError}</p>}
+                                <p className="text-sm text-slate-500">
+                                    {charactersRemaining > 0
+                                        ? `Atlikuši ${charactersRemaining} simboli`
+                                        : 'Kods gatavs iesniegšanai'}
+                                </p>
 
-                            <div className="flex gap-3">
-                                <button
-                                    type="button"
-                                    onClick={verifyCode}
-                                    className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow hover:bg-emerald-700"
-                                >
-                                    Iesniegt kodu
-                                </button>
+                                <div className="flex flex-wrap justify-center gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={verifyCode}
+                                        disabled={verifying}
+                                        className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow hover:bg-emerald-700 disabled:opacity-60"
+                                    >
+                                        {verifying ? (
+                                            <>
+                                                <svg className="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                                                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                                </svg>
+                                                Verificē kodu...
+                                            </>
+                                        ) : (
+                                            'Atbloķēt anketu'
+                                        )}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={resetCode}
+                                        disabled={verifying}
+                                        className="inline-flex items-center justify-center rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+                                    >
+                                        Notīrīt laukus
+                                    </button>
+                                </div>
 
-                                <button
-                                    type="button"
-                                    onClick={resetCode}
-                                    className="inline-flex items-center justify-center rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-                                >
-                                    Notīrīt
-                                </button>
+                                {codeError && <p className="text-sm text-red-600">{codeError}</p>}
                             </div>
                         </div>
                     )}
