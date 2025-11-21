@@ -6,22 +6,31 @@ type Visibility = 'public' | 'private';
 
 interface Field {
     id: string;
-    label: string;
+    label: {
+        lv: string;
+        en: string;
+    };
     type: FieldType;
-    options: string[];
+    options: {
+        lv: string[];
+        en: string[];
+    };
 }
 
 export default function CreateAnketa() {
-    const [title, setTitle] = useState('');
+    const [title, setTitle] = useState({ lv: '', en: '' });
     const [visibility, setVisibility] = useState<Visibility>('public');
     const [fields, setFields] = useState<Field[]>([]);
 
     const addField = () => {
         const newField: Field = {
             id: crypto.randomUUID(),
-            label: '',
+            label: { lv: '', en: '' },
             type: 'radio',
-            options: ['Option 1'],
+            options: {
+                lv: ['Opcija 1'],
+                en: ['Option 1'],
+            },
         };
 
         setFields((prev) => [...prev, newField]);
@@ -31,32 +40,53 @@ export default function CreateAnketa() {
         setFields((prev) => prev.map((field) => (field.id === id ? { ...field, [key]: value } : field)));
     };
 
+    const updateOption = (id: string, lang: 'lv' | 'en', index: number, newValue: string) => {
+        setFields((prev) =>
+            prev.map((field) => {
+                if (field.id !== id) return field;
+
+                const updated = { ...field };
+                updated.options[lang][index] = newValue;
+                return updated;
+            }),
+        );
+    };
+
+    const addOption = (id: string) => {
+        setFields((prev) =>
+            prev.map((field) => {
+                if (field.id !== id) return field;
+
+                return {
+                    ...field,
+                    options: {
+                        lv: [...field.options.lv, `Opcija ${field.options.lv.length + 1}`],
+                        en: [...field.options.en, `Option ${field.options.en.length + 1}`],
+                    },
+                };
+            }),
+        );
+    };
+
     const submitForm = async () => {
-        // JSON payload
         const payload = {
-            title,
-            visibility, // <-- NEW FIELD
+            visibility,
             schema: {
+                title,
                 fields,
             },
         };
 
         console.log('Submitting payload:', payload);
-        let res: { ok: boolean; status: number; data?: any };
+
         try {
-            const response = await axios.post('/admin/anketa/store', payload, {
+            await axios.post('/admin/anketa/store', payload, {
                 headers: { 'Content-Type': 'application/json' },
             });
-            res = { ok: response.status >= 200 && response.status < 300, status: response.status, data: response.data };
-        } catch (err: any) {
-            console.error(err);
-            res = { ok: false, status: err?.response?.status ?? 0, data: err?.response?.data ?? null };
-        }
-
-        if (res.ok) {
             alert('Form created!');
-        } else {
+        } catch (err) {
             alert('Error creating form.');
+            console.error(err);
         }
     };
 
@@ -64,39 +94,62 @@ export default function CreateAnketa() {
         <div className="mx-auto max-w-3xl p-6 text-black">
             <h1 className="mb-4 text-3xl font-bold">Create New Form</h1>
 
-            {/* Title */}
+            {/* MULTILINGUAL TITLE */}
             <input
                 type="text"
-                placeholder="Form title"
-                className="input-bordered input mb-4 w-full"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Form Title (Latvian)"
+                className="input-bordered input mb-2 w-full"
+                value={title.lv}
+                onChange={(e) => setTitle({ ...title, lv: e.target.value })}
             />
 
-            {/* Visibility Dropdown */}
+            <input
+                type="text"
+                placeholder="Form Title (English)"
+                className="input-bordered input mb-4 w-full"
+                value={title.en}
+                onChange={(e) => setTitle({ ...title, en: e.target.value })}
+            />
+
+            {/* VISIBILITY */}
             <select className="select-bordered select mb-4 w-full" value={visibility} onChange={(e) => setVisibility(e.target.value as Visibility)}>
                 <option value="public">Public — anyone with the link can answer</option>
                 <option value="private">Private — restricted access</option>
             </select>
 
-            {/* Add field button */}
             <button className="btn mb-6 btn-primary" onClick={addField}>
                 Add Question
             </button>
 
-            {/* Fields list */}
+            {/* FIELDS */}
             {fields.map((field) => (
                 <div key={field.id} className="mb-4 rounded-lg bg-base-200 p-4 shadow">
-                    {/* Label */}
+                    {/* LABELS */}
+                    <h3 className="font-bold">Label</h3>
+
                     <input
                         type="text"
-                        placeholder="Question label"
-                        className="input-bordered input mb-3 w-full"
-                        value={field.label}
-                        onChange={(e) => updateField(field.id, 'label', e.target.value)}
+                        placeholder="Label (LV)"
+                        className="input-bordered input mb-2 w-full"
+                        value={field.label.lv}
+                        onChange={(e) => {
+                            const updated = { ...field.label, lv: e.target.value };
+                            updateField(field.id, 'label', updated);
+                        }}
                     />
 
-                    {/* Type */}
+                    <input
+                        type="text"
+                        placeholder="Label (EN)"
+                        className="input-bordered input mb-3 w-full"
+                        value={field.label.en}
+                        onChange={(e) => {
+                            const updated = { ...field.label, en: e.target.value };
+                            updateField(field.id, 'label', updated);
+                        }}
+                    />
+
+                    {/* TYPE */}
                     <select
                         className="select-bordered select mb-3 w-full"
                         value={field.type}
@@ -107,30 +160,29 @@ export default function CreateAnketa() {
                         <option value="dropdown">Dropdown</option>
                     </select>
 
-                    {/* Options */}
-                    <div>
-                        <h3 className="mb-2 font-medium">Options:</h3>
+                    {/* OPTIONS */}
+                    <h3 className="mb-2 font-bold">Options</h3>
 
-                        {field.options.map((opt, idx) => (
+                    {field.options.lv.map((_, idx) => (
+                        <div key={idx} className="mb-2 grid grid-cols-2 gap-2">
                             <input
-                                key={idx}
-                                className="input-bordered input mb-2 w-full"
-                                value={opt}
-                                onChange={(e) => {
-                                    const newOptions = [...field.options];
-                                    newOptions[idx] = e.target.value;
-                                    updateField(field.id, 'options', newOptions);
-                                }}
+                                className="input-bordered input w-full"
+                                placeholder="Option (LV)"
+                                value={field.options.lv[idx]}
+                                onChange={(e) => updateOption(field.id, 'lv', idx, e.target.value)}
                             />
-                        ))}
+                            <input
+                                className="input-bordered input w-full"
+                                placeholder="Option (EN)"
+                                value={field.options.en[idx]}
+                                onChange={(e) => updateOption(field.id, 'en', idx, e.target.value)}
+                            />
+                        </div>
+                    ))}
 
-                        <button
-                            className="btn btn-sm btn-secondary"
-                            onClick={() => updateField(field.id, 'options', [...field.options, `Option ${field.options.length + 1}`])}
-                        >
-                            Add Option
-                        </button>
-                    </div>
+                    <button className="btn btn-sm btn-secondary" onClick={() => addOption(field.id)}>
+                        Add Option LV/EN
+                    </button>
                 </div>
             ))}
 
