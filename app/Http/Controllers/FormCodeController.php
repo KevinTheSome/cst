@@ -13,6 +13,8 @@ class FormCodeController extends Controller
 {
     public function index()
     {
+        syncLangFiles('formcodes');
+
         $codes = FormCode::with('admin')->orderBy('created_at', 'desc')->get();
 
         $payload = $codes->map(function ($c) {
@@ -31,7 +33,11 @@ class FormCodeController extends Controller
         });
 
         return inertia('Admin/formCodes', [
-            'codes' => $payload
+            'codes' => $payload,
+            'lang' => [
+                'formcodes' => __('formcodes'),
+            ],
+            'locale' => app()->getLocale(),
         ]);
     }
 
