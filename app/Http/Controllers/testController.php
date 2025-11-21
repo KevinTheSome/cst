@@ -12,7 +12,6 @@ class TestController extends Controller
     {
         $country = $request->get('country');
         syncLangFiles('test');
-        syncLangFiles('contect');
         switch($country){
             case 'NL' :
                 return Inertia::render('welcomeLt');

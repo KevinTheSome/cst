@@ -16,7 +16,8 @@ class FormResult extends Model
     ];
 
     protected $casts = [
-        'results' => 'array', // Laravel will automatically decode JSON
+        'title' => 'array',
+        'results' => 'array',
     ];
 
     public function getFieldsAttribute()
