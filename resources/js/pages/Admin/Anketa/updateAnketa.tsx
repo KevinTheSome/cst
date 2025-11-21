@@ -1,8 +1,11 @@
 // resources/js/Pages/Admin/Anketa/updateAnketa.tsx
 
 import { useEffect, useState } from 'react';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
+import axios from 'axios';
 import AdminLayout from '@/Layouts/AdminLayout';
+import { useLang } from '@/hooks/useLang';
+import type React from 'react';
 
 type FieldType = 'radio' | 'checkbox' | 'dropdown';
 type Visibility = 'public' | 'private';
@@ -24,11 +27,58 @@ interface FormResult {
     };
 }
 
+/**
+ * Inline language switcher (LV / EN) using /locale route
+ */
+function LanguageSwitcher() {
+    const { props } = usePage();
+    const currentLocale = (props as any).locale || 'lv';
+
+    const switchLanguage = async (locale: string) => {
+        if (currentLocale === locale) return;
+
+        try {
+            await axios.post('/locale', { locale });
+            // reload just lang + locale from Inertia shared props
+            router.reload({ only: ['lang', 'locale'] });
+        } catch (error) {
+            console.error('Language switch failed:', error);
+            alert('Failed to switch language. Please try again.');
+        }
+    };
+
+    return (
+        <div className="mb-2 flex gap-2">
+            <button
+                onClick={() => switchLanguage('lv')}
+                className={`rounded px-4 py-2 text-xs font-semibold transition disabled:opacity-50 ${
+                    currentLocale === 'lv'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-gray-200 text-gray-700 hover:bg-green-200'
+                }`}
+            >
+                🇱🇻 Latviešu
+            </button>
+            <button
+                onClick={() => switchLanguage('en')}
+                className={`rounded px-4 py-2 text-xs font-semibold transition disabled:opacity-50 ${
+                    currentLocale === 'en'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-gray-200 text-gray-700 hover:bg-green-200'
+                }`}
+            >
+                🇬🇧 English
+            </button>
+        </div>
+    );
+}
+
 export default function UpdateAnketa({ formResult }: { formResult: FormResult }) {
     const [title, setTitle] = useState('');
     const [visibility, setVisibility] = useState<Visibility>('public');
     const [fields, setFields] = useState<Field[]>([]);
     const [saving, setSaving] = useState(false);
+    const { __ } = useLang();
 
     useEffect(() => {
         if (!formResult) return;
@@ -66,17 +116,14 @@ export default function UpdateAnketa({ formResult }: { formResult: FormResult })
             },
         };
 
-        console.log('Update payload:', payload);
-
         router.put(`/admin/anketa/update/${formResult.id}`, payload, {
             onSuccess: () => {
-                alert('Anketa atjaunināta!');
+                alert(__('anketa.update.success'));
                 setSaving(false);
-                // Inertia already redirected via controller -> admin.anketa
             },
             onError: (errors) => {
                 console.error('Update error:', errors);
-                alert('Kļūda saglabājot izmaiņas.');
+                alert(__('anketa.update.error'));
                 setSaving(false);
             },
         });
@@ -84,16 +131,21 @@ export default function UpdateAnketa({ formResult }: { formResult: FormResult })
 
     return (
         <div className="mx-auto max-w-3xl p-6 text-black">
+            {/* Language switcher */}
+            <div className="flex justify-end">
+                <LanguageSwitcher />
+            </div>
+
             <a href="/admin/anketa" className="btn mb-6 btn-outline btn-sm">
-                ← Back to list
+                {__('anketa.update.back')}
             </a>
 
-            <h1 className="mb-4 text-3xl font-bold">Edit Form</h1>
+            <h1 className="mb-4 text-3xl font-bold">{__('anketa.update.title')}</h1>
 
-            {/* Title */}
+            {/* Form title */}
             <input
                 type="text"
-                placeholder="Form title"
+                placeholder={__('anketa.update.form_title_placeholder')}
                 className="input-bordered input mb-4 w-full"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -105,19 +157,19 @@ export default function UpdateAnketa({ formResult }: { formResult: FormResult })
                 value={visibility}
                 onChange={(e) => setVisibility(e.target.value as Visibility)}
             >
-                <option value="public">Public — anyone with the link can answer</option>
-                <option value="private">Private — restricted access</option>
+                <option value="public">{__('anketa.update.visibility_public')}</option>
+                <option value="private">{__('anketa.update.visibility_private')}</option>
             </select>
 
             {/* Add field button */}
             <button className="btn mb-6 btn-primary" type="button" onClick={addField}>
-                Add Question
+                {__('anketa.update.add_question')}
             </button>
 
             {/* Fields list */}
             {fields.map((field) => (
                 <div key={field.id} className="mb-4 rounded-lg bg-base-200 p-4 shadow">
-                    {/* Label */}
+                    {/* Question label */}
                     <input
                         type="text"
                         placeholder="Question label"
@@ -139,7 +191,7 @@ export default function UpdateAnketa({ formResult }: { formResult: FormResult })
 
                     {/* Options */}
                     <div>
-                        <h3 className="mb-2 font-medium">Options:</h3>
+                        <h3 className="mb-2 font-medium">{__('anketa.update.options_label')}</h3>
 
                         {field.options.map((opt, idx) => (
                             <input
@@ -164,7 +216,7 @@ export default function UpdateAnketa({ formResult }: { formResult: FormResult })
                                 ])
                             }
                         >
-                            Add Option
+                            {__('anketa.update.add_option')}
                         </button>
                     </div>
                 </div>
@@ -176,7 +228,7 @@ export default function UpdateAnketa({ formResult }: { formResult: FormResult })
                 onClick={handleSave}
                 disabled={saving}
             >
-                {saving ? 'Saving...' : 'Save changes'}
+                {saving ? __('anketa.update.saving') : __('anketa.update.save')}
             </button>
         </div>
     );
