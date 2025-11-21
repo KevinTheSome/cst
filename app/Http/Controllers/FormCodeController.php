@@ -33,11 +33,7 @@ class FormCodeController extends Controller
         });
 
         return inertia('Admin/formCodes', [
-            'codes' => $payload,
-            'lang' => [
-                'formcodes' => __('formcodes'),
-            ],
-            'locale' => app()->getLocale(),
+            'codes' => $payload
         ]);
     }
 
