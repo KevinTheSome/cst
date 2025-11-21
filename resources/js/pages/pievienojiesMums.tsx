@@ -21,7 +21,7 @@ const resolveContactRoute = () => {
         }
     }
 
-    return '/contact';
+    return '/pievienojies-mums';
 };
 
 export default function PievienojiesMums() {

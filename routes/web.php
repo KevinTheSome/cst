@@ -9,6 +9,7 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FormCodeController;
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Controllers\ContactController;
 
 if (!function_exists('findPageComponent')) {
     function findPageComponent(string $name): string
@@ -65,6 +66,7 @@ Route::get('/test', [TestController::class, 'test'])->name('test');
 
 Route::get('/contacts', fn () => Inertia::render('contacts'))->name('contacts');
 Route::get('/pievienojies-mums', fn () => Inertia::render('pievienojiesMums'))->name('pievienojies-mums');
+Route::post('/pievienojies-mums', [ContactController::class,'store']);
 Route::get('/biocipu-zinatniska-laboratorija', fn () => Inertia::render('biocipuZinatniskaLaboratorija'))->name('biocipu-zinatniska-laboratorija');
 Route::get('/musu-grupa', fn () => Inertia::render('musuGrupa'))->name('musu-grupa');
 Route::get('/publikacijas', fn () => Inertia::render('publikacijas'))->name('publikacijas');
