@@ -75,6 +75,15 @@ class FormCodeController extends Controller
         ]);
     }
 
+    public function destroy(FormCode $formCode): JsonResponse
+    {
+        $formCode->delete();
+
+        return response()->json([
+            'success' => true,
+        ]);
+    }
+
     public function verify(Request $request): JsonResponse
     {
         $data = $request->validate([

@@ -96,6 +96,7 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/workspace', fn() => Inertia::render('Admin/workspace'))->name('admin.workspace');
     Route::get('/form-codes', [FormCodeController::class, 'index'])->name('admin.formCodes');
     Route::post('/form-codes', [FormCodeController::class, 'store'])->name('admin.formCodes.store');
+    Route::delete('/form-codes/{formCode}', [FormCodeController::class, 'destroy'])->name('admin.formCodes.destroy');
 
     Route::get('/anketa', [AnketaController::class, 'index'])->name('admin.anketa');
     Route::get('/anketa/create', [AnketaController::class, 'create'])->name('admin.anketa.create');
