@@ -94,9 +94,10 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/security', fn() => Inertia::render('Admin/security'))->name('admin.security');
     Route::get('/team-heatmap', fn() => Inertia::render('Admin/teamHeatmap'))->name('admin.team-heatmap');
     Route::get('/workspace', fn() => Inertia::render('Admin/workspace'))->name('admin.workspace');
-    Route::get('/form-codes', [\App\Http\Controllers\FormCodeController::class, 'index'])->name('admin.formCodes');
-    Route::post('/form-codes', [\App\Http\Controllers\FormCodeController::class, 'store'])->name('admin.formCodes.store');
+    Route::get('/form-codes', [FormCodeController::class, 'index'])->name('admin.formCodes');
+    Route::post('/form-codes', [FormCodeController::class, 'store'])->name('admin.formCodes.store');
 
+    Route::get('/anketa', [AnketaController::class, 'index'])->name('admin.anketa');
     Route::get('/anketa/create', [AnketaController::class, 'create'])->name('admin.anketa.create');
     Route::post('/anketa/store', [AnketaController::class, 'store'])->name('admin.anketa.store');
 
@@ -110,5 +111,3 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     // DELETE
     Route::delete('/anketa/destroy/{id}', [AnketaController::class, 'destroy'])->name('admin.anketa.destroy');
 });
-
-
