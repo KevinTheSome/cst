@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FormCode;
+use App\Models\Form;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
@@ -34,12 +35,19 @@ class FormCodeController extends Controller
                     'id'    => $c->admin->id,
                     'email' => $c->admin->email,
                 ] : null,
-                'form_id'         => $c->form_id ?? null,
+                'form' => $c->form ? [
+                    'id' => $c->form->id,
+                    'title' => $c->form->title,
+                ] : null,
             ];
         });
 
+        // only pass private forms for assignment
+        $forms = Form::where('code', 'private')->orderBy('title')->get(['id', 'title']);
+
         return inertia('Admin/formCodes', [
             'codes' => $payload,
+            'forms' => $forms,
         ]);
     }
 
@@ -50,6 +58,19 @@ class FormCodeController extends Controller
             'expiration_hours'=> 'required|integer|min:1',
             'form_id'         => 'nullable|integer|exists:form,id',
         ]);
+
+        $formId = $request->input('form_id');
+
+        // If a form_id is provided, require that the form is private
+        if ($formId) {
+            $form = Form::find($formId);
+            if (! $form || ($form->code ?? '') !== 'private') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You can only assign codes to private surveys.',
+                ], 422);
+            }
+        }
 
         $expiration = now()->addHours($request->expiration_hours);
 
@@ -63,8 +84,8 @@ class FormCodeController extends Controller
             'form_id'         => $request->form_id ?? null,
         ]);
 
-        // load user relation
-        $code->load('admin');
+        // load relations
+        $code->load('admin', 'form');
 
         $response = [
             'id'              => $code->id,
@@ -86,25 +107,17 @@ class FormCodeController extends Controller
         ]);
     }
 
-    public function destroy(FormCode $formCode): JsonResponse
-    {
-        $formCode->delete();
-
-        return response()->json([
-            'success' => true,
-        ]);
-    }
-
     public function verify(Request $request): JsonResponse
     {
         $data = $request->validate([
             'code' => ['required', 'string', 'min:1', 'max:255'],
+            'form_id' => 'nullable|integer|exists:form,id',
         ]);
 
         $codeInput = strtoupper(trim($data['code']));
+        $expectedFormId = $data['form_id'] ?? null;
 
-        // Use a transaction to avoid race conditions when decrementing uses
-        return DB::transaction(function () use ($codeInput) {
+        return DB::transaction(function () use ($codeInput, $expectedFormId) {
             $formCode = FormCode::where('code', $codeInput)
                 ->lockForUpdate()
                 ->first();
@@ -116,10 +129,14 @@ class FormCodeController extends Controller
                 ], 422);
             }
 
-            $expiresAt = $formCode->expiration_date
-                ? Carbon::parse($formCode->expiration_date)
-                : null;
+            if ($expectedFormId && (int)$formCode->form_id !== (int)$expectedFormId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Kods nepieder šai anketai.',
+                ], 422);
+            }
 
+            $expiresAt = $formCode->expiration_date ? Carbon::parse($formCode->expiration_date) : null;
             if ($expiresAt && $expiresAt->isPast()) {
                 return response()->json([
                     'success' => false,
@@ -137,6 +154,9 @@ class FormCodeController extends Controller
             $formCode->uses = max(0, (int) $formCode->uses - 1);
             $formCode->save();
 
+            // load form relation
+            $formCode->load('form');
+
             return response()->json([
                 'success'        => true,
                 'remaining_uses' => (int) $formCode->uses,
@@ -146,4 +166,21 @@ class FormCodeController extends Controller
             ]);
         });
     }
+    public function destroy($id): JsonResponse
+{
+    try {
+        $code = FormCode::findOrFail($id);
+
+        $code->delete(); // or forceDelete() if you use SoftDeletes
+
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        \Log::error("Failed to delete FormCode ID {$id}: {$e->getMessage()}");
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to delete code. Check server logs.',
+        ], 500);
+    }
+}
+
 }
