@@ -4,18 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('forms', function (Blueprint $table) {
+        Schema::create('form_types', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('form_id')->constrained('forms')->onDelete('cascade');
+            $table->string('type');
             $table->timestamps();
-            $table->string('code');
-            $table->string('title');
-            $table->json('results');
         });
     }
 
@@ -24,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('form');
+        Schema::dropIfExists('form_types');
     }
 };

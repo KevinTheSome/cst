@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Form extends Model
 {
 
-    protected $table = 'form';
+    protected $table = 'forms';
 
     protected $fillable = [
         'code',
@@ -30,9 +30,13 @@ class Form extends Model
         // in case title is inside results
         return $this->results['title'] ?? $value;
     }
+    public function formType(){
+        return $this->hasOne(FormType::class);
+    }
+    
     public function codes()
-{
-    return $this->hasMany(FormCode::class, 'form_id', 'id');
-}
+    {
+        return $this->hasMany(FormCode::class, 'form_id', 'id');
+    }
 
 }
