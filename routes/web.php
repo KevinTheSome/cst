@@ -77,6 +77,8 @@ Route::get('/lablife', fn () => Inertia::render('labLife'))->name('lablife');
 Route::get('/anketa', fn () => Inertia::render('anketa'))->name('anketa');
 Route::get('/questions', fn () => Inertia::render('questions'))->name('questions');
 
+Route::post('/anketa/answers', [AnketaController::class, 'storeAnswers'])->name('anketa.answers');
+
 Route::post('/form-codes/verify', [FormCodeController::class, 'verify'])->name('formCodes.verify');
 
 Route::get('/admin/login', fn() => Inertia::render('Admin/login'))->name('admin.login');
@@ -97,6 +99,7 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/security', fn() => Inertia::render('Admin/security'))->name('admin.security');
     Route::get('/team-heatmap', fn() => Inertia::render('Admin/teamHeatmap'))->name('admin.team-heatmap');
     Route::get('/workspace', fn() => Inertia::render('Admin/workspace'))->name('admin.workspace');
+
     Route::get('/form-codes', [FormCodeController::class, 'index'])->name('admin.formCodes');
     Route::post('/form-codes', [FormCodeController::class, 'store'])->name('admin.formCodes.store');
     Route::delete('/form-codes/{formCode}', [FormCodeController::class, 'destroy'])->name('admin.formCodes.destroy');
