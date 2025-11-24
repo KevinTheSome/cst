@@ -119,5 +119,5 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::delete('/anketa/destroy/{id}', [AnketaController::class, 'destroy'])->name('admin.anketa.destroy');
 
     Route::get('/selector', [FormTypeController::class, 'index'])->name('admin.selector');
-    Route::post('/selector', [FormTypeCOntroller::class, 'add'])->name('admin.selector.add');
+    Route::post('/selector/add', [FormTypeController::class, 'add'])->name('admin.selector.add');
 });

@@ -15,29 +15,45 @@ interface FormResultType {
     };
 }
 
-interface SelectorAnketaProps {
-    anketas: FormResultType[];
+interface FormType {
+    id: number;
+    form_id: number;
+    type: string;
 }
 
-export default function SelectorAnketa({ anketas = [] }: SelectorAnketaProps) {
-    const { __ } = useLang();
-    const [selectors, setSelectors] = useState<Record<string, string>>({}); // { formCode: selectedType }
+interface SelectorAnketaProps {
+    anketas: FormResultType[];
+    formTypes: FormType[];
+}
 
-    const handleTypeChange = (formCode: string, type: string) => {
-        setSelectors((prev) => ({
+export default function SelectorAnketa({ anketas = [], formTypes = [] }: SelectorAnketaProps) {
+    const { __ } = useLang();
+
+    // Pre-fill selected types from formTypes
+    const initialSelections: Record<number, string> = {};
+    formTypes.forEach(ft => {
+        initialSelections[ft.form_id] = ft.type;
+    });
+
+    const [selectedTypes, setSelectedTypes] = useState<Record<number, string>>(initialSelections);
+
+    const handleTypeChange = (formId: number, type: string) => {
+        setSelectedTypes(prev => ({
             ...prev,
-            [formCode]: type,
+            [formId]: type,
         }));
     };
 
-    const handleSave = () => {
-        if (Object.keys(selectors).length === 0) {
-            alert(__('anketa.selector.error_no_selection'));
+    const handleSave = (formId: number) => {
+        const type = selectedTypes[formId];
+        if (!type) {
+            alert(__('anketa.selector.error_missing'));
             return;
         }
 
-        router.post('/selector/add', {
-            selections: selectors, // { code: type }
+        router.post('/admin/selector/add', {
+            form_id: formId,
+            type: type,
         }, {
             onSuccess: () => alert(__('anketa.selector.success')),
             onError: (errors) => {
@@ -74,15 +90,31 @@ export default function SelectorAnketa({ anketas = [] }: SelectorAnketaProps) {
 
                             {/* Selector Dropdown */}
                             <select
-                                value={selectors[form.code] || ''}
-                                onChange={(e) => handleTypeChange(form.code, e.target.value)}
+                                value={selectedTypes[form.id] || ''}
+                                onChange={(e) => handleTypeChange(form.id, e.target.value)}
                                 className="mt-3 w-full rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-white"
                             >
-                                <option value=""></option>
-                                <option value="type_a"></option>
-                                <option value="type_b"></option>
-                                <option value="type_c"></option>
+                                <option value="">{__('anketa.selector.select_type')}</option>
+                                <option value="specialists">{__('anketa.update.specialist')}</option>
+                                <option value="psoriasis">{__('anketa.update.psoriasis')}</option>
+                                <option value="chronic">{__('anketa.update.chronic')}</option>
                             </select>
+
+                            {/* Save Button for this form */}
+                            <div className="mt-3 flex justify-end">
+                                <button
+                                    type="button"
+                                    onClick={() => handleSave(form.id)}
+                                    disabled={!selectedTypes[form.id]}
+                                    className={`rounded-xl px-4 py-2 text-white ${
+                                        !selectedTypes[form.id]
+                                            ? 'bg-gray-500 cursor-not-allowed'
+                                            : 'bg-emerald-500 hover:bg-emerald-600'
+                                    }`}
+                                >
+                                    {__('anketa.selector.save')}
+                                </button>
+                            </div>
                         </div>
                     ))}
 
@@ -91,17 +123,6 @@ export default function SelectorAnketa({ anketas = [] }: SelectorAnketaProps) {
                             {__('anketa.selector.no_results')}
                         </p>
                     )}
-                </div>
-
-                {/* Save Button */}
-                <div className="flex justify-end">
-                    <button
-                        type="button"
-                        onClick={handleSave}
-                        className="rounded-xl bg-emerald-500 px-6 py-3 text-white hover:bg-emerald-600"
-                    >
-                        {__('anketa.selector.save')}
-                    </button>
                 </div>
             </div>
         </>

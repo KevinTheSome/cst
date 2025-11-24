@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('form', function (Blueprint $table) {
+        Schema::create('forms', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->string('code');
