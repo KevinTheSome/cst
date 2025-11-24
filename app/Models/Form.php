@@ -30,4 +30,9 @@ class Form extends Model
         // in case title is inside results
         return $this->results['title'] ?? $value;
     }
+    public function codes()
+{
+    return $this->hasMany(FormCode::class, 'form_id', 'id');
+}
+
 }
