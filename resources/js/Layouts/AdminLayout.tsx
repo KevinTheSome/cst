@@ -53,6 +53,7 @@ const navSections: NavSection[] = [
 
             { id: 'content', label: 'Content studio', description: 'Posts, blogs, media', href: '/admin/content-studio', badge: '12 drafts', badgeTone: 'sky' },
             { id: 'form-codes', label: 'Form codes', description: 'Survey code generator', href: '/admin/form-codes' },
+            { id: 'form-selector', label: 'Form Selector', description: 'Change the type select for a form', href: '/admin/selector'}
 
         ],
     },
