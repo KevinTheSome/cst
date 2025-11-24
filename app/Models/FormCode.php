@@ -13,7 +13,8 @@ class FormCode extends Model
         'code',
         'user_created',
         'expiration_date',
-        'uses'
+        'uses',
+        'form_id',
     ];
 
     protected $casts = [
@@ -28,5 +29,10 @@ class FormCode extends Model
     public function admin(): BelongsTo
     {
         return $this->belongsTo(\App\Models\Admin::class, 'user_created');
+    }
+     public function form()
+    {
+        
+        return $this->belongsTo(Form::class, 'form_id', 'id');
     }
 }
