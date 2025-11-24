@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('form_code', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->foreignId('form_id')->constrained('form')->cascadeOnDelete();
             $table->string('code')->unique();
             $table->integer('user_created');
             $table->date('expiration_date');
