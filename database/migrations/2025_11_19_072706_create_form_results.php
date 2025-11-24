@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('form_results', function (Blueprint $table) {
+        Schema::create('form', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->string('code');
@@ -24,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('form_results');
+        Schema::dropIfExists('form');
     }
 };

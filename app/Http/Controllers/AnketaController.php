@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FormResult;
+use App\Models\Form;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,7 +14,7 @@ class AnketaController extends Controller
      */
     public function index()
     {
-        $formResults = FormResult::all();
+        $formResults = Form::all();
 
         return Inertia::render('Admin/Anketa/indexAnketa', [
             'formResults' => $formResults,
@@ -27,7 +27,7 @@ class AnketaController extends Controller
      */
     public function show($id)
     {
-        $formResult = FormResult::findOrFail($id);
+        $formResult = Form::findOrFail($id);
 
         return Inertia::render('Admin/Anketa/showAnketa', [
             'formResult' => $formResult,
@@ -54,7 +54,7 @@ class AnketaController extends Controller
             'visibility' => 'required|string',
             'schema.fields' => 'array|nullable',
         ]);
-        FormResult::create([
+        Form::create([
             'code' => $data['visibility'],
             'title' => $data['title'],
             'results' => [
@@ -71,7 +71,7 @@ class AnketaController extends Controller
      */
     public function edit($id)
     {
-        $formResult = FormResult::findOrFail($id);
+        $formResult = Form::findOrFail($id);
 
         return Inertia::render('Admin/Anketa/updateAnketa', [
             'formResult' => $formResult,
@@ -86,7 +86,7 @@ class AnketaController extends Controller
     {
         $data = $request->all();
 
-        $formResult = FormResult::findOrFail($id);
+        $formResult = Form::findOrFail($id);
 
         $formResult->update([
             'code' => $data['visibility'],
@@ -103,7 +103,7 @@ class AnketaController extends Controller
      */
     public function destroy($id)
     {
-        $formResult = FormResult::findOrFail($id);
+        $formResult = Form::findOrFail($id);
         $formResult->delete();
 
         return redirect()->route('admin.anketa');
