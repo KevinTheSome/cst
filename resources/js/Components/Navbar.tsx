@@ -81,8 +81,26 @@ function Navbar() {
                                     href="/pievienojies-mums"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
                                 >
-                                    Pievienojies mums
+                                    Komanda
                                 </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/pievienojies-mums"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
+                                    Labretorija
+                                </Link>
+                                
+                            </li>
+                            <li>
+                                <Link
+                                    href="/contacts"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
+                                    Kontekti
+                                </Link>
+                                
                             </li>
                         </ul>
                     </div>
@@ -123,7 +141,131 @@ function Navbar() {
                         </ul>
                     </div>
                 </li>
-
+                 {/* Pētmieciba un artauias */}
+                <li>
+                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost md:w-auto">
+                        <label
+                            tabIndex={0}
+                            className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 md:text-xl"
+                        >
+                            PĒTNIECĪBA{' '}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </label>
+                        <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
+                            <li>
+                                <Link
+                                    href="/"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
+                                    Klīniskie pētijumi
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                    PostDock anketa
+                                </Link>
+                            </li>
+                             <li>
+                                <Link href="/" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                    Publikācijas (DOI)
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                {/* SPECIĀLISTIEM */}
+                <li>
+                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost md:w-auto">
+                        <label
+                            tabIndex={0}
+                            className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 md:text-xl"
+                        >
+                            SPECIĀLISTIEM{' '}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </label>
+                        <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
+                            <li>
+                                <Link
+                                    href="/"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
+                                    ES regula un likumi
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                    ATMP ražotnes Eiropā
+                                </Link>
+                            </li>
+                             <li>
+                                <Link href="/" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                    On-line apmāciba (lekcijas. konsultacijas. sertifikāts)
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+{/* New things */}
+                <li>
+                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost md:w-auto">
+                        <label
+                            tabIndex={0}
+                            className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 md:text-xl"
+                        >
+                            PACIANTIEM{' '}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </label>
+                        <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
+                            <li>
+                                <Link
+                                    href="/"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
+                                    Kas ir ATMP?
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                    Psoriāze un jaunās terapjas
+                                </Link>
+                            </li>
+                             <li>
+                                <Link href="/" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                    Krona slimiba un jaunās terapiias
+                                </Link>
+                            </li>
+                             <li>
+                                <Link href="/" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
+                                    Biežak uzdotie jautājumi (FAQ)
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
                 {/* Questionnaire */}
                 <li>
                     <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost md:w-auto">
@@ -319,6 +461,7 @@ function Navbar() {
                                             </li>
                                         </ul>
                                     </details>
+                                    
                                 </li>
                                 <li>
                                     <Link
@@ -334,6 +477,7 @@ function Navbar() {
                                         KONTAKTI
                                     </Link>
                                 </li>
+                                
                                 <li className="mt-4 ml-4 flex w-full flex-row gap-2">
                                     <button
                                         className={`btn flex h-10 min-h-0 w-10 items-center justify-center border-none p-0 text-lg font-semibold btn-ghost transition md:text-xl ${
