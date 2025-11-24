@@ -1,118 +1,258 @@
 import { useLang } from '@/hooks/useLang';
 import { Head, Link } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
-type Slide = { image: string; alt: string };
 
-const SLIDE_INTERVAL = 4000;
-
-const SLIDES: Slide[] = [
-    { image: '/Enu-dienas-RTU-2020.jpg', alt: 'Studenti laboratorijā pie bioinženierijas aprīkojuma' },
-    { image: '/2020.08.27._RTU-izcilnieki_02-scaled.jpg', alt: 'Komanda demonstrē biočipu iekārtu' },
-    { image: '/2020.08.27._RTU-izcilnieki_01-scaled.jpg', alt: 'Biočipa ražošanas process' },
+const audienceInfoCards = [
+    { label: 'Speciālistiem', subtitle: 'Piekļuve protokoliem un sadarbībai' },
+    { label: 'Pacientiem', subtitle: 'Piesakies personalizētai konsultācijai' },
 ];
+
+const valueCards = [
+    {
+        title: 'Cilmes šūnu terapija',
+        body: 'Atjaunojam audus ar hematopoētisko un mezenhimālo šūnu palīdzību.',
+    },
+    {
+        title: 'Biočipu precizitāte',
+        body: 'Mikrofluidika ļauj testēt tūkstošiem scenāriju vienā skrējienā.',
+    },
+    {
+        title: 'Drošas telpas',
+        body: 'ISO klase + ārstu partneri nozīmē uzticamus protokolus.',
+    },
+];
+
+const focusAreas = [
+    {
+        caption: 'Asinsrade',
+        description: 'Atbalsts pacientiem pēc ķīmijterapijas vai ilgstošām infekcijām.',
+    },
+    {
+        caption: 'Autoimunitāte',
+        description: 'Šūnu terapijas multiplās sklerozes un artrīta gadījumos.',
+    },
+    {
+        caption: 'Ortopēdija',
+        description: 'Skrimšļu un saišu “salabošana” ar cilmes šūnām.',
+    },
+];
+
+const stats = [
+    { label: 'Analizētie paraugi', value: '10k+' },
+    { label: 'Šūnu parametri vienā skrējienā', value: '1k+' },
+    { label: 'Partneru klīnikas', value: '12' },
+];
+
+
+
+const ecosystemSteps = [
+    {
+        title: '1. Analīze',
+        text: 'Mikrofluidika uztaisa šūnu karti dažu minūšu laikā.',
+    },
+    {
+        title: '2. Treniņš',
+        text: 'Šūnas tiek “trenētas” ar biomateriāliem, lai aktivizētu dziedināšanu.',
+    },
+    {
+        title: '3. Terapija',
+        text: 'Drošs protokols nonāk pie ārsta un pie pacienta.',
+    },
+];
+
+function ArrowIcon({ className = '' }) {
+    return (
+        <svg viewBox="0 0 20 20" fill="currentColor" className={className} aria-hidden>
+            <path
+                fillRule="evenodd"
+                d="M3 10a.75.75 0 01.75-.75h10.69l-3.22-3.22a.75.75 0 111.06-1.06l4.5 4.5a.75.75 0 010 1.06l-4.5 4.5a.75.75 0 11-1.06-1.06l3.22-3.22H3.75A.75.75 0 013 10z"
+                clipRule="evenodd"
+            />
+        </svg>
+    );
+}
 
 export default function Welcome() {
     const { __ } = useLang();
-    const [activeSlide, setActiveSlide] = useState(0);
-    const totalSlides = SLIDES.length;
-
-    useEffect(() => {
-        const timer = window.setInterval(() => {
-            setActiveSlide((c) => (c + 1) % totalSlides);
-        }, SLIDE_INTERVAL);
-        return () => window.clearInterval(timer);
-    }, [totalSlides]);
-
-    const goToSlide = (index: number) => setActiveSlide((index + totalSlides) % totalSlides);
 
     return (
         <>
             <Head title={__('Sākumlapa')} />
 
-            <div className="bg-[#f4f4f2]">
-                <section className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 pt-12 pb-16 sm:px-10">
-                    {/* SLIDESHOW — full width, no side lines, big rounded corners */}
-                    <div className="relative w-full overflow-hidden rounded-[64px] shadow-lg shadow-black/15 sm:rounded-[88px] lg:rounded-[120px]">
-                        {/* keep ~10% shorter than the original tall version */}
-                        <div className="relative h-[67.5vh] max-h-[882px] w-full sm:h-[72vh] lg:h-[76.5vh]">
-                            {SLIDES.map((slide, index) => (
-                                <figure
-                                    key={slide.image + index}
-                                    className={`absolute inset-0 flex h-full w-full items-center justify-center transition-opacity duration-700 ${
-                                        index === activeSlide ? 'opacity-100' : 'opacity-0'
-                                    }`}
+            <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-[#eef7ff] via-white to-[#ecf9f6] text-slate-900">
+                {/* soft blobs + grid */}
+                <div className="pointer-events-none absolute inset-0">
+                    <div className="absolute -top-24 left-8 h-72 w-72 rounded-full bg-sky-200/50 blur-3xl" />
+                    <div className="absolute top-52 right-[-40px] h-80 w-80 rounded-full bg-emerald-200/50 blur-3xl" />
+                    <div className="absolute inset-0 bg-[radial-gradient(#0f172a12_1px,transparent_1px)] [background-size:18px_18px] opacity-40" />
+                </div>
+
+                {/* HERO */}
+                <section className="relative mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-14 sm:px-8 sm:py-16 lg:flex-row lg:items-center">
+                    {/* LEFT */}
+                    <div className="flex-1 space-y-7">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white/70 px-3 py-1 text-xs uppercase tracking-[0.35em] text-emerald-700 shadow-sm">
+                            <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.9)]" />
+                            Biočipu cilmes šūnu centrs
+                        </div>
+
+                        <h1 className="text-4xl font-semibold leading-tight text-slate-900 sm:text-5xl">
+                            Cilmes šūnu diagnostika un terapija vienā platformā
+                        </h1>
+
+                        <p className="max-w-xl text-lg leading-relaxed text-slate-600">
+                            RTU Biočipu laboratorija apvieno zinātni un inženieriju, lai cilmes šūnu terapijas kļūtu drošākas un pieejamākas.
+                        </p>
+
+                        {/* BIG CENTER CTA */}
+                        <div className="flex w-full justify-center pt-1">
+                            <Link
+                                href="/anketa"
+                                className="group inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-sky-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-500/25 transition hover:-translate-y-0.5 hover:shadow-emerald-500/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:text-lg"
+                            >
+                                Atvērt anketu
+                                <ArrowIcon className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                            </Link>
+                        </div>
+
+                        {/* Audience info cards (no link) */}
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            {audienceInfoCards.map((card) => (
+                                <div
+                                    key={card.label}
+                                    className="rounded-2xl border border-emerald-200/70 bg-white p-5 shadow-lg shadow-emerald-900/5"
                                 >
-                                    <img
-                                        alt={slide.alt}
-                                        src={slide.image}
-                                        className="h-full w-full object-cover object-[center_30%]" /* fill, no letterbox; shift view up a bit */
-                                    />
-                                </figure>
+                                    <p className="text-xs uppercase tracking-[0.35em] text-emerald-700">{card.label}</p>
+                                    <p className="mt-2 text-base font-semibold text-slate-900">{card.subtitle}</p>
+                                </div>
                             ))}
                         </div>
 
-                        {/* Prev / Next hit areas */}
-                        <button
-                            aria-label="Iepriekšējais attēls"
-                            className="absolute top-0 left-0 h-full w-16"
-                            onClick={() => goToSlide(activeSlide - 1)}
-                            type="button"
-                        />
-                        <button
-                            aria-label="Nākamais attēls"
-                            className="absolute top-0 right-0 h-full w-16"
-                            onClick={() => goToSlide(activeSlide + 1)}
-                            type="button"
-                        />
-
-                        {/* Dots */}
-                        <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-2">
-                            {SLIDES.map((_, index) => (
-                                <button
-                                    key={`dot-${index}`}
-                                    aria-label={`Dot ${index + 1}`}
-                                    className={`h-2 w-10 rounded-full transition ${index === activeSlide ? 'bg-white' : 'bg-white/40'}`}
-                                    onClick={() => goToSlide(index)}
-                                    type="button"
-                                />
-                            ))}
-                        </div>
+         
                     </div>
 
-                    {/* Text content */}
-                    <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-8 py-10 text-center">
-                        <h2 className="text-2xl leading-relaxed text-[#3a4955]">
-                            Rīgas Tehniskās universitātes, Mašīnzinību, transporta un aeronautikas fakultātes, Biomedicīnas inženierzinātņu un
-                            nanotehnoloģiju institūta, Biočipu zinātniskā laboratorija.
-                        </h2>
-                        <p className="text-base leading-relaxed text-[#3a4955] sm:text-lg">Laboratorija nodrošina:</p>
-                        <p className="text-base leading-relaxed text-[#3a4955] sm:text-lg">
-                            – pētījumus biomikrotehnoloģijās un nanotehnoloģijās, medicīnas inženierijas un nanoinženierijas jomās,
-                        </p>
-                        <p className="text-base leading-relaxed text-[#3a4955] sm:text-lg">– studentus un jaunos pētniekus ar pētniecisko praksi.</p>
-                        <Link
-                            className="rounded-full bg-[#1f675b] px-6 py-3 text-sm font-semibold tracking-[0.25em] text-white uppercase transition hover:bg-[#184f46]"
-                            href="/biocipu-zinatniska-laboratorija"
-                        >
-                            Uzzināt vairāk
-                        </Link>
+                    {/* RIGHT */}
+                    <div className="flex-1">
+                        <div className="relative overflow-hidden rounded-[40px] border border-white/70 bg-white/85 p-7 shadow-2xl shadow-slate-200 backdrop-blur">
+                            {/* soft circular glows */}
+                            <div className="pointer-events-none absolute -right-14 -top-14 h-40 w-40 rounded-full bg-sky-200/60 blur-3xl" />
+                            <div className="pointer-events-none absolute -left-16 -bottom-16 h-44 w-44 rounded-full bg-emerald-200/60 blur-3xl" />
+                            <div className="pointer-events-none absolute right-6 top-6 h-16 w-16 rounded-full border border-sky-200/60" />
+                            <div className="pointer-events-none absolute left-8 bottom-8 h-12 w-12 rounded-full border border-emerald-200/60" />
+
+                            <h2 className="text-xl font-semibold text-slate-900">Kāpēc cilmes šūnas?</h2>
+
+                            {/* ✅ Short, easy-scan lead */}
+                            <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                                Īsumā: tās palīdz atjaunot audus un imunitāti, balstoties uz pacienta bioloģiju.
+                            </p>
+
+                            {/* ✅ Replace long paragraphs with bullets */}
+                            <ul className="mt-4 space-y-2 text-sm leading-relaxed text-slate-600">
+                                <li className="flex gap-3">
+                                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
+                                    Var kļūt par dažādu audu šūnām, tāpēc der slimībām bez efektīviem medikamentiem.
+                                </li>
+                                <li className="flex gap-3">
+                                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-sky-500" />
+                                    Biočips ļauj droši “trenēt” šūnas ar ļoti mazu materiāla daudzumu.
+                                </li>
+                                <li className="flex gap-3">
+                                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
+                                    Rezultāts ir personalizēts protokols, nevis vidēji statistiska pieeja.
+                                </li>
+                            </ul>
+
+                            {/* Key benefits box stays, but tighter */}
+                            <div className="mt-6 grid gap-3 rounded-2xl bg-slate-50 p-4">
+                                <div className="flex items-start gap-3">
+                                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
+                                    <p className="text-sm text-slate-700">Personalizēti šūnu profili katram pacientam</p>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-sky-500" />
+                                    <p className="text-sm text-slate-700">Mikrofluidika ar minimālu parauga apjomu</p>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
+                                    <p className="text-sm text-slate-700">Klīniski pierādāmi protokoli ar ārstu iesaisti</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
-                <section className="mx-auto flex w-full max-w-5xl flex-col gap-12 px-4 pb-20 sm:px-10">
-                    <div className="flex flex-col gap-8 p-8 md:flex-row md:items-center">
-                        <img
-                            alt="Dr. habil. Uldis Bērziņš"
-                            className="h-52 w-52 flex-shrink-0 rounded-3xl object-cover object-top shadow-lg shadow-black/10 md:h-60 md:w-60"
-                            src="/Uldis_2019-copy.jpg"
-                        />
-                        <div className="flex flex-col gap-4 text-[#26323b]">
-                            <h2 className="text-2xl font-semibold">Dr. biol. Uldis Bērziņš</h2>
-                            <p className="text-base leading-relaxed text-[#40515d]">
-                                ir laboratorijas vadītājs un vadošais pētnieks, kurš pēta novecošanos un tā ārstēšanas iespējas uz šūnu kultūrām
-                                biočipos.
-                            </p>
-                            <p className="text-sm tracking-[0.28em] text-[#74838f] uppercase">Mēs radām nākotnes tehnoloģijas</p>
+                {/* VALUE / PROCESS */}
+                <section className="relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 pb-16 sm:px-8">
+                    {/* Value cards */}
+                    <div className="rounded-[32px] border border-white/70 bg-white p-8 shadow-xl shadow-slate-200/80">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                            <div>
+                                <p className="text-xs uppercase tracking-[0.4em] text-emerald-600">Kas notiek laboratorijā</p>
+                                <h3 className="mt-3 text-3xl font-semibold text-slate-900">Trīs soļi līdz personalizētai terapijai</h3>
+                            </div>
+                            <div className="text-sm text-slate-500">No parauga līdz protokolam</div>
+                        </div>
+
+                        <div className="mt-8 grid gap-6 md:grid-cols-3">
+                            {valueCards.map((card, i) => (
+                                <div
+                                    key={card.title}
+                                    className="group relative rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-slate-50 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+                                >
+                                    <div className="absolute -top-3 left-6 rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white shadow">
+                                        0{i + 1}
+                                    </div>
+                                    <h4 className="mt-3 text-lg font-semibold text-slate-900">{card.title}</h4>
+                                    <p className="mt-3 text-sm leading-relaxed text-slate-600">{card.body}</p>
+                                    <div className="mt-5 h-1 w-12 rounded-full bg-gradient-to-r from-emerald-400 to-sky-400 opacity-70 transition group-hover:w-20" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Focus areas */}
+                    <div className="relative overflow-hidden rounded-[32px] border border-white/70 bg-gradient-to-r from-sky-50 via-white to-emerald-50 p-8 shadow-xl shadow-slate-200">
+                        <div className="absolute right-6 top-6 hidden h-28 w-28 rounded-full bg-white/60 blur-xl sm:block" />
+                        <p className="text-xs uppercase tracking-[0.4em] text-emerald-600">Galvenie virzieni</p>
+                        <h3 className="mt-3 text-2xl font-semibold text-slate-900">Kur mēs fokusējamies</h3>
+
+                        <div className="mt-6 grid gap-6 md:grid-cols-3">
+                            {focusAreas.map((area) => (
+                                <div
+                                    key={area.caption}
+                                    className="group rounded-2xl border border-white/80 bg-white/90 p-6 shadow-sm backdrop-blur transition hover:-translate-y-1 hover:shadow-lg"
+                                >
+                                    <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                                        {area.caption}
+                                    </div>
+                                    <p className="text-sm leading-relaxed text-slate-600">{area.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Ecosystem */}
+                    <div className="rounded-[32px] border border-white/70 bg-white p-8 shadow-xl shadow-slate-200">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <p className="text-xs uppercase tracking-[0.4em] text-emerald-600">Ekosistēma</p>
+                                <h3 className="mt-3 text-2xl font-semibold text-slate-900">Kā top personalizētā terapija</h3>
+                            </div>
+                            <div className="text-sm text-slate-500">Datu plūsma · laboratorija · klīnika</div>
+                        </div>
+
+                        <div className="mt-6 grid gap-6 md:grid-cols-3">
+                            {ecosystemSteps.map((step, index) => (
+                                <div
+                                    key={step.title}
+                                    className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-slate-50 p-5 shadow-sm"
+                                >
+                                    <span className="absolute -right-3 top-3 text-5xl font-bold text-slate-100">{index + 1}</span>
+                                    <p className="text-sm font-semibold text-slate-900">{step.title}</p>
+                                    <p className="mt-2 text-sm leading-relaxed text-slate-600">{step.text}</p>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </section>
