@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FormResult extends Model
+class Form extends Model
 {
 
-    protected $table = 'form_results';
+    protected $table = 'form';
 
     protected $fillable = [
         'code',
