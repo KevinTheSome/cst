@@ -316,7 +316,7 @@ export default function Anketa() {
         const csrf = tokenMeta?.content ?? '';
 
         try {
-            const res = await fetch('/anketa/answers', {
+            const res = await fetch('/anketa/store-answers', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

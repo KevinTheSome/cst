@@ -11,29 +11,42 @@ use Inertia\Inertia;
 
 class AnketaController extends Controller
 {
+    /**
+     * Admin: list stored form results
+     */
     public function index()
     {
-        $formResults = Form::all();
+        // Show stored submissions (form_results)
+        $formResults = FormResult::orderBy('created_at', 'desc')->get();
 
         return Inertia::render('Admin/Anketa/indexAnketa', [
             'formResults' => $formResults,
         ]);
     }
 
+    /**
+     * Admin: show single stored result
+     */
     public function show($id)
     {
-        $formResult = Form::findOrFail($id);
+        $formResult = FormResult::findOrFail($id);
 
         return Inertia::render('Admin/Anketa/showAnketa', [
             'formResult' => $formResult,
         ]);
     }
 
+    /**
+     * Admin: create a new form template
+     */
     public function create()
     {
         return Inertia::render('Admin/Anketa/createAnketa');
     }
 
+    /**
+     * Admin: store form template
+     */
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -53,6 +66,9 @@ class AnketaController extends Controller
         return redirect()->route('admin.anketa');
     }
 
+    /**
+     * Admin: edit form template
+     */
     public function edit($id)
     {
         $formResult = Form::findOrFail($id);
@@ -62,6 +78,9 @@ class AnketaController extends Controller
         ]);
     }
 
+    /**
+     * Admin: update form template
+     */
     public function update(Request $request, $id)
     {
         $data = $request->all();
@@ -77,6 +96,9 @@ class AnketaController extends Controller
         return redirect()->route('admin.anketa');
     }
 
+    /**
+     * Admin: delete form template
+     */
     public function destroy($id)
     {
         $formResult = Form::findOrFail($id);
@@ -85,6 +107,34 @@ class AnketaController extends Controller
         return redirect()->route('admin.anketa');
     }
 
+    /**
+     * Public route: load a form page by its code (used by your route closures)
+     *
+     * Example: app(AnketaController::class)->loadByCode('psoriasis')
+     */
+    public function loadByCode(string $code)
+    {
+        $form = Form::where('code', $code)->first();
+
+        if (! $form) {
+            // If not found, you can either abort(404) or render a generic page.
+            abort(404, 'Form not found.');
+        }
+
+        // Send the form payload to the frontend anketa page.
+        return Inertia::render('anketa', [
+            'form' => [
+                'id' => $form->id,
+                'code' => $form->code,
+                'title' => $form->title,
+                'schema' => $form->results ?? [],
+            ],
+        ]);
+    }
+
+    /**
+     * Public: store submitted answers to form_results table.
+     */
     public function storeAnswers(Request $request)
     {
         $data = $request->validate([
@@ -103,17 +153,17 @@ class AnketaController extends Controller
                     $title = $form->title ?? $title;
                 }
             } catch (\Exception $e) {
-                // swallow - we'll just use provided title or null
+                // swallow - we'll just use provided title or fallback
                 Log::warning('Could not load Form by id in storeAnswers: ' . $e->getMessage());
             }
         }
 
-        // create a new FormResult record
+        // Create a new FormResult record
         $result = FormResult::create([
             'code'    => $data['code'],
             'title'   => $title ?? 'Submission',
             'results' => [
-                'answers'   => $data['answers'],
+                'answers'      => $data['answers'],
                 'submitted_at' => now()->toDateTimeString(),
             ],
         ]);
@@ -130,5 +180,4 @@ class AnketaController extends Controller
             'id'      => $result->id,
         ]);
     }
-
 }
