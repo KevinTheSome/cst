@@ -10,6 +10,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FormCodeController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\FormTypeController;
 
 if (!function_exists('findPageComponent')) {
     function findPageComponent(string $name): string
@@ -116,4 +117,7 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
     // DELETE
     Route::delete('/anketa/destroy/{id}', [AnketaController::class, 'destroy'])->name('admin.anketa.destroy');
+
+    Route::get('/selector', [FormTypeController::class, 'index'])->name('admin.selector');
+    Route::post('/selector/add', [FormTypeController::class, 'add'])->name('admin.selector.add');
 });

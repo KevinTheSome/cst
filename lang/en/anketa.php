@@ -33,5 +33,23 @@ return [
         'saving'                 => 'Saving...',
         'success'                => 'Form updated!',
         'error'                  => 'Error saving changes.',
+        
+        'specialist'             => 'Specialist',
+        'psoriasis'              => 'Psoriasis',
+        'chronic'                => 'Chronic',
+        'form_title_placeholder' => 'Untitled form',
+    ],
+   
+    'selector' => [
+        'page_title'     => 'Selector',
+        'heading'        => 'Assign survey types',
+        'subheading'     => 'Choose a type for each form to control where responses are routed.',
+        'code'           => 'Form code',
+        'select_type'    => 'Select type…',
+        'save'           => 'Save',
+        'no_results'     => 'No forms found.',
+        'error_missing'  => 'Please choose a type before saving.',
+        'success'        => 'Type saved successfully.',
+        'error'          => 'Failed to save. Please try again.',
     ],
 ];
