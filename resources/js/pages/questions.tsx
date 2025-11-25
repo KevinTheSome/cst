@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import {
     ClipboardEvent,
     FormEvent,
@@ -93,6 +93,7 @@ export default function Anketa() {
     const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
     const [unlockedFormId, setUnlockedFormId] = useState<number | null>(null);
+    const [consentChoice, setConsentChoice] = useState<'pending' | 'accepted' | 'declined'>('pending');
 
     const setField = (field: keyof Questionnaire, value: string) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
@@ -516,6 +517,7 @@ export default function Anketa() {
 
             if (resp.data?.success) {
                 setIsCodeVerified(true);
+                setConsentChoice('pending');
                 setUnlockedFormId(resp.data.form_id ?? null);
                 setCodeError(null);
                 return true;
@@ -581,10 +583,42 @@ export default function Anketa() {
         }
     };
 
+    const showConsentModal = isCodeVerified && consentChoice === 'pending';
+
     return (
         <>
             <Head title="Anketa" />
+            {isCodeVerified && consentChoice === 'pending' && (
+                <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 px-4">
+                    <div className="w-full max-w-xl rounded-3xl border border-white/30 bg-white p-8 text-center shadow-2xl shadow-slate-900/40">
+                        <p className="text-xs uppercase tracking-[0.4em] text-emerald-500">Datu izmantošana</p>
+                        <h2 className="mt-3 text-2xl font-semibold text-slate-900">Vai piekrītat datu apstrādei?</h2>
+                        <p className="mt-3 text-sm text-slate-600">
+                            Anketa apkopo veselības informāciju, lai sagatavotu personalizētu cilmes šūnu terapijas piedāvājumu. Ja nepiekrītat, anketa
+                            netiks atvērta.
+                        </p>
+                        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                            <button
+                                type="button"
+                                onClick={() => setConsentChoice('accepted')}
+                                className="inline-flex flex-1 items-center justify-center rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/40 transition hover:bg-emerald-500"
+                            >
+                                Piekrītu
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setConsentChoice('declined')}
+                                className="inline-flex flex-1 items-center justify-center rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-600 transition hover:border-slate-400 hover:text-slate-800"
+                            >
+                                Nepiekrītu
+                            </button>
+                        </div>
+                        <p className="mt-4 text-xs text-slate-500">Piekrišanu varat atsaukt jebkurā brīdī, rakstot mums.</p>
+                    </div>
+                </div>
+            )}
 
+            <div className={showConsentModal ? 'pointer-events-none opacity-30 transition' : 'transition'}>
             <section className="bg-gradient-to-br from-[#f1f5f9] via-white to-[#e8f6ef] py-16 px-4 sm:px-6 lg:px-12">
                 <div className="mx-auto max-w-6xl space-y-10">
                     <div className="relative overflow-hidden rounded-[32px] border border-white/60 bg-white/70 p-8 shadow-2xl shadow-emerald-100/80 backdrop-blur">
@@ -755,7 +789,7 @@ export default function Anketa() {
                     )}
 
                     {/* QUESTIONNAIRE */}
-                    {isCodeVerified && (
+                    {isCodeVerified && consentChoice !== 'pending' && (
                         <>
                             <div className="mb-6">
                                 <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-widest text-slate-500">
@@ -772,39 +806,38 @@ export default function Anketa() {
                                 </div>
                             </div>
 
-                            {!isFinished ? (
+                            {consentChoice === 'declined' ? (
+                                <div className="rounded-3xl bg-white p-12 text-center shadow-2xl shadow-emerald-100/60 ring-1 ring-emerald-100">
+                                    <p className="text-sm uppercase tracking-[0.4em] text-emerald-600">Piekrišana atteikta</p>
+                                    <h2 className="mt-4 text-3xl font-semibold text-slate-900">Anketa nav pieejama</h2>
+                                    <p className="mt-3 text-sm text-slate-600">Datu apstrāde ir nepieciešama, lai sagatavotu personalizētu piedāvājumu.</p>
+                                    <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                                        <Link
+                                            href="/"
+                                            className="inline-flex items-center justify-center rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-600 hover:border-slate-400 hover:text-slate-800"
+                                        >
+                                            Atpakaļ uz sākumlapu
+                                        </Link>
+                                    </div>
+                                </div>
+                            ) : !isFinished ? (
                                 <form
                                     onSubmit={handleSubmit}
                                     className="space-y-10 overflow-hidden rounded-3xl bg-white/95 p-8 shadow-2xl shadow-emerald-100/60 ring-1 ring-slate-100"
                                 >
                                     {errorMessage && (
-                                        <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-900">
-                                            {errorMessage}
-                                        </div>
+                                        <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-900">{errorMessage}</div>
                                     )}
 
                                     <div className="space-y-3">
-                                        <h2 className="text-2xl font-semibold text-slate-900">
-                                            {slides[currentStep].title}
-                                        </h2>
-                                        <p className="text-base text-slate-600">
-                                            {
-                                                slides[currentStep]
-                                                    .description
-                                            }
-                                        </p>
+                                        <h2 className="text-2xl font-semibold text-slate-900">{slides[currentStep].title}</h2>
+                                        <p className="text-base text-slate-600">{slides[currentStep].description}</p>
                                     </div>
 
-                                    <div className="animate-fade-in space-y-8 text-slate-800">
-                                        {slides[currentStep].content}
-                                    </div>
+                                    <div className="animate-fade-in space-y-8 text-slate-800">{slides[currentStep].content}</div>
 
                                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                                        <p className="text-sm text-slate-500">
-                                            Forma ir informatīva. Pēc oficiālās
-                                            iesniegšanas mēs sazināsimies
-                                            personīgi.
-                                        </p>
+                                        <p className="text-sm text-slate-500">Forma ir informatīva. Pēc iesniegšanas mēs sazināsimies personīgi.</p>
                                         <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
                                             {currentStep > 0 && (
                                                 <button
@@ -836,18 +869,15 @@ export default function Anketa() {
                                 </form>
                             ) : (
                                 <div className="rounded-3xl bg-white p-12 text-center shadow-2xl shadow-emerald-100/60 ring-1 ring-emerald-100">
-                                    <p className="text-sm uppercase tracking-[0.4em] text-emerald-600">
-                                        Paldies!
-                                    </p>
-                                    <h2 className="mt-4 text-3xl font-semibold text-slate-900">
-                                        Jūsu atbildes ir saņemtas
-                                    </h2>
+                                    <p className="text-sm uppercase tracking-[0.4em] text-emerald-600">Paldies!</p>
+                                    <h2 className="mt-4 text-3xl font-semibold text-slate-900">Jūsu atbildes ir saņemtas</h2>
                                 </div>
                             )}
                         </>
                     )}
                 </div>
             </section>
+            </div>
 
             <style>{`
                 @keyframes fade-in {
