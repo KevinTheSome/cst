@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FormCode extends Model
 {
-    protected $table = 'form_code';
+    protected $table = 'form_codes';
 
     protected $fillable = [
         'code',

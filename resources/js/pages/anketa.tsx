@@ -296,12 +296,54 @@ export default function Anketa() {
         return true;
     };
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (!validateStep(currentStep)) {
             return;
         }
-        setIsFinished(true);
+
+        // prepare payload
+        const payload = {
+            // if you have a real form id, set it here; otherwise omit or set null
+            // form_id: <number>|null,
+            code: 'anketa', // adjust if you want a different code per form
+            title: 'Anketa pacientiem',
+            answers: formData,
+        };
+
+        // read CSRF token from meta tag that Laravel renders
+        const tokenMeta = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null;
+        const csrf = tokenMeta?.content ?? '';
+
+        try {
+            const res = await fetch('/anketa/store-answers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrf,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                console.error('Server returned non-OK response while saving answers:', text);
+                setErrorMessage('Kļūda saglabājot atbildes. Mēģiniet vēlreiz.');
+                return;
+            }
+
+            const json = await res.json();
+
+            if (json?.ok) {
+                setIsFinished(true);
+            } else {
+                setErrorMessage(json?.message ?? 'Nezināma kļūda saglabājot atbildes.');
+            }
+        } catch (err) {
+            console.error('Failed to submit answers', err);
+            setErrorMessage('Savienojuma kļūda. Pārbaudiet interneta savienojumu un mēģiniet vēlreiz.');
+        }
     };
 
     const nextStep = () => {

@@ -56,7 +56,7 @@ class FormCodeController extends Controller
         $request->validate([
             'uses'            => 'required|integer|min:1',
             'expiration_hours'=> 'required|integer|min:1',
-            'form_id'         => 'nullable|integer|exists:form,id',
+            'form_id'         => 'nullable|integer|exists:forms,id',
         ]);
 
         $formId = $request->input('form_id');
@@ -111,7 +111,7 @@ class FormCodeController extends Controller
     {
         $data = $request->validate([
             'code' => ['required', 'string', 'min:1', 'max:255'],
-            'form_id' => 'nullable|integer|exists:form,id',
+            'form_id' => 'nullable|integer|exists:forms,id',
         ]);
 
         $codeInput = strtoupper(trim($data['code']));

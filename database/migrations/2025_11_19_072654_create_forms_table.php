@@ -10,14 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('form_code', function (Blueprint $table) {
+        Schema::create('forms', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('form_id')->constrained('forms')->cascadeOnDelete();
-            $table->string('code')->unique();
-            $table->integer('user_created');
-            $table->date('expiration_date');
-            $table->integer('uses');
+            $table->string('code');
+            $table->string('title');
+            $table->json('results');
         });
     }
 
@@ -26,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('form_code');
+        Schema::dropIfExists('forms');
     }
 };
