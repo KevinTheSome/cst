@@ -99,9 +99,6 @@ Route::get(
 
 Route::post('/anketa/store-answers', [AnketaController::class, 'storeAnswers'])->name('anketa.answers');
 
-
-
-
 Route::post('/form-codes/verify', [FormCodeController::class, 'verify'])->name('formCodes.verify');
 
 Route::get('/admin/login', fn() => Inertia::render('Admin/login'))->name('admin.login');
