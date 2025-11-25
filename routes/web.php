@@ -65,6 +65,15 @@ Route::get('/', function (Request $request) {
 
 Route::get('/test', [TestController::class, 'test'])->name('test');
 
+// <<<<<<<<<<<<<<<< PACIENTIEM >>>>>>>>>>>>>>>>
+
+Route::get('pacientiem/atmp', fn() => Inertia::render('Pacientiem/atmp'))->name('Pacientiem/atmp');
+Route::get('pacientiem/psoriaze-terapija', fn() => Inertia::render('Pacientiem/psoriaze-terapija'))->name('Pacientiem/psoriaze-terapija');
+Route::get('pacientiem/krona-terapija', fn() => Inertia::render('Pacientiem/krona-terapija'))->name('Pacientiem/krona-terapija');
+Route::get('pacientiem/faq', fn() => Inertia::render('Pacientiem/faq'))->name('Pacientiem/faq');
+
+// <<<<<<<<<<<<< Kaut kas no tās puses >>>>>>>>>>>
+
 Route::get('/contacts', fn() => Inertia::render('contacts'))->name('contacts');
 Route::get('/pievienojies-mums', fn() => Inertia::render('pievienojiesMums'))->name('pievienojies-mums');
 Route::post('/pievienojies-mums', [ContactController::class, 'store']);
@@ -77,7 +86,7 @@ Route::get('/lablife', fn() => Inertia::render('labLife'))->name('lablife');
 Route::get('/anketa', fn() => Inertia::render('anketa'))->name('anketa');
 Route::get('/questions', fn() => Inertia::render('questions'))->name('questions');
 
-
+// <<<<<<<<<<<< ANKETAS >>>>>>>>>>>>>
 
 Route::get(
     '/anketa-specialiste',
@@ -100,6 +109,8 @@ Route::get(
 Route::post('/anketa/store-answers', [AnketaController::class, 'storeAnswers'])->name('anketa.answers');
 
 Route::post('/form-codes/verify', [FormCodeController::class, 'verify'])->name('formCodes.verify');
+
+// <<<<<<<<<< ADMIN >>>>>>>>>>>>>>>>>>
 
 Route::get('/admin/login', fn() => Inertia::render('Admin/login'))->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
