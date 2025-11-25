@@ -136,6 +136,14 @@ class AnketaController extends Controller
 
 
     /**
+     * Public: show the code entry page for forms
+     */
+    public function showCode()
+    {
+        return Inertia::render('Formas/questions');
+    }
+
+    /**
      * Public: store submitted answers to form_results table.
      */
     public function storeAnswers(Request $request)
