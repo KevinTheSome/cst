@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FormResult;
 use App\Models\Form;
+use App\Models\FormType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -36,14 +37,14 @@ class AnketaController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'title'          => 'required',
-            'visibility'     => 'required|string',
-            'schema.fields'  => 'array|nullable',
+            'title' => 'required',
+            'visibility' => 'required|string',
+            'schema.fields' => 'array|nullable',
         ]);
 
         Form::create([
-            'code'    => $data['visibility'],
-            'title'   => $data['title'],
+            'code' => $data['visibility'],
+            'title' => $data['title'],
             'results' => [
                 'fields' => data_get($data, 'schema.fields', []),
             ],
@@ -68,8 +69,8 @@ class AnketaController extends Controller
         $formResult = Form::findOrFail($id);
 
         $formResult->update([
-            'code'    => $data['visibility'] ?? $formResult->code,
-            'title'   => $data['title'] ?? $formResult->title,
+            'code' => $data['visibility'] ?? $formResult->code,
+            'title' => $data['title'] ?? $formResult->title,
             'results' => $data['schema'] ?? $formResult->results,
         ]);
 
@@ -86,47 +87,65 @@ class AnketaController extends Controller
 
     public function storeAnswers(Request $request)
     {
-        $data = $request->validate([
-            'form_id' => 'nullable|integer',
-            'code'    => 'required|string',
-            'title'   => 'nullable|string',
-            'answers' => 'required|array',
-        ]);
+        dd('Storing answers is not yet implemented.', $request->all());
 
-        // Try to get the form title from form_id if provided
-        $title = $data['title'] ?? null;
-        if (isset($data['form_id'])) {
-            try {
-                $form = Form::find($data['form_id']);
-                if ($form) {
-                    $title = $form->title ?? $title;
-                }
-            } catch (\Exception $e) {
-                // swallow - we'll just use provided title or null
-                Log::warning('Could not load Form by id in storeAnswers: ' . $e->getMessage());
-            }
+        // $data = $request->validate([
+        //     'form_id' => 'nullable|integer',
+        //     'code' => 'required|string',
+        //     'answers' => 'required|array',
+        // ]);
+
+        // Log::info('Anketa answers received', [
+        //     'form_id' => $data['form_id'] ?? null,
+        //     'code' => $data['code'],
+        //     'answers' => $data['answers'],
+        // ]);
+
+        // return response()->json([
+        //     'ok' => true,
+        //     'message' => 'Answers stored (stub).',
+        // ]);
+    }
+
+    public function showPublic()
+    {
+        return Inertia::render('Anketa/publicAnketa');
+    }
+
+    public function showSpecialist()
+    {
+        return Inertia::render('Anketa/specialistAnketa');
+    }
+
+    public function showPsoriaze()
+    {
+        return Inertia::render('Anketa/psoriazeAnketa');
+    }
+
+    public function showHroniskas()
+    {
+        return Inertia::render('Anketa/hroniskasAnketa');
+    }
+
+    public function loadByCode($code)
+    {
+        $formType = FormType::where('type', $code)
+            ->with('form')
+            ->first();
+
+
+        if (!$formType || !$formType->form) {
+            return Inertia::render('Formas/forma', [
+                'form' => null,
+                'error' => "Anketa ar kodu '{$code}' nav pieejama.",
+            ]);
         }
 
-        // create a new FormResult record
-        $result = FormResult::create([
-            'code'    => $data['code'],
-            'title'   => $title ?? 'Submission',
-            'results' => [
-                'answers'   => $data['answers'],
-                'submitted_at' => now()->toDateTimeString(),
-            ],
-        ]);
-
-        Log::info('Anketa answers stored', [
-            'form_result_id' => $result->id,
-            'form_id' => $data['form_id'] ?? null,
-            'code'    => $data['code'],
-        ]);
-
-        return response()->json([
-            'ok'      => true,
-            'message' => 'Answers stored.',
-            'id'      => $result->id,
+        // Return normal page
+        return Inertia::render('Formas/forma', [
+            'form' => $formType->form,
+            'error' => null,
         ]);
     }
+
 }

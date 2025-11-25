@@ -59,25 +59,45 @@ Route::get('/', function (Request $request) {
     // Render page and pass plain data
     return Inertia::render($component, [
         'detectedCountry' => $country,
-        'locale'          => $locale,
+        'locale' => $locale,
     ]);
 })->name('home');
 
 Route::get('/test', [TestController::class, 'test'])->name('test');
 
-Route::get('/contacts', fn () => Inertia::render('contacts'))->name('contacts');
-Route::get('/pievienojies-mums', fn () => Inertia::render('pievienojiesMums'))->name('pievienojies-mums');
-Route::post('/pievienojies-mums', [ContactController::class,'store']);
-Route::get('/biocipu-zinatniska-laboratorija', fn () => Inertia::render('biocipuZinatniskaLaboratorija'))->name('biocipu-zinatniska-laboratorija');
-Route::get('/musu-grupa', fn () => Inertia::render('musuGrupa'))->name('musu-grupa');
-Route::get('/publikacijas', fn () => Inertia::render('publikacijas'))->name('publikacijas');
-Route::get('/projects', fn () => Inertia::render('projects'))->name('projects');
-Route::get('/lablife', fn () => Inertia::render('labLife'))->name('lablife');
+Route::get('/contacts', fn() => Inertia::render('contacts'))->name('contacts');
+Route::get('/pievienojies-mums', fn() => Inertia::render('pievienojiesMums'))->name('pievienojies-mums');
+Route::post('/pievienojies-mums', [ContactController::class, 'store']);
+Route::get('/biocipu-zinatniska-laboratorija', fn() => Inertia::render('biocipuZinatniskaLaboratorija'))->name('biocipu-zinatniska-laboratorija');
+Route::get('/musu-grupa', fn() => Inertia::render('musuGrupa'))->name('musu-grupa');
+Route::get('/publikacijas', fn() => Inertia::render('publikacijas'))->name('publikacijas');
+Route::get('/projects', fn() => Inertia::render('projects'))->name('projects');
+Route::get('/lablife', fn() => Inertia::render('labLife'))->name('lablife');
 
-Route::get('/anketa', fn () => Inertia::render('anketa'))->name('anketa');
-Route::get('/questions', fn () => Inertia::render('questions'))->name('questions');
+Route::get('/anketa', fn() => Inertia::render('anketa'))->name('anketa');
+Route::get('/questions', fn() => Inertia::render('questions'))->name('questions');
 
-Route::post('/anketa/answers', [AnketaController::class, 'storeAnswers'])->name('anketa.storeAnswers');
+
+
+Route::get(
+    '/anketa-specialiste',
+    fn() =>
+    app(AnketaController::class)->loadByCode('specialists')
+)->name('anketa.specialist.show');
+
+Route::get(
+    '/anketa-psoriāze',
+    fn() =>
+    app(AnketaController::class)->loadByCode('psoriasis')
+)->name('anketa.psoriaze.show');
+
+Route::get(
+    '/anketa-hroniskas',
+    fn() =>
+    app(AnketaController::class)->loadByCode('chronic')
+)->name('anketa.hroniskas.show');
+
+Route::post('/anketa/store-answers', [AnketaController::class, 'storeAnswers'])->name('anketa.answers');
 
 Route::post('/form-codes/verify', [FormCodeController::class, 'verify'])->name('formCodes.verify');
 
