@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FormResult;
 use App\Models\Form;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -85,22 +86,47 @@ class AnketaController extends Controller
 
     public function storeAnswers(Request $request)
     {
-
         $data = $request->validate([
             'form_id' => 'nullable|integer',
             'code'    => 'required|string',
+            'title'   => 'nullable|string',
             'answers' => 'required|array',
         ]);
 
-        Log::info('Anketa answers received', [
+        // Try to get the form title from form_id if provided
+        $title = $data['title'] ?? null;
+        if (isset($data['form_id'])) {
+            try {
+                $form = Form::find($data['form_id']);
+                if ($form) {
+                    $title = $form->title ?? $title;
+                }
+            } catch (\Exception $e) {
+                // swallow - we'll just use provided title or null
+                Log::warning('Could not load Form by id in storeAnswers: ' . $e->getMessage());
+            }
+        }
+
+        // create a new FormResult record
+        $result = FormResult::create([
+            'code'    => $data['code'],
+            'title'   => $title ?? 'Submission',
+            'results' => [
+                'answers'   => $data['answers'],
+                'submitted_at' => now()->toDateTimeString(),
+            ],
+        ]);
+
+        Log::info('Anketa answers stored', [
+            'form_result_id' => $result->id,
             'form_id' => $data['form_id'] ?? null,
             'code'    => $data['code'],
-            'answers' => $data['answers'],
         ]);
 
         return response()->json([
             'ok'      => true,
-            'message' => 'Answers stored (stub).',
+            'message' => 'Answers stored.',
+            'id'      => $result->id,
         ]);
     }
 }

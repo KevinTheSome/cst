@@ -77,7 +77,7 @@ Route::get('/lablife', fn () => Inertia::render('labLife'))->name('lablife');
 Route::get('/anketa', fn () => Inertia::render('anketa'))->name('anketa');
 Route::get('/questions', fn () => Inertia::render('questions'))->name('questions');
 
-Route::post('/anketa/answers', [AnketaController::class, 'storeAnswers'])->name('anketa.answers');
+Route::post('/anketa/answers', [AnketaController::class, 'storeAnswers'])->name('anketa.storeAnswers');
 
 Route::post('/form-codes/verify', [FormCodeController::class, 'verify'])->name('formCodes.verify');
 
