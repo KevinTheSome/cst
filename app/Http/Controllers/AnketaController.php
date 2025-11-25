@@ -116,21 +116,24 @@ class AnketaController extends Controller
     {
         $form = Form::where('code', $code)->first();
 
-        if (! $form) {
-            // If not found, you can either abort(404) or render a generic page.
-            abort(404, 'Form not found.');
+        if (!$form) {
+            // Return JSON error instead of aborting with HTML
+            return response()->json([
+                'error' => 'Form not found.'
+            ], 404);
         }
 
-        // Send the form payload to the frontend anketa page.
-        return Inertia::render('anketa', [
+        // Send the form payload to the frontend anketa page
+        return response()->json([
             'form' => [
                 'id' => $form->id,
                 'code' => $form->code,
                 'title' => $form->title,
-                'schema' => $form->results ?? [],
+                'results' => $form->results ?? [],
             ],
         ]);
     }
+
 
     /**
      * Public: store submitted answers to form_results table.
@@ -139,8 +142,8 @@ class AnketaController extends Controller
     {
         $data = $request->validate([
             'form_id' => 'nullable|integer',
-            'code'    => 'required|string',
-            'title'   => 'nullable|string',
+            'code' => 'required|string',
+            'title' => 'nullable|string',
             'answers' => 'required|array',
         ]);
 
@@ -160,10 +163,10 @@ class AnketaController extends Controller
 
         // Create a new FormResult record
         $result = FormResult::create([
-            'code'    => $data['code'],
-            'title'   => $title ?? 'Submission',
+            'code' => $data['code'],
+            'title' => $title ?? 'Submission',
             'results' => [
-                'answers'      => $data['answers'],
+                'answers' => $data['answers'],
                 'submitted_at' => now()->toDateTimeString(),
             ],
         ]);
@@ -171,13 +174,13 @@ class AnketaController extends Controller
         Log::info('Anketa answers stored', [
             'form_result_id' => $result->id,
             'form_id' => $data['form_id'] ?? null,
-            'code'    => $data['code'],
+            'code' => $data['code'],
         ]);
 
         return response()->json([
-            'ok'      => true,
+            'ok' => true,
             'message' => 'Answers stored.',
-            'id'      => $result->id,
+            'id' => $result->id,
         ]);
     }
 }
