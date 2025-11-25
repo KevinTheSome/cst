@@ -81,7 +81,6 @@ Route::get('/musu-grupa', fn() => Inertia::render('musuGrupa'))->name('musu-grup
 
 
 Route::get('/anketa', fn() => Inertia::render('anketa'))->name('anketa');
-Route::get('/questions', fn() => Inertia::render('questions'))->name('questions');
 Route::get('/postdock-anketa', fn() => Inertia::render('PostDockanketa'))->name('postdock-anketa');
 
 // <<<<<<<<<<<< ANKETAS >>>>>>>>>>>>>
@@ -103,6 +102,8 @@ Route::get(
     fn() =>
     app(AnketaController::class)->loadByCode('chronic')
 )->name('anketa.hroniskas.show');
+
+Route::get('/anketa-kods',[AnketaController::class, 'showCode'])->name('anketa.koda.show');
 
 Route::post('/anketa/store-answers', [AnketaController::class, 'storeAnswers'])->name('anketa.answers');
 
