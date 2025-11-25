@@ -57,7 +57,7 @@ function Navbar() {
                             tabIndex={0}
                             className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
                         >
-                            PAR MUMS{' '}
+                            PĒTĪJUMI{' '}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
@@ -111,16 +111,16 @@ function Navbar() {
                             </li>
                         </ul>
                     </div>
-                </li>
-
-                {/* PĒTĪJUMI */}
+                </li> 
+                */}
+                {/* PACIANTIEM */}
                 <li>
                     <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
                         <label
                             tabIndex={0}
                             className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
                         >
-                            PĒTĪJUMI{' '}
+                            PACIANTIEM{' '}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
@@ -152,14 +152,14 @@ function Navbar() {
                     </div>
                 </li>
 
-                {/* PĒTNIECĪBA */}
+                {/* SPECIĀLISTIEM */}
                 <li>
                     <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
                         <label
                             tabIndex={0}
                             className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
                         >
-                            PĒTNIECĪBA{' '}
+                            SPECIĀLISTIEM{' '}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
@@ -183,14 +183,14 @@ function Navbar() {
                     </div>
                 </li>
 
-                {/* PACIANTIEM */}
+                {/* ANKETAS */}
                 <li>
                     <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
                         <label
                             tabIndex={0}
                             className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
                         >
-                            PACIANTIEM{' '}
+                            ANKETAS{' '}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
@@ -237,15 +237,14 @@ function Navbar() {
                         </ul>
                     </div>
                 </li>
-
-                {/* ANKETAS */}
+                {/*Par Mums*/}
                 <li>
                     <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
                         <label
                             tabIndex={0}
                             className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
                         >
-                            ANKETAS{' '}
+                            PAR MUMS{' '}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
@@ -540,20 +539,74 @@ function Navbar() {
                                         </ul>
                                     </details>
                                 </li>
-
-                                {/* KONTAKTI */}
+                                {/* PAR MUMS */}
                                 <li>
-                                    <Link
-                                        onClick={() => setSidebarOpen(false)}
-                                        href="/contacts"
-                                        className="flex w-full items-center gap-3 px-3 py-2 text-lg font-semibold"
-                                    >
-                                        <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                            <rect x="3" y="5" width="18" height="14" rx="2" />
-                                            <polyline points="3 7 12 13 21 7" />
-                                        </svg>
-                                        KONTAKTI
-                                    </Link>
+                                    <details className="w-full">
+                                        <summary className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-lg font-semibold">
+                                            <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                                <path d="M17 20v-2a4 4 0 00-3-3.87" />
+                                                <path d="M9 20v-2a4 4 0 013-3.87" />
+                                                <circle cx="12" cy="7" r="4" />
+                                            </svg>
+                                            PAR MUMS
+                                        </summary>
+                                        <ul className="mt-1 ml-6 w-full">
+                                            <li>
+                                                <Link
+                                                    href="/biocipu-zinatniska-laboratorija"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
+                                                    Biočipu zinātniskā laboratorija
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link
+                                                    href="/lablife"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
+                                                    Laboratorijas dzīve
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link
+                                                    href="/musu-grupa"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
+                                                    Mūsu grupa
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link
+                                                    href="/pievienojies-mums"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
+                                                    Komanda
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link
+                                                    href="/pievienojies-mums"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
+                                                    Labretorija
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link
+                                                    href="/contacts"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
+                                                    Kontekti
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </details>
                                 </li>
 
                                 {/* Language buttons */}
