@@ -42,7 +42,6 @@ function Navbar() {
 
             {/* Desktop nav */}
             <ul className="m-0 hidden w-auto list-none flex-row items-center gap-4 p-0 md:flex">
-
                 {/* PĒTĪJUMI 
                 <li>
                     <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost md:w-auto">
@@ -218,8 +217,27 @@ function Navbar() {
                         </label>
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
-                                <Link href="/anketa" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
-                                    Publiskā anketa
+                                <Link
+                                    href="/anketa-specialiste"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
+                                    spicialiste anketa
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/anketa-psoriāze"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
+                                    Psoriāze anketa
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/anketa-hroniskas"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
+                                >
+                                    Hroniskā anketa
                                 </Link>
                             </li>
                             <li>
@@ -284,10 +302,7 @@ function Navbar() {
                                 </Link>
                             </li>
                             <li>
-                                <Link
-                                    href="/contacts"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl"
-                                >
+                                <Link href="/contacts" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 md:text-xl">
                                     Kontekti
                                 </Link>
                             </li>
@@ -467,12 +482,20 @@ function Navbar() {
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
-                                                <Link href="/anketa" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link
+                                                    href="/anketa"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Publiskā anketa
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/questions" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link
+                                                    href="/questions"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Koda anketa
                                                 </Link>
                                             </li>
@@ -492,32 +515,56 @@ function Navbar() {
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
-                                                <Link href="/biocipu-zinatniska-laboratorija" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link
+                                                    href="/biocipu-zinatniska-laboratorija"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Biočipu zinātniskā laboratorija
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/lablife" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link
+                                                    href="/lablife"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Laboratorijas dzīve
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/musu-grupa" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link
+                                                    href="/musu-grupa"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Mūsu grupa
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/pievienojies-mums" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link
+                                                    href="/pievienojies-mums"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Komanda
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/pievienojies-mums" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link
+                                                    href="/pievienojies-mums"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Labretorija
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/contacts" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link
+                                                    href="/contacts"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Kontekti
                                                 </Link>
                                             </li>
