@@ -10,6 +10,7 @@ use Inertia\Inertia;
 class FormTypeController extends Controller
 {
     public function index(){
+        syncLangFiles('anketa');
         $anketas = Form::all();
         $formTypes = FormType::all();
         return Inertia::render('Admin/Anketa/selectorAnketa', ['anketas' => $anketas, 'formTypes' => $formTypes]);
