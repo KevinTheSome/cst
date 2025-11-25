@@ -163,6 +163,11 @@ class FormCodeController extends Controller
                 'expires_at'     => $expiresAt ? $expiresAt->toDateTimeString() : null,
                 'code'           => $formCode->code,
                 'form_id'        => $formCode->form_id ?? null,
+                'form'           => $formCode->form ? [
+                    'id'     => $formCode->form->id,
+                    'title'  => $formCode->form->title,
+                    'fields' => $formCode->form->fields ?? [],
+                ] : null,
             ]);
         });
     }
