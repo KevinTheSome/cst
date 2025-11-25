@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Form;
+use App\Models\FormType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -35,14 +36,14 @@ class AnketaController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'title'          => 'required',
-            'visibility'     => 'required|string',
-            'schema.fields'  => 'array|nullable',
+            'title' => 'required',
+            'visibility' => 'required|string',
+            'schema.fields' => 'array|nullable',
         ]);
 
         Form::create([
-            'code'    => $data['visibility'],
-            'title'   => $data['title'],
+            'code' => $data['visibility'],
+            'title' => $data['title'],
             'results' => [
                 'fields' => data_get($data, 'schema.fields', []),
             ],
@@ -67,8 +68,8 @@ class AnketaController extends Controller
         $formResult = Form::findOrFail($id);
 
         $formResult->update([
-            'code'    => $data['visibility'] ?? $formResult->code,
-            'title'   => $data['title'] ?? $formResult->title,
+            'code' => $data['visibility'] ?? $formResult->code,
+            'title' => $data['title'] ?? $formResult->title,
             'results' => $data['schema'] ?? $formResult->results,
         ]);
 
@@ -86,21 +87,65 @@ class AnketaController extends Controller
     public function storeAnswers(Request $request)
     {
 
-        $data = $request->validate([
-            'form_id' => 'nullable|integer',
-            'code'    => 'required|string',
-            'answers' => 'required|array',
-        ]);
+        dd('Storing answers is not yet implemented.', $request->all());
 
-        Log::info('Anketa answers received', [
-            'form_id' => $data['form_id'] ?? null,
-            'code'    => $data['code'],
-            'answers' => $data['answers'],
-        ]);
+        // $data = $request->validate([
+        //     'form_id' => 'nullable|integer',
+        //     'code' => 'required|string',
+        //     'answers' => 'required|array',
+        // ]);
 
-        return response()->json([
-            'ok'      => true,
-            'message' => 'Answers stored (stub).',
+        // Log::info('Anketa answers received', [
+        //     'form_id' => $data['form_id'] ?? null,
+        //     'code' => $data['code'],
+        //     'answers' => $data['answers'],
+        // ]);
+
+        // return response()->json([
+        //     'ok' => true,
+        //     'message' => 'Answers stored (stub).',
+        // ]);
+    }
+
+    public function showPublic()
+    {
+        return Inertia::render('Anketa/publicAnketa');
+    }
+
+    public function showSpecialist()
+    {
+        return Inertia::render('Anketa/specialistAnketa');
+    }
+
+    public function showPsoriaze()
+    {
+        return Inertia::render('Anketa/psoriazeAnketa');
+    }
+
+    public function showHroniskas()
+    {
+        return Inertia::render('Anketa/hroniskasAnketa');
+    }
+
+    public function loadByCode($code)
+    {
+        $formType = FormType::where('type', $code)
+            ->with('form')
+            ->first();
+
+
+        if (!$formType || !$formType->form) {
+            return Inertia::render('Formas/forma', [
+                'form' => null,
+                'error' => "Anketa ar kodu '{$code}' nav pieejama.",
+            ]);
+        }
+
+        // Return normal page
+        return Inertia::render('Formas/forma', [
+            'form' => $formType->form,
+            'error' => null,
         ]);
     }
+
 }
