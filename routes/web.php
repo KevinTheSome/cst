@@ -77,14 +77,12 @@ Route::get('pacientiem/faq', fn() => Inertia::render('Pacientiem/faq'))->name('P
 Route::get('/contacts', fn() => Inertia::render('contacts'))->name('contacts');
 Route::get('/pievienojies-mums', fn() => Inertia::render('pievienojiesMums'))->name('pievienojies-mums');
 Route::post('/pievienojies-mums', [ContactController::class, 'store']);
-Route::get('/biocipu-zinatniska-laboratorija', fn() => Inertia::render('biocipuZinatniskaLaboratorija'))->name('biocipu-zinatniska-laboratorija');
 Route::get('/musu-grupa', fn() => Inertia::render('musuGrupa'))->name('musu-grupa');
-Route::get('/publikacijas', fn() => Inertia::render('publikacijas'))->name('publikacijas');
-Route::get('/projects', fn() => Inertia::render('projects'))->name('projects');
-Route::get('/lablife', fn() => Inertia::render('labLife'))->name('lablife');
+
 
 Route::get('/anketa', fn() => Inertia::render('anketa'))->name('anketa');
 Route::get('/questions', fn() => Inertia::render('questions'))->name('questions');
+Route::get('/postdock-anketa', fn() => Inertia::render('PostDockanketa'))->name('postdock-anketa');
 
 // <<<<<<<<<<<< ANKETAS >>>>>>>>>>>>>
 
