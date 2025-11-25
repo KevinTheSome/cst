@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FormResult;
 use App\Models\Form;
+use App\Models\FormType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -36,14 +37,14 @@ class AnketaController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'title'          => 'required',
-            'visibility'     => 'required|string',
-            'schema.fields'  => 'array|nullable',
+            'title' => 'required',
+            'visibility' => 'required|string',
+            'schema.fields' => 'array|nullable',
         ]);
 
         Form::create([
-            'code'    => $data['visibility'],
-            'title'   => $data['title'],
+            'code' => $data['visibility'],
+            'title' => $data['title'],
             'results' => [
                 'fields' => data_get($data, 'schema.fields', []),
             ],
@@ -68,8 +69,8 @@ class AnketaController extends Controller
         $formResult = Form::findOrFail($id);
 
         $formResult->update([
-            'code'    => $data['visibility'] ?? $formResult->code,
-            'title'   => $data['title'] ?? $formResult->title,
+            'code' => $data['visibility'] ?? $formResult->code,
+            'title' => $data['title'] ?? $formResult->title,
             'results' => $data['schema'] ?? $formResult->results,
         ]);
 
@@ -129,4 +130,5 @@ class AnketaController extends Controller
             'id'      => $result->id,
         ]);
     }
+
 }
