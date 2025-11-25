@@ -51,68 +51,7 @@ function Navbar() {
 
             {/* Desktop nav – only on large screens and up */}
             <ul className="m-0 hidden w-auto list-none flex-row items-center gap-4 p-0 lg:flex">
-                <li>
-                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
-                        <label
-                            tabIndex={0}
-                            className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
-                        >
-                            PĒTĪJUMI{' '}
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </label>
-                        <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
-                            <li>
-                                <Link
-                                    href="/biocipu-zinatniska-laboratorija"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    Biočipu zinātniskā laboratorija
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/lablife"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    Laboratorijas dzīve
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/musu-grupa"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    Mūsu grupa
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/pievienojies-mums"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    Komanda
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/contacts"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    Kontekti
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                </li> 
-                */}
+               
                 {/* PACIANTIEM */}
                 <li>
                     <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
@@ -121,76 +60,6 @@ function Navbar() {
                             className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
                         >
                             PACIANTIEM{' '}
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </label>
-                        <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
-                            <li>
-                                <Link
-                                    href="/publikacijas"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    Publikācijas
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/projects"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    Projekti
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                {/* SPECIĀLISTIEM */}
-                <li>
-                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
-                        <label
-                            tabIndex={0}
-                            className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
-                        >
-                            SPECIĀLISTIEM{' '}
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </label>
-                        <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
-                            <li>
-                                <Link
-                                    href="/"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    PostDock anketa
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                {/* ANKETAS */}
-                <li>
-                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
-                        <label
-                            tabIndex={0}
-                            className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
-                        >
-                            ANKETAS{' '}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
@@ -237,7 +106,52 @@ function Navbar() {
                         </ul>
                     </div>
                 </li>
-                {/*Par Mums*/}
+ {/* PĒTNIECĪBA */}
+                <li>
+                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
+                        <label
+                            tabIndex={0}
+                            className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
+                        >
+                            PĒTNIECĪBA{' '}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </label>
+                        <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
+                            <li>
+                                <Link
+                                    href="/postdock-anketa"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
+                                >
+                                    PostDock anketa
+                                </Link>
+                            </li>
+                                              <li>
+                                <Link
+                                    href="/anketa"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
+                                >
+                                    Publiskā anketa
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/questions"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
+                                >
+                                    Koda anketa
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
                 <li>
                     <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
                         <label
@@ -258,32 +172,38 @@ function Navbar() {
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
                                 <Link
-                                    href="/anketa"
+                                    href="/musu-grupa"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Publiskā anketa
+                                    Mūsu grupa
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    href="/questions"
+                                    href="/musu-grupa"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Koda anketa
+                                    Komanda
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/contacts"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
+                                >
+                                    Kontekti
+                                </Link>
+                            </li>
+                             <li>
+                                <Link
+                                    href="/pievienojies-mums"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
+                                >
+                                    Pievienojies mums
                                 </Link>
                             </li>
                         </ul>
                     </div>
-                </li>
-
-                {/* Contacts */}
-                <li>
-                    <Link
-                        href="/contacts"
-                        className="btn text-lg font-semibold text-green-700 btn-ghost transition hover:text-orange-400 lg:text-xl"
-                    >
-                        KONTAKTI
-                    </Link>
                 </li>
 
                 {/* Language buttons */}
@@ -338,100 +258,49 @@ function Navbar() {
                         <nav className="flex-1 overflow-y-auto px-2 py-4">
                             {/* FULL mobile menu matches desktop sections */}
                             <ul className="menu w-full gap-1 text-green-700">
-                                {/* PAR MUMS */}
+                              
+                                {/* PĒTNIECĪBA */}
                                 <li>
                                     <details className="w-full">
                                         <summary className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-lg font-semibold">
                                             <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                                <path d="M17 20v-2a4 4 0 00-3-3.87" />
-                                                <path d="M9 20v-2a4 4 0 013-3.87" />
-                                                <circle cx="12" cy="7" r="4" />
+                                                <path d="M9 3h6v6H9z" />
+                                                <path d="M4 21h16M7 9h10l-1 12H8z" />
                                             </svg>
-                                            PAR MUMS
+                                            PĒTNIECĪBA
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
                                                 <Link
-                                                    href="/biocipu-zinatniska-laboratorija"
+                                                    href="/"
                                                     className="block w-full hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
-                                                    Biočipu zinātniskā laboratorija
+                                                    Klīniskie pētijumi
                                                 </Link>
                                             </li>
                                             <li>
                                                 <Link
-                                                    href="/lablife"
+                                                    href="/"
                                                     className="block w-full hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
-                                                    Laboratorijas dzīve
+                                                    PostDock anketa
                                                 </Link>
                                             </li>
                                             <li>
                                                 <Link
-                                                    href="/musu-grupa"
+                                                    href="/"
                                                     className="block w-full hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
-                                                    Mūsu grupa
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    href="/pievienojies-mums"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    Komanda
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    href="/contacts"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    Kontekti
+                                                    Publikācijas (DOI)
                                                 </Link>
                                             </li>
                                         </ul>
                                     </details>
                                 </li>
 
-                                {/* PĒTĪJUMI */}
-                                <li>
-                                    <details className="w-full">
-                                        <summary className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-lg font-semibold">
-                                            <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                                <circle cx="12" cy="12" r="4" />
-                                                <rect x="9" y="2" width="6" height="2" rx="1" />
-                                                <path d="M12 6v2m0 8v2m-4-4h8" />
-                                            </svg>
-                                            PĒTĪJUMI
-                                        </summary>
-                                        <ul className="mt-1 ml-6 w-full">
-                                            <li>
-                                                <Link
-                                                    href="/publikacijas"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    Publikācijas
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    href="/projects"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    Projekti
-                                                </Link>
-                                            </li>
-                                        </ul>
-                                    </details>
-                                </li>
 
                                 {/* PACIANTIEM */}
                                 <li>
@@ -483,63 +352,8 @@ function Navbar() {
                                         </ul>
                                     </details>
                                 </li>
-                                 {/* PĒTNIECĪBA */}
-                                <li>
-                                    <details className="w-full">
-                                        <summary className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-lg font-semibold">
-                                            <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                                <path d="M9 3h6v6H9z" />
-                                                <path d="M4 21h16M7 9h10l-1 12H8z" />
-                                            </svg>
-                                            PĒTNIECĪBA
-                                        </summary>
-                                        <ul className="mt-1 ml-6 w-full">
-                                            <li>
-                                                <Link
-                                                    href="/"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    PostDock anketa
-                                                </Link>
-                                            </li>
-                                        </ul>
-                                    </details>
-                                </li>
 
-                                {/* ANKETAS */}
-                                <li>
-                                    <details className="w-full">
-                                        <summary className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-lg font-semibold">
-                                            <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                                <rect x="3" y="4" width="18" height="16" rx="2" />
-                                                <path d="M16 2v4M8 2v4M3 10h18" />
-                                            </svg>
-                                            ANKETAS
-                                        </summary>
-                                        <ul className="mt-1 ml-6 w-full">
-                                            <li>
-                                                <Link
-                                                    href="/anketa"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    Publiskā anketa
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    href="/questions"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    Koda anketa
-                                                </Link>
-                                            </li>
-                                        </ul>
-                                    </details>
-                                </li>
-                                {/* PAR MUMS */}
+                                 {/* PAR MUMS */}
                                 <li>
                                     <details className="w-full">
                                         <summary className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-lg font-semibold">
@@ -551,15 +365,6 @@ function Navbar() {
                                             PAR MUMS
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
-                                            <li>
-                                                <Link
-                                                    href="/biocipu-zinatniska-laboratorija"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    Biočipu zinātniskā laboratorija
-                                                </Link>
-                                            </li>
                                             <li>
                                                 <Link
                                                     href="/lablife"
@@ -585,15 +390,6 @@ function Navbar() {
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
                                                     Komanda
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    href="/pievienojies-mums"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    Labretorija
                                                 </Link>
                                             </li>
                                             <li>
