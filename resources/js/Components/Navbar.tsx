@@ -59,7 +59,7 @@ function Navbar() {
                             tabIndex={0}
                             className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
                         >
-                            PACIANTIEM{' '}
+                            PACIENTIEM{' '}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
@@ -73,7 +73,7 @@ function Navbar() {
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
                                 <Link
-                                    href="/"
+                                    href="/pacientiem/atmp"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
                                     Kas ir ATMP?
@@ -81,23 +81,23 @@ function Navbar() {
                             </li>
                             <li>
                                 <Link
-                                    href="/"
+                                    href="/pacientiem/psoriaze-terapija"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Psoriāze un jaunās terapjas
+                                    Psoriāze un jaunās terapijas
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    href="/"
+                                    href="/pacientiem/krona-terapija"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Krona slimiba un jaunās terapiias
+                                    Krona slimiba un jaunās terapijas
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    href="/"
+                                    href="/pacientiem/faq"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
                                     Biežak uzdotie jautājumi (FAQ)
