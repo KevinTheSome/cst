@@ -1,18 +1,18 @@
 // resources/js/Pages/Admin/Anketa/indexAnketa.tsx
 
-import { useEffect, useState } from 'react';
-import { Head, router, usePage } from '@inertiajs/react';
-import axios from 'axios';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { useLang } from '@/hooks/useLang';
+import { Head, router, usePage } from '@inertiajs/react';
+import axios from 'axios';
 import type React from 'react';
+import { useEffect, useState } from 'react';
 
 interface FormResultType {
     id: number;
     code: string;
-    title: string;
+    title: any;
     results: {
-        title: string;
+        title: any;
         fields: any[];
     };
 }
@@ -33,29 +33,26 @@ function LanguageSwitcher() {
 
         try {
             await axios.post('/locale', { locale });
-            // reload just lang + locale from Inertia shared props
             router.reload({ only: ['lang', 'locale'] });
         } catch (error) {
             console.error('Language switch failed:', error);
             alert('Failed to switch language. Please try again.');
         }
     };
-
-    
 }
 
 function FormsList({ formResults }: FormsListProps) {
     const [forms, setForms] = useState<FormResultType[]>([]);
-    const { __ } = useLang();
+    const { __, lang } = useLang();
 
     useEffect(() => {
         setForms(formResults || []);
     }, [formResults]);
 
     const handleDeleteClick = (form: FormResultType) => {
-        const title = form.title || form.results?.title || '';
+        const displayTitle = form.results?.title?.[lang] || form.title?.[lang] || '';
 
-        if (!confirm(__('anketa.index.confirm_delete', { title })) ) {
+        if (!confirm(__('anketa.index.confirm_delete', { title: displayTitle }))) {
             return;
         }
 
@@ -71,29 +68,19 @@ function FormsList({ formResults }: FormsListProps) {
         });
     };
 
+    console.log(forms);
     return (
         <>
             <Head title={__('anketa.index.page_title')} />
 
             <div className="space-y-6 text-white">
-                {/* Language switcher at top-right */}
-                <div className="flex justify-end">
-                   
-                </div>
-
                 {/* Header */}
                 <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-slate-900/80 via-slate-900/40 to-slate-900/10 px-6 py-5 shadow-inner shadow-black/20">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <p className="text-xs uppercase tracking-[0.3em] text-white/60">
-                                {__('anketa.index.label')}
-                            </p>
-                            <h1 className="mt-1 text-2xl font-semibold text-white">
-                                {__('anketa.index.heading')}
-                            </h1>
-                            <p className="mt-1 text-sm text-white/70">
-                                {__('anketa.index.subheading')}
-                            </p>
+                            <p className="text-xs tracking-[0.3em] text-white/60 uppercase">{__('anketa.index.label')}</p>
+                            <h1 className="mt-1 text-2xl font-semibold text-white">{__('anketa.index.heading')}</h1>
+                            <p className="mt-1 text-sm text-white/70">{__('anketa.index.subheading')}</p>
                         </div>
 
                         <a
@@ -107,17 +94,6 @@ function FormsList({ formResults }: FormsListProps) {
 
                 {/* List */}
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
-                            <p className="text-xs uppercase tracking-[0.3em] text-white/60">
-                                {__('anketa.index.list_label')}
-                            </p>
-                            <p className="text-sm text-white/70">
-                                {__('anketa.index.list_subheading')}
-                            </p>
-                        </div>
-                    </div>
-
                     <div className="mt-4 grid gap-4 md:grid-cols-2">
                         {forms.map((form) => (
                             <div
@@ -128,11 +104,9 @@ function FormsList({ formResults }: FormsListProps) {
                                     <p className="text-xs text-white/40">
                                         {__('anketa.index.id_label')}: {form.id}
                                     </p>
-                                    <h2 className="mt-1 text-lg font-semibold text-white">
-                                        {form.title ||
-                                            form.results?.title ||
-                                            __('anketa.update.form_title_placeholder')}
-                                    </h2>
+
+                                    <h2 className="mt-1 text-lg font-semibold text-white">{form.results?.title?.lv}</h2>
+
                                     <p className="text-xs text-white/60">
                                         {__('anketa.index.code_label')}: {form.code}
                                     </p>
@@ -162,11 +136,7 @@ function FormsList({ formResults }: FormsListProps) {
                             </div>
                         ))}
 
-                        {forms.length === 0 && (
-                            <p className="col-span-full py-8 text-center text-xs text-white/60">
-                                {__('anketa.index.empty')}
-                            </p>
-                        )}
+                        {forms.length === 0 && <p className="col-span-full py-8 text-center text-xs text-white/60">{__('anketa.index.empty')}</p>}
                     </div>
                 </div>
             </div>
@@ -174,8 +144,6 @@ function FormsList({ formResults }: FormsListProps) {
     );
 }
 
-(FormsList as any).layout = (page: React.ReactNode) => (
-    <AdminLayout title="Anketas">{page}</AdminLayout>
-);
+(FormsList as any).layout = (page: React.ReactNode) => <AdminLayout title="Anketas">{page}</AdminLayout>;
 
 export default FormsList;

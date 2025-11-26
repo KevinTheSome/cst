@@ -144,6 +144,8 @@ export default function UpdateAnketa({ formResult }: any) {
         });
     };
 
+    console.log(title);
+
     return (
         <div className="min-h-screen bg-slate-950 py-12 text-white">
             <div className="mx-auto max-w-6xl space-y-8 px-6">
