@@ -16,13 +16,27 @@ class AnketaController extends Controller
      */
     public function index()
     {
-        // Show stored submissions (form_results)
-        $formResults = Form::orderBy('created_at', 'desc')->get();
+        $forms = Form::orderBy('created_at', 'desc')->get();
+
+        // dd($forms);
+        $formResults = $forms->map(function ($form) {
+            return [
+                'id' => $form->id,
+                'code' => $form->code,
+                'title' => $form->title,         // already array now
+                'results' => [
+                    'title' => $form->title,     // array
+                    'fields' => $form->results['fields'] ?? [],
+                ],
+            ];
+        });
 
         return Inertia::render('Admin/Anketa/indexAnketa', [
             'formResults' => $formResults,
         ]);
     }
+
+
 
     /**
      * Admin: show single stored result
@@ -49,6 +63,8 @@ class AnketaController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
+
         $data = $request->validate([
             'title' => 'required',
             'visibility' => 'required|string',
@@ -57,8 +73,15 @@ class AnketaController extends Controller
 
         Form::create([
             'code' => $data['visibility'],
-            'title' => $data['title'],
+            'title' => [
+                'lv' => $data['title']['lv'] ?? $data['title'],
+                'en' => $data['title']['en'] ?? $data['title'],
+            ],
             'results' => [
+                'title' => [
+                    'lv' => $data['title']['lv'] ?? $data['title'],
+                    'en' => $data['title']['en'] ?? $data['title'],
+                ],
                 'fields' => data_get($data, 'schema.fields', []),
             ],
         ]);
@@ -83,9 +106,14 @@ class AnketaController extends Controller
                 'title' => $form->title,
                 'code' => $form->code,
 
-                // always output the same format
                 'results' => [
-                    'title' => $form->title,
+                    'title' => is_array($form->title)
+                        ? $form->title
+                        : json_decode($form->title, true) ?? [
+                            'lv' => $form->title,
+                            'en' => $form->title
+                        ],
+
                     'fields' => $schema['fields'] ?? [],
                 ],
 
@@ -93,6 +121,7 @@ class AnketaController extends Controller
             ],
         ]);
     }
+
 
 
     /**
@@ -106,7 +135,10 @@ class AnketaController extends Controller
 
         $formResult->update([
             'code' => $data['visibility'] ?? $formResult->code,
-            'title' => $data['title'] ?? $formResult->title,
+            'title' => [
+                'lv' => $data['title']['lv'] ?? $formResult->title['lv'] ?? '',
+                'en' => $data['title']['en'] ?? $formResult->title['en'] ?? '',
+            ],
             'results' => $data['schema'] ?? $formResult->results,
         ]);
 
