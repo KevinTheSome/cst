@@ -114,7 +114,11 @@ class AnketaController extends Controller
      */
     public function loadByCode(string $code)
     {
-        $form = Form::where('code', $code)->first();
+
+        $formType = FormType::where('type', $code)->first();
+
+        $form = $formType->form;
+        // dd($form);
 
         if (!$form) {
             return Inertia::render('Formas/forma', [
@@ -122,14 +126,10 @@ class AnketaController extends Controller
             ]);
         }
         // Send the form payload to the frontend anketa page
-        return response()->json([
-            'form' => [
-                'id' => $form->id,
-                'code' => $form->code,
-                'title' => $form->title,
-                'results' => $form->results ?? [],
-            ],
+        return Inertia::render('Formas/forma', [
+            'form' => $form,
         ]);
+
     }
 
 
