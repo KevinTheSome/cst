@@ -25,7 +25,7 @@ const NAV_GROUPS = [
             { label: 'Mūsu grupa', href: '/musu-grupa' },
             { label: 'Komanda', href: '/musu-grupa' },
             { label: 'Kontakti', href: '/contacts' },
-            { label: 'Pievienojies mums', href: '/pievienojies-mums' },
+            { label: 'Sazinies ar mums', href: '/pievienojies-mums' },
         ],
     },
 ];

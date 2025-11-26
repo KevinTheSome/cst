@@ -57,7 +57,7 @@ export default function PievienojiesMums() {
 
     return (
         <>
-            <Head title="Pievienojies mums" />
+            <Head title="Sazinies ar mums" />
 
             <div className={`relative min-h-screen overflow-hidden ${gradientBackground} py-20`}>
                 <div className="absolute inset-0 opacity-60">
