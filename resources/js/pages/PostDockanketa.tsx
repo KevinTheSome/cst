@@ -34,17 +34,20 @@ export default function PostDockanketa() {
                 </div>
 
                 <section className="relative mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center justify-center gap-10 px-4 py-16 text-center sm:px-8">
-                    <div className="space-y-5">
-                        <p className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white/70 px-4 py-1 text-xs tracking-[0.35em] text-emerald-600 uppercase shadow-sm">
+                    {/* INTRO BLOCK */}
+                    <div className="mx-auto max-w-3xl space-y-5 text-center">
+                        <p className="mx-auto inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white/70 px-4 py-1 text-xs tracking-[0.35em] text-emerald-600 uppercase shadow-sm">
                             PostDock anketa
                         </p>
+
                         <h1 className="text-4xl leading-tight font-semibold sm:text-5xl">Izvēlieties pieredzei atbilstošu PostDock anketu</h1>
-                        <p className="max-w-3xl text-base text-slate-600 sm:text-lg">
+
+                        <p className="mx-auto text-base text-slate-600 sm:text-lg">
                             Mēs strādājam gan ar speciālistiem, gan pacientiem. Izvēlieties atbilstošo sadaļu un atveriet sev nepieciešamo anketu.
                         </p>
                     </div>
 
-                    {/* KLIENTU SEKCIJA */}
+                    {/* CLIENT SECTION */}
                     <div className="mt-14 w-full">
                         <h2 className="mb-4 text-left text-xl font-semibold text-sky-700">Klientiem</h2>
                         <div className="grid w-full gap-6 sm:grid-cols-2">
@@ -66,7 +69,7 @@ export default function PostDockanketa() {
                         </div>
                     </div>
 
-                    {/* SPECĪĀLISTU SEKCIJA */}
+                    {/* SPECIALIST SECTION */}
                     <div className="mt-10 w-full">
                         <h2 className="mb-4 text-left text-xl font-semibold text-emerald-700">Speciālistiem</h2>
                         <div className="grid w-full gap-6 sm:grid-cols-2">
