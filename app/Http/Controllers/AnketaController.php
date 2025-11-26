@@ -71,12 +71,29 @@ class AnketaController extends Controller
      */
     public function edit($id)
     {
-        $formResult = Form::findOrFail($id);
+        $form = Form::findOrFail($id);
+
+        $schema = is_array($form->results)
+            ? $form->results
+            : json_decode($form->results ?? '{}', true);
 
         return Inertia::render('Admin/Anketa/updateAnketa', [
-            'formResult' => $formResult,
+            'formResult' => [
+                'id' => $form->id,
+                'title' => $form->title,
+                'code' => $form->code,
+
+                // always output the same format
+                'results' => [
+                    'title' => $form->title,
+                    'fields' => $schema['fields'] ?? [],
+                ],
+
+                'fields' => $schema['fields'] ?? [],
+            ],
         ]);
     }
+
 
     /**
      * Admin: update form template
@@ -123,6 +140,7 @@ class AnketaController extends Controller
                 'form' => null,
             ]);
         }
+
         $form = $formType->form;
 
         // Send the form payload to the frontend anketa page
