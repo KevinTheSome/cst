@@ -117,14 +117,14 @@ class AnketaController extends Controller
 
         $formType = FormType::where('type', $code)->first();
 
-        $form = $formType->form;
-        // dd($form);
 
-        if (!$form) {
+        if (!$formType) {
             return Inertia::render('Formas/forma', [
                 'form' => null,
             ]);
         }
+        $form = $formType->form;
+
         // Send the form payload to the frontend anketa page
         return Inertia::render('Formas/forma', [
             'form' => $form,
