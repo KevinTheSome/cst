@@ -15,8 +15,7 @@ const NAV_GROUPS = [
         title: 'Pētniecība',
         items: [
             { label: 'PostDock anketa', href: '/postdock-anketa' },
-            { label: 'Publiskā anketa', href: '/anketa' },
-            { label: 'Koda anketa', href: '/questions' },
+            { label: 'Koda anketa', href: '/anketa-kods' },
         ],
     },
     {
@@ -29,7 +28,6 @@ const NAV_GROUPS = [
         ],
     },
 ];
-
 
 const LANGUAGES: Array<{ code: string; label: string; flag: string }> = [
     { code: 'lv', label: 'Latviski', flag: '🇱🇻' },

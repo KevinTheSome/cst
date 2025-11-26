@@ -124,7 +124,10 @@ function Navbar() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/questions" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
+                                <Link
+                                    href="/anketa-kods"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
+                                >
                                     Koda anketa
                                 </Link>
                             </li>
@@ -157,7 +160,7 @@ function Navbar() {
                                     Komanda
                                 </Link>
                             </li>
-            
+
                             <li>
                                 <Link
                                     href="/ParMums/contacts"
@@ -166,7 +169,7 @@ function Navbar() {
                                     Kontakti
                                 </Link>
                             </li>
-                             <li>
+                            <li>
                                 <Link
                                     href="/ParMums/pievienojies-mums"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
@@ -272,22 +275,38 @@ function Navbar() {
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
-                                                <Link href="/pacientiem/atmp" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link
+                                                    href="/pacientiem/atmp"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Kas ir ATMP?
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/pacientiem/psoriaze-terapija" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link
+                                                    href="/pacientiem/psoriaze-terapija"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Psoriāze un jaunās terapijas
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/pacientiem/krona-terapija" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link
+                                                    href="/pacientiem/krona-terapija"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Krona slimība un jaunās terapijas
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/pacientiem/faq" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link
+                                                    href="/pacientiem/faq"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Biežak uzdotie jautājumi (FAQ)
                                                 </Link>
                                             </li>
