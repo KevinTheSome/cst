@@ -1,31 +1,35 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
 
-const NAV_GROUPS: Array<{
-    title: string;
-    items: Array<{ label: string; href?: string }>;
-}> = [
+const NAV_GROUPS = [
+    {
+        title: 'Pacientiem',
+        items: [
+            { label: 'Kas ir ATMP?', href: '/' },
+            { label: 'Psoriāze un jaunās terapjas', href: '/' },
+            { label: 'Krona slimība un jaunās terapijas', href: '/' },
+            { label: 'Biežāk uzdotie jautājumi (FAQ)', href: '/' },
+        ],
+    },
+    {
+        title: 'Pētniecība',
+        items: [
+            { label: 'PostDock anketa', href: '/postdock-anketa' },
+            { label: 'Publiskā anketa', href: '/anketa' },
+            { label: 'Koda anketa', href: '/questions' },
+        ],
+    },
     {
         title: 'Par mums',
         items: [
-            { label: 'Biočipu zinātniskā laboratorija', href: '/biocipu-zinatniska-laboratorija' },
-            { label: 'Laboratorijas dzīve', href: '/lablife' },
             { label: 'Mūsu grupa', href: '/musu-grupa' },
+            { label: 'Komanda', href: '/musu-grupa' },
+            { label: 'Kontakti', href: '/contacts' },
             { label: 'Pievienojies mums', href: '/pievienojies-mums' },
         ],
     },
-    {
-        title: 'Pētījumi',
-        items: [
-            { label: 'Publikācijas', href: '/publikacijas' },
-            { label: 'Projekti', href: '/Projects' },
-        ],
-    },
-    {
-        title: 'Kontakti',
-        items: [{ label: 'Kontakti', href: '/contacts' }],
-    },
 ];
+
 
 const LANGUAGES: Array<{ code: string; label: string; flag: string }> = [
     { code: 'lv', label: 'Latviski', flag: '🇱🇻' },
