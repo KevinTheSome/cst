@@ -5,10 +5,10 @@ const NAV_GROUPS = [
     {
         title: 'Pacientiem',
         items: [
-            { label: 'Kas ir ATMP?', href: '/' },
-            { label: 'Psoriāze un jaunās terapjas', href: '/' },
-            { label: 'Krona slimība un jaunās terapijas', href: '/' },
-            { label: 'Biežāk uzdotie jautājumi (FAQ)', href: '/' },
+            { label: 'Kas ir ATMP?', href: '/pacientiem/atmp' },
+            { label: 'Psoriāze un jaunās terapjas', href: '/pacientiem/psoriaze-terapija' },
+            { label: 'Krona slimība un jaunās terapijas', href: '/pacientiem/krona-terapija' },
+            { label: 'Biežāk uzdotie jautājumi (FAQ)', href: '/pacientiem/faq' },
         ],
     },
     {
