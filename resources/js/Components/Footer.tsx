@@ -1,29 +1,31 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
 
-const NAV_GROUPS: Array<{
-    title: string;
-    items: Array<{ label: string; href?: string }>;
-}> = [
+const NAV_GROUPS = [
+    {
+        title: 'Pacientiem',
+        items: [
+            { label: 'Kas ir ATMP?', href: '/pacientiem/atmp' },
+            { label: 'Psoriāze un jaunās terapjas', href: '/pacientiem/psoriaze-terapija' },
+            { label: 'Krona slimība un jaunās terapijas', href: '/pacientiem/krona-terapija' },
+            { label: 'Biežāk uzdotie jautājumi (FAQ)', href: '/pacientiem/faq' },
+        ],
+    },
+    {
+        title: 'Pētniecība',
+        items: [
+            { label: 'PostDock anketa', href: '/postdock-anketa' },
+            { label: 'Koda anketa', href: '/anketa-kods' },
+        ],
+    },
     {
         title: 'Par mums',
         items: [
-            { label: 'Biočipu zinātniskā laboratorija', href: '/biocipu-zinatniska-laboratorija' },
-            { label: 'Laboratorijas dzīve', href: '/lablife' },
-            { label: 'Mūsu grupa', href: '/musu-grupa' },
-            { label: 'Pievienojies mums', href: '/pievienojies-mums' },
+            { label: 'Mūsu grupa', href: '/ParMums/musu-grupa' },
+            { label: 'Komanda', href: '/ParMums/musu-grupa' },
+            { label: 'Kontakti', href: '/ParMums/contacts' },
+            { label: 'Sazinies ar mums', href: '/ParMums/pievienojies-mums' },
         ],
-    },
-    {
-        title: 'Pētījumi',
-        items: [
-            { label: 'Publikācijas', href: '/publikacijas' },
-            { label: 'Projekti', href: '/Projects' },
-        ],
-    },
-    {
-        title: 'Kontakti',
-        items: [{ label: 'Kontakti', href: '/contacts' }],
     },
 ];
 

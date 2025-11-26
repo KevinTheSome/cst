@@ -17,7 +17,7 @@ class AnketaController extends Controller
     public function index()
     {
         // Show stored submissions (form_results)
-        $formResults = FormResult::orderBy('created_at', 'desc')->get();
+        $formResults = Form::orderBy('created_at', 'desc')->get();
 
         return Inertia::render('Admin/Anketa/indexAnketa', [
             'formResults' => $formResults,
@@ -29,7 +29,7 @@ class AnketaController extends Controller
      */
     public function show($id)
     {
-        $formResult = FormResult::findOrFail($id);
+        $formResult = Form::findOrFail($id);
 
         return Inertia::render('Admin/Anketa/showAnketa', [
             'formResult' => $formResult,
@@ -71,12 +71,29 @@ class AnketaController extends Controller
      */
     public function edit($id)
     {
-        $formResult = Form::findOrFail($id);
+        $form = Form::findOrFail($id);
+
+        $schema = is_array($form->results)
+            ? $form->results
+            : json_decode($form->results ?? '{}', true);
 
         return Inertia::render('Admin/Anketa/updateAnketa', [
-            'formResult' => $formResult,
+            'formResult' => [
+                'id' => $form->id,
+                'title' => $form->title,
+                'code' => $form->code,
+
+                // always output the same format
+                'results' => [
+                    'title' => $form->title,
+                    'fields' => $schema['fields'] ?? [],
+                ],
+
+                'fields' => $schema['fields'] ?? [],
+            ],
         ]);
     }
+
 
     /**
      * Admin: update form template
@@ -114,26 +131,33 @@ class AnketaController extends Controller
      */
     public function loadByCode(string $code)
     {
-        $form = Form::where('code', $code)->first();
 
-        if (!$form) {
-            // Return JSON error instead of aborting with HTML
-            return response()->json([
-                'error' => 'Form not found.'
-            ], 404);
+        $formType = FormType::where('type', $code)->first();
+
+
+        if (!$formType) {
+            return Inertia::render('Formas/forma', [
+                'form' => null,
+            ]);
         }
 
+        $form = $formType->form;
+
         // Send the form payload to the frontend anketa page
-        return response()->json([
-            'form' => [
-                'id' => $form->id,
-                'code' => $form->code,
-                'title' => $form->title,
-                'results' => $form->results ?? [],
-            ],
+        return Inertia::render('Formas/forma', [
+            'form' => $form,
         ]);
+
     }
 
+
+    /**
+     * Public: show the code entry page for forms
+     */
+    public function showCode()
+    {
+        return Inertia::render('Formas/questions');
+    }
 
     /**
      * Public: store submitted answers to form_results table.
