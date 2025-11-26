@@ -17,7 +17,7 @@ class AnketaController extends Controller
     public function index()
     {
         // Show stored submissions (form_results)
-        $formResults = FormResult::orderBy('created_at', 'desc')->get();
+        $formResults = Form::orderBy('created_at', 'desc')->get();
 
         return Inertia::render('Admin/Anketa/indexAnketa', [
             'formResults' => $formResults,
@@ -29,7 +29,7 @@ class AnketaController extends Controller
      */
     public function show($id)
     {
-        $formResult = FormResult::findOrFail($id);
+        $formResult = Form::findOrFail($id);
 
         return Inertia::render('Admin/Anketa/showAnketa', [
             'formResult' => $formResult,
