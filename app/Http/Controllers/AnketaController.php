@@ -49,12 +49,17 @@ class AnketaController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'title' => 'required',
+        $data = $request->validate([     
+            'title' => 'required|array',
+            'title.*' => 'required|string',
             'visibility' => 'required|string',
             'schema.fields' => 'array|nullable',
-        ]);
 
+            'schema.fields.*.label.lv' => 'required|string',
+            'schema.fields.*.label.en' => 'required|string',
+            'schema.fields.*.options.lv.*' => 'required|string',
+            'schema.fields.*.options.en.*' => 'required|string',
+        ]);
         Form::create([
             'code' => $data['visibility'],
             'title' => $data['title'],
@@ -62,8 +67,8 @@ class AnketaController extends Controller
                 'fields' => data_get($data, 'schema.fields', []),
             ],
         ]);
-
         return redirect()->route('admin.anketa');
+
     }
 
     /**
