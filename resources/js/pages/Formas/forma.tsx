@@ -29,6 +29,7 @@ export default function Anketa({ form }: { form: FormData | null }) {
     const [currentSlide, setCurrentSlide] = useState(0);
     const batchSize = 3;
     const totalSlides = Math.ceil(fields.length / batchSize);
+    const progressPercent = totalSlides === 0 ? 0 : Math.round(((currentSlide + 1) / totalSlides) * 100);
 
     const getLabel = (label: { lv: string; en: string }) => label[lang] || label.lv;
     const getOptions = (options?: { lv: string[]; en: string[] }) => (options ? options[lang] || options.lv : []);
@@ -101,6 +102,19 @@ export default function Anketa({ form }: { form: FormData | null }) {
                         </div>
                     ) : (
                         <>
+                            <div className="rounded-2xl border border-white/60 bg-white/80 p-5 shadow-lg shadow-slate-200/70 backdrop-blur">
+                                <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-slate-500">
+                                    <span>Progress</span>
+                                    <span>{progressPercent}%</span>
+                                </div>
+                                <div className="mt-3 h-2 rounded-full bg-slate-200">
+                                    <div
+                                        className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-sky-500 transition-all"
+                                        style={{ width: `${progressPercent}%` }}
+                                    />
+                                </div>
+                            </div>
+
                             <div className="space-y-6">
                                 {fields.slice(currentSlide * batchSize, currentSlide * batchSize + batchSize).map((field) => {
                                     const options = getOptions(field.options);
