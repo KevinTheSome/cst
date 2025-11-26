@@ -74,11 +74,10 @@ Route::get('pacientiem/faq', fn() => Inertia::render('Pacientiem/faq'))->name('P
 
 // <<<<<<<<<<<<< Kaut kas no tās puses >>>>>>>>>>>
 
-Route::get('/contacts', fn() => Inertia::render('contacts'))->name('contacts');
-Route::get('/pievienojies-mums', fn() => Inertia::render('pievienojiesMums'))->name('pievienojies-mums');
-Route::post('/pievienojies-mums', [ContactController::class, 'store']);
-Route::get('/musu-grupa', fn() => Inertia::render('musuGrupa'))->name('musu-grupa');
-
+Route::get('ParMums/contacts', fn() => Inertia::render('ParMums/contacts'))->name('contacts');
+Route::get('ParMums/pievienojies-mums', fn() => Inertia::render('ParMums/pievienojiesMums'))->name('pievienojies-mums');
+Route::get('ParMums/musu-grupa', fn() => Inertia::render('ParMums/musuGrupa'))->name('musu-grupa');
+Route::get('ParMums/lablife', fn() => Inertia::render('ParMums/lablife'))->name('lablife');
 
 Route::get('/anketa', fn() => Inertia::render('anketa'))->name('anketa');
 Route::get('/postdock-anketa', fn() => Inertia::render('PostDockanketa'))->name('postdock-anketa');

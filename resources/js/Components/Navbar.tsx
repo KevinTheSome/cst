@@ -150,26 +150,36 @@ function Navbar() {
                         </label>
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
-                                <Link href="/musu-grupa" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
-                                    Mūsu grupa
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/musu-grupa" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
+                                <Link
+                                    href="/ParMums/musu-grupa"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
+                                >
                                     Komanda
                                 </Link>
                             </li>
+            
                             <li>
-                                <Link href="/contacts" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
-                                    Kontekti
+                                <Link
+                                    href="/ParMums/contacts"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
+                                >
+                                    Kontakti
+                                </Link>
+                            </li>
+                             <li>
+                                <Link
+                                    href="/ParMums/pievienojies-mums"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
+                                >
+                                    Sazinies
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    href="/pievienojies-mums"
+                                    href="/ParMums/lablife"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Pievienojies mums
+                                    Laboratorija
                                 </Link>
                             </li>
                         </ul>
