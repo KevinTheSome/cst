@@ -24,11 +24,7 @@ function Navbar() {
         <nav className="z-50 flex w-full flex-col items-start justify-between bg-white px-4 py-4 shadow-sm lg:flex-row lg:items-center lg:px-8 lg:py-6">
             <div className="flex w-full items-center justify-between gap-6 lg:w-auto">
                 <Link href="/" className="flex items-center gap-4">
-                    <img
-                        src="/bzl-site-icon-01.png"
-                        alt="Biočipu zinātniskā laboratorija"
-                        className="h-16 w-auto md:h-20"
-                    />
+                    <img src="/bzl-site-icon-01.png" alt="Biočipu zinātniskā laboratorija" className="h-16 w-auto md:h-20" />
                     <span className="text-xl leading-tight font-semibold text-green-700 md:text-2xl">
                         Biočipu zinātniskā
                         <br />
@@ -37,12 +33,7 @@ function Navbar() {
                 </Link>
 
                 {/* Hamburger menu for mobile + tablet + small desktops */}
-                <button
-                    className="btn z-30 p-2 lg:hidden"
-                    aria-label="Open menu"
-                    aria-expanded={sidebarOpen}
-                    onClick={() => setSidebarOpen(true)}
-                >
+                <button className="btn z-30 p-2 lg:hidden" aria-label="Open menu" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen(true)}>
                     <svg className="h-7 w-7 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
@@ -51,7 +42,6 @@ function Navbar() {
 
             {/* Desktop nav – only on large screens and up */}
             <ul className="m-0 hidden w-auto list-none flex-row items-center gap-4 p-0 lg:flex">
-               
                 {/* PACIANTIEM */}
                 <li>
                     <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
@@ -106,7 +96,7 @@ function Navbar() {
                         </ul>
                     </div>
                 </li>
- {/* PĒTNIECĪBA */}
+                {/* PĒTNIECĪBA */}
                 <li>
                     <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
                         <label
@@ -133,19 +123,8 @@ function Navbar() {
                                     PostDock anketa
                                 </Link>
                             </li>
-                                              <li>
-                                <Link
-                                    href="/anketa"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    Publiskā anketa
-                                </Link>
-                            </li>
                             <li>
-                                <Link
-                                    href="/questions"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
+                                <Link href="/questions" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
                                     Koda anketa
                                 </Link>
                             </li>
@@ -171,30 +150,21 @@ function Navbar() {
                         </label>
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
-                                <Link
-                                    href="/musu-grupa"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
+                                <Link href="/musu-grupa" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
                                     Mūsu grupa
                                 </Link>
                             </li>
                             <li>
-                                <Link
-                                    href="/musu-grupa"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
+                                <Link href="/musu-grupa" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
                                     Komanda
                                 </Link>
                             </li>
                             <li>
-                                <Link
-                                    href="/contacts"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
+                                <Link href="/contacts" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
                                     Kontekti
                                 </Link>
                             </li>
-                             <li>
+                            <li>
                                 <Link
                                     href="/pievienojies-mums"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
@@ -237,20 +207,12 @@ function Navbar() {
             {sidebarOpen && (
                 <div className="fixed inset-0 z-40 flex lg:hidden">
                     {/* Dark overlay that closes the menu on click */}
-                    <div
-                        className="absolute inset-0 bg-black/40"
-                        onClick={() => setSidebarOpen(false)}
-                        aria-hidden="true"
-                    />
+                    <div className="absolute inset-0 bg-black/40" onClick={() => setSidebarOpen(false)} aria-hidden="true" />
 
                     <aside className="animate-slide-in-sidebar-left relative z-50 flex h-full w-80 max-w-full translate-x-0 flex-col bg-white text-green-700 shadow-lg transition-transform duration-300 ease-in-out">
                         <div className="flex items-center justify-between border-b border-green-700/10 px-6 py-4">
                             <img src="/bzl-site-icon-01.png" alt="Logo" className="h-8 w-auto" />
-                            <button
-                                className="btn text-green-700 btn-sm"
-                                aria-label="Close menu"
-                                onClick={() => setSidebarOpen(false)}
-                            >
+                            <button className="btn text-green-700 btn-sm" aria-label="Close menu" onClick={() => setSidebarOpen(false)}>
                                 ✕
                             </button>
                         </div>
@@ -258,7 +220,6 @@ function Navbar() {
                         <nav className="flex-1 overflow-y-auto px-2 py-4">
                             {/* FULL mobile menu matches desktop sections */}
                             <ul className="menu w-full gap-1 text-green-700">
-                              
                                 {/* PĒTNIECĪBA */}
                                 <li>
                                     <details className="w-full">
@@ -271,36 +232,23 @@ function Navbar() {
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
-                                                <Link
-                                                    href="/"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
+                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
                                                     Klīniskie pētijumi
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link
-                                                    href="/"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
+                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
                                                     PostDock anketa
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link
-                                                    href="/"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
+                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
                                                     Publikācijas (DOI)
                                                 </Link>
                                             </li>
                                         </ul>
                                     </details>
                                 </li>
-
 
                                 {/* PACIANTIEM */}
                                 <li>
@@ -314,38 +262,22 @@ function Navbar() {
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
-                                                <Link
-                                                    href="/"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
+                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
                                                     Kas ir ATMP?
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link
-                                                    href="/"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
+                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
                                                     Psoriāze un jaunās terapjas
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link
-                                                    href="/"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
+                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
                                                     Krona slimiba un jaunās terapiias
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link
-                                                    href="/"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
+                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
                                                     Biežak uzdotie jautājumi (FAQ)
                                                 </Link>
                                             </li>
@@ -353,7 +285,7 @@ function Navbar() {
                                     </details>
                                 </li>
 
-                                 {/* PAR MUMS */}
+                                {/* PAR MUMS */}
                                 <li>
                                     <details className="w-full">
                                         <summary className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-lg font-semibold">
