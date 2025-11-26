@@ -258,26 +258,26 @@ function Navbar() {
                                                 <path d="M12 6v12M6 12h12" />
                                                 <circle cx="12" cy="12" r="9" />
                                             </svg>
-                                            PACIANTIEM
+                                            PACIENTIEM
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
-                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link href="/pacientiem/atmp" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
                                                     Kas ir ATMP?
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
-                                                    Psoriāze un jaunās terapjas
+                                                <Link href="/pacientiem/psoriaze-terapija" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                    Psoriāze un jaunās terapijas
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
-                                                    Krona slimiba un jaunās terapiias
+                                                <Link href="/pacientiem/krona-terapija" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                    Krona slimība un jaunās terapijas
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link href="/pacientiem/faq" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
                                                     Biežak uzdotie jautājumi (FAQ)
                                                 </Link>
                                             </li>
