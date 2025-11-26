@@ -69,8 +69,12 @@ class AnketaController extends Controller
             'title' => 'required',
             'visibility' => 'required|string',
             'schema.fields' => 'array|nullable',
-        ]);
 
+            'schema.fields.*.label.lv' => 'required|string',
+            'schema.fields.*.label.en' => 'required|string',
+            'schema.fields.*.options.lv.*' => 'required|string',
+            'schema.fields.*.options.en.*' => 'required|string',
+        ]);
         Form::create([
             'code' => $data['visibility'],
             'title' => [
@@ -85,8 +89,8 @@ class AnketaController extends Controller
                 'fields' => data_get($data, 'schema.fields', []),
             ],
         ]);
-
         return redirect()->route('admin.anketa');
+
     }
 
     /**

@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call(AdminSeeder::class);
         $this->call(FormSeeder::class);
+        $this->call(FormTypeSeeder::class);
 
     }
 }
