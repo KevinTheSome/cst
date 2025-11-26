@@ -44,28 +44,6 @@ export default function PostDockanketa() {
                         </p>
                     </div>
 
-                    {/* SPECĪĀLISTU SEKCIJA */}
-                    <div className="mt-10 w-full">
-                        <h2 className="mb-4 text-left text-xl font-semibold text-emerald-700">Speciālistiem</h2>
-                        <div className="grid w-full gap-6 sm:grid-cols-2">
-                            {specialistButtons.map((btn) => (
-                                <div
-                                    key={btn.label}
-                                    className="rounded-[28px] border border-white/70 bg-white/80 p-6 text-left shadow-lg shadow-slate-200/60 backdrop-blur transition hover:-translate-y-1 hover:shadow-slate-300"
-                                >
-                                    <p className="text-xs tracking-[0.3em] text-emerald-600 uppercase">{btn.label}</p>
-                                    <p className="mt-2 text-base font-semibold text-slate-900">{btn.subtitle}</p>
-                                    <Link
-                                        href={btn.href}
-                                        className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-emerald-600 to-sky-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition hover:from-emerald-700 hover:to-sky-600"
-                                    >
-                                        Atvērt {btn.label.toLowerCase()}
-                                    </Link>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
                     {/* KLIENTU SEKCIJA */}
                     <div className="mt-14 w-full">
                         <h2 className="mb-4 text-left text-xl font-semibold text-sky-700">Klientiem</h2>
@@ -80,6 +58,28 @@ export default function PostDockanketa() {
                                     <Link
                                         href={btn.href}
                                         className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/30 transition hover:from-sky-600 hover:to-emerald-700"
+                                    >
+                                        Atvērt {btn.label.toLowerCase()}
+                                    </Link>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* SPECĪĀLISTU SEKCIJA */}
+                    <div className="mt-10 w-full">
+                        <h2 className="mb-4 text-left text-xl font-semibold text-emerald-700">Speciālistiem</h2>
+                        <div className="grid w-full gap-6 sm:grid-cols-2">
+                            {specialistButtons.map((btn) => (
+                                <div
+                                    key={btn.label}
+                                    className="rounded-[28px] border border-white/70 bg-white/80 p-6 text-left shadow-lg shadow-slate-200/60 backdrop-blur transition hover:-translate-y-1 hover:shadow-slate-300"
+                                >
+                                    <p className="text-xs tracking-[0.3em] text-emerald-600 uppercase">{btn.label}</p>
+                                    <p className="mt-2 text-base font-semibold text-slate-900">{btn.subtitle}</p>
+                                    <Link
+                                        href={btn.href}
+                                        className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-emerald-600 to-sky-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition hover:from-emerald-700 hover:to-sky-600"
                                     >
                                         Atvērt {btn.label.toLowerCase()}
                                     </Link>
