@@ -43,12 +43,43 @@ class AnketaController extends Controller
      */
     public function show($id)
     {
-        $formResult = Form::findOrFail($id);
+        $form = Form::findOrFail($id);
+
+        // decode results if stored as JSON
+        $results = is_array($form->results)
+            ? $form->results
+            : json_decode($form->results ?? '{}', true);
+
+        // normalize fields ALWAYS to same structure
+        $normalizedFields = collect($results['fields'] ?? [])
+            ->map(function ($f) {
+                return [
+                    'label' => [
+                        'lv' => $f['label']['lv'] ?? $f['label'] ?? '',
+                        'en' => $f['label']['en'] ?? $f['label'] ?? '',
+                    ],
+                    'type' => $f['type'] ?? 'radio',
+                    'options' => [
+                        'lv' => $f['options']['lv'] ?? $f['options'] ?? [],
+                        'en' => $f['options']['en'] ?? $f['options'] ?? [],
+                    ],
+                ];
+            })
+            ->toArray();
 
         return Inertia::render('Admin/Anketa/showAnketa', [
-            'formResult' => $formResult,
+            'formResult' => [
+                'id' => $form->id,
+                'code' => $form->code,
+                'title' => $form->title,
+                'results' => [
+                    'title' => $results['title'] ?? $form->title,
+                    'fields' => $normalizedFields,
+                ],
+            ],
         ]);
     }
+
 
     /**
      * Admin: create a new form template
