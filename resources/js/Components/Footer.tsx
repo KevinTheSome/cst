@@ -22,10 +22,10 @@ const NAV_GROUPS = [
     {
         title: 'Par mums',
         items: [
-            { label: 'Mūsu grupa', href: '/musu-grupa' },
-            { label: 'Komanda', href: '/musu-grupa' },
-            { label: 'Kontakti', href: '/contacts' },
-            { label: 'Sazinies ar mums', href: '/pievienojies-mums' },
+            { label: 'Mūsu grupa', href: '/ParMums/musu-grupa' },
+            { label: 'Komanda', href: '/ParMums/musu-grupa' },
+            { label: 'Kontakti', href: '/ParMums/contacts' },
+            { label: 'Sazinies ar mums', href: '/ParMums/pievienojies-mums' },
         ],
     },
 ];
