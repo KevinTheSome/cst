@@ -37,13 +37,18 @@ class FormCodeController extends Controller
                 ] : null,
                 'form' => $c->form ? [
                     'id' => $c->form->id,
-                    'title' => $c->form->title,
+                    'title' => $c->form->title[app()->getLocale()] ?? $c->form->title['lv'] ?? 'No title',
                 ] : null,
             ];
         });
 
         // only pass private forms for assignment
-        $forms = Form::where('code', 'private')->orderBy('title')->get(['id', 'title']);
+        $forms = Form::where('code', 'private')->get()->map(function ($f) {
+            return [
+                'id' => $f->id,
+                'title' => $f->title[app()->getLocale()] ?? $f->title['lv'] ?? 'No title',
+            ];
+        });
 
         return inertia('Admin/formCodes', [
             'codes' => $payload,
@@ -167,6 +172,7 @@ class FormCodeController extends Controller
                     'id'     => $formCode->form->id,
                     'title'  => $formCode->form->title,
                     'fields' => $formCode->form->fields ?? [],
+                    'lang'   => app()->getLocale(),
                 ] : null,
             ]);
         });

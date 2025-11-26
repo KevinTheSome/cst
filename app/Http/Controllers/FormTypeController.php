@@ -13,7 +13,7 @@ class FormTypeController extends Controller
         syncLangFiles('anketa');
         $anketas = Form::all();
         $formTypes = FormType::all();
-        return Inertia::render('Admin/Anketa/selectorAnketa', ['anketas' => $anketas, 'formTypes' => $formTypes]);
+        return Inertia::render('Admin/Anketa/selectorAnketa', ['anketas' => $anketas, 'formTypes' => $formTypes, 'locale' => app()->getLocale()]);
     }
     public function add(Request $request){
         $validated = $request->validate([
@@ -25,9 +25,9 @@ class FormTypeController extends Controller
         $type_exists = FormType::where('type', $validated['type'])->exists();
         if($type_exists){
             $form = FormType::where('type', $validated['type'])->first();
-            $form->delete($form->id);
+            $form->delete();
         }
-                
+
         $exists = FormType::where('form_id', $validated['form_id'])->exists();
         if($exists){
             $form['type'] = $validated['type'];

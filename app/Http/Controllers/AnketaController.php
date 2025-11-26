@@ -213,6 +213,7 @@ class AnketaController extends Controller
         // Send the form payload to the frontend anketa page
         return Inertia::render('Formas/forma', [
             'form' => $form,
+            'lang' => app()->getLocale(),
         ]);
 
     }
@@ -223,7 +224,9 @@ class AnketaController extends Controller
      */
     public function showCode()
     {
-        return Inertia::render('Formas/questions');
+        return Inertia::render('Formas/questions', [
+            'locale' => app()->getLocale(),
+        ]);
     }
 
     /**
