@@ -67,8 +67,7 @@ export default function PievienojiesMums() {
 
                 <div className="relative mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 sm:px-8">
                     <header className="text-center">
-                        <p className="text-sm uppercase tracking-[0.3em] text-emerald-600">Sazinies</p>
-                        <h1 className="mt-2 text-3xl font-semibold text-slate-900 sm:text-4xl">Pievienojies mums</h1>
+                        <h1 className="mt-2 text-3xl font-semibold text-slate-900 sm:text-4xl">Sazinies ar mums</h1>
                         <p className="mt-4 text-lg text-slate-600">
                             Aizpildi formu un pastāsti, kā vari palīdzēt laboratorijai. Atbildēsim uz e-pastu tiklīdz iespējams.
                         </p>
