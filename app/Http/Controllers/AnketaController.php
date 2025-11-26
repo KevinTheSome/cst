@@ -117,12 +117,10 @@ class AnketaController extends Controller
         $form = Form::where('code', $code)->first();
 
         if (!$form) {
-            // Return JSON error instead of aborting with HTML
-            return response()->json([
-                'error' => 'Form not found.'
-            ], 404);
+            return Inertia::render('Formas/forma', [
+                'form' => null,
+            ]);
         }
-
         // Send the form payload to the frontend anketa page
         return response()->json([
             'form' => [
