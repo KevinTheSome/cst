@@ -46,11 +46,7 @@ class AnketaController extends Controller
         $form = Form::findOrFail($id);
 
         // decode results if stored as JSON
-        $results = is_array($form->results)
-            ? $form->results
-            : json_decode($form->results ?? '{}', true);
-
-        // normalize fields ALWAYS to same structure
+        $results = $form->results ?? []; // already array
         $normalizedFields = collect($results['fields'] ?? [])
             ->map(function ($f) {
                 return [

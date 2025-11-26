@@ -20,14 +20,6 @@ class Form extends Model
         'results' => 'array',
     ];
 
-    public function getResultsAttribute($value)
-    {
-        return [
-            'title' => $this->title,
-            'fields' => $value['fields'] ?? [],
-        ];
-    }
-
     public function getFieldsAttribute()
     {
         return $this->results['fields'] ?? [];

@@ -5,19 +5,21 @@ import { useState, type ReactNode } from 'react';
 type Lang = 'lv' | 'en';
 
 interface Field {
-    label: { lv: string; en: string };
-    type: 'radio' | 'checkbox' | 'dropdown';
-    options: { lv: string[]; en: string[] };
+    id?: string;
+    label: { lv?: string; en?: string } | string;
+    type?: 'radio' | 'checkbox' | 'dropdown' | string;
+    options?: { lv?: string[]; en?: string[] } | string[] | Record<string, string[]>;
+    placeholder?: { lv?: string; en?: string } | string;
+    rows?: number;
 }
 
 interface FormResult {
     id: number;
     code: string;
-    title: { lv?: string; en?: string } | string;
-    results: {
-        title?: { lv?: string; en?: string } | string;
-        fields?: Field[];
-    };
+    title?: { lv?: string; en?: string } | string;
+    // results may be a JSON string or parsed object
+    results?: any;
+    fields?: Field[]; // legacy/top-level fields
 }
 
 export default function ShowAnketa({ formResult }: { formResult: FormResult }) {
@@ -25,20 +27,81 @@ export default function ShowAnketa({ formResult }: { formResult: FormResult }) {
 
     if (!formResult) return <p>Loading...</p>;
 
-    /** always pick the correct title */
-    const resolvedTitle =
-        typeof formResult.results?.title === 'string'
-            ? formResult.results.title
-            : (formResult.results?.title?.[lang] ?? formResult.title?.[lang] ?? formResult.title ?? 'Untitled');
+    // Safely parse results if it's a JSON string
+    let parsedResults: any = formResult.results ?? {};
+    if (typeof parsedResults === 'string') {
+        try {
+            parsedResults = JSON.parse(parsedResults);
+        } catch (e) {
+            // if parsing fails, treat as empty
+            parsedResults = {};
+        }
+    }
 
-    const fields = formResult.results?.fields ?? [];
+    // Resolve fields: prefer results.fields, fallback to top-level formResult.fields
+    const fields: Field[] = Array.isArray(parsedResults?.fields)
+        ? parsedResults.fields
+        : Array.isArray(formResult.fields)
+        ? formResult.fields
+        : [];
 
-    const tr = (value: any) => (typeof value === 'string' ? value : value?.[lang] || value?.lv || value?.en || '');
+    // Helper to get string from title (results.title or top-level title)
+    const resolveTitleString = (): string => {
+        const rTitle = parsedResults?.title;
+        const topTitle = formResult.title;
 
+        // If results.title is a string, return it
+        if (typeof rTitle === 'string' && rTitle.trim().length > 0) return rTitle;
+
+        // If results.title is object with lang keys
+        if (rTitle && typeof rTitle === 'object') {
+            return (rTitle[lang] ?? rTitle.lv ?? rTitle.en ?? '').toString();
+        }
+
+        // If top-level title is string
+        if (typeof topTitle === 'string' && topTitle.trim().length > 0) return topTitle;
+
+        // If top-level title is object
+        if (topTitle && typeof topTitle === 'object') {
+            return (topTitle[lang] ?? topTitle.lv ?? topTitle.en ?? '').toString();
+        }
+
+        return 'Untitled';
+    };
+
+    const resolvedTitle = resolveTitleString();
+
+    // Translate helper for label/help text etc.
+    const tr = (value: any): string =>
+        typeof value === 'string' ? value : (value?.[lang] ?? value?.lv ?? value?.en ?? '') ?? '';
+
+    // Translate helper for options — always return an array of strings
     const trOptions = (value: any): string[] => {
-        if (Array.isArray(value)) return value;
         if (!value) return [];
-        return value?.[lang] || value?.lv || value?.en || [];
+
+        // if already array of strings
+        if (Array.isArray(value)) return value.map(String);
+
+        // If it's an object {lv: [...], en: [...]}
+        if (typeof value === 'object') {
+            const arr = value[lang] ?? value.lv ?? value.en;
+            if (Array.isArray(arr)) return arr.map(String);
+            // fallback: if object contains numeric keys, collect them
+            const maybeArr = Object.values(value).find((v) => Array.isArray(v));
+            if (Array.isArray(maybeArr)) return maybeArr.map(String);
+            return [];
+        }
+
+        // else can't parse -> return empty
+        return [];
+    };
+
+    // Attempt to infer a type when missing (safe fallback)
+    const inferType = (f: Field): 'radio' | 'checkbox' | 'dropdown' => {
+        if (f.type === 'checkbox') return 'checkbox';
+        if (f.type === 'dropdown') return 'dropdown';
+        // default radio
+        return 'radio';
     };
 
     return (
@@ -52,7 +115,7 @@ export default function ShowAnketa({ formResult }: { formResult: FormResult }) {
 
                             <h1 className="mt-2 text-3xl font-semibold">{resolvedTitle}</h1>
                             <p className="mt-2 text-sm text-white/60">
-                                ID #{formResult.id} · {formResult.code.toUpperCase()}
+                                ID #{formResult.id} · {formResult.code?.toUpperCase?.() ?? formResult.code}
                             </p>
                         </div>
 
@@ -81,42 +144,46 @@ export default function ShowAnketa({ formResult }: { formResult: FormResult }) {
                     </div>
                 </div>
 
+                
                 {/* FIELDS */}
                 <div className="grid gap-6 md:grid-cols-2">
                     <div className="space-y-6">
-                        {fields.map((f, i) => {
+                        {fields.map((f: Field, i: number) => {
                             const label = tr(f.label);
                             const opts = trOptions(f.options);
+                            const type = (f.type ? (f.type as 'radio' | 'checkbox' | 'dropdown') : inferType(f)) ?? 'radio';
 
                             return (
-                                <div key={i} className="rounded-2xl border border-white/10 bg-slate-950/50 p-5">
+                                <div key={f.id ?? i} className="rounded-2xl border border-white/10 bg-slate-950/50 p-5">
                                     <p className="text-xs text-white/60 uppercase">Jautājums {i + 1}</p>
 
                                     <h3 className="mt-1 text-lg font-semibold">{label}</h3>
 
-                                    {f.type === 'radio' &&
+                                    {type === 'radio' &&
                                         opts.map((o, j) => (
-                                            <div key={j} className="flex items-center gap-3">
-                                                <span className="h-3 w-3 rounded-full border"></span>
-                                                {o}
+                                            <div key={j} className="flex items-center gap-3 py-1">
+                                                <span className="h-3 w-3 rounded-full border" />
+                                                <span className="text-sm">{o}</span>
                                             </div>
                                         ))}
 
-                                    {f.type === 'checkbox' &&
+                                    {type === 'checkbox' &&
                                         opts.map((o, j) => (
-                                            <div key={j} className="flex items-center gap-3">
-                                                <span className="h-3 w-3 rounded border"></span>
-                                                {o}
+                                            <div key={j} className="flex items-center gap-3 py-1">
+                                                <span className="h-3 w-3 rounded border" />
+                                                <span className="text-sm">{o}</span>
                                             </div>
                                         ))}
 
-                                    {f.type === 'dropdown' && (
+                                    {type === 'dropdown' && (
                                         <select disabled className="w-full rounded-xl bg-slate-900 p-3">
                                             {opts.map((o, j) => (
                                                 <option key={j}>{o}</option>
                                             ))}
                                         </select>
                                     )}
+
+                                    {opts.length === 0 && <p className="text-sm text-white/50 mt-2">Nav opciju</p>}
                                 </div>
                             );
                         })}
