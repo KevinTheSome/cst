@@ -172,34 +172,35 @@ function Navbar() {
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
                                 <Link
-                                    href="/musu-grupa"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    Mūsu grupa
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/musu-grupa"
+                                    href="/ParMums/musu-grupa"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
                                     Komanda
                                 </Link>
                             </li>
+            
                             <li>
                                 <Link
-                                    href="/contacts"
+                                    href="/ParMums/contacts"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Kontekti
+                                    Kontakti
                                 </Link>
                             </li>
                              <li>
                                 <Link
-                                    href="/pievienojies-mums"
+                                    href="/ParMums/pievienojies-mums"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Pievienojies mums
+                                    Sazinies
+                                </Link>
+                            </li>
+                             <li>
+                                <Link
+                                    href="/ParMums/lablife"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
+                                >
+                                    Laboratorija
                                 </Link>
                             </li>
                         </ul>
