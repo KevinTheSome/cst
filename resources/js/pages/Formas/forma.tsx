@@ -72,7 +72,14 @@ export default function Anketa({ form }: { form: FormData | null }) {
     };
 
     if (!form) {
-        return <p className="text-red-400">Notikusi kļūda — anketa nav atrasta.</p>;
+        return (
+            <div className="mx-auto h-screen max-w-3xl py-10">
+                <div className="rounded-2xl border border-yellow-400 bg-yellow-600/20 p-6 text-yellow-200">
+                    <h2 className="text-xl font-semibold">Pašlaik anketa nav pieejama.</h2>
+                    <p className="mt-2 text-yellow-300">Lūdzu, mēģiniet vēlāk.</p>
+                </div>
+            </div>
+        );
     }
 
     return (
