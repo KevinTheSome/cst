@@ -7,6 +7,7 @@ use App\Models\Form;
 use App\Models\FormType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class AnketaController extends Controller
@@ -18,14 +19,13 @@ class AnketaController extends Controller
     {
         $forms = Form::orderBy('created_at', 'desc')->get();
 
-        // dd($forms);
         $formData = $forms->map(function ($form) {
             return [
                 'id' => $form->id,
                 'code' => $form->code,
-                'title' => $form->title,         // already array now
+                'title' => $form->title,
                 'data' => [
-                    'title' => $form->title,     // array
+                    'title' => $form->title,
                     'fields' => $form->data['fields'] ?? [],
                 ],
             ];
@@ -36,17 +36,15 @@ class AnketaController extends Controller
         ]);
     }
 
-
-
     /**
      * Admin: show single stored result
      */
     public function show($id)
     {
+        syncLangFiles('formcodes');
         $form = Form::findOrFail($id);
+        $data = $form->data ?? [];
 
-        // decode data if stored as JSON
-        $data = $form->data ?? []; // already array
         $normalizedFields = collect($data['fields'] ?? [])
             ->map(function ($f) {
                 return [
@@ -59,6 +57,8 @@ class AnketaController extends Controller
                         'lv' => $f['options']['lv'] ?? $f['options'] ?? [],
                         'en' => $f['options']['en'] ?? $f['options'] ?? [],
                     ],
+                    'placeholder' => $f['placeholder'] ?? null,
+                    'scale' => $f['scale'] ?? null,
                 ];
             })
             ->toArray();
@@ -76,12 +76,12 @@ class AnketaController extends Controller
         ]);
     }
 
-
     /**
      * Admin: create a new form template
      */
     public function create()
     {
+        syncLangFiles('formcodes');
         return Inertia::render('Admin/Anketa/createAnketa');
     }
 
@@ -90,34 +90,51 @@ class AnketaController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
-
         $data = $request->validate([
-            'title' => 'required',
-            'visibility' => 'required|string',
+            'title' => 'required|array',
+            'title.lv' => 'required|string|max:255',
+            'title.en' => 'required|string|max:255',
+            'visibility' => 'required|string|in:public,private',
             'schema.fields' => 'array|nullable',
 
-            'schema.fields.*.label.lv' => 'required|string',
-            'schema.fields.*.label.en' => 'required|string',
-            'schema.fields.*.options.lv.*' => 'required|string',
-            'schema.fields.*.options.en.*' => 'required|string',
-        ]);
-        Form::create([
-            'code' => $data['visibility'],
-            'title' => [
-                'lv' => $data['title']['lv'] ?? $data['title'],
-                'en' => $data['title']['en'] ?? $data['title'],
-            ],
-            'data' => [
-                'title' => [
-                    'lv' => $data['title']['lv'] ?? $data['title'],
-                    'en' => $data['title']['en'] ?? $data['title'],
-                ],
-                'fields' => data_get($data, 'schema.fields', []),
-            ],
-        ]);
-        return redirect()->route('admin.anketa');
+            'schema.fields.*.id' => 'required|string',
+            'schema.fields.*.type' => 'required|string|in:radio,checkbox,dropdown,text,scale',
+            'schema.fields.*.label.lv' => 'required|string|max:255',
+            'schema.fields.*.label.en' => 'required|string|max:255',
 
+            'schema.fields.*.options.lv.*' => 'sometimes|required|string|max:255',
+            'schema.fields.*.options.en.*' => 'sometimes|required|string|max:255',
+
+            'schema.fields.*.placeholder.lv' => 'sometimes|required|string|max:255',
+            'schema.fields.*.placeholder.en' => 'sometimes|required|string|max:255',
+
+            'schema.fields.*.scale.min' => 'sometimes|required|integer|min:1|max:100',
+            'schema.fields.*.scale.max' => 'sometimes|required|integer|min:1|max:100',
+            'schema.fields.*.scale.minLabel.lv' => 'sometimes|string|nullable|max:255',
+            'schema.fields.*.scale.minLabel.en' => 'sometimes|string|nullable|max:255',
+            'schema.fields.*.scale.maxLabel.lv' => 'sometimes|string|nullable|max:255',
+            'schema.fields.*.scale.maxLabel.en' => 'sometimes|string|nullable|max:255',
+        ]);
+
+        $form = Form::create([
+            'code' => $data['visibility'],
+            'title' => $data['title'],
+            'data' => [
+                'title' => $data['title'],
+                'fields' => collect($data['schema']['fields'] ?? [])->map(function ($f) {
+                    return [
+                        'id' => $f['id'],
+                        'type' => $f['type'],
+                        'label' => $f['label'] ?? [],
+                        'options' => $f['options'] ?? [],
+                        'placeholder' => $f['placeholder'] ?? null,
+                        'scale' => $f['scale'] ?? null,
+                    ];
+                })->toArray(),
+            ],
+        ]);
+
+        return response()->json(['message' => 'Anketa izveidota!', 'form' => $form]);
     }
 
     /**
@@ -127,20 +144,10 @@ class AnketaController extends Controller
     {
         $form = Form::findOrFail($id);
 
-        $schema = is_array($form->data)
-            ? $form->data
-            : json_decode($form->data ?? '{}', true);
-
         return Inertia::render('Admin/Anketa/updateAnketa', [
-            'formData' => [
-                'id' => $form->id,
-                'title' => $form->title,
-                'code' => $form->code,
-                'data' => $schema,
-            ],
+            'form' => $form
         ]);
     }
-
 
 
     /**
@@ -148,20 +155,54 @@ class AnketaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = $request->all();
+        $form = Form::findOrFail($id);
 
-        //dd(vars: $data);
-
-        $formResult = Form::findOrFail($id);
-
-        $formResult->update([
-            'code' => $data['visibility'] ?? $formResult->code,
-            'title' => $data['title'] ?? $formResult->title,
-            'data' => $data['schema'] ?? $formResult->data,
+        $validated = $request->validate([
+            'code' => 'required|string|in:public,private',
+            'data' => 'required|array',
+            'data.title' => 'required|array',
+            'data.title.lv' => 'required|string|max:255',
+            'data.title.en' => 'required|string|max:255',
+            'data.fields' => 'required|array',
+            'data.fields.*.id' => 'required|string',
+            'data.fields.*.type' => 'required|string|in:text,radio,checkbox,dropdown,scale',
+            'data.fields.*.label' => 'required|array',
+            'data.fields.*.label.lv' => 'required|string|max:255',
+            'data.fields.*.label.en' => 'required|string|max:255',
+            // Options as arrays (lv/en)
+            'data.fields.*.options' => 'nullable|array',
+            'data.fields.*.options.lv' => 'nullable|array',
+            'data.fields.*.options.lv.*' => 'sometimes|required|string|max:255',
+            'data.fields.*.options.en' => 'nullable|array',
+            'data.fields.*.options.en.*' => 'sometimes|required|string|max:255',
+            // Placeholder
+            'data.fields.*.placeholder' => 'nullable|array',
+            'data.fields.*.placeholder.lv' => 'sometimes|string|nullable|max:255',
+            'data.fields.*.placeholder.en' => 'sometimes|string|nullable|max:255',
+            // Scale
+            'data.fields.*.scale' => 'nullable|array',
+            'data.fields.*.scale.min' => 'sometimes|required|integer|min:1|max:100',
+            'data.fields.*.scale.max' => 'sometimes|required|integer|min:1|max:100',
+            'data.fields.*.scale.minLabel' => 'nullable|array',
+            'data.fields.*.scale.minLabel.lv' => 'sometimes|string|nullable|max:255',
+            'data.fields.*.scale.minLabel.en' => 'sometimes|string|nullable|max:255',
+            'data.fields.*.scale.maxLabel' => 'nullable|array',
+            'data.fields.*.scale.maxLabel.lv' => 'sometimes|string|nullable|max:255',
+            'data.fields.*.scale.maxLabel.en' => 'sometimes|string|nullable|max:255',
         ]);
 
-        return redirect()->route('admin.anketa');
+        $form->update([
+            'code' => $validated['code'],
+            'title' => $validated['data']['title'],
+            'data' => $validated['data'],
+        ]);
+
+        return response()->json([
+            'message' => 'Form updated successfully',
+            'form' => $form,
+        ]);
     }
+
 
     /**
      * Admin: delete form template
@@ -175,32 +216,23 @@ class AnketaController extends Controller
     }
 
     /**
-     * Public route: load a form page by its code (used by your route closures)
-     *
-     * Example: app(AnketaController::class)->loadByCode('psoriasis')
+     * Public route: load a form page by its code
      */
     public function loadByCode(string $code)
     {
-
         $formType = FormType::where('type', $code)->first();
 
-
         if (!$formType) {
-            return Inertia::render('Formas/forma', [
-                'form' => null,
-            ]);
+            return Inertia::render('Formas/forma', ['form' => null]);
         }
 
         $form = $formType->form;
 
-        // Send the form payload to the frontend anketa page
         return Inertia::render('Formas/forma', [
             'form' => $form,
             'lang' => app()->getLocale(),
         ]);
-
     }
-
 
     /**
      * Public: show the code entry page for forms
@@ -224,21 +256,16 @@ class AnketaController extends Controller
             'answers' => 'required|array',
         ]);
 
-        // Try to get the form title from form_id if provided
         $title = $data['title'] ?? null;
         if (isset($data['form_id'])) {
             try {
                 $form = Form::find($data['form_id']);
-                if ($form) {
-                    $title = $form->title ?? $title;
-                }
+                if ($form) $title = $form->title ?? $title;
             } catch (\Exception $e) {
-                // swallow - we'll just use provided title or fallback
                 Log::warning('Could not load Form by id in storeAnswers: ' . $e->getMessage());
             }
         }
 
-        // Create a new FormResult record
         $result = FormResult::create([
             'code' => $data['code'],
             'title' => $title ?? 'Submission',
