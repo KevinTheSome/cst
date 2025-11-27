@@ -19,6 +19,7 @@ return [
         'deleted_success' => 'Anketa veiksmīgi izdzēsta.',
         'deleted_error'   => 'Kļūda dzēšot anketu.',
     ],
+    
 
     'update' => [
         'back'                   => '← Atpakaļ uz sarakstu',
@@ -50,4 +51,5 @@ return [
         'success'        => 'Tips veiksmīgi saglabāts.',
         'error'          => 'Neizdevās saglabāt. Lūdzu, mēģiniet vēlreiz.',
     ],
+    
 ];

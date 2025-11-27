@@ -40,6 +40,7 @@ class AnketaController extends Controller
      */
     public function show($id)
     {
+        syncLangFiles('formcodes');
         $form = Form::findOrFail($id);
         $data = $form->data ?? [];
 
@@ -79,6 +80,7 @@ class AnketaController extends Controller
      */
     public function create()
     {
+        syncLangFiles('formcodes');
         return Inertia::render('Admin/Anketa/createAnketa');
     }
 
