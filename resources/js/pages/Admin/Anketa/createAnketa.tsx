@@ -616,25 +616,44 @@ export default function CreateAnketa() {
                           </div>
 
                           <div className="grid md:grid-cols-2 gap-3">
-                            <div>
-                              <label className="text-xs text-white/60">Min label (LV)</label>
-                              <input
-                                type="text"
-                                className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none"
-                                value={(field as ScaleField).scale.minLabel?.lv ?? ''}
-                                onChange={(e) => updateScaleValue(field.id, 'minLabel', e.target.value, 'lv')}
-                              />
-                            </div>
-                            <div>
-                              <label className="text-xs text-white/60">Max label (LV)</label>
-                              <input
-                                type="text"
-                                className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none"
-                                value={(field as ScaleField).scale.maxLabel?.lv ?? ''}
-                                onChange={(e) => updateScaleValue(field.id, 'maxLabel', e.target.value, 'lv')}
-                              />
-                            </div>
-                          </div>
+  <div>
+    <label className="text-xs text-white/60">Min label (LV)</label>
+    <input
+      type="text"
+      className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none"
+      value={(field as ScaleField).scale.minLabel?.lv ?? ''}
+      onChange={(e) => updateScaleValue(field.id, 'minLabel', e.target.value, 'lv')}
+    />
+  </div>
+  <div>
+    <label className="text-xs text-white/60">Max label (LV)</label>
+    <input
+      type="text"
+      className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none"
+      value={(field as ScaleField).scale.maxLabel?.lv ?? ''}
+      onChange={(e) => updateScaleValue(field.id, 'maxLabel', e.target.value, 'lv')}
+    />
+  </div>
+  <div>
+    <label className="text-xs text-white/60">Min label (EN)</label>
+    <input
+      type="text"
+      className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none"
+      value={(field as ScaleField).scale.minLabel?.en ?? ''}
+      onChange={(e) => updateScaleValue(field.id, 'minLabel', e.target.value, 'en')}
+    />
+  </div>
+  <div>
+    <label className="text-xs text-white/60">Max label (EN)</label>
+    <input
+      type="text"
+      className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none"
+      value={(field as ScaleField).scale.maxLabel?.en ?? ''}
+      onChange={(e) => updateScaleValue(field.id, 'maxLabel', e.target.value, 'en')}
+    />
+  </div>
+</div>
+
 
                           <div className="text-sm text-white/70">
                             <p className="text-xs uppercase tracking-[0.3em] text-white/50">Preview</p>
