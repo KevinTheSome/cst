@@ -127,6 +127,7 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/requests', fn() => Inertia::render('Admin/requests'))->name('admin.requests');
     Route::get('/security', [AdminController::class, 'security'])->name('admin.security');
     Route::post('/security', [AdminController::class, 'adminsStore'])->name('admin.security.store');
+    Route::put('/security/{admin}', [AdminController::class, 'adminsUpdate'])->name('admin.security.update');
     Route::delete('/security/{admin}', [AdminController::class, 'adminsDestroy'])->name('admin.security.destroy');
     Route::get('/team-heatmap', fn() => Inertia::render('Admin/teamHeatmap'))->name('admin.team-heatmap');
     Route::get('/workspace', fn() => Inertia::render('Admin/workspace'))->name('admin.workspace');
