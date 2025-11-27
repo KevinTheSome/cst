@@ -12,17 +12,17 @@ class Form extends Model
     protected $fillable = [
         'code',
         'title',
-        'results',
+        'data',
     ];
 
     protected $casts = [
         'title' => 'array',
-        'results' => 'array',
+        'data' => 'array',
     ];
 
     public function getFieldsAttribute()
     {
-        return $this->results['fields'] ?? [];
+        return $this->data['fields'] ?? [];
     }
     public function formType(){
         return $this->hasOne(FormType::class);

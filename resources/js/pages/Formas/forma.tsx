@@ -17,7 +17,7 @@ interface FormData {
 id: number;
 code: string;
 title: LocalizedString;
-results: {
+data: {
 title: LocalizedString;
 fields: Field[];
 };
@@ -26,7 +26,7 @@ lang?: 'lv' | 'en';
 
 export default function Anketa({ form }: { form: FormData | null }) {
 const lang = form?.lang ?? 'lv';
-const fields = form?.results?.fields ?? [];
+const fields = form?.data?.fields ?? [];
 
 const [answers, setAnswers] = useState<Record<string, any>>({});
 const [submitted, setSubmitted] = useState(false);
@@ -98,7 +98,7 @@ return (
                 {/* Header */}
                 <div className="rounded-[32px] border border-white/70 bg-white/90 p-8 text-center shadow-2xl shadow-slate-200/80">
                     <p className="text-xs uppercase tracking-[0.4em] text-emerald-500">PostDock anketa</p>
-                    <h1 className="mt-4 text-3xl font-semibold text-slate-900">{tr(form.results.title)}</h1>
+                    <h1 className="mt-4 text-3xl font-semibold text-slate-900">{tr(form.data.title)}</h1>
                     <p className="mt-3 text-sm text-slate-600">Aizpildiet soļus — jautājumiem nav pareizo vai nepareizo atbilžu.</p>
                 </div>
 

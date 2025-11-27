@@ -13,47 +13,47 @@ interface Field {
     rows?: number;
 }
 
-interface FormResult {
+interface FormData {
     id: number;
     code: string;
     title?: { lv?: string; en?: string } | string;
-    // results may be a JSON string or parsed object
-    results?: any;
+    // data may be a JSON string or parsed object
+    data?: any;
     fields?: Field[]; // legacy/top-level fields
 }
 
-export default function ShowAnketa({ formResult }: { formResult: FormResult }) {
+export default function ShowAnketa({ formResult }: { formResult: FormData }) {
     const [lang, setLang] = useState<Lang>('lv');
 
     if (!formResult) return <p>Loading...</p>;
 
-    // Safely parse results if it's a JSON string
-    let parsedResults: any = formResult.results ?? {};
-    if (typeof parsedResults === 'string') {
+    // Safely parse data if it's a JSON string
+    let parsedData: any = formResult.data ?? {};
+    if (typeof parsedData === 'string') {
         try {
-            parsedResults = JSON.parse(parsedResults);
+            parsedData = JSON.parse(parsedData);
         } catch (e) {
             // if parsing fails, treat as empty
-            parsedResults = {};
+            parsedData = {};
         }
     }
 
-    // Resolve fields: prefer results.fields, fallback to top-level formResult.fields
-    const fields: Field[] = Array.isArray(parsedResults?.fields)
-        ? parsedResults.fields
+    // Resolve fields: prefer data.fields, fallback to top-level formResult.fields
+    const fields: Field[] = Array.isArray(parsedData?.fields)
+        ? parsedData.fields
         : Array.isArray(formResult.fields)
         ? formResult.fields
         : [];
 
-    // Helper to get string from title (results.title or top-level title)
+    // Helper to get string from title (data.title or top-level title)
     const resolveTitleString = (): string => {
-        const rTitle = parsedResults?.title;
+        const rTitle = parsedData?.title;
         const topTitle = formResult.title;
 
-        // If results.title is a string, return it
+        // If data.title is a string, return it
         if (typeof rTitle === 'string' && rTitle.trim().length > 0) return rTitle;
 
-        // If results.title is object with lang keys
+        // If data.title is object with lang keys
         if (rTitle && typeof rTitle === 'object') {
             return (rTitle[lang] ?? rTitle.lv ?? rTitle.en ?? '').toString();
         }
