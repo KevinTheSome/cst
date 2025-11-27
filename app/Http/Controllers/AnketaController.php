@@ -132,23 +132,11 @@ class AnketaController extends Controller
             : json_decode($form->data ?? '{}', true);
 
         return Inertia::render('Admin/Anketa/updateAnketa', [
-            'formResult' => [
+            'formData' => [
                 'id' => $form->id,
                 'title' => $form->title,
                 'code' => $form->code,
-
-                'data' => [
-                    'title' => is_array($form->title)
-                        ? $form->title
-                        : json_decode($form->title, true) ?? [
-                            'lv' => $form->title,
-                            'en' => $form->title
-                        ],
-
-                    'fields' => $schema['fields'] ?? [],
-                ],
-
-                'fields' => $schema['fields'] ?? [],
+                'data' => $schema,
             ],
         ]);
     }
@@ -162,14 +150,13 @@ class AnketaController extends Controller
     {
         $data = $request->all();
 
+        //dd(vars: $data);
+
         $formResult = Form::findOrFail($id);
 
         $formResult->update([
             'code' => $data['visibility'] ?? $formResult->code,
-            'title' => [
-                'lv' => $data['title']['lv'] ?? $formResult->title['lv'] ?? '',
-                'en' => $data['title']['en'] ?? $formResult->title['en'] ?? '',
-            ],
+            'title' => $data['title'] ?? $formResult->title,
             'data' => $data['schema'] ?? $formResult->data,
         ]);
 

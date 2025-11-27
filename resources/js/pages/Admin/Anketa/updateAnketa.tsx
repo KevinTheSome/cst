@@ -1,9 +1,8 @@
 // resources/js/Pages/Admin/Anketa/updateAnketa.tsx
 
-import AdminLayout from '@/Layouts/AdminLayout';
 import { useLang } from '@/hooks/useLang';
 import { Link, router } from '@inertiajs/react';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 
 type FieldType = 'radio' | 'checkbox' | 'dropdown';
 type Visibility = 'public' | 'private';
@@ -72,6 +71,10 @@ export default function UpdateAnketa({ formData }: any) {
         setFields(normalized);
     }, [formData]);
 
+    const updateFieldType = (id: string, type: FieldType) => {
+        setFields((prev) => prev.map((f) => (f.id === id ? { ...f, type } : f)));
+    };
+
     const updateFieldLabel = (id: string, lang: 'lv' | 'en', value: string) => {
         setFields((prev) => prev.map((f) => (f.id === id ? { ...f, label: { ...f.label, [lang]: value } } : f)));
     };
@@ -87,28 +90,33 @@ export default function UpdateAnketa({ formData }: any) {
         );
     };
 
-    const addOption = (id: string, lang: 'lv' | 'en') => {
+    const addOption = (id: string) => {
         setFields((prev) =>
             prev.map((f) => {
                 if (f.id !== id) return f;
-                const count = f.options[lang].length + 1;
+                const count = Math.max(f.options.lv.length, f.options.en.length) + 1;
                 return {
                     ...f,
                     options: {
-                        ...f.options,
-                        [lang]: [...f.options[lang], lang === 'lv' ? `Opcija ${count}` : `Option ${count}`],
+                        lv: [...f.options.lv, `Opcija ${count}`],
+                        en: [...f.options.en, `Option ${count}`],
                     },
                 };
             }),
         );
     };
 
-    const removeOption = (id: string, lang: 'lv' | 'en', idx: number) => {
+    const removeOption = (id: string, idx: number) => {
         setFields((prev) =>
             prev.map((f) => {
                 if (f.id !== id) return f;
-                const updated = f.options[lang].filter((_, i) => i !== idx);
-                return { ...f, options: { ...f.options, [lang]: updated } };
+                return {
+                    ...f,
+                    options: {
+                        lv: f.options.lv.filter((_, i) => i !== idx),
+                        en: f.options.en.filter((_, i) => i !== idx),
+                    },
+                };
             }),
         );
     };
@@ -141,8 +149,12 @@ export default function UpdateAnketa({ formData }: any) {
             title,
             visibility,
             schema: {
-                title,
-                fields,
+                fields: fields.map((f) => ({
+                    id: f.id,
+                    label: f.label,
+                    type: f.type,
+                    options: f.options,
+                })),
             },
         };
 
@@ -197,6 +209,22 @@ export default function UpdateAnketa({ formData }: any) {
                     </div>
                 </div>
 
+                {/* CODE */}
+                <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
+                    <label className="text-sm font-semibold">Code</label>
+
+                    <div className="mt-3">
+                        <select
+                            value={visibility}
+                            onChange={(e) => setVisibility(e.target.value as Visibility)}
+                            className="w-full rounded-2xl border border-white/20 bg-slate-900 p-3 text-white"
+                        >
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                        </select>
+                    </div>
+                </div>
+
                 {/* QUESTIONS */}
                 <button type="button" className="w-full rounded-2xl border border-dashed border-emerald-400 bg-emerald-600/10 p-3" onClick={addField}>
                     {__('add question')}
@@ -204,13 +232,24 @@ export default function UpdateAnketa({ formData }: any) {
 
                 {fields.map((field, i) => (
                     <div key={field.id} className="rounded-2xl border border-white/10 bg-slate-900/50 p-5">
-                        <div className="mb-4 flex justify-between">
+                        <div className="mb-4 flex items-center justify-between">
                             <p className="text-xs tracking-widest text-white/60 uppercase">
                                 {__('label')} #{i + 1}
                             </p>
-                            <button type="button" onClick={() => removeField(field.id)} className="rounded-full border px-3 py-1 text-xs">
-                                {__('remove')}
-                            </button>
+                            <div className="flex items-center gap-2">
+                                <select
+                                    value={field.type}
+                                    onChange={(e) => updateFieldType(field.id, e.target.value as FieldType)}
+                                    className="rounded-full border border-white/20 bg-slate-800 px-3 py-1 text-xs text-white"
+                                >
+                                    <option value="radio">Radio</option>
+                                    <option value="checkbox">Checkbox</option>
+                                    <option value="dropdown">Dropdown</option>
+                                </select>
+                                <button type="button" onClick={() => removeField(field.id)} className="rounded-full border px-3 py-1 text-xs">
+                                    {__('remove')}
+                                </button>
+                            </div>
                         </div>
 
                         {/* LV + EN label */}
@@ -231,29 +270,39 @@ export default function UpdateAnketa({ formData }: any) {
                         </div>
 
                         {/* OPTIONS BLOCK */}
-                        <div className="mt-4 grid grid-cols-2 gap-4">
-                            {(['lv', 'en'] as const).map((lang) => (
-                                <div key={lang}>
-                                    <p className="text-xs text-white/50 uppercase">{lang === 'lv' ? 'Opcijas (LV)' : 'Options (EN)'}</p>
+                        <div className="mt-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                {(['lv', 'en'] as const).map((lang) => (
+                                    <div key={lang}>
+                                        <p className="text-xs text-white/50 uppercase">{lang === 'lv' ? 'Opcijas (LV)' : 'Options (EN)'}</p>
 
-                                    {field.options[lang].map((opt, idx) => (
-                                        <div key={`${field.id}-${lang}-${idx}`} className="my-2 flex gap-2">
-                                            <input
-                                                value={opt}
-                                                className="flex-1 rounded-xl border bg-slate-800 p-3"
-                                                onChange={(e) => updateOption(field.id, lang, idx, e.target.value)}
-                                            />
-                                            <button type="button" onClick={() => removeOption(field.id, lang, idx)} className="rounded-xl border px-3">
-                                                x
-                                            </button>
-                                        </div>
-                                    ))}
+                                        {field.options[lang].map((opt, idx) => (
+                                            <div key={`${field.id}-${lang}-${idx}`} className="my-2 flex gap-2">
+                                                <input
+                                                    value={opt}
+                                                    className="flex-1 rounded-xl border bg-slate-800 p-3"
+                                                    onChange={(e) => updateOption(field.id, lang, idx, e.target.value)}
+                                                />
+                                                {lang === 'en' && field.options[lang].length > 1 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeOption(field.id, idx)}
+                                                        className="rounded-xl border px-3"
+                                                    >
+                                                        x
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                ))}
+                            </div>
 
-                                    <button type="button" onClick={() => addOption(field.id, lang)} className="rounded-xl border px-3 py-1 text-xs">
-                                        + add
-                                    </button>
-                                </div>
-                            ))}
+                            <div className="mt-3 flex justify-center">
+                                <button type="button" onClick={() => addOption(field.id)} className="rounded-xl border px-4 py-2 text-xs">
+                                    + Add Option
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ))}
@@ -265,4 +314,3 @@ export default function UpdateAnketa({ formData }: any) {
         </div>
     );
 }
-
