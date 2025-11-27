@@ -52,4 +52,5 @@ return [
         'success'        => 'Type saved successfully.',
         'error'          => 'Failed to save. Please try again.',
     ],
+    
 ];
