@@ -196,7 +196,8 @@ export default function UpdateAnketa() {
       prev.map((f) => {
         if (f.id !== fieldId) return f;
         if (f.type === 'text') {
-          return { ...f, placeholder: { ...f.placeholder, [lang]: value } } as TextField;
+          const currentPlaceholder = (f as TextField).placeholder || { lv: '', en: '' };
+          return { ...f, placeholder: { ...currentPlaceholder, [lang]: value } } as TextField;
         }
         return f;
       })
@@ -208,21 +209,25 @@ export default function UpdateAnketa() {
       prev.map((f) => {
         if (f.id !== fieldId) return f;
         if (f.type === 'scale') {
-          const s = { ...f.scale };
+          const currentScale = (f as ScaleField).scale || { min: 1, max: 10, minLabel: { lv: '', en: '' }, maxLabel: { lv: '', en: '' } };
+          const s = { ...currentScale };
 
           if (key === 'min' || key === 'max') {
             let num = Number(value);
             if (!Number.isFinite(num)) num = key === 'min' ? 1 : 10;
             num = Math.round(num);
-            num = Math.max(1, Math.min(10, num));
+            num = Math.max(1, Math.min(100, num));
 
             s[key] = num;
             if (s.min >= s.max) {
-              if (key === 'min') s.max = Math.min(10, s.min + 1);
+              if (key === 'min') s.max = Math.min(100, s.min + 1);
               else s.min = Math.max(1, s.max - 1);
             }
-          } else if (key === 'minLabel') s.minLabel = { ...(s.minLabel || {}), [lang as Lang]: value };
-          else if (key === 'maxLabel') s.maxLabel = { ...(s.maxLabel || {}), [lang as Lang]: value };
+          } else if (key === 'minLabel') {
+            s.minLabel = { ...(s.minLabel || { lv: '', en: '' }), [lang as Lang]: value };
+          } else if (key === 'maxLabel') {
+            s.maxLabel = { ...(s.maxLabel || { lv: '', en: '' }), [lang as Lang]: value };
+          }
 
           return { ...f, scale: s } as ScaleField;
         }
