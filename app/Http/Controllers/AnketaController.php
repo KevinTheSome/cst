@@ -7,6 +7,7 @@ use App\Models\Form;
 use App\Models\FormType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class AnketaController extends Controller
@@ -127,20 +128,10 @@ class AnketaController extends Controller
     {
         $form = Form::findOrFail($id);
 
-        $schema = is_array($form->data)
-            ? $form->data
-            : json_decode($form->data ?? '{}', true);
-
         return Inertia::render('Admin/Anketa/updateAnketa', [
-            'formData' => [
-                'id' => $form->id,
-                'title' => $form->title,
-                'code' => $form->code,
-                'data' => $schema,
-            ],
+            'form' => $form
         ]);
     }
-
 
 
     /**
@@ -148,20 +139,54 @@ class AnketaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = $request->all();
+        $form = Form::findOrFail($id);
 
-        //dd(vars: $data);
-
-        $formResult = Form::findOrFail($id);
-
-        $formResult->update([
-            'code' => $data['visibility'] ?? $formResult->code,
-            'title' => $data['title'] ?? $formResult->title,
-            'data' => $data['schema'] ?? $formResult->data,
+        $validated = $request->validate([
+            'code' => 'required|string|in:public,private',
+            'data' => 'required|array',
+            'data.title' => 'required|array',
+            'data.title.lv' => 'required|string|max:255',
+            'data.title.en' => 'required|string|max:255',
+            'data.fields' => 'required|array',
+            'data.fields.*.id' => 'required|string',
+            'data.fields.*.type' => 'required|string|in:text,radio,checkbox,dropdown,scale',
+            'data.fields.*.label' => 'required|array',
+            'data.fields.*.label.lv' => 'required|string|max:255',
+            'data.fields.*.label.en' => 'required|string|max:255',
+            // Options as arrays (lv/en)
+            'data.fields.*.options' => 'nullable|array',
+            'data.fields.*.options.lv' => 'nullable|array',
+            'data.fields.*.options.lv.*' => 'sometimes|required|string|max:255',
+            'data.fields.*.options.en' => 'nullable|array',
+            'data.fields.*.options.en.*' => 'sometimes|required|string|max:255',
+            // Placeholder
+            'data.fields.*.placeholder' => 'nullable|array',
+            'data.fields.*.placeholder.lv' => 'sometimes|string|nullable|max:255',
+            'data.fields.*.placeholder.en' => 'sometimes|string|nullable|max:255',
+            // Scale
+            'data.fields.*.scale' => 'nullable|array',
+            'data.fields.*.scale.min' => 'sometimes|required|integer|min:1|max:100',
+            'data.fields.*.scale.max' => 'sometimes|required|integer|min:1|max:100',
+            'data.fields.*.scale.minLabel' => 'nullable|array',
+            'data.fields.*.scale.minLabel.lv' => 'sometimes|string|nullable|max:255',
+            'data.fields.*.scale.minLabel.en' => 'sometimes|string|nullable|max:255',
+            'data.fields.*.scale.maxLabel' => 'nullable|array',
+            'data.fields.*.scale.maxLabel.lv' => 'sometimes|string|nullable|max:255',
+            'data.fields.*.scale.maxLabel.en' => 'sometimes|string|nullable|max:255',
         ]);
 
-        return redirect()->route('admin.anketa');
+        $form->update([
+            'code' => $validated['code'],
+            'title' => $validated['data']['title'],
+            'data' => $validated['data'],
+        ]);
+
+        return response()->json([
+            'message' => 'Form updated successfully',
+            'form' => $form,
+        ]);
     }
+
 
     /**
      * Admin: delete form template
