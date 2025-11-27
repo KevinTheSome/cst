@@ -21,7 +21,11 @@ class FormSeeder extends Seeder
                     'lv' => 'Anketa par psoriāzi un attieksmi pret ATMP/MSC terapijām',
                     'en' => 'Questionnaire about psoriasis and attitude to ATMP/MSC therapies',
                 ],
-                'results' => [
+                'data' => [
+                    'title' => [
+                        'lv' => 'Anketa par psoriāzi un attieksmi pret ATMP/MSC terapijām',
+                        'en' => 'Questionnaire about psoriasis and attitude to ATMP/MSC therapies',
+                    ],
                     'fields' => [
                         // 1. Par Jums
                         [
@@ -349,7 +353,11 @@ class FormSeeder extends Seeder
                     'lv' => 'Anketa par Krona slimību un attieksmi pret ATMP/MSC terapijām',
                     'en' => 'Questionnaire about Crohn\'s disease and attitude to ATMP/MSC therapies',
                 ],
-                'results' => [
+                'data' => [
+                    'title' => [
+                        'lv' => 'Anketa par Krona slimību un attieksmi pret ATMP/MSC terapijām',
+                        'en' => 'Questionnaire about Crohn\'s disease and attitude to ATMP/MSC therapies',
+                    ],
                     'fields' => [
                         // 1. Par Jums
                         [

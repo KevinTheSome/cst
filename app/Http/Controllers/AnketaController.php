@@ -12,27 +12,27 @@ use Inertia\Inertia;
 class AnketaController extends Controller
 {
     /**
-     * Admin: list stored form results
+     * Admin: list stored form data
      */
     public function index()
     {
         $forms = Form::orderBy('created_at', 'desc')->get();
 
         // dd($forms);
-        $formResults = $forms->map(function ($form) {
+        $formData = $forms->map(function ($form) {
             return [
                 'id' => $form->id,
                 'code' => $form->code,
                 'title' => $form->title,         // already array now
-                'results' => [
+                'data' => [
                     'title' => $form->title,     // array
-                    'fields' => $form->results['fields'] ?? [],
+                    'fields' => $form->data['fields'] ?? [],
                 ],
             ];
         });
 
         return Inertia::render('Admin/Anketa/indexAnketa', [
-            'formResults' => $formResults,
+            'formData' => $formData,
         ]);
     }
 
@@ -45,13 +45,9 @@ class AnketaController extends Controller
     {
         $form = Form::findOrFail($id);
 
-        // decode results if stored as JSON
-        $results = is_array($form->results)
-            ? $form->results
-            : json_decode($form->results ?? '{}', true);
-
-        // normalize fields ALWAYS to same structure
-        $normalizedFields = collect($results['fields'] ?? [])
+        // decode data if stored as JSON
+        $data = $form->data ?? []; // already array
+        $normalizedFields = collect($data['fields'] ?? [])
             ->map(function ($f) {
                 return [
                     'label' => [
@@ -72,8 +68,8 @@ class AnketaController extends Controller
                 'id' => $form->id,
                 'code' => $form->code,
                 'title' => $form->title,
-                'results' => [
-                    'title' => $results['title'] ?? $form->title,
+                'data' => [
+                    'title' => $data['title'] ?? $form->title,
                     'fields' => $normalizedFields,
                 ],
             ],
@@ -112,7 +108,7 @@ class AnketaController extends Controller
                 'lv' => $data['title']['lv'] ?? $data['title'],
                 'en' => $data['title']['en'] ?? $data['title'],
             ],
-            'results' => [
+            'data' => [
                 'title' => [
                     'lv' => $data['title']['lv'] ?? $data['title'],
                     'en' => $data['title']['en'] ?? $data['title'],
@@ -131,28 +127,16 @@ class AnketaController extends Controller
     {
         $form = Form::findOrFail($id);
 
-        $schema = is_array($form->results)
-            ? $form->results
-            : json_decode($form->results ?? '{}', true);
+        $schema = is_array($form->data)
+            ? $form->data
+            : json_decode($form->data ?? '{}', true);
 
         return Inertia::render('Admin/Anketa/updateAnketa', [
-            'formResult' => [
+            'formData' => [
                 'id' => $form->id,
                 'title' => $form->title,
                 'code' => $form->code,
-
-                'results' => [
-                    'title' => is_array($form->title)
-                        ? $form->title
-                        : json_decode($form->title, true) ?? [
-                            'lv' => $form->title,
-                            'en' => $form->title
-                        ],
-
-                    'fields' => $schema['fields'] ?? [],
-                ],
-
-                'fields' => $schema['fields'] ?? [],
+                'data' => $schema,
             ],
         ]);
     }
@@ -166,15 +150,14 @@ class AnketaController extends Controller
     {
         $data = $request->all();
 
+        //dd(vars: $data);
+
         $formResult = Form::findOrFail($id);
 
         $formResult->update([
             'code' => $data['visibility'] ?? $formResult->code,
-            'title' => [
-                'lv' => $data['title']['lv'] ?? $formResult->title['lv'] ?? '',
-                'en' => $data['title']['en'] ?? $formResult->title['en'] ?? '',
-            ],
-            'results' => $data['schema'] ?? $formResult->results,
+            'title' => $data['title'] ?? $formResult->title,
+            'data' => $data['schema'] ?? $formResult->data,
         ]);
 
         return redirect()->route('admin.anketa');
