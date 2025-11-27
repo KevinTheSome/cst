@@ -146,7 +146,7 @@ class AnketaController extends Controller
         $schema = is_array($form->data) ? $form->data : json_decode($form->data ?? '{}', true);
 
         return Inertia::render('Admin/Anketa/updateAnketa', [
-            'formResult' => [
+            'formData' => [
                 'id' => $form->id,
                 'title' => $form->title,
                 'code' => $form->code,
