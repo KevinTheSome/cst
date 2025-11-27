@@ -278,7 +278,6 @@ class AnketaController extends Controller
         ], 200);
     }
 
-
     /**
      * Admin: delete form template
      */
