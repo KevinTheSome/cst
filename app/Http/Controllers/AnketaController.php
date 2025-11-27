@@ -206,50 +206,38 @@ class AnketaController extends Controller
     public function update(Request $request, $id)
     {
         $form = Form::findOrFail($id);
-      
-        $formResult->update([
-            'code' => $data['visibility'] ?? $formResult->code,
-            'title' => [
-                'lv' => $data['title']['lv'] ?? $formResult->title['lv'] ?? '',
-                'en' => $data['title']['en'] ?? $formResult->title['en'] ?? '',
-            ],
-            'data' => [
-                // drop data.title, keep only fields
-                'fields' => collect($data['schema']['fields'] ?? [])->map(function ($f) {
-                    return [
-                        'id' => $f['id'],
-                        'type' => $f['type'],
-                        'label' => $f['label'] ?? [],
-                        'options' => $f['options'] ?? [],
-                        'placeholder' => $f['placeholder'] ?? null,
-                        'scale' => $f['scale'] ?? null,
-                    ];
-                })->toArray(),
-            ],
-          
+
         $validated = $request->validate([
+            // Top-level title (single source of truth)
+            'title' => 'required|array',
+            'title.lv' => 'required|string|max:255',
+            'title.en' => 'required|string|max:255',
+
+            // visibility / code
             'code' => 'required|string|in:public,private',
-            'data' => 'required|array',
-            'data.title' => 'required|array',
-            'data.title.lv' => 'required|string|max:255',
-            'data.title.en' => 'required|string|max:255',
-            'data.fields' => 'required|array',
-            'data.fields.*.id' => 'required|string',
-            'data.fields.*.type' => 'required|string|in:text,radio,checkbox,dropdown,scale',
-            'data.fields.*.label' => 'required|array',
-            'data.fields.*.label.lv' => 'required|string|max:255',
-            'data.fields.*.label.en' => 'required|string|max:255',
-            // Options as arrays (lv/en)
+
+            // data.fields (optional but if present must follow shape)
+            'data' => 'nullable|array',
+            'data.fields' => 'nullable|array',
+            'data.fields.*.id' => 'required_with:data.fields|string',
+            'data.fields.*.type' => 'required_with:data.fields|string|in:text,radio,checkbox,dropdown,scale',
+            'data.fields.*.label' => 'required_with:data.fields|array',
+            'data.fields.*.label.lv' => 'required_with:data.fields|string|max:255',
+            'data.fields.*.label.en' => 'required_with:data.fields|string|max:255',
+
+            // options
             'data.fields.*.options' => 'nullable|array',
             'data.fields.*.options.lv' => 'nullable|array',
             'data.fields.*.options.lv.*' => 'sometimes|required|string|max:255',
             'data.fields.*.options.en' => 'nullable|array',
             'data.fields.*.options.en.*' => 'sometimes|required|string|max:255',
-            // Placeholder
+
+            // placeholder
             'data.fields.*.placeholder' => 'nullable|array',
             'data.fields.*.placeholder.lv' => 'sometimes|string|nullable|max:255',
             'data.fields.*.placeholder.en' => 'sometimes|string|nullable|max:255',
-            // Scale
+
+            // scale
             'data.fields.*.scale' => 'nullable|array',
             'data.fields.*.scale.min' => 'sometimes|required|integer|min:1|max:100',
             'data.fields.*.scale.max' => 'sometimes|required|integer|min:1|max:100',
@@ -261,18 +249,34 @@ class AnketaController extends Controller
             'data.fields.*.scale.maxLabel.en' => 'sometimes|string|nullable|max:255',
         ]);
 
+        // Build data payload — keep only fields under data (do not duplicate title inside data)
+        $dataPayload = [
+            'fields' => collect($validated['data']['fields'] ?? [])->map(function ($f) {
+                return [
+                    'id' => $f['id'],
+                    'type' => $f['type'],
+                    'label' => $f['label'] ?? [],
+                    'options' => $f['options'] ?? [],
+                    'placeholder' => $f['placeholder'] ?? null,
+                    'scale' => $f['scale'] ?? null,
+                ];
+            })->toArray(),
+        ];
+
         $form->update([
             'code' => $validated['code'],
-            'title' => $validated['data']['title'],
-            'data' => $validated['data'],
+            'title' => [
+                'lv' => $validated['title']['lv'] ?? ($form->title['lv'] ?? ''),
+                'en' => $validated['title']['en'] ?? ($form->title['en'] ?? ''),
+            ],
+            'data' => $dataPayload,
         ]);
 
         return response()->json([
             'message' => 'Form updated successfully',
-            'form' => $form,
-        ]);
+            'form' => $form->fresh(),
+        ], 200);
     }
-
 
     /**
      * Admin: delete form template
