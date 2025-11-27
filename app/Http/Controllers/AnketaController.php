@@ -143,9 +143,60 @@ class AnketaController extends Controller
     public function edit($id)
     {
         $form = Form::findOrFail($id);
+        $data = $form->data ?? [];
+
+        // Normalize fields to ensure proper structure
+        $normalizedFields = collect($data['fields'] ?? [])
+            ->map(function ($f) {
+                $normalized = [
+                    'id' => $f['id'] ?? (string) Str::uuid(),
+                    'type' => $f['type'] ?? 'radio',
+                    'label' => [
+                        'lv' => $f['label']['lv'] ?? $f['label'] ?? '',
+                        'en' => $f['label']['en'] ?? $f['label'] ?? '',
+                    ],
+                ];
+
+                // Add type-specific fields
+                if (in_array($f['type'] ?? '', ['radio', 'checkbox', 'dropdown'])) {
+                    $normalized['options'] = [
+                        'lv' => $f['options']['lv'] ?? $f['options'] ?? [],
+                        'en' => $f['options']['en'] ?? $f['options'] ?? [],
+                    ];
+                } elseif ($f['type'] === 'text') {
+                    $normalized['placeholder'] = [
+                        'lv' => $f['placeholder']['lv'] ?? $f['placeholder'] ?? '',
+                        'en' => $f['placeholder']['en'] ?? $f['placeholder'] ?? '',
+                    ];
+                } elseif ($f['type'] === 'scale') {
+                    $normalized['scale'] = [
+                        'min' => $f['scale']['min'] ?? 1,
+                        'max' => $f['scale']['max'] ?? 10,
+                        'minLabel' => [
+                            'lv' => $f['scale']['minLabel']['lv'] ?? '',
+                            'en' => $f['scale']['minLabel']['en'] ?? '',
+                        ],
+                        'maxLabel' => [
+                            'lv' => $f['scale']['maxLabel']['lv'] ?? '',
+                            'en' => $f['scale']['maxLabel']['en'] ?? '',
+                        ],
+                    ];
+                }
+
+                return $normalized;
+            })
+            ->toArray();
 
         return Inertia::render('Admin/Anketa/updateAnketa', [
-            'form' => $form
+            'form' => [
+                'id' => $form->id,
+                'code' => $form->code,
+                'title' => $form->title,
+                'data' => [
+                    'title' => $data['title'] ?? $form->title,
+                    'fields' => $normalizedFields,
+                ],
+            ]
         ]);
     }
 
