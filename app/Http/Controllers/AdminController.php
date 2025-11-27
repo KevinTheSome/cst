@@ -1,11 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Admin;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
 
 class AdminController extends Controller
 {
@@ -20,28 +20,106 @@ class AdminController extends Controller
     }
 
     public function login(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-    ]);
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-    $admin = Admin::where('email', $request->email)->first();
+        $admin = Admin::where('email', $request->email)->first();
 
-    if ($admin && Hash::check($request->password, $admin->password)) {
-        $request->session()->put('is_admin', true);
-        $request->session()->put('admin_id', $admin->id); 
+        if ($admin && Hash::check($request->password, $admin->password)) {
+            $request->session()->put('is_admin', true);
+            $request->session()->put('admin_id', $admin->id);
+
+            return response()->json([
+                'message' => 'Logged in!',
+                'redirect' => route('admin.dashboard')
+            ]);
+        }
 
         return response()->json([
-            'message' => 'Logged in!',
-            'redirect' => route('admin.dashboard')
+            'message' => 'Invalid credentials.'
+        ], 401);
+    }
+
+    // ---------- CRUD for admin accounts ----------
+
+    // List all admins
+    public function adminsIndex()
+    {
+        $admins = Admin::select('id', 'email', 'created_at')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return Inertia::render('Admin/admins', [
+            'admins' => $admins,
+            'flash' => [
+                'success' => session('success'),
+            ],
         ]);
     }
 
-    return response()->json([
-        'message' => 'Invalid credentials.'
-    ], 401);
-}
+    // Create new admin
+    public function adminsStore(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|unique:admins,email',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        Admin::create([
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return redirect()
+            ->route('admin.admins.index')
+            ->with('success', 'Admin created.');
+    }
+
+    // Update existing admin
+    public function adminsUpdate(Request $request, Admin $admin)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|unique:admins,email,' . $admin->id,
+            'password' => 'nullable|min:8|confirmed',
+        ]);
+
+        $data = [
+            'email' => $validated['email'],
+        ];
+
+        if (!empty($validated['password'])) {
+            $data['password'] = Hash::make($validated['password']);
+        }
+
+        $admin->update($data);
+
+        return redirect()
+            ->route('admin.admins.index')
+            ->with('success', 'Admin updated.');
+    }
+
+    // Delete admin
+    public function adminsDestroy(Request $request, Admin $admin)
+    {
+        // optional: prevent deleting yourself
+        if ($request->session()->get('admin_id') === $admin->id) {
+            return redirect()
+                ->route('admin.admins.index')
+                ->with('success', 'You cannot delete your own admin account while logged in.');
+        }
+
+        $admin->delete();
+
+        return redirect()
+            ->route('admin.admins.index')
+            ->with('success', 'Admin deleted.');
+    }
+
+    // ---------- existing other pages ----------
+
     public function missions()
     {
         return Inertia::render('Admin/missions');
