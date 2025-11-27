@@ -120,7 +120,6 @@ class AnketaController extends Controller
             'code' => $data['visibility'],
             'title' => $data['title'],
             'data' => [
-                'title' => $data['title'],
                 'fields' => collect($data['schema']['fields'] ?? [])->map(function ($f) {
                     return [
                         'id' => $f['id'],
@@ -207,7 +206,27 @@ class AnketaController extends Controller
     public function update(Request $request, $id)
     {
         $form = Form::findOrFail($id);
-
+      
+        $formResult->update([
+            'code' => $data['visibility'] ?? $formResult->code,
+            'title' => [
+                'lv' => $data['title']['lv'] ?? $formResult->title['lv'] ?? '',
+                'en' => $data['title']['en'] ?? $formResult->title['en'] ?? '',
+            ],
+            'data' => [
+                // drop data.title, keep only fields
+                'fields' => collect($data['schema']['fields'] ?? [])->map(function ($f) {
+                    return [
+                        'id' => $f['id'],
+                        'type' => $f['type'],
+                        'label' => $f['label'] ?? [],
+                        'options' => $f['options'] ?? [],
+                        'placeholder' => $f['placeholder'] ?? null,
+                        'scale' => $f['scale'] ?? null,
+                    ];
+                })->toArray(),
+            ],
+          
         $validated = $request->validate([
             'code' => 'required|string|in:public,private',
             'data' => 'required|array',
@@ -279,8 +298,24 @@ class AnketaController extends Controller
 
         $form = $formType->form;
 
+        // normalize title (title may be json or string)
+        $title = is_array($form->title)
+            ? $form->title
+            : (json_decode($form->title, true) ?? ['lv' => (string)$form->title, 'en' => (string)$form->title]);
+
+        // normalize fields from data
+        $schema = is_array($form->data) ? $form->data : json_decode($form->data ?? '{}', true);
+        $fields = $schema['fields'] ?? [];
+
         return Inertia::render('Formas/forma', [
-            'form' => $form,
+            'form' => [
+                'id' => $form->id,
+                'code' => $form->code,
+                'title' => $title,
+                'data' => [
+                    'fields' => $fields,
+                ],
+            ],
             'lang' => app()->getLocale(),
         ]);
     }

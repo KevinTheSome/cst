@@ -64,6 +64,20 @@ export default function UpdateAnketa() {
       title: { lv: string; en: string };
       fields: Field[];
     };
+
+    useEffect(() => {
+        if (!formData) return;
+
+        const rawTitle = formData.title ?? formData.data?.title;
+
+        // normalize title
+        if (typeof rawTitle === 'string') {
+            setTitle({ lv: rawTitle, en: rawTitle });
+        } else {
+            setTitle({
+                lv: rawTitle?.lv ?? '',
+                en: rawTitle?.en ?? '',
+            });
   };
 
   const [title, setTitle] = useState<{ lv: string; en: string }>(existingForm.data.title);
