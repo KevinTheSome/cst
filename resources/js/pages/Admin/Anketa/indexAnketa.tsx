@@ -11,14 +11,14 @@ interface FormResultType {
     id: number;
     code: string;
     title: any;
-    results: {
+    data: {
         title: any;
         fields: any[];
     };
 }
 
 interface FormsListProps {
-    formResults: FormResultType[];
+    formData: FormResultType[];
 }
 
 /**
@@ -41,16 +41,16 @@ function LanguageSwitcher() {
     };
 }
 
-function FormsList({ formResults }: FormsListProps) {
+function FormsList({ formData }: FormsListProps) {
     const [forms, setForms] = useState<FormResultType[]>([]);
     const { __, lang } = useLang();
 
     useEffect(() => {
-        setForms(formResults || []);
-    }, [formResults]);
+        setForms(formData || []);
+    }, [formData]);
 
     const handleDeleteClick = (form: FormResultType) => {
-        const displayTitle = form.results?.title?.[lang] || form.title?.[lang] || '';
+        const displayTitle = form.data?.title?.[lang] || form.title?.[lang] || '';
 
         if (!confirm(__('anketa.index.confirm_delete', { title: displayTitle }))) {
             return;
@@ -105,7 +105,7 @@ function FormsList({ formResults }: FormsListProps) {
                                         {__('anketa.index.id_label')}: {form.id}
                                     </p>
 
-                                    <h2 className="mt-1 text-lg font-semibold text-white">{form.results?.title?.lv}</h2>
+                                    <h2 className="mt-1 text-lg font-semibold text-white">{form.data?.title?.lv}</h2>
 
                                     <p className="text-xs text-white/60">
                                         {__('anketa.index.code_label')}: {form.code}

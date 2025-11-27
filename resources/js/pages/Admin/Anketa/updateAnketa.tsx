@@ -15,7 +15,8 @@ interface Field {
     options: { lv: string[]; en: string[] };
 }
 
-export default function UpdateAnketa({ formResult }: any) {
+// ...keep your imports
+export default function UpdateAnketa({ formData }: any) {
     const { __ } = useLang();
     const [saving, setSaving] = useState(false);
 
@@ -23,13 +24,20 @@ export default function UpdateAnketa({ formResult }: any) {
     const [title, setTitle] = useState<{ lv: string; en: string }>({ lv: '', en: '' });
 
     const [visibility, setVisibility] = useState<Visibility>('public');
-
     const [fields, setFields] = useState<Field[]>([]);
 
-    useEffect(() => {
-        if (!formResult) return;
+    // UUID fallback
+    const getUUID = () => {
+        try {
+            if (typeof crypto !== 'undefined' && (crypto as any).randomUUID) return (crypto as any).randomUUID();
+        } catch {}
+        return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+    };
 
-        const rawTitle = formResult.results?.title ?? formResult.title;
+    useEffect(() => {
+        if (!formData) return;
+
+        const rawTitle = formData.data?.title ?? formData.title;
 
         // normalize title
         if (typeof rawTitle === 'string') {
@@ -41,27 +49,28 @@ export default function UpdateAnketa({ formResult }: any) {
             });
         }
 
-        const initialVis = formResult.code === 'private' ? 'private' : 'public';
+        const initialVis = formData.code === 'private' ? 'private' : 'public';
         setVisibility(initialVis);
 
-        const incoming = formResult.results?.fields ?? formResult.fields ?? [];
+        const incomingCandidate = formData.data?.fields ?? formData.fields ?? [];
+        const incoming = Array.isArray(incomingCandidate) ? incomingCandidate : [];
 
         // normalize fields structure
         const normalized: Field[] = incoming.map((f: any) => ({
-            id: f.id,
+            id: f.id ?? getUUID(),
             label: {
                 lv: f.label?.lv ?? '',
                 en: f.label?.en ?? '',
             },
-            type: f.type,
+            type: (f.type as FieldType) ?? 'radio',
             options: {
-                lv: f.options?.lv ?? [],
-                en: f.options?.en ?? [],
+                lv: Array.isArray(f.options?.lv) ? f.options.lv : [],
+                en: Array.isArray(f.options?.en) ? f.options.en : [],
             },
         }));
 
         setFields(normalized);
-    }, [formResult]);
+    }, [formData]);
 
     const updateFieldLabel = (id: string, lang: 'lv' | 'en', value: string) => {
         setFields((prev) => prev.map((f) => (f.id === id ? { ...f, label: { ...f.label, [lang]: value } } : f)));
@@ -112,7 +121,7 @@ export default function UpdateAnketa({ formResult }: any) {
         setFields((prev) => [
             ...prev,
             {
-                id: crypto.randomUUID(),
+                id: getUUID(),
                 type: 'radio',
                 label: { lv: '', en: '' },
                 options: { lv: ['Opcija 1'], en: ['Option 1'] },
@@ -121,6 +130,11 @@ export default function UpdateAnketa({ formResult }: any) {
     };
 
     const handleSave = () => {
+        if (!formData?.id) {
+            alert(__('error'));
+            return;
+        }
+
         setSaving(true);
 
         const payload = {
@@ -132,19 +146,20 @@ export default function UpdateAnketa({ formResult }: any) {
             },
         };
 
-        router.put(`/admin/anketa/update/${formResult.id}`, payload, {
+        router.put(`/admin/anketa/update/${formData.id}`, payload, {
             onSuccess: () => {
                 alert(__('success'));
-                setSaving(false);
             },
             onError: () => {
                 alert(__('error'));
+            },
+            onFinish: () => {
                 setSaving(false);
             },
         });
     };
 
-    console.log(title);
+    // ...
 
     return (
         <div className="min-h-screen bg-slate-950 py-12 text-white">
@@ -183,7 +198,7 @@ export default function UpdateAnketa({ formResult }: any) {
                 </div>
 
                 {/* QUESTIONS */}
-                <button className="w-full rounded-2xl border border-dashed border-emerald-400 bg-emerald-600/10 p-3" onClick={addField}>
+                <button type="button" className="w-full rounded-2xl border border-dashed border-emerald-400 bg-emerald-600/10 p-3" onClick={addField}>
                     {__('add question')}
                 </button>
 
@@ -193,7 +208,7 @@ export default function UpdateAnketa({ formResult }: any) {
                             <p className="text-xs tracking-widest text-white/60 uppercase">
                                 {__('label')} #{i + 1}
                             </p>
-                            <button onClick={() => removeField(field.id)} className="rounded-full border px-3 py-1 text-xs">
+                            <button type="button" onClick={() => removeField(field.id)} className="rounded-full border px-3 py-1 text-xs">
                                 {__('remove')}
                             </button>
                         </div>
@@ -222,19 +237,19 @@ export default function UpdateAnketa({ formResult }: any) {
                                     <p className="text-xs text-white/50 uppercase">{lang === 'lv' ? 'Opcijas (LV)' : 'Options (EN)'}</p>
 
                                     {field.options[lang].map((opt, idx) => (
-                                        <div key={idx} className="my-2 flex gap-2">
+                                        <div key={`${field.id}-${lang}-${idx}`} className="my-2 flex gap-2">
                                             <input
                                                 value={opt}
                                                 className="flex-1 rounded-xl border bg-slate-800 p-3"
                                                 onChange={(e) => updateOption(field.id, lang, idx, e.target.value)}
                                             />
-                                            <button onClick={() => removeOption(field.id, lang, idx)} className="rounded-xl border px-3">
+                                            <button type="button" onClick={() => removeOption(field.id, lang, idx)} className="rounded-xl border px-3">
                                                 x
                                             </button>
                                         </div>
                                     ))}
 
-                                    <button onClick={() => addOption(field.id, lang)} className="rounded-xl border px-3 py-1 text-xs">
+                                    <button type="button" onClick={() => addOption(field.id, lang)} className="rounded-xl border px-3 py-1 text-xs">
                                         + add
                                     </button>
                                 </div>
@@ -251,4 +266,3 @@ export default function UpdateAnketa({ formResult }: any) {
     );
 }
 
-UpdateAnketa.layout = (page: ReactNode) => <AdminLayout title="Anketas">{page}</AdminLayout>;
