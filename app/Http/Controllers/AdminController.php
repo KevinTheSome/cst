@@ -74,7 +74,7 @@ class AdminController extends Controller
         ]);
 
         return redirect()
-            ->route('admin.admins.index')
+            ->route('admin.security')
             ->with('success', 'Admin created.');
     }
 
@@ -97,7 +97,7 @@ class AdminController extends Controller
         $admin->update($data);
 
         return redirect()
-            ->route('admin.admins.index')
+            ->route('admin.security')
             ->with('success', 'Admin updated.');
     }
 
@@ -107,14 +107,14 @@ class AdminController extends Controller
         // optional: prevent deleting yourself
         if ($request->session()->get('admin_id') === $admin->id) {
             return redirect()
-                ->route('admin.admins.index')
-                ->with('success', 'You cannot delete your own admin account while logged in.');
+                ->route('admin.security')
+                ->with('error', 'You cannot delete your own admin account while logged in.');
         }
 
         $admin->delete();
 
         return redirect()
-            ->route('admin.admins.index')
+            ->route('admin.security')
             ->with('success', 'Admin deleted.');
     }
 
@@ -152,7 +152,17 @@ class AdminController extends Controller
 
     public function security()
     {
-        return Inertia::render('Admin/security');
+        $admins = Admin::select('id', 'email', 'created_at')
+            ->orderByDesc('created_at')
+            ->get();
+
+        return Inertia::render('Admin/security', [
+            'admins' => $admins,
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error'),
+            ],
+        ]);
     }
 
     public function workspace()
