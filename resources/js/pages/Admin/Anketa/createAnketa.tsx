@@ -307,7 +307,106 @@ export default function CreateAnketa() {
                             </div>
                         </div>
 
+<<<<<<< Updated upstream
                         {/* VISIBILITY */}
+=======
+                        <div>
+                          <input
+                            type="text"
+                            placeholder="Question text (EN)"
+                            className={`w-full rounded-2xl border px-4 py-3 outline-none transition ${ferr.labelEn ? 'border-rose-400 bg-rose-50/5 text-white' : 'border-white/10 bg-slate-900/60 text-white'} focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200`}
+                            value={field.label.en}
+                            onChange={(e) => updateLabel(field.id, 'en', e.target.value)}
+                          />
+                          {ferr.labelEn && <p className="mt-1 text-xs text-rose-300">{ferr.labelEn}</p>}
+                        </div>
+                      </div>
+
+                      <div>
+                        <select
+                          className={`w-full rounded-2xl border px-4 py-3 outline-none transition ${ferr.type ? 'border-rose-400 bg-rose-50/5 text-white' : 'border-white/10 bg-slate-900/60 text-white'} focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200`}
+                          value={field.type}
+                          onChange={(e) => changeFieldType(field.id, e.target.value as FieldType)}
+                        >
+                          <option value="radio" className="text-black">Multiple Choice (Radio)</option>
+                          <option value="checkbox" className="text-black">Select Multiple (Checkbox)</option>
+                          <option value="dropdown" className="text-black">Dropdown</option>
+                          <option value="text" className="text-black">Text input</option>
+                          <option value="scale" className="text-black">Scale (numeric)</option>
+                        </select>
+                        {ferr.type && <p className="mt-1 text-xs text-rose-300">{ferr.type}</p>}
+                      </div>
+
+                     {/* Option fields only */}
+                    {'options' in field && (field.type === 'radio' || field.type === 'checkbox' || field.type === 'dropdown') && (
+                    <div className="space-y-2">
+                        <p className="text-xs uppercase tracking-[0.3em] text-white/50">Opcijas (LV / EN)</p>
+
+                        {field.options.lv.map((_, optionIndex) => (
+                        <div key={optionIndex} className="grid gap-2 md:grid-cols-[1fr,1fr,auto]">
+                            <input
+                            type="text"
+                            className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                            placeholder="Opcija (LV)"
+                            value={field.options.lv[optionIndex]}
+                            onChange={(e) => updateOption(field.id, 'lv', optionIndex, e.target.value)}
+                            />
+                            <input
+                            type="text"
+                            className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                            placeholder="Option (EN)"
+                            value={field.options.en[optionIndex]}
+                            onChange={(e) => updateOption(field.id, 'en', optionIndex, e.target.value)}
+                            />
+                            <button
+                            type="button"
+                            onClick={() => removeOption(field.id, optionIndex)}
+                            className="rounded-2xl border border-white/10 px-3 py-2 text-xs text-white/70 transition hover:border-rose-300/40 hover:bg-rose-500/10"
+                            >
+                            Noņemt
+                            </button>
+                        </div>
+                        ))}
+
+                        <button
+                        type="button"
+                        onClick={() => addOption(field.id)}
+                        className="mt-2 inline-flex items-center rounded-full border border-dashed border-white/20 px-4 py-2 text-xs font-semibold text-white/80 transition hover:border-white/40"
+                        >
+                        + Pievienot opciju (LV/EN)
+                        </button>
+                    </div>
+                    )}
+
+
+                      {/* Text field */}
+                      {field.type === 'text' && (
+                        <div className="space-y-2">
+                          <p className="text-xs uppercase tracking-[0.3em] text-white/50">Placeholder (LV / EN)</p>
+                          <input
+                            type="text"
+                            placeholder="Placeholder (LV)"
+                            className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none"
+                            value={(field as TextField).placeholder.lv}
+                            onChange={(e) => updatePlaceholder(field.id, 'lv', e.target.value)}
+                          />
+                          <input
+                            type="text"
+                            placeholder="Placeholder (EN)"
+                            className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none"
+                            value={(field as TextField).placeholder.en}
+                            onChange={(e) => updatePlaceholder(field.id, 'en', e.target.value)}
+                          />
+                          {ferr.placeholderLv && <p className="mt-1 text-xs text-rose-300">{ferr.placeholderLv}</p>}
+                          {ferr.placeholderEn && <p className="mt-1 text-xs text-rose-300">{ferr.placeholderEn}</p>}
+                         
+                        </div>
+                        
+                      )}
+
+                      {/* Scale field */}
+                      {field.type === 'scale' && (
+>>>>>>> Stashed changes
                         <div className="space-y-3">
                             <label className="text-sm font-semibold text-white/80">Redzamība</label>
                             <select
