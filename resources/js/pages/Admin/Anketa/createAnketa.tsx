@@ -323,7 +323,6 @@ export default function CreateAnketa() {
       title,
       visibility,
       schema: {
-        title,
         fields: fields.map((f) => {
           const base: any = {
             id: f.id,

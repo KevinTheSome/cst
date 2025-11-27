@@ -36,7 +36,7 @@ export default function UpdateAnketa({ formData }: any) {
     useEffect(() => {
         if (!formData) return;
 
-        const rawTitle = formData.data?.title ?? formData.title;
+        const rawTitle = formData.title ?? formData.data?.title;
 
         // normalize title
         if (typeof rawTitle === 'string') {
