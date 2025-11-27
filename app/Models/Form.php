@@ -12,28 +12,22 @@ class Form extends Model
     protected $fillable = [
         'code',
         'title',
-        'results',
+        'data',
     ];
 
     protected $casts = [
         'title' => 'array',
-        'results' => 'array',
+        'data' => 'array',
     ];
 
     public function getFieldsAttribute()
     {
-        return $this->results['fields'] ?? [];
-    }
-
-    public function getTitleAttribute($value)
-    {
-        // in case title is inside results
-        return $this->results['title'] ?? $value;
+        return $this->data['fields'] ?? [];
     }
     public function formType(){
         return $this->hasOne(FormType::class);
     }
-    
+
     public function codes()
     {
         return $this->hasMany(FormCode::class, 'form_id', 'id');
