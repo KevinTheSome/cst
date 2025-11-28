@@ -96,6 +96,43 @@ function Navbar() {
                         </ul>
                     </div>
                 </li>
+                {/* Speciālistiem */}
+                <li>
+                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
+                        <label
+                            tabIndex={0}
+                            className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
+                        >
+                            SPECIĀLISTIEM{' '}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </label>
+                        <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
+                            <li>
+                                <Link href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
+                                    ES regula un likumi
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
+                                    ATMP ražotnes Eiropā
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
+                                    Apmācība
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
                 {/* PĒTNIECĪBA */}
                 <li>
                     <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
@@ -257,6 +294,36 @@ function Navbar() {
                                             <li>
                                                 <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
                                                     Publikācijas (DOI)
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </details>
+                                </li>
+
+                                {/* SPECIĀLISTIEM */}
+                                <li>
+                                    <details className="w-full">
+                                        <summary className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-lg font-semibold">
+                                            <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                                <path d="M9 3h6v6H9z" />
+                                                <path d="M4 21h16M7 9h10l-1 12H8z" />
+                                            </svg>
+                                            SPECIĀLISTIEM
+                                        </summary>
+                                        <ul className="mt-1 ml-6 w-full">
+                                            <li>
+                                                <Link href="#" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                    ES regula un likumi
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link href="#" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                    ATMP ražotnes Eiropā
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link href="#" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                    Apmācība
                                                 </Link>
                                             </li>
                                         </ul>
