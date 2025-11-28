@@ -11,7 +11,7 @@ class FormTypeController extends Controller
 {
     public function index(){
         syncLangFiles('anketa');
-        $anketas = Form::all();
+        $anketas = Form::where('code', 'public')->get();
         $formTypes = FormType::all();
         return Inertia::render('Admin/Anketa/selectorAnketa', ['anketas' => $anketas, 'formTypes' => $formTypes, 'locale' => app()->getLocale()]);
     }
