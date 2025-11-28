@@ -54,36 +54,126 @@ type ValidationErrors = {
   fieldErrors: Record<string, FieldErrors>;
 };
 
+// UUID fallback for environments where crypto.randomUUID isn't available
+const uuid = () => {
+  try {
+    // @ts-ignore
+    if (typeof crypto !== 'undefined' && (crypto as any).randomUUID) return (crypto as any).randomUUID();
+  } catch {}
+  return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+};
+
+const trimStr = (s?: string) => (s ?? '').trim();
+const findDuplicates = (arr: string[]) => {
+  const counts: Record<string, number> = {};
+  arr.forEach((a) => {
+    counts[a] = (counts[a] || 0) + 1;
+  });
+  return Object.keys(counts).filter((k) => counts[k] > 1);
+};
+
 export default function UpdateAnketa() {
   const { props } = usePage();
-  const existingForm = props.form as {
-    id: number;
-    code: string;
-    title: { lv: string; en: string };
-    data: {
-      title: { lv: string; en: string };
-      fields: Field[];
-    };
-  };
 
-  const [title, setTitle] = useState<{ lv: string; en: string }>(existingForm.data.title);
-  const [visibility, setVisibility] = useState<Visibility>(existingForm.code as Visibility);
-  const [fields, setFields] = useState<Field[]>(existingForm.data.fields || []);
+  // props.form may be undefined during SSR/hydration; provide safe defaults
+  const rawForm = (props as any)?.form ?? null;
+
+  const initialForm = useMemo(() => {
+    if (!rawForm) {
+      return {
+        id: -1,
+        code: 'public',
+        title: { lv: '', en: '' },
+        data: { title: { lv: '', en: '' }, fields: [] as Field[] },
+      };
+    }
+
+    // normalize title: prefer top-level title, fallback to data.title
+    const titleSource =
+      typeof rawForm.title === 'object' && rawForm.title !== null
+        ? rawForm.title
+        : rawForm.title && typeof rawForm.title === 'string'
+        ? { lv: rawForm.title, en: rawForm.title }
+        : rawForm.data?.title ?? { lv: '', en: '' };
+
+    const normalizedTitle = {
+      lv: titleSource.lv ?? '',
+      en: titleSource.en ?? '',
+    };
+
+    const schema = Array.isArray(rawForm.data?.fields) ? rawForm.data.fields : Array.isArray(rawForm.fields) ? rawForm.fields : [];
+
+    const normalizedFields: Field[] = schema.map((f: any) => {
+      const base: FieldBase = {
+        id: f.id ?? uuid(),
+        label: {
+          lv: f.label?.lv ?? f.label ?? '',
+          en: f.label?.en ?? f.label ?? '',
+        },
+      };
+
+      if (f.type === 'text') {
+        return {
+          ...base,
+          type: 'text',
+          placeholder: { lv: f.placeholder?.lv ?? '', en: f.placeholder?.en ?? '' },
+        } as TextField;
+      }
+
+      if (f.type === 'scale') {
+        return {
+          ...base,
+          type: 'scale',
+          scale: {
+            min: typeof f.scale?.min === 'number' ? f.scale.min : 1,
+            max: typeof f.scale?.max === 'number' ? f.scale.max : 10,
+            minLabel: f.scale?.minLabel ?? { lv: '', en: '' },
+            maxLabel: f.scale?.maxLabel ?? { lv: '', en: '' },
+          },
+        } as ScaleField;
+      }
+
+      // option types
+      return {
+        ...base,
+        type: (f.type as FieldType) ?? 'radio',
+        options: {
+          lv: Array.isArray(f.options?.lv) ? f.options.lv : Array.isArray(f.options) ? (f.options as any) : [],
+          en: Array.isArray(f.options?.en) ? f.options.en : Array.isArray(f.options) ? (f.options as any) : [],
+        },
+      } as OptionField;
+    });
+
+    return {
+      id: rawForm.id ?? -1,
+      code: rawForm.code ?? 'public',
+      title: normalizedTitle,
+      data: {
+        title: normalizedTitle,
+        fields: normalizedFields,
+      },
+    };
+  }, [rawForm]);
+
+  const [title, setTitle] = useState<{ lv: string; en: string }>({
+    lv: initialForm.title.lv ?? '',
+    en: initialForm.title.en ?? '',
+  });
+  const [visibility, setVisibility] = useState<Visibility>((initialForm.code as Visibility) ?? 'public');
+  const [fields, setFields] = useState<Field[]>(Array.isArray(initialForm.data?.fields) ? initialForm.data.fields : []);
   const [errors, setErrors] = useState<ValidationErrors>({ fieldErrors: {} });
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
-  const trimStr = (s?: string) => (s ?? '').trim();
-  const findDuplicates = (arr: string[]) => {
-    const counts: Record<string, number> = {};
-    arr.forEach((a) => {
-      counts[a] = (counts[a] || 0) + 1;
-    });
-    return Object.keys(counts).filter((k) => counts[k] > 1);
-  };
+  // keep state in sync if server props update (e.g., navigation/hydration)
+  useEffect(() => {
+    setTitle({ lv: initialForm.title.lv ?? '', en: initialForm.title.en ?? '' });
+    setVisibility((initialForm.code as Visibility) ?? 'public');
+    setFields(Array.isArray(initialForm.data?.fields) ? initialForm.data.fields : []);
+  }, [initialForm]);
 
   const addField = () => {
     const newField: OptionField = {
-      id: crypto.randomUUID(),
+      id: uuid(),
       label: { lv: '', en: '' },
       type: 'radio',
       options: { lv: ['Opcija 1'], en: ['Option 1'] },
@@ -109,7 +199,7 @@ export default function UpdateAnketa() {
           case 'radio':
           case 'checkbox':
           case 'dropdown':
-            return { ...base, type: newType, options: { lv: ['Opcija 1'], en: ['Option 1'] } } as OptionField;
+            return { ...base, type: newType, options: (f as any).options ?? { lv: ['Opcija 1'], en: ['Option 1'] } } as OptionField;
           case 'text':
             return { ...base, type: 'text', placeholder: { lv: '', en: '' } } as TextField;
           case 'scale':
@@ -147,9 +237,9 @@ export default function UpdateAnketa() {
       prev.map((f) => {
         if (f.id !== fieldId) return f;
         if (f.type === 'radio' || f.type === 'checkbox' || f.type === 'dropdown') {
-          const arr = [...f.options[lang]];
+          const arr = Array.isArray((f as OptionField).options[lang]) ? [...(f as OptionField).options[lang]] : [];
           arr[index] = value;
-          return { ...f, options: { ...f.options, [lang]: arr } } as OptionField;
+          return { ...f, options: { ...(f as OptionField).options, [lang]: arr } } as OptionField;
         }
         return f;
       })
@@ -161,12 +251,12 @@ export default function UpdateAnketa() {
       prev.map((f) => {
         if (f.id !== fieldId) return f;
         if (f.type === 'radio' || f.type === 'checkbox' || f.type === 'dropdown') {
-          const nextIndex = f.options.lv.length + 1;
+          const nextIndex = Math.max(((f as OptionField).options.lv?.length ?? 0), ((f as OptionField).options.en?.length ?? 0)) + 1;
           return {
             ...f,
             options: {
-              lv: [...f.options.lv, `Opcija ${nextIndex}`],
-              en: [...f.options.en, `Option ${nextIndex}`],
+              lv: [...((f as OptionField).options.lv ?? []), `Opcija ${nextIndex}`],
+              en: [...((f as OptionField).options.en ?? []), `Option ${nextIndex}`],
             },
           } as OptionField;
         }
@@ -181,10 +271,13 @@ export default function UpdateAnketa() {
         if (f.id !== fieldId) return f;
         if (f.type === 'radio' || f.type === 'checkbox' || f.type === 'dropdown') {
           const nv = {
-            lv: f.options.lv.filter((_, i) => i !== index),
-            en: f.options.en.filter((_, i) => i !== index),
+            lv: (f as OptionField).options.lv.filter((_, i) => i !== index),
+            en: (f as OptionField).options.en.filter((_, i) => i !== index),
           };
-          return { ...f, options: { lv: nv.lv.length ? nv.lv : ['Opcija 1'], en: nv.en.length ? nv.en : ['Option 1'] } } as OptionField;
+          return {
+            ...f,
+            options: { lv: nv.lv.length ? nv.lv : ['Opcija 1'], en: nv.en.length ? nv.en : ['Option 1'] },
+          } as OptionField;
         }
         return f;
       })
@@ -216,8 +309,8 @@ export default function UpdateAnketa() {
             let num = Number(value);
             if (!Number.isFinite(num)) num = key === 'min' ? 1 : 10;
             num = Math.round(num);
+            // clamp to 1..100 (consistent with validation)
             num = Math.max(1, Math.min(100, num));
-
             s[key] = num;
             if (s.min >= s.max) {
               if (key === 'min') s.max = Math.min(100, s.min + 1);
@@ -236,7 +329,7 @@ export default function UpdateAnketa() {
     );
   };
 
-  // --- Validation same as CreateAnketa ---
+  // --- Validation (same logic as CreateAnketa) ---
   const validateField = (f: Field): FieldErrors => {
     const fe: FieldErrors = {};
     const labelLv = trimStr(f.label.lv);
@@ -246,10 +339,12 @@ export default function UpdateAnketa() {
     if (!labelEn) fe.labelEn = 'Question text (EN) is required.';
 
     if ('options' in f) {
-      const optsLv = (f.options.lv || []).map((o) => (o ?? '').trim()).filter(Boolean);
-      const optsEn = (f.options.en || []).map((o) => (o ?? '').trim()).filter(Boolean);
+      const optsLv = (f as OptionField).options.lv.map((o) => (o ?? '').trim()).filter(Boolean);
+      const optsEn = (f as OptionField).options.en.map((o) => (o ?? '').trim()).filter(Boolean);
+
       if (!optsLv.length) fe.optionsLv = 'Jābūt vismaz vienai opcijai (LV).';
       if (!optsEn.length) fe.optionsEn = 'Jābūt vismaz vienai opcijai (EN).';
+
       const dupLv = findDuplicates(optsLv);
       if (dupLv.length) fe.optionsLv = `Duplikātas opcijas LV: ${dupLv.join(', ')}.`;
       const dupEn = findDuplicates(optsEn);
@@ -296,6 +391,7 @@ export default function UpdateAnketa() {
 
   useEffect(() => {
     setErrors(validateAll());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, visibility, fields]);
 
   const hasErrors = useMemo(() => {
@@ -314,9 +410,14 @@ export default function UpdateAnketa() {
     if (Object.keys(next.fieldErrors).length > 0 || next.titleLv || next.fields || next.visibility) return;
 
     const payload = {
+      // top-level title is the single source of truth
+      title: {
+        lv: title.lv.trim(),
+        en: title.en.trim(),
+      },
       code: visibility,
+      // do NOT write data.title; only include fields under data
       data: {
-        title,
         fields: fields.map((f) => {
           const base: any = {
             id: f.id,
@@ -339,7 +440,7 @@ export default function UpdateAnketa() {
     };
 
     try {
-      const response = await axios.put(`/admin/anketa/update/${existingForm.id}`, payload, {
+      const response = await axios.put(`/admin/anketa/update/${initialForm.id}`, payload, {
         headers: { 'Content-Type': 'application/json' },
       });
 
@@ -461,7 +562,17 @@ export default function UpdateAnketa() {
                     <div className="mb-4 flex items-center justify-between gap-3">
                       <div>
                         <p className="text-xs uppercase tracking-[0.3em] text-white/60">Jautājums {idx + 1}</p>
-                        <p className="text-sm text-white/70">{field.type === 'radio' ? 'Vienas atbildes izvēle' : field.type === 'checkbox' ? 'Vairākas atbildes' : field.type === 'dropdown' ? 'Izvēlne' : field.type === 'text' ? 'Teksts' : 'Skala'}</p>
+                        <p className="text-sm text-white/70">
+                          {field.type === 'radio'
+                            ? 'Vienas atbildes izvēle'
+                            : field.type === 'checkbox'
+                            ? 'Vairākas atbildes'
+                            : field.type === 'dropdown'
+                            ? 'Izvēlne'
+                            : field.type === 'text'
+                            ? 'Teksts'
+                            : 'Skala'}
+                        </p>
                       </div>
                       <button
                         type="button"
@@ -478,7 +589,9 @@ export default function UpdateAnketa() {
                           <input
                             type="text"
                             placeholder="Jautājuma teksts (LV)"
-                            className={`w-full rounded-2xl border px-4 py-3 outline-none transition ${ferr.labelLv ? 'border-rose-400 bg-rose-50/5 text-white' : 'border-white/10 bg-slate-900/60 text-white'} focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200`}
+                            className={`w-full rounded-2xl border px-4 py-3 outline-none transition ${
+                              ferr.labelLv ? 'border-rose-400 bg-rose-50/5 text-white' : 'border-white/10 bg-slate-900/60 text-white'
+                            } focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200`}
                             value={field.label.lv}
                             onChange={(e) => updateLabel(field.id, 'lv', e.target.value)}
                           />
@@ -489,7 +602,9 @@ export default function UpdateAnketa() {
                           <input
                             type="text"
                             placeholder="Question text (EN)"
-                            className={`w-full rounded-2xl border px-4 py-3 outline-none transition ${ferr.labelEn ? 'border-rose-400 bg-rose-50/5 text-white' : 'border-white/10 bg-slate-900/60 text-white'} focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200`}
+                            className={`w-full rounded-2xl border px-4 py-3 outline-none transition ${
+                              ferr.labelEn ? 'border-rose-400 bg-rose-50/5 text-white' : 'border-white/10 bg-slate-900/60 text-white'
+                            } focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200`}
                             value={field.label.en}
                             onChange={(e) => updateLabel(field.id, 'en', e.target.value)}
                           />
@@ -499,61 +614,75 @@ export default function UpdateAnketa() {
 
                       <div>
                         <select
-                          className={`w-full rounded-2xl border px-4 py-3 outline-none transition ${ferr.type ? 'border-rose-400 bg-rose-50/5 text-white' : 'border-white/10 bg-slate-900/60 text-white'} focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200`}
+                          className={`w-full rounded-2xl border px-4 py-3 outline-none transition ${
+                            ferr.type ? 'border-rose-400 bg-rose-50/5 text-white' : 'border-white/10 bg-slate-900/60 text-white'
+                          } focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200`}
                           value={field.type}
                           onChange={(e) => changeFieldType(field.id, e.target.value as FieldType)}
                         >
-                          <option value="radio" className="text-black">Multiple Choice (Radio)</option>
-                          <option value="checkbox" className="text-black">Select Multiple (Checkbox)</option>
-                          <option value="dropdown" className="text-black">Dropdown</option>
-                          <option value="text" className="text-black">Text input</option>
-                          <option value="scale" className="text-black">Scale (numeric)</option>
+                          <option value="radio" className="text-black">
+                            Multiple Choice (Radio)
+                          </option>
+                          <option value="checkbox" className="text-black">
+                            Select Multiple (Checkbox)
+                          </option>
+                          <option value="dropdown" className="text-black">
+                            Dropdown
+                          </option>
+                          <option value="text" className="text-black">
+                            Text input
+                          </option>
+                          <option value="scale" className="text-black">
+                            Scale (numeric)
+                          </option>
                         </select>
                         {ferr.type && <p className="mt-1 text-xs text-rose-300">{ferr.type}</p>}
                       </div>
 
                       {/* Option fields only */}
-                      {'options' in field && (field.type === 'radio' || field.type === 'checkbox' || field.type === 'dropdown') && (
-                        <div className="space-y-2">
-                          <p className="text-xs uppercase tracking-[0.3em] text-white/50">Opcijas (LV / EN)</p>
+                      {'options' in field &&
+                        (field.type === 'radio' || field.type === 'checkbox' || field.type === 'dropdown') && (
+                          <div className="space-y-2">
+                            <p className="text-xs uppercase tracking-[0.3em] text-white/50">Opcijas (LV / EN)</p>
 
-                          {field.options.lv.map((_, optionIndex) => (
-                            <div key={optionIndex} className="grid gap-2 md:grid-cols-[1fr,1fr,auto]">
-                              <input
-                                type="text"
-                                className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-                                placeholder="Opcija (LV)"
-                                value={field.options.lv[optionIndex]}
-                                onChange={(e) => updateOption(field.id, 'lv', optionIndex, e.target.value)}
-                              />
-                              <input
-                                type="text"
-                                className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-                                placeholder="Option (EN)"
-                                value={field.options.en[optionIndex]}
-                                onChange={(e) => updateOption(field.id, 'en', optionIndex, e.target.value)}
-                              />
-                              <button
-                                type="button"
-                                onClick={() => removeOption(field.id, optionIndex)}
-                                className="rounded-2xl border border-white/10 px-3 py-2 text-xs text-white/70 transition hover:border-rose-300/40 hover:bg-rose-500/10"
-                              >
-                                Noņemt
-                              </button>
-                            </div>
-                          ))}
+                            {Array.isArray((field as OptionField).options.lv) &&
+                              (field as OptionField).options.lv.map((_, optionIndex) => (
+                                <div key={optionIndex} className="grid gap-2 md:grid-cols-[1fr,1fr,auto]">
+                                  <input
+                                    type="text"
+                                    className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                                    placeholder="Opcija (LV)"
+                                    value={(field as OptionField).options.lv[optionIndex]}
+                                    onChange={(e) => updateOption(field.id, 'lv', optionIndex, e.target.value)}
+                                  />
+                                  <input
+                                    type="text"
+                                    className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                                    placeholder="Option (EN)"
+                                    value={(field as OptionField).options.en[optionIndex]}
+                                    onChange={(e) => updateOption(field.id, 'en', optionIndex, e.target.value)}
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => removeOption(field.id, optionIndex)}
+                                    className="rounded-2xl border border-white/10 px-3 py-2 text-xs text-white/70 transition hover:border-rose-300/40 hover:bg-rose-500/10"
+                                  >
+                                    Noņemt
+                                  </button>
+                                </div>
+                              ))}
 
-                          <button
-                            type="button"
-                            onClick={() => addOption(field.id)}
-                            className="mt-2 inline-flex items-center rounded-full border border-dashed border-white/20 px-4 py-2 text-xs font-semibold text-white/80 transition hover:border-white/40"
-                          >
-                            + Pievienot opciju (LV/EN)
-                          </button>
-                          {ferr.optionsLv && <p className="mt-1 text-xs text-rose-300">{ferr.optionsLv}</p>}
-                          {ferr.optionsEn && <p className="mt-1 text-xs text-rose-300">{ferr.optionsEn}</p>}
-                        </div>
-                      )}
+                            <button
+                              type="button"
+                              onClick={() => addOption(field.id)}
+                              className="mt-2 inline-flex items-center rounded-full border border-dashed border-white/20 px-4 py-2 text-xs font-semibold text-white/80 transition hover:border-white/40"
+                            >
+                              + Pievienot opciju (LV/EN)
+                            </button>
+                            {ferr.optionsLv && <p className="mt-1 text-xs text-rose-300">{ferr.optionsLv}</p>}
+                            {ferr.optionsEn && <p className="mt-1 text-xs text-rose-300">{ferr.optionsEn}</p>}
+                          </div>
+                        )}
 
                       {/* Text field */}
                       {field.type === 'text' && (
@@ -587,7 +716,8 @@ export default function UpdateAnketa() {
                               <label className="text-xs text-white/60">Min</label>
                               <input
                                 type="number"
-                                min={0}
+                                min={1}
+                                max={100}
                                 className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none"
                                 value={(field as ScaleField).scale.min}
                                 onChange={(e) => updateScaleValue(field.id, 'min', Number(e.target.value))}
@@ -598,6 +728,7 @@ export default function UpdateAnketa() {
                               <input
                                 type="number"
                                 min={1}
+                                max={100}
                                 className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white outline-none"
                                 value={(field as ScaleField).scale.max}
                                 onChange={(e) => updateScaleValue(field.id, 'max', Number(e.target.value))}
