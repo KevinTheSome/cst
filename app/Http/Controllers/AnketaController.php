@@ -342,23 +342,38 @@ class AnketaController extends Controller
         $data = $request->validate([
             'form_id' => 'nullable|integer',
             'code' => 'required|string',
-            'title' => 'nullable|string',
+            'title' => 'nullable',
             'answers' => 'required|array',
         ]);
 
+        // Start with any title passed in payload
         $title = $data['title'] ?? null;
+
+        // If form_id given, attempt to load the form and use its title
         if (isset($data['form_id'])) {
             try {
                 $form = Form::find($data['form_id']);
-                if ($form) $title = $form->title ?? $title;
+                if ($form) {
+                    // $form->title may be array or string. Normalize to a string.
+                    if (is_array($form->title)) {
+                        // prefer current locale, then lv, then en, then json
+                        $locale = app()->getLocale();
+                        $title = $form->title[$locale] ?? $form->title['lv'] ?? $form->title['en'] ?? json_encode($form->title);
+                    } else {
+                        $title = (string) $form->title;
+                    }
+                }
             } catch (\Exception $e) {
                 Log::warning('Could not load Form by id in storeAnswers: ' . $e->getMessage());
             }
         }
 
+        // If still null, pick a default string
+        $title = $title ?? 'Submission';
+
         $result = FormResult::create([
             'code' => $data['code'],
-            'title' => $title ?? 'Submission',
+            'title' => $title,
             'results' => [
                 'answers' => $data['answers'],
                 'submitted_at' => now()->toDateTimeString(),
