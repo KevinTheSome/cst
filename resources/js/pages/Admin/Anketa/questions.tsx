@@ -1,6 +1,6 @@
 import { Head, router } from '@inertiajs/react';
-import AdminLayout from '../../Layouts/AdminLayout';
-import React from 'react';  
+import React from 'react';
+import AdminLayout from '../../../Layouts/AdminLayout';
 
 type Visibility = 'public' | 'private';
 
@@ -15,7 +15,7 @@ type Question = {
 
 interface QuestionsPageProps {
     visibility?: Visibility; // you can pass this from backend later
-    questions?: Question[];  // replace mockData with this when ready
+    questions?: Question[]; // replace mockData with this when ready
 }
 
 const mockPublicQuestions: Question[] = [
@@ -72,15 +72,10 @@ function statusBadge(status: Question['status']) {
     );
 }
 
-export default function QuestionsPage({
-    visibility = 'public',
-    questions,
-}: QuestionsPageProps) {
+export default function QuestionsPage({ visibility = 'public', questions }: QuestionsPageProps) {
     const isPublic = visibility === 'public';
 
-    const data =
-        questions ??
-        (isPublic ? mockPublicQuestions : mockPrivateQuestions);
+    const data = questions ?? (isPublic ? mockPublicQuestions : mockPrivateQuestions);
 
     return (
         <>
@@ -90,15 +85,9 @@ export default function QuestionsPage({
                 <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-slate-900/80 via-slate-900/40 to-slate-900/10 px-6 py-5 shadow-inner shadow-black/20">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <p className="text-xs uppercase tracking-[0.3em] text-white/60">
-                                Anketas
-                            </p>
-                            <h1 className="mt-1 text-2xl font-semibold text-white">
-                                Jautājumu banka
-                            </h1>
-                            <p className="mt-1 text-sm text-white/70">
-                                Pārvaldi publiskās un privātās anketu jautājumus vienuviet.
-                            </p>
+                            <p className="text-xs tracking-[0.3em] text-white/60 uppercase">Anketas</p>
+                            <h1 className="mt-1 text-2xl font-semibold text-white">Jautājumu banka</h1>
+                            <p className="mt-1 text-sm text-white/70">Pārvaldi publiskās un privātās anketu jautājumus vienuviet.</p>
                         </div>
 
                         <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
@@ -108,9 +97,7 @@ export default function QuestionsPage({
                                     type="button"
                                     onClick={() => router.visit('/admin/anketas/public')}
                                     className={`flex-1 rounded-xl px-3 py-1.5 font-semibold ${
-                                        isPublic
-                                            ? 'bg-white text-slate-900'
-                                            : 'text-white/70 hover:bg-white/10'
+                                        isPublic ? 'bg-white text-slate-900' : 'text-white/70 hover:bg-white/10'
                                     }`}
                                 >
                                     Publiskās
@@ -119,9 +106,7 @@ export default function QuestionsPage({
                                     type="button"
                                     onClick={() => router.visit('/admin/anketas/private')}
                                     className={`flex-1 rounded-xl px-3 py-1.5 font-semibold ${
-                                        !isPublic
-                                            ? 'bg-white text-slate-900'
-                                            : 'text-white/70 hover:bg-white/10'
+                                        !isPublic ? 'bg-white text-slate-900' : 'text-white/70 hover:bg-white/10'
                                     }`}
                                 >
                                     Privātās
@@ -150,9 +135,7 @@ export default function QuestionsPage({
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <p className="text-xs uppercase tracking-[0.3em] text-white/60">
-                                {isPublic ? 'Publiskās anketas' : 'Privātās anketas'}
-                            </p>
+                            <p className="text-xs tracking-[0.3em] text-white/60 uppercase">{isPublic ? 'Publiskās anketas' : 'Privātās anketas'}</p>
                             <p className="text-sm text-white/70">
                                 {isPublic
                                     ? 'Rediģē jautājumus, ko redz visi respondenti.'
@@ -171,7 +154,7 @@ export default function QuestionsPage({
 
                     <div className="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40">
                         <table className="min-w-full text-sm">
-                            <thead className="bg-white/5 text-xs uppercase tracking-wide text-white/50">
+                            <thead className="bg-white/5 text-xs tracking-wide text-white/50 uppercase">
                                 <tr>
                                     <th className="px-4 py-3 text-left">Jautājums</th>
                                     <th className="px-4 py-3 text-left">Tips</th>
@@ -186,28 +169,16 @@ export default function QuestionsPage({
                                     <tr
                                         key={question.id}
                                         className={`border-t border-white/5 ${
-                                            index % 2 === 0
-                                                ? 'bg-slate-950/40'
-                                                : 'bg-slate-950/20'
+                                            index % 2 === 0 ? 'bg-slate-950/40' : 'bg-slate-950/20'
                                         } hover:bg-white/5`}
                                     >
                                         <td className="px-4 py-3 align-top">
-                                            <p className="text-sm font-semibold text-white">
-                                                {question.title}
-                                            </p>
+                                            <p className="text-sm font-semibold text-white">{question.title}</p>
                                         </td>
-                                        <td className="px-4 py-3 align-top text-xs text-white/70">
-                                            {question.type}
-                                        </td>
-                                        <td className="px-4 py-3 align-top text-xs text-white/70">
-                                            {question.responses}
-                                        </td>
-                                        <td className="px-4 py-3 align-top">
-                                            {statusBadge(question.status)}
-                                        </td>
-                                        <td className="px-4 py-3 align-top text-xs text-white/60">
-                                            {question.updatedAt}
-                                        </td>
+                                        <td className="px-4 py-3 align-top text-xs text-white/70">{question.type}</td>
+                                        <td className="px-4 py-3 align-top text-xs text-white/70">{question.responses}</td>
+                                        <td className="px-4 py-3 align-top">{statusBadge(question.status)}</td>
+                                        <td className="px-4 py-3 align-top text-xs text-white/60">{question.updatedAt}</td>
                                         <td className="px-4 py-3 align-top">
                                             <div className="flex justify-end gap-2 text-xs">
                                                 <button
@@ -238,10 +209,7 @@ export default function QuestionsPage({
 
                                 {data.length === 0 && (
                                     <tr>
-                                        <td
-                                            colSpan={6}
-                                            className="px-4 py-8 text-center text-xs text-white/60"
-                                        >
+                                        <td colSpan={6} className="px-4 py-8 text-center text-xs text-white/60">
                                             Šobrīd nav neviena jautājuma šajā sadaļā.
                                         </td>
                                     </tr>
@@ -255,6 +223,4 @@ export default function QuestionsPage({
     );
 }
 
-QuestionsPage.layout = (page: React.ReactNode) => (
-    <AdminLayout title="Anketas">{page}</AdminLayout>
-);
+QuestionsPage.layout = (page: React.ReactNode) => <AdminLayout title="Anketas">{page}</AdminLayout>;
