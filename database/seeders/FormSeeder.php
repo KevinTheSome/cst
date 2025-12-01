@@ -22,10 +22,6 @@ class FormSeeder extends Seeder
                     'en' => 'Questionnaire about psoriasis and attitude to ATMP/MSC therapies',
                 ],
                 'data' => [
-                    'title' => [
-                        'lv' => 'Anketa par psoriāzi un attieksmi pret ATMP/MSC terapijām',
-                        'en' => 'Questionnaire about psoriasis and attitude to ATMP/MSC therapies',
-                    ],
                     'fields' => [
                         // 1. Par Jums
                         [
@@ -84,12 +80,12 @@ class FormSeeder extends Seeder
                                 'en' => ['Scalp', 'Elbows, knees', 'Back / trunk', 'Palms / soles', 'Nails', 'Other (please specify)'],
                             ],
                         ],
-                        /*[
+                        [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '2.4.1. Ja "Citi", lūdzu norādiet', 'en' => '2.4.1. If "Other", please specify'],
                             'type' => 'text',
                             'placeholder' => ['lv' => 'Rakstiet šeit', 'en' => 'Please specify'],
-                        ],*/
+                        ],
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '2.5. Vai Jums ir kādas ar psoriāzi saistītas blakussaslimšanas, par kurām zināt?', 'en' => '2.5. Do you have comorbidities related to psoriasis?'],
@@ -131,12 +127,12 @@ class FormSeeder extends Seeder
                                 ],
                             ],
                         ],
-                        /*[
+                        [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '3.1.1. Ja "Citi", lūdzu norādiet', 'en' => '3.1.1. If "Other", please specify'],
                             'type' => 'text',
                             'placeholder' => ['lv' => 'Norādiet citus veidus', 'en' => 'Specify other methods'],
-                        ],*/
+                        ],
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '3.2. Vai kopumā iepriekšējās terapijas Jums palīdzēja?', 'en' => '3.2. Did previous therapies help overall?'],
@@ -193,13 +189,28 @@ class FormSeeder extends Seeder
                         ],
 
                         // 5. Apmierinātība ar esošo stāvokli
-                        /*[
+                        [
                             'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '5.1. Cik apmierināts/a esat ar esošo psoriāzes stāvokli, ņemot vērā šobrīd lietoto (vai nelietoto) ārstēšanu? (1-10)', 'en' => '5.1. How satisfied are you with current psoriasis status? (1-10)'],
                             'type' => 'scale',
-                            'scale' => ['min' => 1, 'max' => 10],
-                            'help' => ['lv' => '1 – Pilnīgi neapmierināts(a); 10 – Pilnīgi apmierināts(a)', 'en' => '1 – Completely dissatisfied; 10 – Completely satisfied'],
-                        ],*/
+                            'label' => [
+                                'lv' => '5.1. Cik apmierināts/a esat ar esošo psoriāzes stāvokli, ņemot vērā šobrīd lietoto (vai nelietoto) ārstēšanu? (1–10)',
+                                'en' => '5.1. How satisfied are you with your current psoriasis condition, considering current (or no) treatment? (1–10)',
+                            ],
+                            'options' => [],
+                            'placeholder' => null,
+                            'scale' => [
+                                'min' => 1,
+                                'max' => 10,
+                                'minLabel' => [
+                                    'lv' => 'Pilnīgi neapmierināts(a)',
+                                    'en' => 'Completely dissatisfied',
+                                ],
+                                'maxLabel' => [
+                                    'lv' => 'Pilnīgi apmierināts(a)',
+                                    'en' => 'Completely satisfied',
+                                ],
+                            ],
+                        ],
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '5.2. Vai Jūs vēlētos izmēģināt jaunu ārstēšanas pieeju, ja tā būtu pamatota ar zinātniskiem pētījumiem un atbilstu ES regulām?', 'en' => '5.2. Would you try a new treatment if evidence and regulations are met?'],
@@ -238,12 +249,28 @@ class FormSeeder extends Seeder
                         ],*/
 
                         // 7. Interese un gatavība apsvērt ATMP / MSC terapiju
-                        /*[
+                        [
                             'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '7.1.1. Cik lielā mērā Jūs interesētu iespēja nākotnē apsvērt ATMP (MSC šūnu) terapiju savai psoriāzei? (1-10)', 'en' => '7.1.1. How interested would you be to consider ATMP therapy in future? (1-10)'],
                             'type' => 'scale',
-                            'scale' => ['min' => 1, 'max' => 10],
-                        ],*/
+                            'label' => [
+                                'lv' => '7.1.1. Cik lielā mērā Jūs interesētu iespēja nākotnē apsvērt ATMP (MSC šūnu) terapiju savai psoriāzei? (1–10)',
+                                'en' => '7.1.1. How interested would you be to consider ATMP therapy in future? (1–10)',
+                            ],
+                            'options' => [],
+                            'placeholder' => null,
+                            'scale' => [
+                                'min' => 1,
+                                'max' => 10,
+                                'minLabel' => [
+                                    'lv' => 'Maz interesē',
+                                    'en' => 'Low interest',
+                                ],
+                                'maxLabel' => [
+                                    'lv' => 'Ļoti interesē',
+                                    'en' => 'High interest',
+                                ],
+                            ],
+                        ],
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '7.2.1. Kas Jums būtu vissvarīgākie faktori, lemjot, vai apsvērt šādu inovatīvu terapiju?', 'en' => '7.2.1. What factors would be most important to you when deciding?'],
@@ -269,12 +296,12 @@ class FormSeeder extends Seeder
                                 ],
                             ],
                         ],
-                        /*[
+                        [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '7.2.1.1. Ja "Citi", lūdzu norādiet', 'en' => 'If "Other", please specify'],
                             'type' => 'text',
                             'placeholder' => ['lv' => 'Norādiet citus faktorus', 'en' => 'Specify other factors'],
-                        ],*/
+                        ],
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '7.3.1. Vai Jūs būtu gatavs/gatava saņemt vairāk informācijas par ATMP / MSC iespējām psoriāzes ārstēšanā?', 'en' => '7.3.1. Would you be willing to receive more info about ATMP/MSC options?'],
@@ -304,7 +331,7 @@ class FormSeeder extends Seeder
                                 'en' => ['Yes, I agree', 'No, I do not agree'],
                             ],
                         ],
-                        /*[
+                        [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '8.2.2. Vārds (var būt tikai vārds)', 'en' => '8.2.2. Name (first name only)'],
                             'type' => 'text',
@@ -321,7 +348,7 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => 'Telefona nr. (pēc izvēles)', 'en' => 'Phone number (optional)'],
                             'type' => 'text',
                             'placeholder' => ['lv' => '+371 ...', 'en' => '+371 ...'],
-                        ],*/
+                        ],
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '8.2.3. Kādu saziņas veidu Jūs visvairāk vēlētos?', 'en' => '8.2.3. Preferred contact method'],
@@ -331,13 +358,13 @@ class FormSeeder extends Seeder
                                 'en' => ['Email', 'Phone call', 'SMS / WhatsApp (if available)', 'Other (please specify)'],
                             ],
                         ],
-                        /*[
+                        [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '8.2.3.1. Ja "Citi", lūdzu norādiet', 'en' => 'If "Other", please specify'],
                             'type' => 'text',
                             'placeholder' => ['lv' => 'Norādiet citu saziņas veidu', 'en' => 'Specify other contact method'],
                         ],
-                        [
+                        /*[
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '8.3. Brīvais komentārs', 'en' => '8.3. Free comment'],
                             'type' => 'textarea',
@@ -354,10 +381,6 @@ class FormSeeder extends Seeder
                     'en' => 'Questionnaire about Crohn\'s disease and attitude to ATMP/MSC therapies',
                 ],
                 'data' => [
-                    'title' => [
-                        'lv' => 'Anketa par Krona slimību un attieksmi pret ATMP/MSC terapijām',
-                        'en' => 'Questionnaire about Crohn\'s disease and attitude to ATMP/MSC therapies',
-                    ],
                     'fields' => [
                         // 1. Par Jums
                         [
@@ -428,13 +451,13 @@ class FormSeeder extends Seeder
                         ],
                         // NOTE: free-text to describe if yes
                         // NOTE: type = text
-                        /*[
+                        [
                             // NOTE: text field — front-end may need to handle this as open input
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => 'Ja Jā, lūdzu, īsi norādiet', 'en' => 'If yes, please briefly specify'],
                             'type' => 'text',
                             'placeholder' => ['lv' => 'Piem., fistulas, striktūras, locītavu iekaisums', 'en' => 'E.g., fistulas, strictures, joint inflammation'],
-                        ],*/
+                        ],
 
                         // 3. Pašreizējie simptomi
                         [
@@ -522,12 +545,12 @@ class FormSeeder extends Seeder
                             ],
                         ],
 
-                        /*[
+                        [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '4.1.1 Ja "Citi medikamenti", lūdzu norādiet', 'en' => '4.1.1 If "Other medications", please specify'],
                             'type' => 'text',
                             'placeholder' => ['lv' => 'Norādiet citus medikamentus', 'en' => 'Specify other medications'],
-                        ],*/
+                        ],
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '4.2. Vai kopumā iepriekšējās terapijas Jums palīdzēja?', 'en' => '4.2. Did previous therapies help overall?'],
@@ -600,15 +623,28 @@ class FormSeeder extends Seeder
                                 'en' => ['Yes, often', 'Sometimes', 'No, never', 'Prefer not to answer'],
                             ],
                         ],
-
-                        /*[
-                            // NOTE: scale field — numeric slider/scale expected
+                        [
                             'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '6.1. Cik apmierināts/a esat ar esošo Krona slimības stāvokli? (1-10)', 'en' => '6.1. How satisfied are you with your current Crohn\'s disease status? (1-10)'],
                             'type' => 'scale',
-                            'scale' => ['min' => 1, 'max' => 10],
-                            'help' => ['lv' => '1 – Pilnīgi neapmierināts(a); 10 – Pilnīgi apmierināts(a)', 'en' => '1 – Completely dissatisfied; 10 – Completely satisfied'],
-                        ],*/
+                            'label' => [
+                                'lv' => '6.1. Cik apmierināts/a esat ar esošo Krona slimības stāvokli? (1–10)',
+                                'en' => '6.1. How satisfied are you with your current Crohn\'s disease status? (1–10)',
+                            ],
+                            'options' => [],
+                            'placeholder' => null,
+                            'scale' => [
+                                'min' => 1,
+                                'max' => 10,
+                                'minLabel' => [
+                                    'lv' => 'Pilnīgi neapmierināts(a)',
+                                    'en' => 'Completely dissatisfied',
+                                ],
+                                'maxLabel' => [
+                                    'lv' => 'Pilnīgi apmierināts(a)',
+                                    'en' => 'Completely satisfied',
+                                ],
+                            ],
+                        ],
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '6.2. Vai Jūs vēlētos izmēģināt jaunu ārstēšanas pieeju, ja tā būtu pamatota ar zinātniskiem pētījumiem un atbilstu ES regulām?', 'en' => '6.2. Would you try a new treatment if evidence and regulations are met?'],
@@ -648,14 +684,30 @@ class FormSeeder extends Seeder
                             'type' => 'textarea',
                             'rows' => 4,
                             'placeholder' => ['lv' => 'Rakstiet īsu priekšstatu', 'en' => 'Write your brief understanding or thoughts'],
-                        ],
+                        ],*/
 
                         [
                             'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '9.1. Cik lielā mērā Jūs interesētu iespēja nākotnē apsvērt ATMP (MSC šūnu) terapiju savai Krona slimībai? (1-10)', 'en' => '9.1. How interested would you be to consider ATMP therapy in future? (1-10)'],
                             'type' => 'scale',
-                            'scale' => ['min' => 1, 'max' => 10],
-                        ],*/
+                            'label' => [
+                                'lv' => '9.1. Cik lielā mērā Jūs interesētu iespēja nākotnē apsvērt ATMP (MSC šūnu) terapiju savai Krona slimībai? (1–10)',
+                                'en' => '9.1. How interested would you be to consider ATMP therapy in future? (1–10)',
+                            ],
+                            'options' => [],
+                            'placeholder' => null,
+                            'scale' => [
+                                'min' => 1,
+                                'max' => 10,
+                                'minLabel' => [
+                                    'lv' => 'Maz interesē',
+                                    'en' => 'Low interest',
+                                ],
+                                    'maxLabel' => [
+                                    'lv' => 'Ļoti interesē',
+                                    'en' => 'High interest',
+                                ],
+                            ],
+                        ],
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '9.2. Kas Jums būtu vissvarīgākie faktori, lemjot, vai apsvērt šādu inovatīvu terapiju?', 'en' => '9.2. What would be the most important factors when deciding?'],
@@ -684,12 +736,12 @@ class FormSeeder extends Seeder
                             ],
                         ],
 
-                        /*[
+                        [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => 'Ja "Citi faktori", lūdzu norādiet', 'en' => 'If "Other factors", please specify'],
                             'type' => 'text',
                             'placeholder' => ['lv' => 'Norādiet citus faktorus', 'en' => 'Specify other factors'],
-                        ],*/
+                        ],
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '9.3. Vai vēlaties būt vieni no pirmajiem, kas saņem strukturētu informāciju un uzaicinājumus?', 'en' => '9.3. Would you like to be among the first to receive structured info and invitations?'],
@@ -719,7 +771,7 @@ class FormSeeder extends Seeder
                             ],
                         ],
 
-                        /*[
+                        [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => 'Vārds (var būt tikai vārds)', 'en' => 'Name (first name only)'],
                             'type' => 'text',
@@ -736,7 +788,7 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => 'Telefona nr. (pēc izvēles)', 'en' => 'Phone number (optional)'],
                             'type' => 'text',
                             'placeholder' => ['lv' => '+371 ...', 'en' => '+371 ...'],
-                        ],*/
+                        ],
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '10.3. Kādu saziņas veidu Jūs visvairāk vēlētos?', 'en' => '10.3. Preferred contact method'],
@@ -747,14 +799,14 @@ class FormSeeder extends Seeder
                             ],
                         ],
 
-                        /*[
+                        [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => 'Ja "Citi", lūdzu norādiet', 'en' => 'If "Other", please specify'],
                             'type' => 'text',
                             'placeholder' => ['lv' => 'Norādiet citu saziņas veidu', 'en' => 'Specify other contact method'],
                         ],
 
-                        [
+                        /*[
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '11. Brīvais komentārs', 'en' => '11. Free comment'],
                             'type' => 'textarea',

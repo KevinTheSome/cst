@@ -95,7 +95,7 @@ export default function SelectorAnketa({ anketas = [], formTypes = [], locale = 
                 <div className="grid gap-4 md:grid-cols-2">
                     {anketas.map((form) => (
                         <div key={form.id} className="rounded-xl border border-white/10 bg-slate-950/40 px-4 py-4 shadow-sm shadow-black/20">
-                            <h2 className="text-lg font-semibold">{form.data?.title?.[locale] || __('anketa.update.form_title_placeholder')}</h2>
+                            <h2 className="text-lg font-semibold">{form.title?.[locale] || __('anketa.update.form_title_placeholder')}</h2>
                             <p className="text-xs text-white/60">
                                 {__('anketa.selector.code')}: {form.code}
                             </p>
