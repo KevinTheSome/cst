@@ -53,7 +53,7 @@ export default function Footer() {
         <footer className="border-t border-[#dfe9e3] bg-[#f7faf8] text-[#1f5e45]">
             <div className="mx-auto flex w-full max-w-6xl flex-col gap-14 px-6 py-14 md:flex-row md:justify-between">
                 <div className="max-w-xl space-y-8">
-                    <h2 className="text-base font-semibold tracking-[0.2em] text-[#1b4a37] uppercase">Biočipu zinātniskā laboratorija</h2>
+                    <h2 className="text-base font-semibold tracking-[0.2em] text-[#1b4a37] uppercase">SIA cilmes šūnu tehnoloģijas</h2>
                     <dl className="space-y-6 text-lg leading-relaxed tracking-wide">
                         <div>
                             <dt className="font-semibold text-[#1b4a37]">Telefona numurs:</dt>
