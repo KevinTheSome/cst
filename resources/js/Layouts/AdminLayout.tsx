@@ -35,8 +35,22 @@ const navSections: NavSection[] = [
     {
         label: 'Command',
         items: [
-            { id: 'dashboard', label: 'Control room', description: 'Live signals & status', href: '/admin', badge: 'Live', badgeTone: 'emerald' },
-            { id: 'Tracker', label: 'Tracker', description: 'See what users are looking more in web', href: '/admin/missions', badge: 'Live', badgeTone: 'violet' }
+            {
+                id: 'dashboard',
+                label: 'Control room',
+                description: 'Live signals & status',
+                href: '/admin',
+                badge: 'Live',
+                badgeTone: 'emerald',
+            },
+            {
+                id: 'Tracker',
+                label: 'Tracker',
+                description: 'See what users are looking more in web',
+                href: '/admin/missions',
+                badge: 'Live',
+                badgeTone: 'violet',
+            },
         ],
     },
     {
@@ -50,16 +64,47 @@ const navSections: NavSection[] = [
                 badge: 'CRUD',
                 badgeTone: 'emerald',
             },
-
-            { id: 'content', label: 'Content studio', description: 'Posts, blogs, media', href: '/admin/content-studio', badge: '12 drafts', badgeTone: 'sky' },
-            { id: 'form-codes', label: 'Form codes', description: 'Survey code generator', href: '/admin/form-codes' },
-            { id: 'form-selector', label: 'Form Selector', description: 'Change the type select for a form', href: '/admin/selector'}
-
+            {
+                id: 'anketa-results',
+                label: 'Anketu atbildes',
+                description: 'Order / search aizpildītās anketas',
+                href: '/admin/anketa/results',
+                badge: 'New',
+                badgeTone: 'amber',
+            },
+            {
+                id: 'content',
+                label: 'Content studio',
+                description: 'Posts, blogs, media',
+                href: '/admin/content-studio',
+                badge: '12 drafts',
+                badgeTone: 'sky',
+            },
+            {
+                id: 'form-codes',
+                label: 'Form codes',
+                description: 'Survey code generator',
+                href: '/admin/form-codes',
+            },
+            {
+                id: 'form-selector',
+                label: 'Form Selector',
+                description: 'Change the type select for a form',
+                href: '/admin/selector',
+            },
         ],
     },
     {
         label: 'Users',
         items: [
+            {
+                id: 'admin-users',
+                label: 'Admin lietotāji',
+                description: 'Create / edit admin accounts',
+                href: '/admin/admins',
+                badge: 'CRUD',
+                badgeTone: 'sky',
+            },
             {
                 id: 'security',
                 label: 'Security',
@@ -72,18 +117,15 @@ const navSections: NavSection[] = [
     },
 ];
 
-
 export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWithChildren<AdminLayoutProps>) {
     const [loaderVisible, setLoaderVisible] = useState(true);
     const [mobileNavOpen, setMobileNavOpen] = useState(false);
     const initialDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const hideDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // <-- Single usePage call INSIDE the component
     const { url, props } = usePage<any>();
     const currentLocale = props?.locale || 'lv';
 
-    // <-- switchLanguage also INSIDE the component
     const switchLanguage = async (locale: string) => {
         if (currentLocale === locale) return;
 
@@ -174,7 +216,21 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
                     <p className="text-xs tracking-[0.25em] text-white/50 uppercase">{section.label}</p>
                     <div className="space-y-3">
                         {section.items.map((item) => {
-                            const isActive = url === item.href || (item.href !== '/admin' && url.startsWith(item.href));
+                            let isActive = false;
+
+                            if (item.href === '/admin/anketa') {
+                                isActive =
+                                    url.startsWith('/admin/anketa') &&
+                                    !url.startsWith('/admin/anketa/results');
+                            } else if (item.href === '/admin/anketa/results') {
+                                isActive = url.startsWith('/admin/anketa/results');
+                            } else if (item.href === '/admin') {
+                                isActive = url === '/admin' || url.startsWith('/admin?');
+                            } else {
+                                isActive =
+                                    url === item.href ||
+                                    (item.href !== '/admin' && url.startsWith(item.href));
+                            }
 
                             return (
                                 <button
@@ -221,14 +277,18 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
             <BioChipLoader visible={loaderVisible} />
             <div
                 aria-busy={loaderVisible}
-                className={`flex flex-1 transition-opacity duration-500 ${loaderVisible ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+                className={`flex flex-1 transition-opacity duration-500 ${
+                    loaderVisible ? 'pointer-events-none opacity-0' : 'opacity-100'
+                }`}
             >
                 <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 pt-10 pb-12 sm:px-6 lg:flex-row lg:px-12">
                     <div className="lg:hidden">
                         <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-white/5 to-white/0 px-6 py-5">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-xs tracking-[0.3em] text-white/60 uppercase">Command center</p>
+                                    <p className="text-xs tracking-[0.3em] text-white/60 uppercase">
+                                        Command center
+                                    </p>
                                     <p className="text-xl font-semibold text-white">{cardTitle}</p>
                                 </div>
                                 <button
@@ -270,15 +330,21 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
                         <div className="flex-1 overflow-y-auto pr-1">{renderNavSections()}</div>
                         <div className="mt-8 space-y-4">
                             <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/0 p-4 text-sm text-white/80">
-                                <p className="text-xs tracking-[0.4em] text-white/50 uppercase">Focus</p>
-                                <p className="mt-2 text-sm font-semibold text-white">Next sync 15:30</p>
+                                <p className="text-xs tracking-[0.4em] text-white/50 uppercase">
+                                    Focus
+                                </p>
+                                <p className="mt-2 text-sm font-semibold text-white">
+                                    Next sync 15:30
+                                </p>
                                 <p className="text-xs text-white/60">Labs leadership update</p>
                             </div>
                             {/* Language switcher */}
                             <div className="flex gap-3">
                                 <button
                                     className={`btn flex h-10 min-h-0 w-10 items-center justify-center border-none p-0 text-lg font-semibold btn-ghost transition md:text-xl ${
-                                        currentLocale === 'lv' ? 'btn btn-success' : 'text-green-700 hover:text-orange-400'
+                                        currentLocale === 'lv'
+                                            ? 'btn btn-success'
+                                            : 'text-green-700 hover:text-orange-400'
                                     }`}
                                     onClick={() => switchLanguage('lv')}
                                     disabled={currentLocale === 'lv'}
@@ -290,7 +356,9 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
 
                                 <button
                                     className={`btn flex h-10 min-h-0 w-10 items-center justify-center border-none p-0 text-lg font-semibold btn-ghost transition md:text-xl ${
-                                        currentLocale === 'en' ? 'btn btn-success' : 'text-green-700 hover:text-orange-400'
+                                        currentLocale === 'en'
+                                            ? 'btn btn-success'
+                                            : 'text-green-700 hover:text-orange-400'
                                     }`}
                                     onClick={() => switchLanguage('en')}
                                     disabled={currentLocale === 'en'}

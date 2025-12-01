@@ -152,4 +152,7 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
     Route::get('/selector', [FormTypeController::class, 'index'])->name('admin.selector');
     Route::post('/selector/add', [FormTypeController::class, 'add'])->name('admin.selector.add');
+
+     Route::get('/anketa/results', [AnketaController::class, 'resultsIndex'])->name('admin.anketa.results');
+    Route::get('/anketa/results/{id}', [AnketaController::class, 'resultsShow'])->name('admin.anketa.results.show');
 });
