@@ -26,9 +26,11 @@ function Navbar() {
                 <Link href="/" className="flex items-center gap-4">
                     <img src="/bzl-site-icon-01.png" alt="Biočipu zinātniskā laboratorija" className="h-16 w-auto md:h-20" />
                     <span className="text-xl leading-tight font-semibold text-green-700 md:text-2xl">
-                        Biočipu zinātniskā
+                        {/* jobanais */}
+                        SIA cilmes šunu
                         <br />
-                        laboratorija
+                        tehnoloģijas
+                        {/* Bled */}
                     </span>
                 </Link>
 
