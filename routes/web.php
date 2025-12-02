@@ -72,6 +72,8 @@ Route::get('pacientiem/psoriaze-terapija', fn() => Inertia::render('Pacientiem/p
 Route::get('pacientiem/krona-terapija', fn() => Inertia::render('Pacientiem/krona-terapija'))->name('Pacientiem/krona-terapija');
 Route::get('pacientiem/faq', fn() => Inertia::render('Pacientiem/faq'))->name('Pacientiem/faq');
 
+Route::get('Specialistiem/likumi', fn() => Inertia::render('Specialistiem/likumi'))->name('likumi');
+
 // <<<<<<<<<<<<<<< SPECIALISTIEM >>>>>>>>>>>>>>>>>
 
 Route::get('specialistiem/apmaciba', fn() => Inertia::render('Specialistiem/apmaciba'))->name('Specialistiem/apmaciba');
