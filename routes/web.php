@@ -77,6 +77,8 @@ Route::get('Specialistiem/likumi', fn() => Inertia::render('Specialistiem/likumi
 // <<<<<<<<<<<<<<< SPECIALISTIEM >>>>>>>>>>>>>>>>>
 
 Route::get('specialistiem/apmaciba', fn() => Inertia::render('Specialistiem/apmaciba'))->name('Specialistiem/apmaciba');
+Route::get('specialistiem/atmp', fn() => Inertia::render('Specialistiem/atmp'))->name('Specialistiem/atmp');
+
 
 // <<<<<<<<<<<<< Kaut kas no tās puses >>>>>>>>>>>
 
@@ -108,7 +110,7 @@ Route::get(
     app(AnketaController::class)->loadByCode('chronic')
 )->name('anketa.hroniskas.show');
 
-Route::get('/anketa-kods',[AnketaController::class, 'showCode'])->name('anketa.koda.show');
+Route::get('/anketa-kods', [AnketaController::class, 'showCode'])->name('anketa.koda.show');
 
 Route::post('/anketa/store-answers', [AnketaController::class, 'storeAnswers'])->name('anketa.answers');
 
@@ -159,6 +161,6 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/selector', [FormTypeController::class, 'index'])->name('admin.selector');
     Route::post('/selector/add', [FormTypeController::class, 'add'])->name('admin.selector.add');
 
-     Route::get('/anketa/results', [AnketaController::class, 'resultsIndex'])->name('admin.anketa.results');
+    Route::get('/anketa/results', [AnketaController::class, 'resultsIndex'])->name('admin.anketa.results');
     Route::get('/anketa/results/{id}', [AnketaController::class, 'resultsShow'])->name('admin.anketa.results.show');
 });
