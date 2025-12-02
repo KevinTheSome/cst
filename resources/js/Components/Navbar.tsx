@@ -1,12 +1,15 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { useState } from 'react';
+import { useLang } from '@/hooks/useLang';
 
 function Navbar() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    const { props } = usePage();
+    const { props } = usePage<any>();
     const currentLocale = props.locale || 'lv';
+
+    const { __ } = useLang(); // <--- translation helper
 
     const switchLanguage = async (locale: string) => {
         if (currentLocale === locale) return;
@@ -26,16 +29,19 @@ function Navbar() {
                 <Link href="/" className="flex items-center gap-4">
                     <img src="/bzl-site-icon-01.png" alt="Biočipu zinātniskā laboratorija" className="h-16 w-auto md:h-20" />
                     <span className="text-xl leading-tight font-semibold text-green-700 md:text-2xl">
-                        {/* jobanais */}
                         SIA cilmes šunu
                         <br />
                         tehnoloģijas
-                        {/* Bled */}
                     </span>
                 </Link>
 
                 {/* Hamburger menu for mobile + tablet + small desktops */}
-                <button className="btn z-30 p-2 lg:hidden" aria-label="Open menu" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen(true)}>
+                <button
+                    className="btn z-30 p-2 lg:hidden"
+                    aria-label="Open menu"
+                    aria-expanded={sidebarOpen}
+                    onClick={() => setSidebarOpen(true)}
+                >
                     <svg className="h-7 w-7 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
@@ -44,14 +50,14 @@ function Navbar() {
 
             {/* Desktop nav – only on large screens and up */}
             <ul className="m-0 hidden w-auto list-none flex-row items-center gap-4 p-0 lg:flex">
-                {/* PACIANTIEM */}
+                {/* PACIENTIEM */}
                 <li>
                     <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
                         <label
                             tabIndex={0}
                             className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
                         >
-                            PACIENTIEM{' '}
+                            {__('head.nav_patients')}{' '}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
@@ -68,7 +74,7 @@ function Navbar() {
                                     href="/pacientiem/atmp"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Kas ir ATMP?
+                                    {__('head.nav_patients_atmp')}
                                 </Link>
                             </li>
                             <li>
@@ -76,7 +82,7 @@ function Navbar() {
                                     href="/pacientiem/psoriaze-terapija"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Psoriāze un jaunās terapijas
+                                    {__('head.nav_patients_psoriasis')}
                                 </Link>
                             </li>
                             <li>
@@ -84,7 +90,7 @@ function Navbar() {
                                     href="/pacientiem/krona-terapija"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Krona slimiba un jaunās terapijas
+                                    {__('head.nav_patients_crohn')}
                                 </Link>
                             </li>
                             <li>
@@ -92,12 +98,13 @@ function Navbar() {
                                     href="/pacientiem/faq"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Biežak uzdotie jautājumi (FAQ)
+                                    {__('head.nav_patients_faq')}
                                 </Link>
                             </li>
                         </ul>
                     </div>
                 </li>
+
                 {/* Speciālistiem */}
                 <li>
                     <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
@@ -105,7 +112,7 @@ function Navbar() {
                             tabIndex={0}
                             className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
                         >
-                            SPECIĀLISTIEM{' '}
+                            {__('head.nav_specialists')}{' '}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
@@ -122,15 +129,15 @@ function Navbar() {
                                     href="/Specialistiem/likumi"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    ES regula un likumi
+                                    {__('head.nav_specialists_laws')}
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    href="specialistiem/atmp"
+                                    href="#"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    ATMP ražotnes Eiropā
+                                    {__('head.nav_specialists_plants')}
                                 </Link>
                             </li>
                             <li>
@@ -138,12 +145,13 @@ function Navbar() {
                                     href="specialistiem/apmaciba"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Apmācība
+                                    {__('head.nav_specialists_training')}
                                 </Link>
                             </li>
                         </ul>
                     </div>
                 </li>
+
                 {/* PĒTNIECĪBA */}
                 <li>
                     <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
@@ -151,7 +159,7 @@ function Navbar() {
                             tabIndex={0}
                             className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
                         >
-                            PĒTNIECĪBA{' '}
+                            {__('head.nav_research')}{' '}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
@@ -168,7 +176,7 @@ function Navbar() {
                                     href="/postdock-anketa"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    PostDock anketa
+                                    {__('head.nav_research_postdoc')}
                                 </Link>
                             </li>
                             <li>
@@ -176,19 +184,21 @@ function Navbar() {
                                     href="/anketa-kods"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Koda anketa
+                                    {__('head.nav_research_code')}
                                 </Link>
                             </li>
                         </ul>
                     </div>
                 </li>
+
+                {/* PAR MUMS */}
                 <li>
                     <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
                         <label
                             tabIndex={0}
                             className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
                         >
-                            PAR MUMS{' '}
+                            {__('head.nav_about')}{' '}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
@@ -205,7 +215,7 @@ function Navbar() {
                                     href="/ParMums/musu-grupa"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Komanda
+                                    {__('head.nav_about_team')}
                                 </Link>
                             </li>
 
@@ -214,7 +224,7 @@ function Navbar() {
                                     href="/ParMums/contacts"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Kontakti
+                                    {__('head.nav_about_contacts')}
                                 </Link>
                             </li>
                             <li>
@@ -222,7 +232,7 @@ function Navbar() {
                                     href="/ParMums/pievienojies-mums"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Sazinies
+                                    {__('head.nav_about_join')}
                                 </Link>
                             </li>
                             <li>
@@ -230,7 +240,7 @@ function Navbar() {
                                     href="/ParMums/lablife"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
-                                    Laboratorija
+                                    {__('head.nav_about_lab')}
                                 </Link>
                             </li>
                         </ul>
@@ -267,19 +277,25 @@ function Navbar() {
             {/* Sidebar + overlay for mobile & tablet */}
             {sidebarOpen && (
                 <div className="fixed inset-0 z-40 flex lg:hidden">
-                    {/* Dark overlay that closes the menu on click */}
-                    <div className="absolute inset-0 bg-black/40" onClick={() => setSidebarOpen(false)} aria-hidden="true" />
+                    <div
+                        className="absolute inset-0 bg-black/40"
+                        onClick={() => setSidebarOpen(false)}
+                        aria-hidden="true"
+                    />
 
                     <aside className="animate-slide-in-sidebar-left relative z-50 flex h-full w-80 max-w-full translate-x-0 flex-col bg-white text-green-700 shadow-lg transition-transform duration-300 ease-in-out">
                         <div className="flex items-center justify-between border-b border-green-700/10 px-6 py-4">
                             <img src="/bzl-site-icon-01.png" alt="Logo" className="h-8 w-auto" />
-                            <button className="btn text-green-700 btn-sm" aria-label="Close menu" onClick={() => setSidebarOpen(false)}>
+                            <button
+                                className="btn text-green-700 btn-sm"
+                                aria-label="Close menu"
+                                onClick={() => setSidebarOpen(false)}
+                            >
                                 ✕
                             </button>
                         </div>
 
                         <nav className="flex-1 overflow-y-auto px-2 py-4">
-                            {/* FULL mobile menu matches desktop sections */}
                             <ul className="menu w-full gap-1 text-green-700">
                                 {/* PĒTNIECĪBA */}
                                 <li>
@@ -289,22 +305,25 @@ function Navbar() {
                                                 <path d="M9 3h6v6H9z" />
                                                 <path d="M4 21h16M7 9h10l-1 12H8z" />
                                             </svg>
-                                            PĒTNIECĪBA
+                                            {__('head.nav_research')}
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
-                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
-                                                    Klīniskie pētijumi
+                                                <Link
+                                                    href="/postdock-anketa"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
+                                                    {__('head.nav_research_postdoc')}
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
-                                                    PostDock anketa
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
-                                                    Publikācijas (DOI)
+                                                <Link
+                                                    href="/anketa-kods"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
+                                                    {__('head.nav_research_code')}
                                                 </Link>
                                             </li>
                                         </ul>
@@ -319,7 +338,7 @@ function Navbar() {
                                                 <path d="M9 3h6v6H9z" />
                                                 <path d="M4 21h16M7 9h10l-1 12H8z" />
                                             </svg>
-                                            SPECIĀLISTIEM
+                                            {__('head.nav_specialists')}
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
@@ -328,12 +347,16 @@ function Navbar() {
                                                     className="block w-full hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
-                                                    ES regula un likumi
+                                                    {__('head.nav_specialists_laws')}
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="#" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
-                                                    ATMP ražotnes Eiropā
+                                                <Link
+                                                    href="#"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
+                                                    {__('head.nav_specialists_plants')}
                                                 </Link>
                                             </li>
                                             <li>
@@ -342,14 +365,14 @@ function Navbar() {
                                                     className="block w-full hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
-                                                    Apmācība
+                                                    {__('head.nav_specialists_training')}
                                                 </Link>
                                             </li>
                                         </ul>
                                     </details>
                                 </li>
 
-                                {/* PACIANTIEM */}
+                                {/* PACIENTIEM */}
                                 <li>
                                     <details className="w-full">
                                         <summary className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-lg font-semibold">
@@ -357,7 +380,7 @@ function Navbar() {
                                                 <path d="M12 6v12M6 12h12" />
                                                 <circle cx="12" cy="12" r="9" />
                                             </svg>
-                                            PACIENTIEM
+                                            {__('head.nav_patients')}
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
@@ -366,7 +389,7 @@ function Navbar() {
                                                     className="block w-full hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
-                                                    Kas ir ATMP?
+                                                    {__('head.nav_patients_atmp')}
                                                 </Link>
                                             </li>
                                             <li>
@@ -375,7 +398,7 @@ function Navbar() {
                                                     className="block w-full hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
-                                                    Psoriāze un jaunās terapijas
+                                                    {__('head.nav_patients_psoriasis')}
                                                 </Link>
                                             </li>
                                             <li>
@@ -384,7 +407,7 @@ function Navbar() {
                                                     className="block w-full hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
-                                                    Krona slimība un jaunās terapijas
+                                                    {__('head.nav_patients_crohn')}
                                                 </Link>
                                             </li>
                                             <li>
@@ -393,7 +416,7 @@ function Navbar() {
                                                     className="block w-full hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
-                                                    Biežak uzdotie jautājumi (FAQ)
+                                                    {__('head.nav_patients_faq')}
                                                 </Link>
                                             </li>
                                         </ul>
@@ -409,43 +432,43 @@ function Navbar() {
                                                 <path d="M9 20v-2a4 4 0 013-3.87" />
                                                 <circle cx="12" cy="7" r="4" />
                                             </svg>
-                                            PAR MUMS
+                                            {__('head.nav_about')}
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
                                                 <Link
-                                                    href="/lablife"
+                                                    href="/ParMums/lablife"
                                                     className="block w-full hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
-                                                    Laboratorijas dzīve
+                                                    {__('head.nav_about_lab')}
                                                 </Link>
                                             </li>
                                             <li>
                                                 <Link
-                                                    href="/musu-grupa"
+                                                    href="/ParMums/musu-grupa"
                                                     className="block w-full hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
-                                                    Mūsu grupa
+                                                    {__('head.nav_about_team')}
                                                 </Link>
                                             </li>
                                             <li>
                                                 <Link
-                                                    href="/pievienojies-mums"
+                                                    href="/ParMums/pievienojies-mums"
                                                     className="block w-full hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
-                                                    Komanda
+                                                    {__('head.nav_about_join')}
                                                 </Link>
                                             </li>
                                             <li>
                                                 <Link
-                                                    href="/contacts"
+                                                    href="/ParMums/contacts"
                                                     className="block w-full hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
-                                                    Kontekti
+                                                    {__('head.nav_about_contacts')}
                                                 </Link>
                                             </li>
                                         </ul>
