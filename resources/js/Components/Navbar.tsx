@@ -128,7 +128,7 @@ function Navbar() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
+                                <Link href="specialistiem/apmaciba" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
                                     Apmācība
                                 </Link>
                             </li>
@@ -324,7 +324,7 @@ function Navbar() {
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="#" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link href="specialistiem/apmaciba" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
                                                     Apmācība
                                                 </Link>
                                             </li>
