@@ -83,7 +83,7 @@ Route::get('/anketa', fn() => Inertia::render('anketa'))->name('anketa');
 Route::get('/postdock-anketa', fn() => Inertia::render('PostDockanketa'))->name('postdock-anketa');
 
 // <<<<<<<<<<<< ANKETAS >>>>>>>>>>>>>
-
+Route::get('/clinical-trials', fn()=> Inertia::render('clinicalTrials'))->name('clinicalTrials');
 Route::get(
     '/anketa-specialiste',
     fn() =>
