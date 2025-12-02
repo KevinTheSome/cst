@@ -118,7 +118,7 @@ function Navbar() {
                         </label>
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
-                                <Link href="Specialistiem/likumi" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
+                                <Link href="/Specialistiem/likumi" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
                                     ES regula un likumi
                                 </Link>
                             </li>
