@@ -72,6 +72,9 @@ Route::get('pacientiem/psoriaze-terapija', fn() => Inertia::render('Pacientiem/p
 Route::get('pacientiem/krona-terapija', fn() => Inertia::render('Pacientiem/krona-terapija'))->name('Pacientiem/krona-terapija');
 Route::get('pacientiem/faq', fn() => Inertia::render('Pacientiem/faq'))->name('Pacientiem/faq');
 
+Route::get('Specialistiem/likumi', fn() => Inertia::render('Specialistiem/likumi'))->name('likumi');
+
+
 // <<<<<<<<<<<<< Kaut kas no tās puses >>>>>>>>>>>
 
 Route::get('ParMums/contacts', fn() => Inertia::render('ParMums/contacts'))->name('contacts');

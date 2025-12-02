@@ -118,7 +118,7 @@ function Navbar() {
                         </label>
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
-                                <Link href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
+                                <Link href="Specialistiem/likumi" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
                                     ES regula un likumi
                                 </Link>
                             </li>
@@ -314,7 +314,7 @@ function Navbar() {
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
-                                                <Link href="#" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link href="/Specialistiem/likumi" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
                                                     ES regula un likumi
                                                 </Link>
                                             </li>
