@@ -173,6 +173,14 @@ function Navbar() {
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
                                 <Link
+                                    href="/clinical-trials"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
+                                >
+                                    Klīniskie pētijumi
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
                                     href="/postdock-anketa"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
@@ -309,6 +317,13 @@ function Navbar() {
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
+                                                <Link href="/clinical-trials" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                    Klīniskie pētijumi
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                    PostDock anketa
                                                 <Link
                                                     href="/postdock-anketa"
                                                     className="block w-full hover:text-orange-400"
