@@ -1,10 +1,7 @@
 import { useLang } from '@/hooks/useLang';
 import { Head, Link } from '@inertiajs/react';
 
-const audienceInfoCards = [
-    { label: 'Speciālistiem', subtitle: 'Piekļuve protokoliem un sadarbībai' },
-    { label: 'Pacientiem', subtitle: 'Piesakies personalizētai konsultācijai' },
-];
+
 
 const valueCards = [
     {
@@ -92,7 +89,7 @@ export default function Welcome() {
                     <div className="flex-1 space-y-7">
                         <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white/70 px-3 py-1 text-xs uppercase tracking-[0.35em] text-emerald-700 shadow-sm">
                             <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.9)]" />
-                            Biočipu cilmes šūnu centrs
+                            SIA cilmes šunu tehnoloģijas
                         </div>
 
                         <h1 className="text-4xl font-semibold leading-tight text-slate-900 sm:text-5xl">
@@ -114,16 +111,27 @@ export default function Welcome() {
                             </Link>
                         </div>
 
-                        {/* Audience info cards (no link) */}
-                        <div className="grid gap-4 sm:grid-cols-2">
-                            {audienceInfoCards.map((card) => (
-                                <div
-                                    key={card.label}
-                                    className="rounded-2xl border border-emerald-200/70 bg-white p-5 shadow-lg shadow-emerald-900/5"
-                                >
-                                    <p className="text-xs uppercase tracking-[0.35em] text-emerald-700">{card.label}</p>
-                                    <p className="mt-2 text-base font-semibold text-slate-900">{card.subtitle}</p>
-                                </div>
+                        {/* Specialist vs patient buttons */}
+                        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+                            {[
+                                { label: 'Speciālisti', href: '/postdock-anketa?role=specialists' },
+                                { label: 'Pacienti', href: '/anketa?role=pacients' },
+                            ].map((cta) => (
+                                <Link key={cta.label} href={cta.href} className="cta-pill group">
+                                    <span className="cta-pill__accent">
+                                        <svg viewBox="0 0 1024 1024" height="24" width="24" aria-hidden>
+                                            <path
+                                                d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"
+                                                fill="#0f172a"
+                                            />
+                                            <path
+                                                d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"
+                                                fill="#0f172a"
+                                            />
+                                        </svg>
+                                    </span>
+                                    <span className="cta-pill__label">{cta.label}</span>
+                                </Link>
                             ))}
                         </div>
 
@@ -257,6 +265,62 @@ export default function Welcome() {
                     </div>
                 </section>
             </div>
+
+            <style>
+                {`
+                .cta-pill {
+                    position: relative;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 1rem;
+                    width: 11.5rem;
+                    height: 3.5rem;
+                    border-radius: 1.5rem;
+                    background: rgba(255, 255, 255, 0.9);
+                    border: 1px solid rgba(15, 23, 42, 0.12);
+                    color: #0f172a;
+                    text-decoration: none;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.15em;
+                    overflow: hidden;
+                    transition: box-shadow 0.3s ease;
+                }
+                .cta-pill__accent {
+                    position: absolute;
+                    left: 6px;
+                    top: 6px;
+                    height: calc(100% - 12px);
+                    width: 3.4rem;
+                    border-radius: 1.25rem;
+                    background: linear-gradient(135deg, #34d399, #22d3ee);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: width 0.45s ease;
+                    box-shadow: 0 10px 25px rgba(45, 212, 191, 0.35);
+                    z-index: 1;
+                }
+                .cta-pill__label {
+                    position: relative;
+                    z-index: 2;
+                    transform: translateX(15px);
+                    transition: transform 0.45s ease;
+                }
+                .cta-pill:hover .cta-pill__accent {
+                    width: calc(100% - 12px);
+                }
+                .cta-pill:hover .cta-pill__label {
+                    transform: translateX(8px);
+                    z-index: 0;
+                }
+                .cta-pill:hover {
+                    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.1);
+                }
+                `}
+            </style>
         </>
     );
 }
