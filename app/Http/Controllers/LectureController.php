@@ -18,7 +18,7 @@ class LectureController extends Controller
         // load recent codes (adjust ordering / eager loads as needed)
         $codes = OnlineCode::orderBy('created_at', 'desc')->get();
 
-        return Inertia::render('Admin/Lecture/lectureCode', [
+        return Inertia::render('Admin/Apmaciba/lectureCode', [
             'codes' => $codes,
         ]);
     }
@@ -93,7 +93,8 @@ class LectureController extends Controller
         $code->max_uses = $data['max_uses'] ?? $code->max_uses;
         $code->valid_from = $data['valid_from'] ?? $code->valid_from;
         $code->valid_until = $data['valid_until'] ?? $code->valid_until;
-        if (isset($data['is_active'])) $code->is_active = (bool) $data['is_active'];
+        if (isset($data['is_active']))
+            $code->is_active = (bool) $data['is_active'];
 
         $code->save();
 
@@ -109,6 +110,59 @@ class LectureController extends Controller
         $code->delete();
 
         return response()->json(['ok' => true], 200);
+    }
+
+    /**
+     * Verify a lecture code for public access
+     */
+    public function verifyCode(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string',
+        ]);
+
+        $code = OnlineCode::where('code', strtoupper(trim($request->code)))->first();
+
+        if (!$code) {
+            return response()->json([
+                'valid' => false,
+                'message' => 'Invalid code',
+            ], 404);
+        }
+
+        if (!$code->isValidNow()) {
+            return response()->json([
+                'valid' => false,
+                'message' => 'Code is expired or inactive',
+            ], 403);
+        }
+
+        // Update usage tracking
+        $code->used_count += 1;
+        $code->last_used_at = now();
+        $code->last_used_by = $request->ip(); // or user ID if authenticated
+        $code->save();
+
+        // Get all active online trainings
+        $trainings = \App\Models\OnlineTraining::where('is_active', true)->get();
+
+        // Return all active training data
+        $lectures = $trainings->map(function ($training) {
+            return [
+                'id' => $training->id,
+                'title' => $training->title,
+                'description' => $training->description,
+                'url' => $training->url,
+                'starts_at' => $training->starts_at,
+                'ends_at' => $training->ends_at,
+            ];
+        })->toArray();
+
+        return response()->json([
+            'valid' => true,
+            'code' => $code,
+            'lectures' => $lectures,
+        ]);
     }
 
     /**
