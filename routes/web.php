@@ -72,13 +72,12 @@ Route::get('pacientiem/psoriaze-terapija', fn() => Inertia::render('Pacientiem/p
 Route::get('pacientiem/krona-terapija', fn() => Inertia::render('Pacientiem/krona-terapija'))->name('Pacientiem/krona-terapija');
 Route::get('pacientiem/faq', fn() => Inertia::render('Pacientiem/faq'))->name('Pacientiem/faq');
 
-Route::get('Specialistiem/likumi', fn() => Inertia::render('Specialistiem/likumi'))->name('likumi');
 
 // <<<<<<<<<<<<<<< SPECIALISTIEM >>>>>>>>>>>>>>>>>
 
 Route::get('specialistiem/apmaciba', fn() => Inertia::render('Specialistiem/apmaciba'))->name('Specialistiem/apmaciba');
 Route::get('specialistiem/atmp', fn() => Inertia::render('Specialistiem/atmp'))->name('Specialistiem/atmp');
-
+Route::get('specialistiem/likumi', fn() => Inertia::render('Specialistiem/likumi'))->name('Specialistiem/likumi');
 
 // <<<<<<<<<<<<< Kaut kas no tās puses >>>>>>>>>>>
 
@@ -91,7 +90,7 @@ Route::get('/anketa', fn() => Inertia::render('anketa'))->name('anketa');
 Route::get('/postdock-anketa', fn() => Inertia::render('PostDockanketa'))->name('postdock-anketa');
 
 // <<<<<<<<<<<< ANKETAS >>>>>>>>>>>>>
-
+Route::get('/clinical-trials', fn()=> Inertia::render('clinicalTrials'))->name('clinicalTrials');
 Route::get(
     '/anketa-specialiste',
     fn() =>
