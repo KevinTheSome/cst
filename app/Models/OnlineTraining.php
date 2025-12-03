@@ -9,8 +9,6 @@ class OnlineTraining extends Model
     protected $fillable = [
         'title',
         'description',
-        'slug',
-        'platform',
         'url',
         'starts_at',
         'ends_at',

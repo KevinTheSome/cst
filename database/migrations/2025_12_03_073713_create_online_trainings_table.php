@@ -11,8 +11,6 @@ return new class extends Migration {
             $table->id();
             $table->json('title');
             $table->text('description')->nullable();
-            $table->string('slug')->unique();     
-            $table->string('platform')->nullable();
             $table->string('url')->nullable();    
 
             // schedule
