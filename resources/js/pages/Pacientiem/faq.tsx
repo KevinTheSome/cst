@@ -1,6 +1,18 @@
-import { useLang } from '@/hooks/useLang';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
+
+// --- ICONS ---
+const Icons = {
+    Plus: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+    ),
+    Minus: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12h-15" /></svg>
+    ),
+    Chat: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" /></svg>
+    )
+};
 
 type FAQItemType = {
     question: string;
@@ -10,23 +22,19 @@ type FAQItemType = {
 const faqItems: FAQItemType[] = [
     {
         question: 'Kas ir hroniskas slimības cilmes šūnu terapija?',
-        answer:
-            'Tā ir personalizēta terapija, kuras mērķis ir stimulēt organisma šūnu atjaunošanu un uzlabot funkcionalitāti ilgstošu slimību gadījumos.',
+        answer: 'Tā ir personalizēta terapija, kuras mērķis ir stimulēt organisma šūnu atjaunošanu un uzlabot funkcionalitāti ilgstošu slimību gadījumos. Mēs izmantojam pacienta paša šūnas, lai mazinātu atgrūšanas risku.',
     },
     {
         question: 'Kā tiek sagatavotas cilmes šūnas?',
-        answer:
-            'Šūnas tiek izolētas, analizētas un “trenētas” mikrofluidikā, lai tās būtu drošas un efektīvas terapijas nodrošināšanai.',
+        answer: 'Šūnas tiek izolētas, analizētas un “trenētas” mikrofluidikā. Šis process notiek ISO klases tīrtelpās, nodrošinot augstāko drošības un efektivitātes līmeni pirms terapijas uzsākšanas.',
     },
     {
         question: 'Vai terapija ir droša?',
-        answer:
-            'Jā, terapija tiek veikta saskaņā ar klīniski pārbaudītiem protokoliem un ārstu uzraudzībā.',
+        answer: 'Jā, terapija tiek veikta saskaņā ar klīniski pārbaudītiem protokoliem un ārstu uzraudzībā. Pirms procedūras tiek veikta rūpīga pacienta veselības pārbaude.',
     },
     {
         question: 'Cik ilgs ir terapijas kurss?',
-        answer:
-            'Terapijas ilgums ir individuāls, balstoties uz pacienta veselības stāvokli un slimības smagumu.',
+        answer: 'Terapijas ilgums ir individuāls, balstoties uz pacienta veselības stāvokli un slimības smagumu. Parasti tas ietver vienu procedūru un sekojošu uzraudzības periodu 3-6 mēnešu garumā.',
     },
 ];
 
@@ -34,105 +42,122 @@ function FAQItem({ item, index }: { item: FAQItemType; index: number }) {
     const [open, setOpen] = useState(false);
 
     return (
-        <div className="group rounded-2xl border border-slate-100 bg-white/80 p-4 sm:p-5 shadow-sm shadow-slate-200/70 backdrop-blur transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-lg">
+        <div 
+            className={`group rounded-2xl border bg-white transition-all duration-300 ${
+                open 
+                ? 'border-emerald-500 shadow-md ring-1 ring-emerald-500/20' 
+                : 'border-slate-200 shadow-sm hover:border-emerald-300 hover:shadow-md'
+            }`}
+        >
             <button
                 onClick={() => setOpen((prev) => !prev)}
-                className="flex w-full items-center justify-between gap-4 text-left"
+                className="flex w-full items-start justify-between gap-4 p-6 text-left"
                 aria-expanded={open}
             >
-                <div className="flex items-start gap-3">
-                    <div className="mt-1 flex h-7 w-7 flex-none items-center justify-center rounded-full bg-emerald-50 text-xs font-semibold text-emerald-600 shadow-sm">
-                        {index + 1}
-                    </div>
-                    <div>
-                        <p className="text-sm font-semibold text-slate-900 sm:text-base">
-                            {item.question}
-                        </p>
-                    </div>
+                <div className="flex gap-4">
+                    <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-bold transition-colors ${
+                        open ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500 group-hover:bg-emerald-50 group-hover:text-emerald-600'
+                    }`}>
+                        {index + 1 < 10 ? `0${index + 1}` : index + 1}
+                    </span>
+                    <h3 className={`text-base font-semibold transition-colors ${
+                        open ? 'text-slate-900' : 'text-slate-700 group-hover:text-slate-900'
+                    }`}>
+                        {item.question}
+                    </h3>
                 </div>
 
-                <span
-                    className={`flex h-8 w-8 flex-none items-center justify-center rounded-full border border-emerald-100 bg-emerald-50 text-sm font-bold text-emerald-600 transition-transform ${
-                        open ? 'rotate-180' : ''
-                    }`}
-                >
-                    ⌃
+                <span className={`shrink-0 text-slate-400 transition-colors ${open ? 'text-emerald-500' : 'group-hover:text-emerald-500'}`}>
+                    {open ? <Icons.Minus className="h-5 w-5" /> : <Icons.Plus className="h-5 w-5" />}
                 </span>
             </button>
 
-            {open && (
-                <div className="mt-3 pl-10 text-sm text-slate-600 sm:text-[0.95rem]">
+            <div 
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                    open ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'
+                }`}
+            >
+                <div className="px-6 pb-6 pt-0 ml-10 text-sm leading-relaxed text-slate-600">
                     {item.answer}
                 </div>
-            )}
+            </div>
         </div>
     );
 }
 
 export default function ChronicFAQ() {
-    const { __ } = useLang();
-
     return (
         <>
-            <Head title={__('Bieži uzdotie jautājumi')} />
+            <Head title="Bieži uzdotie jautājumi" />
 
-            <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-[#eaf3ff] via-white to-[#e7f7f1]">
-                {/* Soft background orbs & grid */}
-                <div className="pointer-events-none absolute inset-0">
-                    <div className="absolute -top-32 left-[-40px] h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
-                    <div className="absolute top-1/3 right-[-60px] h-80 w-80 rounded-full bg-emerald-200/40 blur-3xl" />
-                    <div className="absolute bottom-[-80px] left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-teal-100/40 blur-3xl" />
-                    <div className="absolute inset-0 bg-[radial-gradient(#0f172a0d_1px,transparent_1px)] [background-size:18px_18px] opacity-40" />
+            <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
+                
+                {/* BACKGROUND TECH GRID */}
+                <div className="fixed inset-0 pointer-events-none z-0">
+                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+                    <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-emerald-400 opacity-20 blur-[100px]"></div>
+                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-sky-400 opacity-10 blur-[120px]"></div>
                 </div>
 
-                <section className="relative mx-auto flex min-h-screen max-w-5xl flex-col px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-                    {/* Header */}
-                    <div className="mx-auto mb-10 max-w-2xl text-center sm:mb-12">
-                        <span className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-emerald-500 shadow-sm shadow-emerald-100/60">
-                            FAQ
-                            <span className="h-1 w-1 rounded-full bg-emerald-400" />
-                            Cilmes šūnu terapija
-                        </span>
-
-                        <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-                            Bieži uzdotie jautājumi
-                        </h2>
-                        <p className="mt-3 text-sm text-slate-600 sm:text-base">
-                            Īsas un saprotamas atbildes par cilmes šūnu terapiju hronisku saslimšanu gadījumā –
-                            lai Jūs justos droši un informēti.
-                        </p>
-                    </div>
-
-                    {/* FAQ card wrapper */}
-                    <div className="mx-auto w-full max-w-4xl rounded-3xl border border-slate-100 bg-white/80 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-md sm:p-7 lg:p-8">
-                        <div className="mb-4 flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
-                            <div>
-                                <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
-                                    Jautājumi par terapiju
-                                </p>
-                                <p className="mt-1 text-sm text-slate-500">
-                                    Ja Jums rodas vēl kādi jautājumi, konsultējieties ar savu ārstu vai mūsu
-                                    speciālistiem.
-                                </p>
-                            </div>
-                            <div className="inline-flex items-center gap-2 rounded-2xl bg-emerald-50 px-3 py-1 text-xs text-emerald-700">
-                                <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                                Atbildēm ir informatīvs raksturs
-                            </div>
-                        </div>
-
-                        <div className="space-y-3">
-                            {faqItems.map((item, index) => (
-                                <FAQItem key={item.question} item={item} index={index} />
-                            ))}
+                <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+                    
+                    {/* Header Badge */}
+                    <div className="mb-8">
+                         <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-emerald-700">
+                            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                            Atbalsta Centrs
                         </div>
                     </div>
 
-                    {/* Small footer note */}
-                    <p className="mt-6 text-center text-xs text-slate-400">
-                        Šī informācija neaizstāj ārsta konsultāciju un individuālu medicīnisku izvērtējumu.
-                    </p>
-                </section>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                        
+                        {/* LEFT COLUMN: Context & Contact */}
+                        <div className="lg:col-span-4 lg:sticky lg:top-8 h-fit">
+                            <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-6">
+                                Bieži uzdotie <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-sky-600">
+                                    jautājumi
+                                </span>
+                            </h1>
+                            <p className="text-slate-600 text-lg mb-8 leading-relaxed">
+                                Atbildes uz populārākajiem jautājumiem par cilmes šūnu terapijas procesu, drošību un rezultātiem.
+                            </p>
+
+                            {/* Contact Card */}
+                            <div className="rounded-2xl bg-white p-6 border border-slate-200 shadow-sm relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-sky-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                                <div className="relative z-10">
+                                    <div className="h-10 w-10 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center mb-4">
+                                        <Icons.Chat className="w-5 h-5" />
+                                    </div>
+                                    <h4 className="font-bold text-slate-900">Neatradāt atbildi?</h4>
+                                    <p className="text-sm text-slate-500 mt-2 mb-4">
+                                        Mūsu speciālisti ir gatavi palīdzēt jums individuāli.
+                                    </p>
+                                    <a href="/ParMums/pievienojies-mums" className="text-sm font-semibold text-sky-600 hover:text-sky-700 hover:underline">
+                                        Sazināties ar mums &rarr;
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* RIGHT COLUMN: FAQ List */}
+                        <div className="lg:col-span-8">
+                            <div className="space-y-4">
+                                {faqItems.map((item, index) => (
+                                    <FAQItem key={item.question} item={item} index={index} />
+                                ))}
+                            </div>
+
+                            <div className="mt-8 border-t border-slate-200 pt-6">
+                                <p className="text-xs text-slate-400 text-center sm:text-left">
+                                    * Šī informācija ir informatīva un neaizstāj ārsta konsultāciju.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </>
     );

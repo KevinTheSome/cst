@@ -1,7 +1,21 @@
 import { useLang } from '@/hooks/useLang';
 import { Head, Link } from '@inertiajs/react';
 
-
+// --- Icons (Inline SVGs for performance/no dependencies) ---
+const Icons = {
+    ArrowRight: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+    ),
+    Check: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+    ),
+    User: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+    ),
+    Doctor: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" /></svg>
+    ),
+};
 
 const valueCards = [
     {
@@ -39,8 +53,6 @@ const stats = [
     { label: 'Partneru klīnikas', value: '12' },
 ];
 
-
-
 const ecosystemSteps = [
     {
         title: '1. Analīze',
@@ -56,7 +68,7 @@ const ecosystemSteps = [
     },
 ];
 
-function ArrowIcon({ className = '' }) {
+function ArrowIcon({ className = '' }: { className?: string }) {
     return (
         <svg viewBox="0 0 20 20" fill="currentColor" className={className} aria-hidden>
             <path
@@ -75,252 +87,162 @@ export default function Welcome() {
         <>
             <Head title={__('Sākumlapa')} />
 
-            <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-[#eef7ff] via-white to-[#ecf9f6] text-slate-900">
-                {/* soft blobs + grid */}
-                <div className="pointer-events-none absolute inset-0">
-                    <div className="absolute -top-24 left-8 h-72 w-72 rounded-full bg-sky-200/50 blur-3xl" />
-                    <div className="absolute top-52 right-[-40px] h-80 w-80 rounded-full bg-emerald-200/50 blur-3xl" />
-                    <div className="absolute inset-0 bg-[radial-gradient(#0f172a12_1px,transparent_1px)] [background-size:18px_18px] opacity-40" />
+            {/* MAIN WRAPPER (styles taken from the FIRST file) */}
+            <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
+
+                {/* BACKGROUND TECH GRID (from FIRST file) */}
+                <div className="fixed inset-0 pointer-events-none z-0">
+                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+                    <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-emerald-400 opacity-20 blur-[100px]"></div>
+                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-sky-400 opacity-10 blur-[120px]"></div>
                 </div>
 
-                {/* HERO */}
-                <section className="relative mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-14 sm:px-8 sm:py-16 lg:flex-row lg:items-center">
-                    {/* LEFT */}
-                    <div className="flex-1 space-y-7">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white/70 px-3 py-1 text-xs uppercase tracking-[0.35em] text-emerald-700 shadow-sm">
-                            <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.9)]" />
-                            SIA cilmes šunu tehnoloģijas
-                        </div>
+                <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-                        <h1 className="text-4xl font-semibold leading-tight text-slate-900 sm:text-5xl">
+                   
+                    {/* --- HERO (layout/content from SECOND file, but styling from FIRST) --- */}
+                    <main className="py-12 lg:py-20 text-center">
+                        <h1 className="mx-auto max-w-4xl text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl mb-6">
                             Cilmes šūnu diagnostika un terapija vienā platformā
                         </h1>
 
-                        <p className="max-w-xl text-lg leading-relaxed text-slate-600">
+                        <p className="mx-auto max-w-2xl text-lg text-slate-600 leading-relaxed mb-10">
                             RTU Biočipu laboratorija apvieno zinātni un inženieriju, lai cilmes šūnu terapijas kļūtu drošākas un pieejamākas.
                         </p>
 
-                        {/* BIG CENTER CTA */}
-                        <div className="flex w-full justify-center pt-1">
-                            <Link
-                                href="/anketa"
-                                className="group inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-sky-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-500/25 transition hover:-translate-y-0.5 hover:shadow-emerald-500/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 sm:text-lg"
-                            >
-                                Atvērt anketu
-                                <ArrowIcon className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                        {/* SPLIT CTA - use FIRST file card styles but SECOND file links/content */}
+                        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-2">
+                            {/* Patient Card (content from second) */}
+                            <Link href="/anketa?role=pacients" className="group relative flex flex-col items-start p-6 rounded-2xl border border-slate-200 bg-white hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-100 transition-all duration-300">
+                                <div className="mb-4 rounded-full bg-emerald-50 p-3 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                                    <Icons.User className="h-6 w-6" />
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-900">Esmu Pacients</h3>
+                                <p className="mt-1 text-sm text-slate-500 text-left">Meklēju risinājumu imunitātei, locītavām vai atlabšanai.</p>
+                                <div className="mt-4 flex items-center text-sm font-semibold text-emerald-600 group-hover:underline">
+                                    Aizpildīt anketu <Icons.ArrowRight className="ml-2 h-4 w-4" />
+                                </div>
+                            </Link>
+
+                            {/* Doctor Card (content from second) */}
+                            <Link href="/postdock-anketa?role=specialists" className="group relative flex flex-col items-start p-6 rounded-2xl border border-slate-200 bg-white hover:border-sky-400 hover:shadow-lg hover:shadow-sky-100 transition-all duration-300">
+                                <div className="mb-4 rounded-full bg-sky-50 p-3 text-sky-600 group-hover:bg-sky-600 group-hover:text-white transition-colors">
+                                    <Icons.Doctor className="h-6 w-6" />
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-900">Esmu Speciālists</h3>
+                                <p className="mt-1 text-sm text-slate-500 text-left">Vēlos sadarboties pētniecībā vai nosūtīt pacientus.</p>
+                                <div className="mt-4 flex items-center text-sm font-semibold text-sky-600 group-hover:underline">
+                                    Speciālista reģistrācija <Icons.ArrowRight className="ml-2 h-4 w-4" />
+                                </div>
                             </Link>
                         </div>
 
-                        {/* Specialist vs patient buttons */}
-                        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                            {[
-                                { label: 'Speciālisti', href: '/postdock-anketa?role=specialists' },
-                                { label: 'Pacienti', href: '/anketa?role=pacients' },
-                            ].map((cta) => (
-                                <Link key={cta.label} href={cta.href} className="cta-pill group">
-                                    <span className="cta-pill__accent">
-                                        <svg viewBox="0 0 1024 1024" height="24" width="24" aria-hidden>
-                                            <path
-                                                d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"
-                                                fill="#0f172a"
-                                            />
-                                            <path
-                                                d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"
-                                                fill="#0f172a"
-                                            />
-                                        </svg>
-                                    </span>
-                                    <span className="cta-pill__label">{cta.label}</span>
-                                </Link>
+                        {/* Trust Badges / Stats (styling from FIRST) */}
+                        <div className="mt-12 flex flex-wrap justify-center gap-8 text-slate-400 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all">
+                            {stats.map((s, i) => (
+                                <div key={i} className="flex flex-col items-center">
+                                    <span className="text-2xl font-bold text-slate-800">{s.value}</span>
+                                    <span className="text-xs uppercase tracking-wider">{s.label}</span>
+                                </div>
                             ))}
                         </div>
+                    </main>
 
-         
-                    </div>
-
-                    {/* RIGHT */}
-                    <div className="flex-1">
-                        <div className="relative overflow-hidden rounded-[40px] border border-white/70 bg-white/85 p-7 shadow-2xl shadow-slate-200 backdrop-blur">
-                            {/* soft circular glows */}
-                            <div className="pointer-events-none absolute -right-14 -top-14 h-40 w-40 rounded-full bg-sky-200/60 blur-3xl" />
-                            <div className="pointer-events-none absolute -left-16 -bottom-16 h-44 w-44 rounded-full bg-emerald-200/60 blur-3xl" />
-                            <div className="pointer-events-none absolute right-6 top-6 h-16 w-16 rounded-full border border-sky-200/60" />
-                            <div className="pointer-events-none absolute left-8 bottom-8 h-12 w-12 rounded-full border border-emerald-200/60" />
-
-                            <h2 className="text-xl font-semibold text-slate-900">Kāpēc cilmes šūnas?</h2>
-
-                            {/* ✅ Short, easy-scan lead */}
-                            <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                                Īsumā: tās palīdz atjaunot audus un imunitāti, balstoties uz pacienta bioloģiju.
-                            </p>
-
-                            {/* ✅ Replace long paragraphs with bullets */}
-                            <ul className="mt-4 space-y-2 text-sm leading-relaxed text-slate-600">
-                                <li className="flex gap-3">
-                                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
-                                    Var kļūt par dažādu audu šūnām, tāpēc der slimībām bez efektīviem medikamentiem.
-                                </li>
-                                <li className="flex gap-3">
-                                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-sky-500" />
-                                    Biočips ļauj droši “trenēt” šūnas ar ļoti mazu materiāla daudzumu.
-                                </li>
-                                <li className="flex gap-3">
-                                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
-                                    Rezultāts ir personalizēts protokols, nevis vidēji statistiska pieeja.
-                                </li>
-                            </ul>
-
-                            {/* Key benefits box stays, but tighter */}
-                            <div className="mt-6 grid gap-3 rounded-2xl bg-slate-50 p-4">
-                                <div className="flex items-start gap-3">
-                                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
-                                    <p className="text-sm text-slate-700">Personalizēti šūnu profili katram pacientam</p>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-sky-500" />
-                                    <p className="text-sm text-slate-700">Mikrofluidika ar minimālu parauga apjomu</p>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
-                                    <p className="text-sm text-slate-700">Klīniski pierādāmi protokoli ar ārstu iesaisti</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* VALUE / PROCESS */}
-                <section className="relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 pb-16 sm:px-8">
-                    {/* Value cards */}
-                    <div className="rounded-[32px] border border-white/70 bg-white p-8 shadow-xl shadow-slate-200/80">
-                        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                    {/* --- BENTO GRID FEATURES (use SECOND content but style from FIRST) --- */}
+                    <section className="py-16">
+                        <div className="mb-10 flex items-end justify-between">
                             <div>
-                                <p className="text-xs uppercase tracking-[0.4em] text-emerald-600">Kas notiek laboratorijā</p>
-                                <h3 className="mt-3 text-3xl font-semibold text-slate-900">Trīs soļi līdz personalizētai terapijai</h3>
+                                <h2 className="text-3xl font-bold text-slate-900">Tehnoloģija & Fokus</h2>
+                                <p className="mt-2 text-slate-600">Kāpēc mūsu metode ir pārāka par tradicionālo pieeju.</p>
                             </div>
-                            <div className="text-sm text-slate-500">No parauga līdz protokolam</div>
                         </div>
 
-                        <div className="mt-8 grid gap-6 md:grid-cols-3">
-                            {valueCards.map((card, i) => (
-                                <div
-                                    key={card.title}
-                                    className="group relative rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-slate-50 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-                                >
-                                    <div className="absolute -top-3 left-6 rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white shadow">
-                                        0{i + 1}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                            {/* Big Card - Core Tech (SECOND content) */}
+                            <div className="md:col-span-2 rounded-3xl bg-white p-8 shadow-sm border border-slate-200 relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
+                                <div className="relative z-10">
+                                    <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/50 px-3 py-1 text-xs text-emerald-700 mb-4">
+                                        Core Technology
                                     </div>
-                                    <h4 className="mt-3 text-lg font-semibold text-slate-900">{card.title}</h4>
-                                    <p className="mt-3 text-sm leading-relaxed text-slate-600">{card.body}</p>
-                                    <div className="mt-5 h-1 w-12 rounded-full bg-gradient-to-r from-emerald-400 to-sky-400 opacity-70 transition group-hover:w-20" />
+                                    <h3 className="text-2xl font-bold text-slate-900 mb-3">Biočipu precizitāte</h3>
+                                    <p className="text-slate-600 max-w-md leading-relaxed">
+                                        Atšķirībā no parastām mēģenēm, mikrofluidika ļauj testēt tūkstošiem scenāriju vienā skrējienā ar minimālu parauga daudzumu. Mēs redzam to, ko citi palaiž garām.
+                                    </p>
+                                    <ul className="mt-6 space-y-2">
+                                        {['Ātrāka analīze', 'Mazāks biomateriāla patēriņš', 'Augstāka šūnu izdzīvotība'].map(item => (
+                                            <li key={item} className="flex items-center gap-2 text-sm text-slate-700 font-medium">
+                                                <Icons.Check className="h-4 w-4 text-emerald-500" /> {item}
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Focus areas */}
-                    <div className="relative overflow-hidden rounded-[32px] border border-white/70 bg-gradient-to-r from-sky-50 via-white to-emerald-50 p-8 shadow-xl shadow-slate-200">
-                        <div className="absolute right-6 top-6 hidden h-28 w-28 rounded-full bg-white/60 blur-xl sm:block" />
-                        <p className="text-xs uppercase tracking-[0.4em] text-emerald-600">Galvenie virzieni</p>
-                        <h3 className="mt-3 text-2xl font-semibold text-slate-900">Kur mēs fokusējamies</h3>
-
-                        <div className="mt-6 grid gap-6 md:grid-cols-3">
-                            {focusAreas.map((area) => (
-                                <div
-                                    key={area.caption}
-                                    className="group rounded-2xl border border-white/80 bg-white/90 p-6 shadow-sm backdrop-blur transition hover:-translate-y-1 hover:shadow-lg"
-                                >
-                                    <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                                        {area.caption}
-                                    </div>
-                                    <p className="text-sm leading-relaxed text-slate-600">{area.description}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Ecosystem */}
-                    <div className="rounded-[32px] border border-white/70 bg-white p-8 shadow-xl shadow-slate-200">
-                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                            <div>
-                                <p className="text-xs uppercase tracking-[0.4em] text-emerald-600">Ekosistēma</p>
-                                <h3 className="mt-3 text-2xl font-semibold text-slate-900">Kā top personalizētā terapija</h3>
                             </div>
-                            <div className="text-sm text-slate-500">Datu plūsma · laboratorija · klīnika</div>
-                        </div>
 
-                        <div className="mt-6 grid gap-6 md:grid-cols-3">
-                            {ecosystemSteps.map((step, index) => (
-                                <div
-                                    key={step.title}
-                                    className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-slate-50 p-5 shadow-sm"
-                                >
-                                    <span className="absolute -right-3 top-3 text-5xl font-bold text-slate-100">{index + 1}</span>
-                                    <p className="text-sm font-semibold text-slate-900">{step.title}</p>
-                                    <p className="mt-2 text-sm leading-relaxed text-slate-600">{step.text}</p>
+                            {/* Tall Card - Process (SECOND content) - changed to WHITE background to match page style */}
+                            <div className="md:row-span-2 rounded-3xl bg-white p-8 text-slate-900 relative overflow-hidden">
+                                <div className="relative z-10 h-full flex flex-col">
+                                    <h3 className="text-xl font-bold mb-6">Terapijas soļi</h3>
+
+                                    <div className="space-y-8 flex-1">
+                                        {ecosystemSteps.map((step, i) => (
+                                            <div key={i} className="flex gap-4 group">
+                                                <div className="flex flex-col items-center">
+                                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-700 font-bold text-xs shadow-sm">
+                                                        {i + 1}
+                                                    </div>
+                                                    {i !== ecosystemSteps.length - 1 && <div className="h-full w-0.5 bg-slate-200 my-2 group-hover:bg-emerald-200 transition-colors"></div>}
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-semibold text-slate-900">{step.title}</h4>
+                                                    <p className="text-sm text-slate-600 mt-1">{step.text}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="mt-8 pt-6 border-t border-slate-100">
+                                        <p className="text-xs text-slate-500">ISO Klase + Ārstu uzraudzība</p>
+                                    </div>
                                 </div>
-                            ))}
+                            </div>
+
+                            {/* Small Cards (SECOND content) */}
+                            <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200 hover:border-emerald-300 transition-colors">
+                                <div className="h-10 w-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
+                                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                                </div>
+                                <h4 className="font-bold text-slate-900">Autoimunitāte</h4>
+                                <p className="text-sm text-slate-600 mt-2">Šūnu terapijas multiplās sklerozes un artrīta gadījumos.</p>
+                            </div>
+
+                            <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200 hover:border-emerald-300 transition-colors">
+                                <div className="h-10 w-10 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center mb-4">
+                                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                                </div>
+                                <h4 className="font-bold text-slate-900">Asinsrade & Atjaunošana</h4>
+                                <p className="text-sm text-slate-600 mt-2">Atbalsts pacientiem pēc ķīmijterapijas vai ilgstošām infekcijām.</p>
+                            </div>
+
+                        </div>
+                    </section>
+
+                    {/* --- FINAL CTA (FIRST styling, SECOND links) --- */}
+                    <div className="py-20 text-center">
+                        <h2 className="text-2xl font-bold text-slate-900">Gatavs uzzināt vairāk?</h2>
+                        <div className="mt-6 flex justify-center gap-4">
+                             <Link href="/anketa" className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-800">
+                                Sākt anketēšanu
+                             </Link>
+                             <a href="/ParMums/pievienojies-mums" className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-100 transition-colors">
+                                Sazināties ar mums
+                             </a>
                         </div>
                     </div>
-                </section>
+
+                </div>
             </div>
-
-            <style>
-                {`
-                .cta-pill {
-                    position: relative;
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 1rem;
-                    width: 11.5rem;
-                    height: 3.5rem;
-                    border-radius: 1.5rem;
-                    background: rgba(255, 255, 255, 0.9);
-                    border: 1px solid rgba(15, 23, 42, 0.12);
-                    color: #0f172a;
-                    text-decoration: none;
-                    font-weight: 600;
-                    font-size: 1rem;
-                    text-transform: uppercase;
-                    letter-spacing: 0.15em;
-                    overflow: hidden;
-                    transition: box-shadow 0.3s ease;
-                }
-                .cta-pill__accent {
-                    position: absolute;
-                    left: 6px;
-                    top: 6px;
-                    height: calc(100% - 12px);
-                    width: 3.4rem;
-                    border-radius: 1.25rem;
-                    background: linear-gradient(135deg, #34d399, #22d3ee);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    transition: width 0.45s ease;
-                    box-shadow: 0 10px 25px rgba(45, 212, 191, 0.35);
-                    z-index: 1;
-                }
-                .cta-pill__label {
-                    position: relative;
-                    z-index: 2;
-                    transform: translateX(15px);
-                    transition: transform 0.45s ease;
-                }
-                .cta-pill:hover .cta-pill__accent {
-                    width: calc(100% - 12px);
-                }
-                .cta-pill:hover .cta-pill__label {
-                    transform: translateX(8px);
-                    z-index: 0;
-                }
-                .cta-pill:hover {
-                    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.1);
-                }
-                `}
-            </style>
         </>
     );
 }
