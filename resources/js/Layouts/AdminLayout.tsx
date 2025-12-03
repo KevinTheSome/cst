@@ -95,6 +95,19 @@ const navSections: NavSection[] = [
         ],
     },
     {
+        label: 'Lectures',
+        items: [
+            {
+                id: 'all-forms',
+                label: 'Lecture codes',
+                description: 'Create lecture codes',
+                href: '/admin/lecture/codes',
+                badge: 'CRUD',
+                badgeTone: 'emerald',
+            },
+        ],
+    },
+    {
         label: 'Users',
         items: [
             {
