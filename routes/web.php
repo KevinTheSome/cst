@@ -11,6 +11,7 @@ use App\Http\Controllers\FormCodeController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FormTypeController;
+use App\Http\Controllers\VideoController;
 
 if (!function_exists('findPageComponent')) {
     function findPageComponent(string $name): string
@@ -125,6 +126,10 @@ Route::get('/admin/logout', function () {
     session()->forget('is_admin');   // remove the admin flag
     return redirect()->route('admin.login');
 })->name('admin.logout');
+
+// <<<<<<<<<< Video >>>>>>>>>>>>>>>>>>
+Route::post('/generate-temp-link/{filename}', [VideoCOntroller::class, 'generateTempLink'])->name('generate.temp.link');
+Route::get('/download/{token}', [VideoController::class, 'downloadTemp'])->name('download.temp');
 
 Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/', fn() => Inertia::render('Admin/dashboard'))->name('admin.dashboard');
