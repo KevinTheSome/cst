@@ -11,6 +11,7 @@ use App\Http\Controllers\FormCodeController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FormTypeController;
+use App\Http\Controllers\LectureController;
 
 if (!function_exists('findPageComponent')) {
     function findPageComponent(string $name): string
@@ -126,6 +127,8 @@ Route::get('/admin/logout', function () {
 })->name('admin.logout');
 
 Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
+
+    // <<<<<<<<<<<<<<<< ADMIN PAGES >>>>>>>>>>>>>>>>>>
     Route::get('/', fn() => Inertia::render('Admin/dashboard'))->name('admin.dashboard');
     Route::get('/content-studio', fn() => Inertia::render('Admin/contentStudio'))->name('admin.content');
     Route::get('/insights', fn() => Inertia::render('Admin/insights'))->name('admin.insights');
@@ -147,14 +150,9 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/anketa/create', [AnketaController::class, 'create'])->name('admin.anketa.create');
     Route::post('/anketa/store', [AnketaController::class, 'store'])->name('admin.anketa.store');
 
-    // SHOW ONE
     Route::get('/anketa/show/{id}', [AnketaController::class, 'show'])->name('admin.anketa.show');
-
-    // EDIT + UPDATE
     Route::get('/anketa/edit/{id}', [AnketaController::class, 'edit'])->name('admin.anketa.edit');
     Route::put('/anketa/update/{id}', [AnketaController::class, 'update'])->name('admin.anketa.update');
-
-    // DELETE
     Route::delete('/anketa/destroy/{id}', [AnketaController::class, 'destroy'])->name('admin.anketa.destroy');
 
     Route::get('/selector', [FormTypeController::class, 'index'])->name('admin.selector');
@@ -162,4 +160,11 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
     Route::get('/anketa/results', [AnketaController::class, 'resultsIndex'])->name('admin.anketa.results');
     Route::get('/anketa/results/{id}', [AnketaController::class, 'resultsShow'])->name('admin.anketa.results.show');
+
+    Route::get('/lecture/codes', [LectureController::class, 'index'])->name('codes.index');
+    Route::post('/lecture/codes', [LectureController::class, 'store'])->name('codes.store');
+    Route::get('/lecture/codes/{id}', [LectureController::class, 'show'])->name('codes.show');
+    Route::put('/lecture/codes/{id}', [LectureController::class, 'update'])->name('codes.update');
+    Route::delete('/lecture/codes/{id}', [LectureController::class, 'destroy'])->name('codes.destroy');
+    Route::post('/lecture/codes/{id}/regenerate', [LectureController::class, 'regenerate'])->name('codes.regenerate');
 });
