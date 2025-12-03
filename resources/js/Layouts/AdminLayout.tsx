@@ -113,6 +113,28 @@ const navSections: NavSection[] = [
                 badge: 'Shielded',
                 badgeTone: 'emerald',
             },
+            
+        ],
+    },
+    {
+        label: 'Online Training',
+        items: [
+            {
+                id: 'training-list',
+                label: 'Trainings',
+                description: 'List & manage online trainings',
+                href: '/admin/trainings',
+                badge: 'CRUD',
+                badgeTone: 'emerald',
+            },
+            {
+                id: 'training-create',
+                label: 'Create training',
+                description: 'Add a new online training',
+                href: '/admin/trainings/create',
+                badge: 'New',
+                badgeTone: 'sky',
+            },
         ],
     },
 ];
