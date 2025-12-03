@@ -162,7 +162,7 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
     Route::get('/anketa/results', [AnketaController::class, 'resultsIndex'])->name('admin.anketa.results');
     Route::get('/anketa/results/{id}', [AnketaController::class, 'resultsShow'])->name('admin.anketa.results.show');
-    // Online Trainings CRUD (explicit routes, match your existing conventions)
+    
 Route::get('/trainings', [OnlineTrainingController::class, 'index'])->name('admin.trainings');
 Route::get('/trainings/create', [OnlineTrainingController::class, 'create'])->name('admin.trainings.create');
 Route::post('/trainings/store', [OnlineTrainingController::class, 'store'])->name('admin.trainings.store');
