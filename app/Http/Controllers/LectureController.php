@@ -18,7 +18,7 @@ class LectureController extends Controller
         // load recent codes (adjust ordering / eager loads as needed)
         $codes = OnlineCode::orderBy('created_at', 'desc')->get();
 
-        return Inertia::render('Admin/Lecture/lectureCode', [
+        return Inertia::render('Admin/Apmaciba/lectureCode', [
             'codes' => $codes,
         ]);
     }
