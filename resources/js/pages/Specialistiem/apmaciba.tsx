@@ -3,19 +3,20 @@ import { Head } from '@inertiajs/react';
 import axios from 'axios';
 import { useState } from 'react';
 
-type Lecture = {
-    id: string;
-    title: string;
-    duration: string;
-    shortDesc?: string;
+type MultilingualTitle = {
+    lv?: string;
+    en?: string;
+    [key: string]: string | undefined;
 };
 
-const MOCK_LECTURES: Lecture[] = [
-    { id: 'l1', title: 'Ievads ATMP un MSC šūnu terapijā', duration: '10:24', shortDesc: 'Kas ir ATMP un kas jāzina pacientam.' },
-    { id: 'l2', title: 'Klīniskie pētījumi un drošība', duration: '18:12', shortDesc: 'Apskats par pierādījumiem un riskiem.' },
-    { id: 'l3', title: 'Kas notiek procedūras laikā?', duration: '12:05', shortDesc: 'Soli pa solim - ko sagaidīt.' },
-    { id: 'l4', title: 'Biežākie jautājumi un resursi', duration: '08:40', shortDesc: 'Praktiski padomi un saites.' },
-];
+type Lecture = {
+    id: string;
+    title: string | MultilingualTitle;
+    description?: string;
+    url?: string;
+    starts_at?: string;
+    ends_at?: string;
+};
 
 export default function OnlineTraining() {
     const { __ } = useLang();
@@ -154,18 +155,26 @@ export default function OnlineTraining() {
                                             <div key={lec.id} className="rounded-2xl border border-white/10 bg-slate-950/60 p-4">
                                                 <div className="flex items-start justify-between gap-3">
                                                     <div>
-                                                        <h3 className="text-sm font-semibold text-white">{lec.title}</h3>
-                                                        <p className="mt-2 text-xs text-slate-400">{lec.shortDesc}</p>
+                                                        <h3 className="text-sm font-semibold text-white">
+                                                            {typeof lec.title === 'string'
+                                                                ? lec.title
+                                                                : lec.title.lv || lec.title.en || 'Online Training'}
+                                                        </h3>
+                                                        <p className="mt-2 text-xs text-slate-400">{lec.description}</p>
+                                                        {lec.starts_at && (
+                                                            <p className="mt-1 text-xs text-slate-500">
+                                                                Sākums: {new Date(lec.starts_at).toLocaleString('lv-LV')}
+                                                            </p>
+                                                        )}
                                                     </div>
 
                                                     <div className="text-right">
-                                                        <div className="text-xs text-slate-400">{lec.duration}</div>
                                                         <button
                                                             type="button"
                                                             onClick={() => setSelectedLecture(lec.id)}
                                                             className="mt-3 inline-flex items-center gap-2 rounded-full bg-emerald-500 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-400"
                                                         >
-                                                            Sākt lekciju
+                                                            {lec.url ? 'Atvērt lekciju' : 'Sākt lekciju'}
                                                         </button>
                                                     </div>
                                                 </div>
@@ -186,7 +195,42 @@ export default function OnlineTraining() {
                                                 </button>
                                             </div>
                                             <div className="mt-3 text-sm text-slate-600">
-                                                <p>Lekcija ir pieejama. Reāla video/lekciju atskaņošana tiks pievienota vēlāk.</p>
+                                                {(() => {
+                                                    const lecture = lectures.find((l) => l.id === selectedLecture);
+                                                    if (!lecture) return <p>Lekcija nav atrasta.</p>;
+
+                                                    if (lecture.url) {
+                                                        return (
+                                                            <div>
+                                                                <p>Lekcija ir pieejama šeit:</p>
+                                                                <a
+                                                                    href={lecture.url}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-emerald-500 underline hover:text-emerald-400"
+                                                                >
+                                                                    Atvērt lekciju
+                                                                </a>
+                                                            </div>
+                                                        );
+                                                    }
+
+                                                    return (
+                                                        <div>
+                                                            <p>
+                                                                Lekcija:{' '}
+                                                                {typeof lecture.title === 'string'
+                                                                    ? lecture.title
+                                                                    : lecture.title.lv || lecture.title.en || 'Online Training'}
+                                                            </p>
+                                                            {lecture.description && <p className="mt-2">{lecture.description}</p>}
+                                                            {lecture.starts_at && (
+                                                                <p className="mt-2">Sākums: {new Date(lecture.starts_at).toLocaleString('lv-LV')}</p>
+                                                            )}
+                                                            {lecture.ends_at && <p>Beigas: {new Date(lecture.ends_at).toLocaleString('lv-LV')}</p>}
+                                                        </div>
+                                                    );
+                                                })()}
                                             </div>
                                         </div>
                                     )}

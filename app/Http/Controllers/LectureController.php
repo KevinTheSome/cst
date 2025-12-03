@@ -143,33 +143,20 @@ class LectureController extends Controller
         $code->last_used_by = $request->ip(); // or user ID if authenticated
         $code->save();
 
-        // Return lecture data (mock data for now, can be enhanced later)
-        $lectures = [
-            [
-                'id' => 'l1',
-                'title' => 'Ievads ATMP un MSC šūnu terapijā',
-                'duration' => '10:24',
-                'shortDesc' => 'Kas ir ATMP un kas jāzina pacientam.',
-            ],
-            [
-                'id' => 'l2',
-                'title' => 'Klīniskie pētījumi un drošība',
-                'duration' => '18:12',
-                'shortDesc' => 'Apskats par pierādījumiem un riskiem.',
-            ],
-            [
-                'id' => 'l3',
-                'title' => 'Kas notiek procedūras laikā?',
-                'duration' => '12:05',
-                'shortDesc' => 'Soli pa solim - ko sagaidīt.',
-            ],
-            [
-                'id' => 'l4',
-                'title' => 'Biežākie jautājumi un resursi',
-                'duration' => '08:40',
-                'shortDesc' => 'Praktiski padomi un saites.',
-            ],
-        ];
+        // Get all active online trainings
+        $trainings = \App\Models\OnlineTraining::where('is_active', true)->get();
+
+        // Return all active training data
+        $lectures = $trainings->map(function ($training) {
+            return [
+                'id' => $training->id,
+                'title' => $training->title,
+                'description' => $training->description,
+                'url' => $training->url,
+                'starts_at' => $training->starts_at,
+                'ends_at' => $training->ends_at,
+            ];
+        })->toArray();
 
         return response()->json([
             'valid' => true,
