@@ -12,6 +12,9 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FormTypeController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\OnlineTrainingController;
+
+use App\Http\Controllers\LectureController;
 
 if (!function_exists('findPageComponent')) {
     function findPageComponent(string $name): string
@@ -73,13 +76,12 @@ Route::get('pacientiem/psoriaze-terapija', fn() => Inertia::render('Pacientiem/p
 Route::get('pacientiem/krona-terapija', fn() => Inertia::render('Pacientiem/krona-terapija'))->name('Pacientiem/krona-terapija');
 Route::get('pacientiem/faq', fn() => Inertia::render('Pacientiem/faq'))->name('Pacientiem/faq');
 
-Route::get('Specialistiem/likumi', fn() => Inertia::render('Specialistiem/likumi'))->name('likumi');
 
 // <<<<<<<<<<<<<<< SPECIALISTIEM >>>>>>>>>>>>>>>>>
 
 Route::get('specialistiem/apmaciba', fn() => Inertia::render('Specialistiem/apmaciba'))->name('Specialistiem/apmaciba');
 Route::get('specialistiem/atmp', fn() => Inertia::render('Specialistiem/atmp'))->name('Specialistiem/atmp');
-
+Route::get('specialistiem/likumi', fn() => Inertia::render('Specialistiem/likumi'))->name('Specialistiem/likumi');
 
 // <<<<<<<<<<<<< Kaut kas no tās puses >>>>>>>>>>>
 
@@ -92,7 +94,7 @@ Route::get('/anketa', fn() => Inertia::render('anketa'))->name('anketa');
 Route::get('/postdock-anketa', fn() => Inertia::render('PostDockanketa'))->name('postdock-anketa');
 
 // <<<<<<<<<<<< ANKETAS >>>>>>>>>>>>>
-Route::get('/clinical-trials', fn()=> Inertia::render('clinicalTrials'))->name('clinicalTrials');
+Route::get('/clinical-trials', fn() => Inertia::render('clinicalTrials'))->name('clinicalTrials');
 Route::get(
     '/anketa-specialiste',
     fn() =>
@@ -117,6 +119,8 @@ Route::post('/anketa/store-answers', [AnketaController::class, 'storeAnswers'])-
 
 Route::post('/form-codes/verify', [FormCodeController::class, 'verify'])->name('formCodes.verify');
 
+Route::post('/lecture-codes/verify', [LectureController::class, 'verifyCode'])->name('lectureCodes.verify');
+
 // <<<<<<<<<< ADMIN >>>>>>>>>>>>>>>>>>
 
 Route::get('/admin/login', fn() => Inertia::render('Admin/login'))->name('admin.login');
@@ -132,6 +136,8 @@ Route::post('/generate-temp-link/{filename}', [VideoCOntroller::class, 'generate
 Route::get('/download/{token}', [VideoController::class, 'downloadTemp'])->name('download.temp');
 
 Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
+
+    // <<<<<<<<<<<<<<<< ADMIN PAGES >>>>>>>>>>>>>>>>>>
     Route::get('/', fn() => Inertia::render('Admin/dashboard'))->name('admin.dashboard');
     Route::get('/content-studio', fn() => Inertia::render('Admin/contentStudio'))->name('admin.content');
     Route::get('/insights', fn() => Inertia::render('Admin/insights'))->name('admin.insights');
@@ -153,14 +159,9 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/anketa/create', [AnketaController::class, 'create'])->name('admin.anketa.create');
     Route::post('/anketa/store', [AnketaController::class, 'store'])->name('admin.anketa.store');
 
-    // SHOW ONE
     Route::get('/anketa/show/{id}', [AnketaController::class, 'show'])->name('admin.anketa.show');
-
-    // EDIT + UPDATE
     Route::get('/anketa/edit/{id}', [AnketaController::class, 'edit'])->name('admin.anketa.edit');
     Route::put('/anketa/update/{id}', [AnketaController::class, 'update'])->name('admin.anketa.update');
-
-    // DELETE
     Route::delete('/anketa/destroy/{id}', [AnketaController::class, 'destroy'])->name('admin.anketa.destroy');
 
     Route::get('/selector', [FormTypeController::class, 'index'])->name('admin.selector');
@@ -168,4 +169,22 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
     Route::get('/anketa/results', [AnketaController::class, 'resultsIndex'])->name('admin.anketa.results');
     Route::get('/anketa/results/{id}', [AnketaController::class, 'resultsShow'])->name('admin.anketa.results.show');
+
+    Route::get('/trainings', [OnlineTrainingController::class, 'index'])->name('admin.trainings');
+    Route::get('/trainings/create', [OnlineTrainingController::class, 'create'])->name('admin.trainings.create');
+    Route::post('/trainings/store', [OnlineTrainingController::class, 'store'])->name('admin.trainings.store');
+
+    Route::get('/trainings/show/{id}', [OnlineTrainingController::class, 'show'])->name('admin.trainings.show');
+    Route::get('/trainings/edit/{id}', [OnlineTrainingController::class, 'edit'])->name('admin.trainings.edit');
+    Route::put('/trainings/update/{id}', [OnlineTrainingController::class, 'update'])->name('admin.trainings.update');
+
+    Route::delete('/trainings/destroy/{id}', [OnlineTrainingController::class, 'destroy'])->name('admin.trainings.destroy');
+
+
+    Route::get('/lecture/codes', [LectureController::class, 'index'])->name('codes.index');
+    Route::post('/lecture/codes', [LectureController::class, 'store'])->name('codes.store');
+    Route::get('/lecture/codes/{id}', [LectureController::class, 'show'])->name('codes.show');
+    Route::put('/lecture/codes/{id}', [LectureController::class, 'update'])->name('codes.update');
+    Route::delete('/lecture/codes/{id}', [LectureController::class, 'destroy'])->name('codes.destroy');
+    Route::post('/lecture/codes/{id}/regenerate', [LectureController::class, 'regenerate'])->name('codes.regenerate');
 });

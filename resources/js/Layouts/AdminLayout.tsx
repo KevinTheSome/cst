@@ -95,6 +95,19 @@ const navSections: NavSection[] = [
         ],
     },
     {
+        label: 'Lectures',
+        items: [
+            {
+                id: 'all-forms',
+                label: 'Lecture codes',
+                description: 'Create lecture codes',
+                href: '/admin/lecture/codes',
+                badge: 'CRUD',
+                badgeTone: 'emerald',
+            },
+        ],
+    },
+    {
         label: 'Users',
         items: [
             {
@@ -112,6 +125,28 @@ const navSections: NavSection[] = [
                 href: '/admin/security',
                 badge: 'Shielded',
                 badgeTone: 'emerald',
+            },
+            
+        ],
+    },
+    {
+        label: 'Online Training',
+        items: [
+            {
+                id: 'training-list',
+                label: 'Trainings',
+                description: 'List & manage online trainings',
+                href: '/admin/trainings',
+                badge: 'CRUD',
+                badgeTone: 'emerald',
+            },
+            {
+                id: 'training-create',
+                label: 'Create training',
+                description: 'Add a new online training',
+                href: '/admin/trainings/create',
+                badge: 'New',
+                badgeTone: 'sky',
             },
         ],
     },

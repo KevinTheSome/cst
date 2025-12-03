@@ -1,7 +1,7 @@
+import { useLang } from '@/hooks/useLang';
 import { Link, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { useState } from 'react';
-import { useLang } from '@/hooks/useLang';
 
 function Navbar() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -36,12 +36,7 @@ function Navbar() {
                 </Link>
 
                 {/* Hamburger menu for mobile + tablet + small desktops */}
-                <button
-                    className="btn z-30 p-2 lg:hidden"
-                    aria-label="Open menu"
-                    aria-expanded={sidebarOpen}
-                    onClick={() => setSidebarOpen(true)}
-                >
+                <button className="btn z-30 p-2 lg:hidden" aria-label="Open menu" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen(true)}>
                     <svg className="h-7 w-7 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
@@ -126,23 +121,20 @@ function Navbar() {
                         <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
                             <li>
                                 <Link
-                                    href="/Specialistiem/likumi"
+                                    href="/specialistiem/likumi"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
                                     {__('head.nav_specialists_laws')}
                                 </Link>
                             </li>
                             <li>
-                                <Link
-                                    href="#"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
+                                <Link href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
                                     {__('head.nav_specialists_plants')}
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    href="specialistiem/apmaciba"
+                                    href="/specialistiem/apmaciba"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
                                     {__('head.nav_specialists_training')}
@@ -285,20 +277,12 @@ function Navbar() {
             {/* Sidebar + overlay for mobile & tablet */}
             {sidebarOpen && (
                 <div className="fixed inset-0 z-40 flex lg:hidden">
-                    <div
-                        className="absolute inset-0 bg-black/40"
-                        onClick={() => setSidebarOpen(false)}
-                        aria-hidden="true"
-                    />
+                    <div className="absolute inset-0 bg-black/40" onClick={() => setSidebarOpen(false)} aria-hidden="true" />
 
                     <aside className="animate-slide-in-sidebar-left relative z-50 flex h-full w-80 max-w-full translate-x-0 flex-col bg-white text-green-700 shadow-lg transition-transform duration-300 ease-in-out">
                         <div className="flex items-center justify-between border-b border-green-700/10 px-6 py-4">
                             <img src="/bzl-site-icon-01.png" alt="Logo" className="h-8 w-auto" />
-                            <button
-                                className="btn text-green-700 btn-sm"
-                                aria-label="Close menu"
-                                onClick={() => setSidebarOpen(false)}
-                            >
+                            <button className="btn text-green-700 btn-sm" aria-label="Close menu" onClick={() => setSidebarOpen(false)}>
                                 ✕
                             </button>
                         </div>
@@ -317,13 +301,20 @@ function Navbar() {
                                         </summary>
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
-                                                <Link href="/clinical-trials" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link
+                                                    href="/clinical-trials"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     Klīniskie pētijumi
                                                 </Link>
                                             </li>
                                             <li>
                                                 <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
                                                     PostDock anketa
+                                                </Link>
+                                            </li>
+                                            <li>
                                                 <Link
                                                     href="/postdock-anketa"
                                                     className="block w-full hover:text-orange-400"
@@ -358,7 +349,7 @@ function Navbar() {
                                         <ul className="mt-1 ml-6 w-full">
                                             <li>
                                                 <Link
-                                                    href="/Specialistiem/likumi"
+                                                    href="/specialistiem/likumi"
                                                     className="block w-full hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
@@ -366,11 +357,7 @@ function Navbar() {
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link
-                                                    href="#"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
+                                                <Link href="#" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
                                                     {__('head.nav_specialists_plants')}
                                                 </Link>
                                             </li>
