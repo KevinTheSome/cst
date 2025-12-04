@@ -30,17 +30,22 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        // Set locale from session (with fallback) so all Lang::get() use the same locale
+        // Determine locale from session, or use default
         $locale = $request->session()->get('locale', config('app.locale'));
+        logger('Current locale: ' . $locale);
+
+        // Set Laravel locale **before any translations**
         App::setLocale($locale);
 
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
+        
 
         return [
             ...parent::share($request),
 
             // current locale for frontend
             'locale' => $locale,
+            
 
             // 🔹 All translation bundles you want in JS
             'lang' => [
