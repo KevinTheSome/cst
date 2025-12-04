@@ -8,7 +8,8 @@ class OnlineCode extends Model
 {
     protected $fillable = [
         'code',
-        'online_training_id',
+        'online_training_id',     // keep for compatibility
+        'online_training_ids',    // NEW: array of ids
         'max_uses',
         'used_count',
         'last_used_by',
@@ -23,11 +24,17 @@ class OnlineCode extends Model
         'valid_until' => 'datetime',
         'last_used_at' => 'datetime',
         'is_active' => 'boolean',
+        'online_training_ids' => 'array', // NEW
     ];
 
     public function training()
     {
         return $this->belongsTo(OnlineTraining::class, 'online_training_id');
+    }
+
+    // OnlineTraining.php
+    public function codes() {
+        return $this->belongsToMany(OnlineCode::class, 'online_code_training');
     }
 
     public function isValidNow(): bool
