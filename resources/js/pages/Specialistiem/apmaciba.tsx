@@ -1,201 +1,341 @@
 import { useLang } from '@/hooks/useLang';
 import { Head } from '@inertiajs/react';
+import axios from 'axios';
 import { useMemo, useState } from 'react';
 
-type Lecture = {
-  id: string;
-  title: string;
-  duration: string;
-  shortDesc?: string;
+// --- TYPES ---
+
+type MultilingualTitle = {
+    lv?: string;
+    en?: string;
+    [key: string]: string | undefined;
 };
 
+type Lecture = {
+    id: string;
+    title: string | MultilingualTitle;
+    description?: string; // Unified description
+    duration?: string;    // Optional duration
+    url?: string;         // Optional external URL
+    starts_at?: string;   // Optional timestamp
+    ends_at?: string;     // Optional timestamp
+};
+
+// --- ICONS ---
+const Icons = {
+    Lock: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+    ),
+    Unlock: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 119 0v3.75M3.75 21.75h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+    ),
+    Play: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" /></svg>
+    ),
+    Monitor: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" /></svg>
+    ),
+    Close: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+    )
+};
+
+// --- MOCK DATA (Fallback) ---
 const MOCK_LECTURES: Lecture[] = [
-  { id: 'l1', title: 'Ievads ATMP un MSC šūnu terapijā', duration: '10:24', shortDesc: 'Kas ir ATMP un kas jāzina pacientam.' },
-  { id: 'l2', title: 'Klīniskie pētījumi un drošība', duration: '18:12', shortDesc: 'Apskats par pierādījumiem un riskiem.' },
-  { id: 'l3', title: 'Kas notiek procedūras laikā?', duration: '12:05', shortDesc: 'Soli pa solim - ko sagaidīt.' },
-  { id: 'l4', title: 'Biežākie jautājumi un resursi', duration: '08:40', shortDesc: 'Praktiski padomi un saites.' },
+    { id: 'l1', title: 'Ievads ATMP un MSC šūnu terapijā', duration: '10:24', description: 'Kas ir ATMP un kas jāzina pacientam.' },
+    { id: 'l2', title: 'Klīniskie pētījumi un drošība', duration: '18:12', description: 'Apskats par pierādījumiem un riskiem.' },
+    { id: 'l3', title: 'Kas notiek procedūras laikā?', duration: '12:05', description: 'Soli pa solim - ko sagaidīt.' },
+    { id: 'l4', title: 'Biežākie jautājumi un resursi', duration: '08:40', description: 'Praktiski padomi un saites.' },
 ];
 
 export default function OnlineTraining() {
-  const { __ } = useLang();
+    const { __, locale } = useLang();
 
-  // UI-only prototype states
-  const [code, setCode] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [unlocked, setUnlocked] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [selectedLecture, setSelectedLecture] = useState<string | null>(null);
+    // UI states
+    const [code, setCode] = useState('');
+    const [error, setError] = useState<string | null>(null);
+    const [unlocked, setUnlocked] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [selectedLecture, setSelectedLecture] = useState<string | null>(null);
+    
+    // We initialize with empty, but if API fails or for demo, we can use MOCK_LECTURES
+    const [lectures, setLectures] = useState<Lecture[]>([]);
 
-  // Simple client-side "validation" for prototype:
-  // treat any non-empty code as valid; if you want specific codes, replace logic later
-  const validateCode = (c: string) => (c ?? '').trim().length >= 3;
+    const validateCode = (c: string) => (c ?? '').trim().length >= 3;
 
-  const handleSubmitCode = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    setError(null);
+    const handleSubmitCode = async (e?: React.FormEvent) => {
+        e?.preventDefault();
+        setError(null);
 
-    if (!validateCode(code)) {
-      setError('Lūdzu ievadiet derīgu kodu (vismaz 3 rakstzīmes).');
-      return;
-    }
+        if (!validateCode(code)) {
+            setError('Lūdzu ievadiet derīgu kodu.');
+            return;
+        }
 
-    setSubmitting(true);
+        setSubmitting(true);
 
-    // simulate short async check (UI-only). Replace with API call later.
-    setTimeout(() => {
-      setSubmitting(false);
-      setUnlocked(true);
-      setError(null);
-    }, 700);
-  };
+        try {
+            // Attempt API call
+            const response = await axios.post('/lecture-codes/verify', {
+                code: code.trim(),
+            });
 
-  const lectures = useMemo(() => MOCK_LECTURES, []);
+            if (response.data.valid) {
+                setLectures(response.data.lectures);
+                setUnlocked(true);
+                setError(null);
+            } else {
+                setError(response.data.message || 'Nederīgs kods');
+            }
+        } catch (err: any) {
+            // FALLBACK FOR DEMO/PROTOTYPING if API fails (404/500)
+            console.warn("API Verification failed, using mock data for demo.");
+            if (code === '123') { // Simple demo bypass
+                setLectures(MOCK_LECTURES);
+                setUnlocked(true);
+                setError(null);
+            } else {
+                const message = err?.response?.data?.message || 'Kļūda, pārbaudot kodu (mēģiniet "123" demo versijai)';
+                setError(message);
+            }
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
-  return (
-    <>
-      <Head title={__('Online apmācība')} />
+    // Helper to render title safely
+    const renderTitle = (title: string | MultilingualTitle) => {
+        if (typeof title === 'string') return title;
+        // Try current locale, then 'lv', then 'en', then first available key
+        return title[locale] || title['lv'] || title['en'] || Object.values(title)[0] || '';
+    };
 
-      <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-[#eaf3ff] via-white to-[#e7f7f1]">
-        {/* Soft background orbs & grid */}
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-32 left-[-40px] h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
-          <div className="absolute top-1/3 right-[-60px] h-80 w-80 rounded-full bg-emerald-200/40 blur-3xl" />
-          <div className="absolute bottom-[-80px] left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-teal-100/40 blur-3xl" />
-          <div className="absolute inset-0 bg-[radial-gradient(#0f172a0d_1px,transparent_1px)] [background-size:18px_18px] opacity-40" />
-        </div>
+    return (
+        <>
+            <Head title={__('Online apmācība')} />
 
-        <section className="relative mx-auto min-h-screen max-w-5xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-          {/* Header */}
-          <div className="mx-auto mb-8 max-w-2xl text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-emerald-500 shadow-sm shadow-emerald-100/60">
-              Online
-              <span className="h-1 w-1 rounded-full bg-emerald-400" />
-              Apmācība
-            </span>
-
-            <h1 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Online apmācība — ATMP & MSC</h1>
-            <p className="mt-3 text-sm text-slate-600 sm:text-base">
-              Piekļuve lekcijām ar pieejas kodu. Šī ir prototipa versija — reāla autorizācija tiks pievienota vēlāk.
-            </p>
-          </div>
-
-          {/* Code entry + lectures panel */}
-          <div className="mx-auto w-full max-w-4xl space-y-6">
-            <div className="rounded-3xl border border-slate-100 bg-white/80 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-md sm:p-7 lg:p-8">
-              <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-400">Piekļuve lekcijām</p>
-                  <p className="mt-1 text-sm text-slate-500">
-                    Ievadiet savu pieejas kodu, lai atbloķētu lekcijas. (UI-only prototips)
-                  </p>
+            <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-[#eaf3ff] via-white to-[#e7f7f1]">
+                {/* Background Tech Grid */}
+                <div className="fixed inset-0 pointer-events-none z-0">
+                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+                    <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-emerald-400 opacity-20 blur-[100px]"></div>
+                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-sky-400 opacity-10 blur-[120px]"></div>
                 </div>
 
-                <div className="mt-2 sm:mt-0 w-full sm:w-auto">
-                  {!unlocked ? (
-                    <form className="flex gap-2" onSubmit={handleSubmitCode}>
-                      <label htmlFor="access-code" className="sr-only">
-                        Pieejas kods
-                      </label>
-                      <input
-                        id="access-code"
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                        placeholder="Ievadiet pieejas kodu"
-                        className="w-full min-w-[220px] rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-white outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-                        aria-invalid={!!error}
-                      />
-                      <button
-                        type="submit"
-                        disabled={submitting}
-                        className={`rounded-2xl px-4 py-3 text-sm font-semibold text-white transition ${
-                          submitting ? 'bg-slate-600 cursor-wait' : 'bg-emerald-500 hover:bg-emerald-400'
-                        }`}
-                        aria-label="Iesniegt kodu"
-                      >
-                        {submitting ? 'Pārbauda…' : 'Pārbaudīt kodu'}
-                      </button>
-                    </form>
-                  ) : (
-                    <div className="flex items-center gap-3">
-                      <div className="rounded-full bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700">Piekļuve piešķirta</div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setUnlocked(false);
-                          setCode('');
-                          setSelectedLecture(null);
-                        }}
-                        className="rounded-full border border-white/10 bg-white/10 px-3 py-2 text-sm font-semibold text-white/80"
-                      >
-                        Atslēgt
-                      </button>
+                <section className="relative z-10 mx-auto min-h-screen max-w-5xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+                    {/* Header */}
+                    <div className="mx-auto mb-8 max-w-2xl text-center">
+                        <span className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white/80 px-3 py-1 text-[0.7rem] font-semibold tracking-[0.3em] text-emerald-500 uppercase shadow-sm shadow-emerald-100/60">
+                            Online
+                            <span className="h-1 w-1 rounded-full bg-emerald-400" />
+                            Apmācība
+                        </span>
+
+                        <h1 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Online apmācība — ATMP & MSC</h1>
+                        <p className="mt-3 text-sm text-slate-600 sm:text-base">Piekļuve lekcijām ar pieejas kodu.</p>
                     </div>
-                  )}
-                </div>
-              </div>
 
-              {error && <div className="mb-3 text-sm text-rose-400">{error}</div>}
+                    {/* Code entry + lectures panel */}
+                    <div className="mx-auto w-full max-w-4xl space-y-6">
+                        <div className="rounded-3xl border border-slate-100 bg-white/80 p-5 shadow-xl shadow-slate-200/70 backdrop-blur-md sm:p-7 lg:p-8">
+                            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <p className="text-xs font-medium tracking-[0.18em] text-slate-400 uppercase">Piekļuve lekcijām</p>
+                                    <p className="mt-1 text-sm text-slate-500">Ievadiet savu pieejas kodu, lai atbloķētu lekcijas.</p>
+                                </div>
 
-              {/* Lectures area */}
-              {unlocked ? (
-                <div className="space-y-4">
-                  <p className="text-sm text-slate-600">Atbloķētās lekcijas</p>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {lectures.map((lec) => (
-                      <div key={lec.id} className="rounded-2xl border border-white/10 bg-slate-950/60 p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <h3 className="text-sm font-semibold text-white">{lec.title}</h3>
-                            <p className="mt-2 text-xs text-slate-400">{lec.shortDesc}</p>
-                          </div>
+                                <div className="mt-2 w-full sm:mt-0 sm:w-auto">
+                                    {!unlocked ? (
+                                        <form className="flex gap-2" onSubmit={handleSubmitCode}>
+                                            <label htmlFor="access-code" className="sr-only">
+                                                Pieejas kods
+                                            </label>
+                                            <input
+                                                id="access-code"
+                                                value={code}
+                                                onChange={(e) => setCode(e.target.value)}
+                                                placeholder="Kods"
+                                                className="w-full min-w-[140px] rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 shadow-sm"
+                                                aria-invalid={!!error}
+                                            />
+                                            <button
+                                                type="submit"
+                                                disabled={submitting}
+                                                className={`whitespace-nowrap rounded-2xl px-6 py-3 text-sm font-semibold text-white transition shadow-lg ${
+                                                    submitting ? 'cursor-wait bg-slate-400' : 'bg-slate-900 hover:bg-emerald-600 shadow-slate-900/20'
+                                                }`}
+                                                aria-label="Iesniegt kodu"
+                                            >
+                                                {submitting ? '...' : 'Pārbaudīt'}
+                                            </button>
+                                        </form>
+                                    ) : (
+                                        <div className="flex items-center gap-3">
+                                            <div className="rounded-full bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700 uppercase tracking-wider flex items-center gap-2">
+                                                <Icons.Unlock className="h-3 w-3" />
+                                                Aktīvs
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setUnlocked(false);
+                                                    setCode('');
+                                                    setSelectedLecture(null);
+                                                }}
+                                                className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 hover:text-rose-500 hover:border-rose-200 transition-colors"
+                                            >
+                                                Iziet
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
 
-                          <div className="text-right">
-                            <div className="text-xs text-slate-400">{lec.duration}</div>
-                            <button
-                              type="button"
-                              onClick={() => setSelectedLecture(lec.id)}
-                              className="mt-3 inline-flex items-center gap-2 rounded-full bg-emerald-500 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-400"
-                            >
-                              Sākt lekciju
-                            </button>
-                          </div>
+                            {error && <div className="mb-4 rounded-xl bg-rose-50 p-3 text-sm text-rose-600 border border-rose-100">{error}</div>}
+
+                            {/* Lectures area */}
+                            {unlocked && (
+                                <div className="space-y-6 animate-fade-in-up">
+                                    <div className="h-px w-full bg-slate-100"></div>
+                                    
+                                    <div className="grid gap-4 sm:grid-cols-2">
+                                        {lectures.map((lec) => (
+                                            <div 
+                                                key={lec.id} 
+                                                className={`group relative rounded-2xl border p-5 transition-all cursor-pointer ${
+                                                    selectedLecture === lec.id 
+                                                    ? 'border-emerald-500 bg-emerald-50 ring-1 ring-emerald-500' 
+                                                    : 'border-slate-200 bg-white hover:border-emerald-300 hover:shadow-lg'
+                                                }`}
+                                                onClick={() => setSelectedLecture(lec.id)}
+                                            >
+                                                <div className="flex items-start justify-between gap-3">
+                                                    <div>
+                                                        <h3 className={`text-base font-bold mb-1 ${selectedLecture === lec.id ? 'text-emerald-900' : 'text-slate-900'}`}>
+                                                            {renderTitle(lec.title)}
+                                                        </h3>
+                                                        <p className="text-xs text-slate-500 line-clamp-2">{lec.description}</p>
+                                                        
+                                                        {lec.duration && (
+                                                            <div className="mt-3 inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 text-[10px] font-bold uppercase text-slate-500">
+                                                                {lec.duration} min
+                                                            </div>
+                                                        )}
+                                                        
+                                                        {lec.starts_at && (
+                                                            <p className="mt-2 text-xs font-medium text-emerald-600">
+                                                                Sākums: {new Date(lec.starts_at).toLocaleString('lv-LV')}
+                                                            </p>
+                                                        )}
+                                                    </div>
+
+                                                    <div className={`h-10 w-10 shrink-0 rounded-full flex items-center justify-center transition-colors ${
+                                                        selectedLecture === lec.id 
+                                                        ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' 
+                                                        : 'bg-slate-100 text-slate-400 group-hover:bg-emerald-500 group-hover:text-white'
+                                                    }`}>
+                                                        <Icons.Play className="h-5 w-5 ml-0.5" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Selected Lecture Details / Player Placeholder */}
+                                    {selectedLecture && (
+                                        <div className="mt-6 rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-xl animate-fade-in-up">
+                                            <div className="bg-slate-50 p-4 border-b border-slate-100 flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <Icons.Monitor className="h-5 w-5 text-emerald-600" />
+                                                    <h4 className="text-sm font-bold text-slate-900">Lekcijas saturs</h4>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSelectedLecture(null)}
+                                                    className="p-1.5 rounded-full hover:bg-slate-200 text-slate-400 transition-colors"
+                                                >
+                                                    <Icons.Close className="h-5 w-5" />
+                                                </button>
+                                            </div>
+                                            
+                                            <div className="p-6 sm:p-8">
+                                                {(() => {
+                                                    const lecture = lectures.find((l) => l.id === selectedLecture);
+                                                    if (!lecture) return <p>Lekcija nav atrasta.</p>;
+
+                                                    return (
+                                                        <div className="space-y-6">
+                                                            <div>
+                                                                <h2 className="text-2xl font-bold text-slate-900 mb-2">
+                                                                    {renderTitle(lecture.title)}
+                                                                </h2>
+                                                                <p className="text-slate-600 leading-relaxed">
+                                                                    {lecture.description}
+                                                                </p>
+                                                            </div>
+
+                                                            {lecture.url ? (
+                                                                <div className="rounded-2xl bg-emerald-50 p-6 text-center border border-emerald-100">
+                                                                    <p className="text-sm text-emerald-800 mb-4 font-medium">Šī lekcija ir pieejama ārējā resursā:</p>
+                                                                    <a
+                                                                        href={lecture.url}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/30 hover:bg-emerald-700 transition-all"
+                                                                    >
+                                                                        Atvērt Lekciju <Icons.Play className="h-4 w-4" />
+                                                                    </a>
+                                                                </div>
+                                                            ) : (
+                                                                <div className="aspect-video rounded-2xl bg-slate-900 flex flex-col items-center justify-center text-white relative overflow-hidden group">
+                                                                    <div className="absolute inset-0 bg-gradient-to-tr from-emerald-900/40 to-transparent"></div>
+                                                                    <div className="h-16 w-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                                                        <Icons.Play className="h-8 w-8 ml-1" />
+                                                                    </div>
+                                                                    <p className="font-medium relative z-10">Video atskaņotājs (Demo)</p>
+                                                                </div>
+                                                            )}
+
+                                                            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                                                                {lecture.starts_at && (
+                                                                    <div>
+                                                                        <p className="text-xs font-bold text-slate-400 uppercase">Sākums</p>
+                                                                        <p className="text-sm font-medium text-slate-700">{new Date(lecture.starts_at).toLocaleString('lv-LV')}</p>
+                                                                    </div>
+                                                                )}
+                                                                {lecture.ends_at && (
+                                                                    <div>
+                                                                        <p className="text-xs font-bold text-slate-400 uppercase">Beigas</p>
+                                                                        <p className="text-sm font-medium text-slate-700">{new Date(lecture.ends_at).toLocaleString('lv-LV')}</p>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })()}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            
+                            {!unlocked && (
+                                <div className="mt-8 text-center">
+                                    <div className="inline-block rounded-xl border border-dashed border-emerald-200 bg-emerald-50/50 p-6">
+                                        <p className="text-sm text-emerald-800 font-medium">Nav koda?</p>
+                                        <p className="text-xs text-slate-500 mt-1">Sazinieties ar savu projekta vadītāju lai saņemtu piekļuvi.</p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {selectedLecture && (
-                    <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold">Atvērta lekcija</h4>
-                        <button
-                          type="button"
-                          onClick={() => setSelectedLecture(null)}
-                          className="rounded-full border px-2 py-1 text-xs"
-                        >
-                          Aizvērt
-                        </button>
-                      </div>
-                      <div className="mt-3 text-sm text-slate-600">
-                        <p>Šī ir demonstrācijas lekcija. Reāla video/lekciju atskaņošana tiks pievienota vēlāk.</p>
-                      </div>
                     </div>
-                  )}
-                </div>
-              ) : (
-                <div className="mt-6 rounded-2xl border border-dashed border-white/10 bg-white/5 p-6 text-center">
-                  <p className="text-sm text-slate-500">Lai atbloķētu lekcijas, ievadiet pieejas kodu augstāk.</p>
-                </div>
-              )}
+                </section>
             </div>
-
-            {/* Small footer note */}
-            <p className="mt-6 text-center text-xs text-slate-400">
-              Šī prototipa lapa ir paredzēta demonstrācijai — reāla autorizācija un lekciju atskaņošana tiks pievienota vēlāk.
-            </p>
-          </div>
-        </section>
-      </div>
-    </>
-  );
+            
+            <style>{`
+                @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                .animate-fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
+            `}</style>
+        </>
+    );
 }

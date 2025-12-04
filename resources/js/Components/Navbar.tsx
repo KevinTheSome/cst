@@ -7,7 +7,7 @@ function Navbar() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const { props } = usePage<any>();
-    const currentLocale = props.locale || 'lv';
+    const currentLocale = props.locale; // always defined from middleware
 
     const { __ } = useLang(); // <--- translation helper
 
@@ -16,7 +16,7 @@ function Navbar() {
 
         try {
             await axios.post('/locale', { locale });
-            router.reload({ only: ['lang', 'locale'] });
+            router.visit(window.location.pathname, { replace: true });
         } catch (error) {
             console.error('Language switch failed:', error);
             alert('Failed to switch language. Please try again.');
