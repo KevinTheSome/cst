@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\OnlineCode;
+use App\Models\OnlineTraining;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -15,11 +16,12 @@ class LectureController extends Controller
      */
     public function index()
     {
-        // load recent codes (adjust ordering / eager loads as needed)
         $codes = OnlineCode::orderBy('created_at', 'desc')->get();
+        $trainings = \App\Models\OnlineTraining::orderBy('starts_at', 'desc')->get();
 
         return Inertia::render('Admin/Apmaciba/lectureCode', [
             'codes' => $codes,
+            'trainings' => $trainings,
         ]);
     }
 
@@ -30,14 +32,15 @@ class LectureController extends Controller
     {
         $data = $request->validate([
             'code' => 'nullable|string|unique:online_codes,code',
-            'online_training_id' => 'nullable|integer',
+            'online_training_ids' => 'nullable|array',
+            'online_training_ids.*' => 'integer|exists:online_trainings,id',
             'max_uses' => 'nullable|integer|min:0',
             'valid_from' => 'nullable|date',
             'valid_until' => 'nullable|date|after_or_equal:valid_from',
             'is_active' => 'sometimes|boolean',
         ]);
 
-        // generate code if not provided
+        // Auto-generate code if empty
         if (empty($data['code'])) {
             do {
                 $generated = strtoupper(Str::random(8));
@@ -45,16 +48,15 @@ class LectureController extends Controller
             $data['code'] = $generated;
         }
 
+        // Create code
         $code = OnlineCode::create([
             'code' => $data['code'],
-            'online_training_id' => $data['online_training_id'] ?? null,
             'max_uses' => $data['max_uses'] ?? 0,
             'used_count' => 0,
-            'last_used_by' => null,
             'valid_from' => $data['valid_from'] ?? null,
             'valid_until' => $data['valid_until'] ?? null,
-            'last_used_at' => null,
-            'is_active' => isset($data['is_active']) ? (bool) $data['is_active'] : true,
+            'is_active' => $data['is_active'] ?? true,
+            'online_training_ids' => $data['online_training_ids'] ?? [],
         ]);
 
         return response()->json(['ok' => true, 'code' => $code], 201);
@@ -78,23 +80,22 @@ class LectureController extends Controller
 
         $data = $request->validate([
             'code' => ['nullable', 'string', Rule::unique('online_codes', 'code')->ignore($code->id)],
-            'online_training_id' => 'nullable|integer',
+            'online_training_ids' => 'nullable|array',
+            'online_training_ids.*' => 'nullable|integer|exists:online_trainings,id',
             'max_uses' => 'nullable|integer|min:0',
             'valid_from' => 'nullable|date',
             'valid_until' => 'nullable|date|after_or_equal:valid_from',
             'is_active' => 'sometimes|boolean',
         ]);
 
-        if (!empty($data['code'])) {
-            $code->code = $data['code'];
-        }
-
-        $code->online_training_id = $data['online_training_id'] ?? $code->online_training_id;
+        $code->code = $data['code'] ?? $code->code;
+        $code->online_training_ids = $data['online_training_ids'] ?? $code->online_training_ids;
         $code->max_uses = $data['max_uses'] ?? $code->max_uses;
         $code->valid_from = $data['valid_from'] ?? $code->valid_from;
         $code->valid_until = $data['valid_until'] ?? $code->valid_until;
-        if (isset($data['is_active']))
+        if (isset($data['is_active'])) {
             $code->is_active = (bool) $data['is_active'];
+        }
 
         $code->save();
 
@@ -143,20 +144,34 @@ class LectureController extends Controller
         $code->last_used_by = $request->ip(); // or user ID if authenticated
         $code->save();
 
-        // Get all active online trainings
-        $trainings = \App\Models\OnlineTraining::where('is_active', true)->get();
+        $lectures = [];
 
-        // Return all active training data
-        $lectures = $trainings->map(function ($training) {
-            return [
-                'id' => $training->id,
-                'title' => $training->title,
-                'description' => $training->description,
-                'url' => $training->url,
-                'starts_at' => $training->starts_at,
-                'ends_at' => $training->ends_at,
-            ];
-        })->toArray();
+        if (!empty($code->online_training_ids)) {
+            // Only return trainings assigned to this code
+            $trainings = OnlineTraining::whereIn('id', $code->online_training_ids)
+                ->where('is_active', true)
+                ->get();
+
+            $lectures = $trainings->map(fn($t) => [
+                'id' => $t->id,
+                'title' => $t->title,
+                'description' => $t->description,
+                'url' => $t->url,
+                'starts_at' => $t->starts_at,
+                'ends_at' => $t->ends_at,
+            ])->toArray();
+        } else {
+            // Fallback: all active trainings (for backwards compatibility)
+            $trainings = OnlineTraining::where('is_active', true)->get();
+            $lectures = $trainings->map(fn($t) => [
+                'id' => $t->id,
+                'title' => $t->title,
+                'description' => $t->description,
+                'url' => $t->url,
+                'starts_at' => $t->starts_at,
+                'ends_at' => $t->ends_at,
+            ])->toArray();
+        }
 
         return response()->json([
             'valid' => true,
