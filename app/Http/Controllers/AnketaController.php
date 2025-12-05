@@ -15,95 +15,95 @@ class AnketaController extends Controller
     /**
      * Admin: list stored form data
      */
-// app/Http/Controllers/AnketaController.php
+    // app/Http/Controllers/AnketaController.php
 
-public function index(Request $request)
-{
-    // Savācam filtrus no query string
-    $filters = $request->only([
-        'type',      // filtrs pēc veida (piem., public/private vai kas tev tur ir)
-        'code',      // filtrs pēc koda
-        'from',      // no kura datuma (YYYY-MM-DD)
-        'to',        // līdz kuram datumam (YYYY-MM-DD)
-        'search',    // brīvteksta meklēšana
-        'orderBy',   // kolonna, pēc kā kārtot
-        'orderDir',  // asc / desc
-    ]);
+    public function index(Request $request)
+    {
+        // Savācam filtrus no query string
+        $filters = $request->only([
+            'type',      // filtrs pēc veida (piem., public/private vai kas tev tur ir)
+            'code',      // filtrs pēc koda
+            'from',      // no kura datuma (YYYY-MM-DD)
+            'to',        // līdz kuram datumam (YYYY-MM-DD)
+            'search',    // brīvteksta meklēšana
+            'orderBy',   // kolonna, pēc kā kārtot
+            'orderDir',  // asc / desc
+        ]);
 
-    $query = Form::query();
+        $query = Form::query();
 
-    /*
-     * TYPE filtrs
-     * Šeit pieņemu, ka "type" loģiski atbilst Form kolonnai "code" vai kādam tavam laukam.
-     * Ja tev Form tabulā ir atsevišķa kolonna "type", nomaini where('code'...) uz where('type'...).
-     */
-    if (!empty($filters['type'])) {
-        $query->where('code', $filters['type']);
-    }
+        /*
+         * TYPE filtrs
+         * Šeit pieņemu, ka "type" loģiski atbilst Form kolonnai "code" vai kādam tavam laukam.
+         * Ja tev Form tabulā ir atsevišķa kolonna "type", nomaini where('code'...) uz where('type'...).
+         */
+        if (!empty($filters['type'])) {
+            $query->where('code', $filters['type']);
+        }
 
-    // FILTRS pēc konkrēta koda (piemēram, daļēja atbilstība)
-    if (!empty($filters['code'])) {
-        $query->where('code', 'like', '%' . $filters['code'] . '%');
-    }
+        // FILTRS pēc konkrēta koda (piemēram, daļēja atbilstība)
+        if (!empty($filters['code'])) {
+            $query->where('code', 'like', '%' . $filters['code'] . '%');
+        }
 
-    // DATUMA FILTRI (time_when_completed -> šeit izmantojam created_at kā izpildes laiku)
-    if (!empty($filters['from'])) {
-        $query->whereDate('created_at', '>=', $filters['from']);
-    }
+        // DATUMA FILTRI (time_when_completed -> šeit izmantojam created_at kā izpildes laiku)
+        if (!empty($filters['from'])) {
+            $query->whereDate('created_at', '>=', $filters['from']);
+        }
 
-    if (!empty($filters['to'])) {
-        $query->whereDate('created_at', '<=', $filters['to']);
-    }
+        if (!empty($filters['to'])) {
+            $query->whereDate('created_at', '<=', $filters['to']);
+        }
 
-    // BRĪVTEKSTA SEARCH (meklējam kodā un title LV/EN)
-    if (!empty($filters['search'])) {
-        $search = $filters['search'];
+        // BRĪVTEKSTA SEARCH (meklējam kodā un title LV/EN)
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
 
-        $query->where(function ($q) use ($search) {
-            $q->where('code', 'like', '%' . $search . '%')
-                ->orWhere('title->lv', 'like', '%' . $search . '%')
-                ->orWhere('title->en', 'like', '%' . $search . '%');
-        });
-    }
+            $query->where(function ($q) use ($search) {
+                $q->where('code', 'like', '%' . $search . '%')
+                    ->orWhere('title->lv', 'like', '%' . $search . '%')
+                    ->orWhere('title->en', 'like', '%' . $search . '%');
+            });
+        }
 
-    // ORDER BY
-    $allowedOrderBy = ['id', 'code', 'created_at'];
-    $orderBy = in_array($filters['orderBy'] ?? '', $allowedOrderBy, true)
-        ? $filters['orderBy']
-        : 'created_at';
+        // ORDER BY
+        $allowedOrderBy = ['id', 'code', 'created_at'];
+        $orderBy = in_array($filters['orderBy'] ?? '', $allowedOrderBy, true)
+            ? $filters['orderBy']
+            : 'created_at';
 
-    $orderDir = in_array($filters['orderDir'] ?? '', ['asc', 'desc'], true)
-        ? $filters['orderDir']
-        : 'desc';
+        $orderDir = in_array($filters['orderDir'] ?? '', ['asc', 'desc'], true)
+            ? $filters['orderDir']
+            : 'desc';
 
-    $forms = $query->orderBy($orderBy, $orderDir)->get();
+        $forms = $query->orderBy($orderBy, $orderDir)->get();
 
-    $formData = $forms->map(function ($form) {
-        return [
-            'id' => $form->id,
-            'code' => $form->code,
-            'title' => $form->title,
-            'created_at' => $form->created_at?->toDateTimeString(),
-            'data' => [
+        $formData = $forms->map(function ($form) {
+            return [
+                'id' => $form->id,
+                'code' => $form->code,
                 'title' => $form->title,
-                'fields' => $form->data['fields'] ?? [],
-            ],
-        ];
-    });
+                'created_at' => $form->created_at?->toDateTimeString(),
+                'data' => [
+                    'title' => $form->title,
+                    'fields' => $form->data['fields'] ?? [],
+                ],
+            ];
+        });
 
-    return Inertia::render('Admin/Anketa/indexAnketa', [
-        'formData' => $formData,
-        'filters'  => [
-            'type'     => $filters['type'] ?? '',
-            'code'     => $filters['code'] ?? '',
-            'from'     => $filters['from'] ?? '',
-            'to'       => $filters['to'] ?? '',
-            'search'   => $filters['search'] ?? '',
-            'orderBy'  => $orderBy,
-            'orderDir' => $orderDir,
-        ],
-    ]);
-}
+        return Inertia::render('Admin/Anketa/indexAnketa', [
+            'formData' => $formData,
+            'filters' => [
+                'type' => $filters['type'] ?? '',
+                'code' => $filters['code'] ?? '',
+                'from' => $filters['from'] ?? '',
+                'to' => $filters['to'] ?? '',
+                'search' => $filters['search'] ?? '',
+                'orderBy' => $orderBy,
+                'orderDir' => $orderDir,
+            ],
+        ]);
+    }
 
 
     /**
@@ -375,7 +375,7 @@ public function index(Request $request)
         // normalize title (title may be json or string)
         $title = is_array($form->title)
             ? $form->title
-            : (json_decode($form->title, true) ?? ['lv' => (string)$form->title, 'en' => (string)$form->title]);
+            : (json_decode((string) $form->title, true) ?? ['lv' => (string) $form->title, 'en' => (string) $form->title]);
 
         // normalize fields from data
         $schema = is_array($form->data) ? $form->data : json_decode($form->data ?? '{}', true);
@@ -390,7 +390,6 @@ public function index(Request $request)
                     'fields' => $fields,
                 ],
             ],
-            'lang' => app()->getLocale(),
         ]);
     }
 
@@ -408,70 +407,70 @@ public function index(Request $request)
      * Public: store submitted answers to form_results table.
      */
     public function storeAnswers(Request $request)
-{
-    $data = $request->validate([
-        'form_id' => 'nullable|integer',
-        'code' => 'required|string',   // likely the access code
-        'title' => 'nullable',
-        'answers' => 'required|array',
-    ]);
+    {
+        $data = $request->validate([
+            'form_id' => 'nullable|integer',
+            'code' => 'required|string',   // likely the access code
+            'title' => 'nullable',
+            'answers' => 'required|array',
+        ]);
 
-    $title = $data['title'] ?? null;
-    $formTypeString = null; // <--- we'll try to figure out the "type" here
+        $title = $data['title'] ?? null;
+        $formTypeString = null; // <--- we'll try to figure out the "type" here
 
-    // If form_id given, attempt to load the form and use its title + type
-    if (isset($data['form_id'])) {
-        try {
-            $form = Form::find($data['form_id']);
-            if ($form) {
-                // normalize title
-                if (is_array($form->title)) {
-                    $locale = app()->getLocale();
-                    $title = $form->title[$locale]
-                        ?? $form->title['lv']
-                        ?? $form->title['en']
-                        ?? json_encode($form->title);
-                } else {
-                    $title = (string) $form->title;
+        // If form_id given, attempt to load the form and use its title + type
+        if (isset($data['form_id'])) {
+            try {
+                $form = Form::find($data['form_id']);
+                if ($form) {
+                    // normalize title
+                    if (is_array($form->title)) {
+                        $locale = app()->getLocale();
+                        $title = $form->title[$locale]
+                            ?? $form->title['lv']
+                            ?? $form->title['en']
+                            ?? json_encode($form->title);
+                    } else {
+                        $title = (string) $form->title;
+                    }
+
+                    // try to get FormType (so we can filter by type later)
+                    $formType = FormType::where('form_id', $form->id)->first();
+                    if ($formType) {
+                        $formTypeString = $formType->type; // e.g. 'psoriasis', 'chronic', etc.
+                    }
                 }
-
-                // try to get FormType (so we can filter by type later)
-                $formType = FormType::where('form_id', $form->id)->first();
-                if ($formType) {
-                    $formTypeString = $formType->type; // e.g. 'psoriasis', 'chronic', etc.
-                }
+            } catch (\Exception $e) {
+                Log::warning('Could not load Form by id in storeAnswers: ' . $e->getMessage());
             }
-        } catch (\Exception $e) {
-            Log::warning('Could not load Form by id in storeAnswers: ' . $e->getMessage());
         }
-    }
 
-    $title = $title ?? 'Submission';
+        $title = $title ?? 'Submission';
 
-    $result = FormResult::create([
-        'code' => $data['code'],
-        'title' => $title,
-        'results' => [
-            'answers' => $data['answers'],
-            'submitted_at' => now()->toDateTimeString(),
+        $result = FormResult::create([
+            'code' => $data['code'],
+            'title' => $title,
+            'results' => [
+                'answers' => $data['answers'],
+                'submitted_at' => now()->toDateTimeString(),
+                'form_id' => $data['form_id'] ?? null,
+                'form_type' => $formTypeString,
+            ],
+        ]);
+
+        Log::info('Anketa answers stored', [
+            'form_result_id' => $result->id,
             'form_id' => $data['form_id'] ?? null,
-            'form_type' => $formTypeString,  
-        ],
-    ]);
+            'code' => $data['code'],
+            'form_type' => $formTypeString,
+        ]);
 
-    Log::info('Anketa answers stored', [
-        'form_result_id' => $result->id,
-        'form_id' => $data['form_id'] ?? null,
-        'code' => $data['code'],
-        'form_type' => $formTypeString,
-    ]);
-
-    return response()->json([
-        'ok' => true,
-        'message' => 'Answers stored.',
-        'id' => $result->id,
-    ]);
-}
+        return response()->json([
+            'ok' => true,
+            'message' => 'Answers stored.',
+            'id' => $result->id,
+        ]);
+    }
 
 
     public function resultsIndex(Request $request)
@@ -493,7 +492,7 @@ public function index(Request $request)
             $type = $filters['type'];
             $query->where(function ($q) use ($type) {
                 $q->where('results->form_type', $type)
-                  ->orWhere('code', $type);
+                    ->orWhere('code', $type);
             });
         }
 
@@ -516,7 +515,7 @@ public function index(Request $request)
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('code', 'like', '%' . $search . '%')
-                  ->orWhere('title', 'like', '%' . $search . '%');
+                    ->orWhere('title', 'like', '%' . $search . '%');
             });
         }
 
@@ -554,13 +553,13 @@ public function index(Request $request)
 
         return Inertia::render('Admin/Anketa/resultsIndex', [
             'results' => $formatted,
-            'filters'  => [
-                'type'     => $filters['type'] ?? '',
-                'code'     => $filters['code'] ?? '',
-                'from'     => $filters['from'] ?? '',
-                'to'       => $filters['to'] ?? '',
-                'search'   => $filters['search'] ?? '',
-                'orderBy'  => $orderBy,
+            'filters' => [
+                'type' => $filters['type'] ?? '',
+                'code' => $filters['code'] ?? '',
+                'from' => $filters['from'] ?? '',
+                'to' => $filters['to'] ?? '',
+                'search' => $filters['search'] ?? '',
+                'orderBy' => $orderBy,
                 'orderDir' => $orderDir,
             ],
         ]);
