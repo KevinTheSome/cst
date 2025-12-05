@@ -8,13 +8,13 @@ import {
     CheckCircle, 
     AlertTriangle, 
     Settings2, 
-    LayoutList, 
     ChevronDown,
     Activity,
     User,
     Clock
 } from 'lucide-react';
 
+// --- Interfaces ---
 interface Multilingual {
     lv: string;
     en: string;
@@ -50,28 +50,28 @@ interface SelectorAnketaProps {
     locale: keyof Multilingual;
 }
 
-// --- Icons for Type Options ---
-const getTypeIcon = (type: string) => {
-    switch (type) {
-        case 'specialists': return <User className="h-4 w-4" />;
-        case 'psoriasis': return <Activity className="h-4 w-4" />;
-        case 'chronic': return <Clock className="h-4 w-4" />;
-        default: return <FileText className="h-4 w-4" />;
-    }
-};
+// Define the three distinct sections based on your image
+const sectionDefinitions = [
+    { type: 'psoriasis', labelKey: 'anketa.update.psoriasis', defaultLabel: 'Psiorāze', icon: Activity },
+    { type: 'chronic', labelKey: 'anketa.update.chronic', defaultLabel: 'Hroniskās slimības', icon: Clock },
+    { type: 'specialists', labelKey: 'anketa.update.specialist', defaultLabel: 'Speciālisti', icon: User },
+] as const;
+
 
 export default function SelectorAnketa({ anketas = [], formTypes = [], locale = 'lv' as keyof Multilingual }: SelectorAnketaProps) {
     const { __ } = useLang();
 
-    // Pre-fill selected types from formTypes
-    const initialSelections: Record<number, string> = {};
-    formTypes.forEach((ft) => {
-        initialSelections[ft.form_id] = ft.type;
+    // Initialize state to track which form ID is selected for each type key
+    const [selectedFormsByType, setSelectedFormsByType] = useState<{ [key: string]: number | null }>(() => {
+        const initialState: { [key: string]: number | null } = {};
+        sectionDefinitions.forEach(section => {
+            const found = formTypes.find(ft => ft.type === section.type);
+            initialState[section.type] = found ? found.form_id : null;
+        });
+        return initialState;
     });
-
-    const [selectedTypes, setSelectedTypes] = useState<Record<number, string>>(initialSelections);
     
-    // Custom Modal State
+    // Custom Modal State for feedback
     const [modalState, setModalState] = useState<{
         isOpen: boolean;
         type: 'success' | 'error' | 'warning';
@@ -84,29 +84,32 @@ export default function SelectorAnketa({ anketas = [], formTypes = [], locale = 
         message: '',
     });
 
-    const [processingId, setProcessingId] = useState<number | null>(null);
+    // Track which section type is currently being saved
+    const [processingType, setProcessingType] = useState<string | null>(null);
 
-    const handleTypeChange = (formId: number, type: string) => {
-        setSelectedTypes((prev) => ({
+    const handleFormSelection = (type: string, formIdStr: string) => {
+        const formId = formIdStr ? Number(formIdStr) : null;
+        setSelectedFormsByType((prev) => ({
             ...prev,
-            [formId]: type,
+            [type]: formId,
         }));
     };
 
-    const handleSave = (formId: number) => {
-        const type = selectedTypes[formId];
+    const handleSave = (type: string) => {
+        const formId = selectedFormsByType[type];
         
-        if (!type) {
+        // Strict validation: User MUST choose a form
+        if (!formId) {
             setModalState({
                 isOpen: true,
                 type: 'warning',
-                title: __('anketa.selector.error_missing') || 'Missing Selection',
-                message: 'Please select a form type before saving.'
+                title: __('anketa.selector.error_missing') || 'Izvēle ir obligāta',
+                message: 'Lūdzu, izvēlieties anketu pirms saglabāšanas.'
             });
             return;
         }
 
-        setProcessingId(formId);
+        setProcessingType(type);
 
         router.post(
             '/admin/selector/add',
@@ -119,20 +122,20 @@ export default function SelectorAnketa({ anketas = [], formTypes = [], locale = 
                     setModalState({
                         isOpen: true,
                         type: 'success',
-                        title: 'Success',
-                        message: __('anketa.selector.success') || 'Form type assigned successfully.'
+                        title: 'Saglabāts',
+                        message: __('anketa.selector.success') || 'Anketas piesaiste veiksmīgi saglabāta.'
                     });
-                    setProcessingId(null);
+                    setProcessingType(null);
                 },
                 onError: (errors) => {
                     console.error(errors);
                     setModalState({
                         isOpen: true,
                         type: 'error',
-                        title: 'Error',
-                        message: __('anketa.selector.error') || 'Failed to save changes.'
+                        title: 'Kļūda',
+                        message: __('anketa.selector.error') || 'Neizdevās saglabāt izmaiņas.'
                     });
-                    setProcessingId(null);
+                    setProcessingType(null);
                 },
             },
         );
@@ -144,10 +147,10 @@ export default function SelectorAnketa({ anketas = [], formTypes = [], locale = 
 
     return (
         <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
-            <Head title={__('anketa.selector.page_title')} />
+            <Head title={__('anketa.selector.page_title') || 'Anketu Klasifikators'} />
 
             {/* --- Main Container --- */}
-            <div className="mx-auto max-w-7xl space-y-8">
+            <div className="mx-auto max-w-5xl space-y-8">
                 
                 {/* --- Header Card --- */}
                 <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-900/50 p-8 shadow-2xl backdrop-blur-xl">
@@ -156,92 +159,99 @@ export default function SelectorAnketa({ anketas = [], formTypes = [], locale = 
                         <div>
                             <div className="flex items-center gap-2 mb-2">
                                 <Settings2 className="h-5 w-5 text-blue-400" />
-                                <span className="text-xs font-bold uppercase tracking-widest text-blue-400">Configuration</span>
+                                <span className="text-xs font-bold uppercase tracking-widest text-blue-400">Konfigurācija</span>
                             </div>
-                            <h1 className="text-3xl font-bold text-white tracking-tight">{__('anketa.selector.heading')}</h1>
-                            <p className="mt-2 text-slate-400 max-w-lg">{__('anketa.selector.subheading')}</p>
+                            <h1 className="text-3xl font-bold text-white tracking-tight">{__('anketa.selector.heading') || 'Anketu Klasifikators'}</h1>
+                            <p className="mt-2 text-slate-400 max-w-lg">{__('anketa.selector.subheading') || 'Piesaistiet atbilstošo anketu katrai kategorijai.'}</p>
                         </div>
                     </div>
                 </div>
 
-                {/* --- Content Grid --- */}
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {anketas.map((form) => {
-                        const currentType = selectedTypes[form.id] || '';
+                {/* --- Content Grid (Three Sections) --- */}
+                <div className="grid grid-cols-1 gap-6">
+                    {sectionDefinitions.map(({ type, labelKey, defaultLabel, icon: Icon }) => {
+                        const selectedFormId = selectedFormsByType[type];
+                        const isProcessing = processingType === type;
+                        const selectedFormInfo = anketas.find(a => a.id === selectedFormId);
                         
                         return (
                             <div 
-                                key={form.id} 
+                                key={type} 
                                 className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border bg-slate-900/40 p-6 shadow-lg transition-all hover:bg-slate-900/60 ${
-                                    currentType 
+                                    selectedFormId 
                                     ? 'border-emerald-500/30 shadow-emerald-500/5' 
                                     : 'border-white/10'
                                 }`}
                             >
                                 {/* Decorative gradient if active */}
-                                {currentType && (
-                                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none" />
+                                {selectedFormId && (
+                                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent pointer-events-none" />
                                 )}
 
                                 <div className="relative z-10">
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-800 border border-white/5 text-slate-300">
-                                            <LayoutList className="h-5 w-5" />
+                                    {/* Section Header */}
+                                    <div className="flex items-center gap-4 mb-5">
+                                        <div className="h-12 w-12 flex items-center justify-center rounded-xl bg-slate-800 border border-white/5 text-slate-300">
+                                            <Icon className="h-6 w-6" />
                                         </div>
-                                        <span className="font-mono text-xs text-slate-500 bg-slate-950/50 px-2 py-1 rounded-md border border-white/5">
-                                            {form.code}
-                                        </span>
+                                        <h2 className="text-2xl font-bold text-white">
+                                            {__(labelKey) || defaultLabel}
+                                        </h2>
                                     </div>
-                                    
-                                    <h2 className="text-lg font-bold text-white mb-2 line-clamp-2 min-h-[3.5rem]">
-                                        {form.title?.[locale] || __('anketa.update.form_title_placeholder')}
-                                    </h2>
 
-                                    {/* Selector */}
-                                    <div className="relative mt-4">
+                                    {/* Form Selector Dropdown */}
+                                    <div className="relative">
                                         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                                            {currentType ? getTypeIcon(currentType) : <FileText className="h-4 w-4" />}
+                                            <FileText className="h-5 w-5" />
                                         </div>
                                         <select
-                                            value={currentType}
-                                            onChange={(e) => handleTypeChange(form.id, e.target.value)}
-                                            className="w-full appearance-none rounded-xl border border-white/10 bg-slate-950/50 pl-10 pr-10 py-3 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors cursor-pointer hover:bg-slate-950/70"
+                                            value={selectedFormId || ''}
+                                            onChange={(e) => handleFormSelection(type, e.target.value)}
+                                            className="w-full appearance-none rounded-xl border border-white/10 bg-slate-950/50 pl-10 pr-10 py-4 text-base text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors cursor-pointer hover:bg-slate-950/70 truncate"
                                         >
-                                            <option value="" disabled className="bg-slate-900 text-slate-500">{__('anketa.selector.select_type')}</option>
-                                            <option value="specialists" className="bg-slate-900">{__('anketa.update.specialist')}</option>
-                                            <option value="psoriasis" className="bg-slate-900">{__('anketa.update.psoriasis')}</option>
-                                            <option value="chronic" className="bg-slate-900">{__('anketa.update.chronic')}</option>
+                                            <option value="" disabled className="bg-slate-900 text-slate-500">
+                                                Izvēlies anketu...
+                                            </option>
+                                            
+                                            {anketas.map(form => (
+                                                <option key={form.id} value={form.id} className="bg-slate-900 text-white">
+                                                    [{form.code}] {form.title?.[locale] || 'Bez nosaukuma'}
+                                                </option>
+                                            ))}
                                         </select>
-                                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400">
-                                            <ChevronDown className="h-4 w-4" />
+                                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400">
+                                            <ChevronDown className="h-5 w-5" />
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Footer Action */}
-                                <div className="relative z-10 mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
-                                    <span className={`text-xs font-medium transition-colors ${currentType ? 'text-emerald-400' : 'text-slate-500'}`}>
-                                        {currentType ? 'Type Assigned' : 'No Type Selected'}
+                                <div className="relative z-10 mt-6 pt-4 border-t border-white/5 flex items-center justify-between bg-slate-900/20 -mx-6 -mb-6 px-6 py-4">
+                                    <span className={`text-sm font-medium transition-colors truncate mr-4 ${selectedFormId ? 'text-emerald-400' : 'text-slate-500'}`}>
+                                        {selectedFormId && selectedFormInfo
+                                            ? `Izvēlēts: ${selectedFormInfo.code}` 
+                                            : 'Nav izvēlēta anketa'}
                                     </span>
                                     
                                     <button
                                         type="button"
-                                        onClick={() => handleSave(form.id)}
-                                        disabled={!currentType || processingId === form.id}
-                                        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition-all ${
-                                            !currentType 
+                                        onClick={() => handleSave(type)}
+                                        // Button is disabled if no form is selected or if it's currently processing
+                                        disabled={!selectedFormId || isProcessing}
+                                        className={`flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-bold transition-all ${
+                                            !selectedFormId 
                                                 ? 'cursor-not-allowed bg-slate-800 text-slate-500' 
-                                                : processingId === form.id
+                                                : isProcessing
                                                     ? 'cursor-wait bg-emerald-500/50 text-white'
                                                     : 'bg-emerald-500 text-slate-900 hover:bg-emerald-400 hover:shadow-lg hover:shadow-emerald-500/20'
                                         }`}
                                     >
-                                        {processingId === form.id ? (
-                                            'Saving...'
+                                        {isProcessing ? (
+                                            'Notiek saglabāšana...'
                                         ) : (
                                             <>
-                                                <Save className="h-3.5 w-3.5" />
-                                                {__('anketa.selector.save')}
+                                                <Save className="h-4 w-4" />
+                                                {__('anketa.selector.save') || 'Saglabāt'}
                                             </>
                                         )}
                                     </button>
@@ -249,17 +259,10 @@ export default function SelectorAnketa({ anketas = [], formTypes = [], locale = 
                             </div>
                         );
                     })}
-
-                    {anketas.length === 0 && (
-                        <div className="col-span-full rounded-3xl border border-dashed border-white/10 bg-slate-900/30 p-12 text-center text-slate-400">
-                            <FileText className="mx-auto h-12 w-12 opacity-20 mb-3" />
-                            <p>{__('anketa.selector.no_results')}</p>
-                        </div>
-                    )}
                 </div>
             </div>
 
-            {/* --- Custom Notification Modal --- */}
+            {/* --- Custom Notification Modal (Unchanged) --- */}
             {modalState.isOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div 
@@ -290,7 +293,7 @@ export default function SelectorAnketa({ anketas = [], formTypes = [], locale = 
                                 onClick={closeModal}
                                 className="w-full rounded-xl bg-slate-800 py-3 text-sm font-bold text-white transition-colors hover:bg-slate-700"
                             >
-                                Close
+                                Aizvērt
                             </button>
                         </div>
                     </div>
