@@ -142,6 +142,21 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
     const initialDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const hideDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+    // NEW: live focus time state
+    const [focusTime, setFocusTime] = useState(() =>
+        new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Europe/Riga' })
+    );
+
+    useEffect(() => {
+        const id = setInterval(() => {
+            setFocusTime(
+                new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Europe/Riga' })
+            );
+        }, 1000);
+
+        return () => clearInterval(id);
+    }, []);
+
     const { url, props } = usePage<any>();
     const currentLocale = props?.locale || 'lv';
 
@@ -352,10 +367,12 @@ export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWi
                                 <p className="text-xs tracking-[0.4em] text-white/50 uppercase">
                                     Focus
                                 </p>
+
+                                {/* NEW: live time display */}
                                 <p className="mt-2 text-sm font-semibold text-white">
-                                    Next sync 15:30
+                                    {focusTime} <span className="ml-2 rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide uppercase bg-emerald-400/15 text-emerald-200 ring-emerald-400/40">Live</span>
                                 </p>
-                                <p className="text-xs text-white/60">Labs leadership update</p>
+                                <p className="text-xs text-white/60">Next sync 15:30 • Labs leadership update</p>
                             </div>
                             {/* Language switcher */}
                             <div className="flex gap-3">

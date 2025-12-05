@@ -74,11 +74,7 @@ const statHighlights: StatHighlight[] = [
     },
 ];
 
-const quickActions = [
-    { id: 'story', label: 'Launch story', description: 'Create a new highlight', accent: 'emerald' as BadgeTone, icon: Zap },
-    { id: 'invite', label: 'Invite member', description: 'Bring someone onboard', accent: 'sky' as BadgeTone, icon: UserPlus },
-    { id: 'update', label: 'Share update', description: 'Send a pulse note', accent: 'violet' as BadgeTone, icon: Send },
-];
+
 
 const activityFeed = [
     {
@@ -282,36 +278,6 @@ export default function Dashboard() {
 
                     {/* --- Right Column (Actions & Health) --- */}
                     <div className="space-y-8">
-                        
-                        {/* Quick Actions */}
-                        <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 to-slate-950 p-6 shadow-xl">
-                            <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Quick Actions</p>
-                            <div className="space-y-3">
-                                {quickActions.map((action) => {
-                                    const Icon = action.icon;
-                                    return (
-                                        <button
-                                            key={action.id}
-                                            onClick={() => setActiveModal(action.id)}
-                                            className="group w-full flex items-center gap-4 rounded-2xl border border-white/5 bg-white/[0.02] p-4 text-left transition-all hover:bg-white/5 hover:border-white/10 hover:shadow-lg"
-                                        >
-                                            <div className={`rounded-xl p-2.5 transition-colors ${
-                                                action.accent === 'emerald' ? 'bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500/20' :
-                                                action.accent === 'sky' ? 'bg-sky-500/10 text-sky-400 group-hover:bg-sky-500/20' :
-                                                'bg-violet-500/10 text-violet-400 group-hover:bg-violet-500/20'
-                                            }`}>
-                                                <Icon className="h-5 w-5" />
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-bold text-white">{action.label}</p>
-                                                <p className="text-xs text-slate-400 group-hover:text-slate-300">{action.description}</p>
-                                            </div>
-                                            <ArrowRight className="h-4 w-4 ml-auto text-slate-600 group-hover:text-white transition-colors" />
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
 
                         {/* System Health */}
                         <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
