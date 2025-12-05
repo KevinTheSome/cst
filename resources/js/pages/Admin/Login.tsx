@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
 import { Head } from '@inertiajs/react';
 import LoginLayout from '../../Layouts/LoginLayout';
+import { 
+    Mail, 
+    Lock, 
+    Eye, 
+    EyeOff, 
+    ArrowRight, 
+    Globe, 
+    HelpCircle,
+    X,
+    CheckCircle2,
+    AlertCircle,
+    Loader2
+} from 'lucide-react';
 
 type LoginProps = {
     onSuccess?: (data: unknown) => void;
     apiEndpoint?: string;
 };
-
-const statCards = [
-    { label: 'Sessions today', value: '148', hint: 'Last sync 2m ago' },
-    { label: 'Systems status', value: 'Operational', hint: 'No incidents reported' },
-    { label: 'Latency', value: '246ms', hint: 'Global average' },
-];
 
 export default function LoginPage({ onSuccess, apiEndpoint = '/admin/login' }: LoginProps) {
     const [email, setEmail] = useState('');
@@ -21,6 +28,9 @@ export default function LoginPage({ onSuccess, apiEndpoint = '/admin/login' }: L
     const [error, setError] = useState<string | null>(null);
     const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
     const [showPassword, setShowPassword] = useState(false);
+    
+    // Modal State
+    const [isHelpOpen, setIsHelpOpen] = useState(false);
 
     function validate() {
         const errors: { email?: string; password?: string } = {};
@@ -62,7 +72,7 @@ export default function LoginPage({ onSuccess, apiEndpoint = '/admin/login' }: L
 
             if (!res.ok) {
                 if (data.errors) setFieldErrors(data.errors);
-                setError(data.message || 'Login failed.');
+                setError(data.message || 'Authentication failed. Please check your credentials.');
                 setLoading(false);
                 return;
             }
@@ -73,7 +83,7 @@ export default function LoginPage({ onSuccess, apiEndpoint = '/admin/login' }: L
             if (data.redirect) window.location.href = data.redirect;
         } catch (err: unknown) {
             setLoading(false);
-            const message = err instanceof Error ? err.message : 'Network error';
+            const message = err instanceof Error ? err.message : 'Network connection error';
             setError(message);
         }
     }
@@ -81,114 +91,176 @@ export default function LoginPage({ onSuccess, apiEndpoint = '/admin/login' }: L
     return (
         <>
             <Head title="Login" />
-            <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-16 text-white sm:px-6 lg:px-12">
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.15),_transparent_55%)]" />
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_bottom,_rgba(99,102,241,0.18),_transparent_55%)]" />
-                <div className="relative z-10 grid w-full max-w-6xl gap-8 rounded-[32px] border border-white/10 bg-slate-950/70 p-8 shadow-[0_20px_80px_rgba(15,23,42,0.6)] backdrop-blur-xl lg:grid-cols-2 lg:p-12">
-                    <section className="flex flex-col justify-between space-y-10">
+            
+            {/* Full Page Background Layer - Fixed to cover entire viewport */}
+            <div className="fixed inset-0 -z-10 w-full h-full bg-slate-950 overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.1),_transparent_50%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(99,102,241,0.15),_transparent_50%)]" />
+            </div>
+
+            <div className="relative z-10 flex min-h-screen w-full items-center justify-center px-4 py-16 text-white sm:px-6 lg:px-8">
+                
+                {/* Main Login Card */}
+                <div className="w-full max-w-md rounded-[32px] border border-white/10 bg-slate-900/60 p-8 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.5)] backdrop-blur-2xl sm:p-10">
+                    
+                    <div className="mb-10">
+                        <h1 className="text-3xl font-bold text-white tracking-tight">Admin Login</h1>
+                        <p className="mt-2 text-base text-slate-400">
+                            Enter your credentials to access the command dashboard.
+                        </p>
+                    </div>
+
+                    {error && (
+                        <div className="mb-6 flex items-start gap-3 rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 text-rose-200">
+                            <AlertCircle className="h-5 w-5 shrink-0 text-rose-400" />
+                            <div className="text-sm font-medium">{error}</div>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} noValidate className="space-y-5">
                         <div>
-                            <p className="text-xs uppercase tracking-[0.4em] text-white/60">Control surface</p>
-                            <h1 className="mt-4 text-3xl font-semibold text-white">Admin authentication</h1>
-                            <p className="mt-2 max-w-md text-sm text-white/70">
-                                Access the command dashboard, review approvals, and keep everything in sync. Use your work email to sign in.
-                            </p>
-                        </div>
-                        <div className="space-y-4">
-                            {statCards.map((stat) => (
-                                <div key={stat.label} className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-inner shadow-black/10">
-                                    <p className="text-xs uppercase tracking-[0.3em] text-white/60">{stat.label}</p>
-                                    <p className="mt-2 text-2xl font-semibold text-white">{stat.value}</p>
-                                    <p className="text-sm text-white/60">{stat.hint}</p>
+                            <label htmlFor="email" className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                                Email Address
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-500 pointer-events-none">
+                                    <Mail className="h-5 w-5" />
                                 </div>
-                            ))}
+                                <input
+                                    id="email"
+                                    type="email"
+                                    value={email}
+                                    autoComplete="email"
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className={`w-full rounded-xl border bg-black/20 pl-11 pr-4 py-3.5 text-sm text-white placeholder-slate-600 transition-all focus:border-indigo-500 focus:bg-slate-900/80 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+                                        fieldErrors.email ? 'border-rose-500/50 focus:border-rose-500 focus:ring-rose-500' : 'border-white/10'
+                                    }`}
+                                    placeholder="name@company.com"
+                                />
+                            </div>
+                            {fieldErrors.email && <p className="mt-1.5 text-xs text-rose-400">{fieldErrors.email}</p>}
                         </div>
-                        <div className="rounded-3xl border border-emerald-300/30 bg-emerald-400/10 p-4 text-sm text-emerald-100">
-                            <p className="text-xs uppercase tracking-[0.4em] text-emerald-200">Security pulse</p>
-                            <p className="mt-2 font-semibold text-white">All systems shielded • MFA enforced</p>
+
+                        <div>
+                            <label htmlFor="password" className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                                Password
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-500 pointer-events-none">
+                                    <Lock className="h-5 w-5" />
+                                </div>
+                                <input
+                                    id="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
+                                    autoComplete="current-password"
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className={`w-full rounded-xl border bg-black/20 pl-11 pr-11 py-3.5 text-sm text-white placeholder-slate-600 transition-all focus:border-indigo-500 focus:bg-slate-900/80 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+                                        fieldErrors.password ? 'border-rose-500/50 focus:border-rose-500 focus:ring-rose-500' : 'border-white/10'
+                                    }`}
+                                    placeholder="••••••••"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword((s) => !s)}
+                                    className="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-500 hover:text-white transition-colors"
+                                >
+                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </button>
+                            </div>
+                            {fieldErrors.password && <p className="mt-1.5 text-xs text-rose-400">{fieldErrors.password}</p>}
                         </div>
-                    </section>
 
-                    <section className="rounded-[28px] border border-white/10 bg-white/5 p-6 shadow-lg shadow-black/30 sm:p-8">
-                        {error && (
-                            <div className="mb-4 rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">
-                                {error}
-                            </div>
-                        )}
-
-                        <form onSubmit={handleSubmit} noValidate className="space-y-6">
-                            <div>
-                                <label htmlFor="email" className="text-xs uppercase tracking-[0.3em] text-white/60">
-                                    Email
-                                </label>
-                                <div className="mt-2">
-                                    <input
-                                        id="email"
-                                        type="email"
-                                        value={email}
-                                        autoComplete="email"
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        className={`w-full rounded-2xl border bg-slate-950/60 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 ${
-                                            fieldErrors.email ? 'border-rose-400/50' : 'border-white/10'
-                                        }`}
-                                        placeholder="you@lab.io"
-                                    />
-                                    {fieldErrors.email && <p className="mt-2 text-xs text-rose-200">{fieldErrors.email}</p>}
-                                </div>
-                            </div>
-
-                            <div>
-                                <label htmlFor="password" className="text-xs uppercase tracking-[0.3em] text-white/60">
-                                    Password
-                                </label>
-                                <div className="mt-2">
-                                    <div className="relative">
-                                        <input
-                                            id="password"
-                                            type={showPassword ? 'text' : 'password'}
-                                            value={password}
-                                            autoComplete="current-password"
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            className={`w-full rounded-2xl border bg-slate-950/60 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 ${
-                                                fieldErrors.password ? 'border-rose-400/50' : 'border-white/10'
-                                            }`}
-                                            placeholder="••••••••"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword((s) => !s)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-white/70 hover:text-white"
-                                        >
-                                            {showPassword ? 'Hide' : 'Show'}
-                                        </button>
-                                    </div>
-                                    {fieldErrors.password && <p className="mt-2 text-xs text-rose-200">{fieldErrors.password}</p>}
-                                </div>
-                            </div>
-
-                            <div className="flex items-center justify-between text-sm text-white/70">
-                                <label className="flex items-center gap-2">
+                        <div className="flex items-center justify-between pt-1">
+                            <label className="flex items-center gap-2 cursor-pointer group">
+                                <div className="relative flex items-center">
                                     <input
                                         type="checkbox"
                                         checked={remember}
                                         onChange={(e) => setRemember(e.target.checked)}
-                                        className="h-4 w-4 rounded border-white/30 bg-transparent text-emerald-400 focus:ring-emerald-400/30"
+                                        className="peer h-4 w-4 cursor-pointer appearance-none rounded border border-white/30 bg-transparent transition-all checked:border-indigo-500 checked:bg-indigo-500 hover:border-white/50"
                                     />
-                                    Remember me
-                                </label>
-                                <span className="text-xs uppercase tracking-[0.3em] text-white/40">Need help?</span>
-                            </div>
-
+                                    <CheckCircle2 className="pointer-events-none absolute h-3 w-3 text-white opacity-0 peer-checked:opacity-100 left-0.5" />
+                                </div>
+                                <span className="text-sm text-slate-400 group-hover:text-white transition-colors">Remember me</span>
+                            </label>
                             <button
-                                type="submit"
-                                disabled={loading}
-                                className="w-full rounded-2xl border border-emerald-300/40 bg-gradient-to-r from-emerald-400/20 to-sky-500/20 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:translate-y-0.5 hover:border-emerald-200/70 focus:outline-none focus:ring-2 focus:ring-emerald-400/40 disabled:opacity-60"
+                                type="button" 
+                                onClick={() => setIsHelpOpen(true)}
+                                className="flex items-center gap-1.5 text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
                             >
-                                {loading ? 'Verifying access…' : 'Enter command center'}
+                                <HelpCircle className="h-3.5 w-3.5" />
+                                Need help?
                             </button>
-                        </form>
-                    </section>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="group relative w-full overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 py-3.5 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 transition-all hover:scale-[1.02] hover:shadow-indigo-500/40 disabled:opacity-70 disabled:hover:scale-100"
+                        >
+                            <div className="flex items-center justify-center gap-2">
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        <span>Verifying credentials...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>Enter Command Center</span>
+                                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    </>
+                                )}
+                            </div>
+                        </button>
+                    </form>
                 </div>
             </div>
+
+            {/* --- Help Modal --- */}
+            {isHelpOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div 
+                        className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-in fade-in" 
+                        onClick={() => setIsHelpOpen(false)}
+                    />
+                    <div className="relative w-full max-w-sm overflow-hidden rounded-3xl border border-white/10 bg-slate-900 shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="flex items-center justify-between border-b border-white/10 px-6 py-4 bg-slate-950/50">
+                            <h3 className="font-bold text-white">Login Assistance</h3>
+                            <button 
+                                onClick={() => setIsHelpOpen(false)}
+                                className="rounded-lg p-2 text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+                        
+                        <div className="p-6 space-y-4">
+                            <p className="text-sm text-slate-400">
+                                If you have forgotten your password or are experiencing issues with Multi-Factor Authentication (MFA), please contact the IT security team immediately.
+                            </p>
+                            
+                            <div className="rounded-xl bg-white/5 border border-white/5 p-4 space-y-3">
+                                <div className="flex items-center gap-3 text-sm text-white">
+                                    <Mail className="h-4 w-4 text-indigo-400" />
+                                    <span>support@lab.io</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-sm text-white">
+                                    <Globe className="h-4 w-4 text-indigo-400" />
+                                    <span>Internal Wiki / Ops</span>
+                                </div>
+                            </div>
+
+                            <button 
+                                onClick={() => setIsHelpOpen(false)}
+                                className="w-full rounded-xl bg-slate-800 py-3 text-sm font-bold text-white hover:bg-slate-700 transition-colors"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

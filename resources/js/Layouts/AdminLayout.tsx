@@ -73,14 +73,6 @@ const navSections: NavSection[] = [
                 badgeTone: 'amber',
             },
             {
-                id: 'content',
-                label: 'Content studio',
-                description: 'Posts, blogs, media',
-                href: '/admin/content-studio',
-                badge: '12 drafts',
-                badgeTone: 'sky',
-            },
-            {
                 id: 'form-codes',
                 label: 'Form codes',
                 description: 'Survey code generator',
@@ -111,19 +103,11 @@ const navSections: NavSection[] = [
         label: 'Users',
         items: [
             {
-                id: 'admin-users',
-                label: 'Admin lietotāji',
-                description: 'Create / edit admin accounts',
-                href: '/admin/admins',
-                badge: 'CRUD',
-                badgeTone: 'sky',
-            },
-            {
                 id: 'security',
-                label: 'Security',
+                label: 'Admin lietotāji',
                 description: 'Roles, audit trail',
                 href: '/admin/security',
-                badge: 'Shielded',
+                badge: 'CRUD',
                 badgeTone: 'emerald',
             },
             

@@ -1,7 +1,20 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { useLang } from '@/hooks/useLang';
 import { Head, router, usePage } from '@inertiajs/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { 
+    Search, 
+    Filter, 
+    X, 
+    Calendar, 
+    ArrowUpDown, 
+    Eye, 
+    FileText, 
+    Hash,
+    RotateCcw,
+    CheckCircle2,
+    Clock
+} from 'lucide-react';
 
 type ResultRow = {
     id: number;
@@ -31,6 +44,8 @@ const ResultsIndex: React.FC = () => {
     const { results, filters: serverFilters } = usePage<PageProps>().props;
     const { __ } = useLang();
 
+    const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+    
     const [localFilters, setLocalFilters] = useState<Filters>({
         type: serverFilters?.type ?? '',
         code: serverFilters?.code ?? '',
@@ -41,8 +56,19 @@ const ResultsIndex: React.FC = () => {
         orderDir: serverFilters?.orderDir ?? 'desc',
     });
 
-    const applyFilters = (e: React.FormEvent) => {
-        e.preventDefault();
+    // Check if any filter (except default sort) is active
+    const hasActiveFilters = 
+        localFilters.type || 
+        localFilters.code || 
+        localFilters.from || 
+        localFilters.to || 
+        (localFilters.orderBy !== 'created_at') || 
+        (localFilters.orderDir !== 'desc');
+
+    const applyFilters = (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        
+        setIsFilterModalOpen(false); // Close modal on apply
 
         router.get(
             '/admin/anketa/results',
@@ -62,16 +88,22 @@ const ResultsIndex: React.FC = () => {
         );
     };
 
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        applyFilters();
+    };
+
     const resetFilters = () => {
         setLocalFilters({
             type: '',
             code: '',
             from: '',
             to: '',
-            search: '',
+            search: '', // Keep search? Usually reset clears everything, let's clear it.
             orderBy: 'created_at',
             orderDir: 'desc',
         });
+        setIsFilterModalOpen(false);
 
         router.get(
             '/admin/anketa/results',
@@ -83,232 +115,297 @@ const ResultsIndex: React.FC = () => {
         );
     };
 
+    // Helper for badges
+    const getTypeColor = (type: string | null) => {
+        switch (type) {
+            case 'psoriasis': return 'bg-pink-500/10 text-pink-400 border-pink-500/20';
+            case 'chronic': return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+            case 'specialists': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+            default: return 'bg-slate-700/30 text-slate-400 border-slate-600/30';
+        }
+    };
+
     return (
-        <>
+        <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
             <Head title={__('anketa.results.page_title') ?? 'Form answers'} />
 
-            <div className="space-y-6 text-white">
-                {/* Header */}
-                <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-slate-900/80 via-slate-900/40 to-slate-900/10 px-6 py-5 shadow-inner shadow-black/20">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mx-auto max-w-7xl space-y-6">
+                
+                {/* --- Header Card --- */}
+                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-900/50 p-8 shadow-2xl backdrop-blur-xl">
+                    <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
+                    
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
-                            <p className="text-xs tracking-[0.3em] text-white/60 uppercase">
-                                {__('anketa.results.label') ?? 'Form submissions'}
-                            </p>
-                            <h1 className="mt-1 text-2xl font-semibold text-white">
-                                {__('anketa.results.heading') ?? 'Answers'}
+                            <div className="flex items-center gap-2 mb-2">
+                                <FileText className="h-5 w-5 text-blue-400" />
+                                <span className="text-xs font-bold uppercase tracking-widest text-blue-400">
+                                    {__('anketa.results.label') ?? 'Submissions'}
+                                </span>
+                            </div>
+                            <h1 className="text-3xl font-bold text-white tracking-tight">
+                                {__('anketa.results.heading') ?? 'Form Answers'}
                             </h1>
-                            <p className="mt-1 text-sm text-white/70">
-                                {__('anketa.results.subheading') ??
-                                    'Browse and filter submitted questionnaire answers.'}
+                            <p className="mt-2 text-slate-400 max-w-lg">
+                                {__('anketa.results.subheading') ?? 'Browse and analyze submitted questionnaire answers.'}
                             </p>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <div className="bg-slate-900/50 rounded-2xl border border-white/10 p-4 min-w-[140px]">
+                                <p className="text-xs text-slate-400 uppercase tracking-wider">Total Answers</p>
+                                <p className="text-2xl font-bold text-white mt-1">{results.length}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Filters */}
-                <div className="rounded-3xl border border-white/10 bg-slate-950/70 p-4">
-                    <form
-                        onSubmit={applyFilters}
-                        className="grid gap-3 md:grid-cols-5 md:items-end"
-                    >
-                        {/* TYPE */}
-                        <div>
-                            <label className="text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
-                                Type
-                            </label>
-                            <input
-                                type="text"
-                                value={localFilters.type ?? ''}
-                                onChange={(e) =>
-                                    setLocalFilters((prev) => ({
-                                        ...prev,
-                                        type: e.target.value,
-                                    }))
-                                }
-                                className="mt-1 w-full rounded-2xl border border-white/15 bg-slate-900/80 px-3 py-2 text-sm text-white outline-none focus:border-sky-400"
-                                placeholder="psoriasis / chronic..."
-                            />
+                {/* --- Toolbar --- */}
+                <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                    {/* Search Bar */}
+                    <form onSubmit={handleSearch} className="relative w-full sm:max-w-md group">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <Search className="h-4 w-4 text-slate-500 group-focus-within:text-blue-400 transition-colors" />
                         </div>
-
-                        {/* CODE */}
-                        <div>
-                            <label className="text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
-                                Code
-                            </label>
-                            <input
-                                type="text"
-                                value={localFilters.code ?? ''}
-                                onChange={(e) =>
-                                    setLocalFilters((prev) => ({
-                                        ...prev,
-                                        code: e.target.value,
-                                    }))
-                                }
-                                className="mt-1 w-full rounded-2xl border border-white/15 bg-slate-900/80 px-3 py-2 text-sm text-white outline-none focus:border-sky-400"
-                                placeholder="Access code"
-                            />
-                        </div>
-
-                        {/* FROM */}
-                        <div>
-                            <label className="text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
-                                From
-                            </label>
-                            <input
-                                type="date"
-                                value={localFilters.from ?? ''}
-                                onChange={(e) =>
-                                    setLocalFilters((prev) => ({
-                                        ...prev,
-                                        from: e.target.value,
-                                    }))
-                                }
-                                className="mt-1 w-full rounded-2xl border border-white/15 bg-slate-900/80 px-3 py-2 text-sm text-white outline-none focus:border-sky-400"
-                            />
-                        </div>
-
-                        {/* TO */}
-                        <div>
-                            <label className="text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
-                                To
-                            </label>
-                            <input
-                                type="date"
-                                value={localFilters.to ?? ''}
-                                onChange={(e) =>
-                                    setLocalFilters((prev) => ({
-                                        ...prev,
-                                        to: e.target.value,
-                                    }))
-                                }
-                                className="mt-1 w-full rounded-2xl border border-white/15 bg-slate-900/80 px-3 py-2 text-sm text-white outline-none focus:border-sky-400"
-                            />
-                        </div>
-
-                        {/* SEARCH + ORDER */}
-                        <div>
-                            <label className="text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
-                                Search / Order
-                            </label>
-                            <div className="mt-1 flex flex-col gap-2">
-                                <input
-                                    type="text"
-                                    value={localFilters.search ?? ''}
-                                    onChange={(e) =>
-                                        setLocalFilters((prev) => ({
-                                            ...prev,
-                                            search: e.target.value,
-                                        }))
-                                    }
-                                    className="w-full rounded-2xl border border-white/15 bg-slate-900/80 px-3 py-2 text-sm text-white outline-none focus:border-sky-400"
-                                    placeholder={
-                                        __('anketa.results.search_placeholder') ??
-                                        'Search by title or code'
-                                    }
-                                />
-                                <select
-                                    value={localFilters.orderDir ?? 'desc'}
-                                    onChange={(e) =>
-                                        setLocalFilters((prev) => ({
-                                            ...prev,
-                                            orderBy: 'created_at',
-                                            orderDir: e.target.value as 'asc' | 'desc',
-                                        }))
-                                    }
-                                    className="rounded-2xl border border-white/15 bg-slate-900/80 px-2 py-1 text-xs text-white outline-none focus:border-sky-400"
-                                >
-                                    <option value="desc">
-                                        {__('anketa.results.sort_newest') ?? 'Newest first'}
-                                    </option>
-                                    <option value="asc">
-                                        {__('anketa.results.sort_oldest') ?? 'Oldest first'}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-
-                        {/* BUTTONS */}
-                        <div className="md:col-span-5 flex justify-end gap-2 pt-2">
-                            <button
-                                type="button"
-                                onClick={resetFilters}
-                                className="rounded-2xl border border-white/20 bg-slate-900/70 px-4 py-2 text-xs font-semibold text-white/80"
-                            >
-                                {__('anketa.results.reset_filters') ?? 'Reset'}
-                            </button>
-                            <button
-                                type="submit"
-                                className="rounded-2xl border border-sky-300/40 bg-sky-500/30 px-4 py-2 text-xs font-semibold text-sky-50 shadow shadow-sky-500/30 hover:bg-sky-500/40"
-                            >
-                                {__('anketa.results.apply_filters') ?? 'Apply'}
-                            </button>
-                        </div>
+                        <input
+                            type="text"
+                            value={localFilters.search ?? ''}
+                            onChange={(e) => setLocalFilters(prev => ({ ...prev, search: e.target.value }))}
+                            placeholder={__('anketa.results.search_placeholder') ?? 'Search by code or title...'}
+                            className="block w-full rounded-2xl border border-white/10 bg-slate-900/50 pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:bg-slate-900 transition-all shadow-sm"
+                        />
                     </form>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                        {hasActiveFilters && (
+                            <button
+                                onClick={resetFilters}
+                                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-xs font-bold text-slate-300 hover:bg-white/10 hover:text-white transition-all"
+                            >
+                                <RotateCcw className="h-3.5 w-3.5" />
+                                Reset
+                            </button>
+                        )}
+                        <button
+                            onClick={() => setIsFilterModalOpen(true)}
+                            className={`flex flex-1 sm:flex-none justify-center items-center gap-2 px-6 py-3 rounded-xl border text-sm font-bold transition-all shadow-lg ${
+                                hasActiveFilters 
+                                ? 'border-blue-500/50 bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 shadow-blue-500/10' 
+                                : 'border-white/10 bg-slate-800 text-white hover:bg-slate-700'
+                            }`}
+                        >
+                            <Filter className="h-4 w-4" />
+                            Filters
+                            {hasActiveFilters && <span className="flex h-2 w-2 rounded-full bg-blue-400 ml-1 animate-pulse" />}
+                        </button>
+                    </div>
                 </div>
 
-                {/* List */}
-                <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                    <div className="mt-4 overflow-x-auto">
-                        <table className="min-w-full text-left text-sm text-white/80">
+                {/* --- Results Table --- */}
+                <div className="rounded-3xl border border-white/10 bg-slate-900/50 overflow-hidden shadow-2xl backdrop-blur-xl">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm">
                             <thead>
-                                <tr className="border-b border-white/10 text-xs uppercase tracking-[0.2em] text-white/50">
-                                    <th className="px-3 py-2">ID</th>
-                                    <th className="px-3 py-2">Type</th>
-                                    <th className="px-3 py-2">Code</th>
-                                    <th className="px-3 py-2">Submitted</th>
-                                    <th className="px-3 py-2">Answers</th>
-                                    <th className="px-3 py-2 text-right">Actions</th>
+                                <tr className="border-b border-white/5 bg-white/5 text-xs font-bold uppercase tracking-wider text-slate-400">
+                                    <th className="px-6 py-4">ID / Code</th>
+                                    <th className="px-6 py-4">Type</th>
+                                    <th className="px-6 py-4">Submitted</th>
+                                    <th className="px-6 py-4 text-center">Answers</th>
+                                    <th className="px-6 py-4 text-right">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {results.length === 0 && (
+                            <tbody className="divide-y divide-white/5">
+                                {results.length === 0 ? (
                                     <tr>
-                                        <td
-                                            colSpan={6}
-                                            className="px-3 py-6 text-center text-xs text-white/60"
-                                        >
-                                            {__('anketa.results.empty') ?? 'No submissions found.'}
+                                        <td colSpan={5} className="px-6 py-16 text-center">
+                                            <div className="flex flex-col items-center justify-center text-slate-500">
+                                                <div className="rounded-full bg-slate-800/50 p-4 mb-3">
+                                                    <Search className="h-8 w-8 opacity-50" />
+                                                </div>
+                                                <p className="text-lg font-medium text-white">{__('anketa.results.empty') ?? 'No results found'}</p>
+                                                <p className="text-sm">Try adjusting your filters or search query.</p>
+                                            </div>
                                         </td>
                                     </tr>
+                                ) : (
+                                    results.map((row) => (
+                                        <tr key={row.id} className="group hover:bg-white/[0.02] transition-colors">
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-800 font-mono text-xs text-slate-400 border border-white/5">
+                                                        #{row.id}
+                                                    </div>
+                                                    <div>
+                                                        <div className="flex items-center gap-1.5 font-mono font-medium text-blue-400">
+                                                            <Hash className="h-3 w-3" />
+                                                            {row.code}
+                                                        </div>
+                                                        <div className="text-xs text-slate-500 truncate max-w-[150px]" title={row.title}>
+                                                            {row.title || 'Untitled Form'}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getTypeColor(row.type)}`}>
+                                                    {row.type || 'Standard'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-2 text-slate-300">
+                                                    <Calendar className="h-4 w-4 text-slate-500" />
+                                                    {row.submitted_at ? new Date(row.submitted_at).toLocaleDateString() : '—'}
+                                                </div>
+                                                {row.submitted_at && (
+                                                    <div className="text-xs text-slate-500 mt-0.5 pl-6">
+                                                        {new Date(row.submitted_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-bold text-white border border-white/5">
+                                                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                                                    {row.answers_count}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <a
+                                                    href={`/admin/anketa/results/${row.id}`}
+                                                    className="inline-flex items-center gap-2 rounded-xl bg-slate-800 px-4 py-2 text-xs font-bold text-white shadow-lg transition-all hover:bg-blue-600 hover:shadow-blue-500/20 border border-white/5 hover:border-blue-500/50"
+                                                >
+                                                    <Eye className="h-3.5 w-3.5" />
+                                                    {__('anketa.results.view') ?? 'View'}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    ))
                                 )}
-
-                                {results.map((row) => (
-                                    <tr
-                                        key={row.id}
-                                        className="border-b border-white/5 last:border-0"
-                                    >
-                                        <td className="px-3 py-2 text-xs text-white/60">
-                                            #{row.id}
-                                        </td>
-                                        <td className="px-3 py-2">
-                                            {row.type ?? <span className="text-white/40">–</span>}
-                                        </td>
-                                        <td className="px-3 py-2">{row.code}</td>
-                                        <td className="px-3 py-2 text-xs text-white/70">
-                                            {row.submitted_at
-                                                ? new Date(row.submitted_at).toLocaleString()
-                                                : '–'}
-                                        </td>
-                                        <td className="px-3 py-2 text-xs text-white/70">
-                                            {row.answers_count}
-                                        </td>
-                                        <td className="px-3 py-2 text-right">
-                                            <a
-                                                href={`/admin/anketa/results/${row.id}`}
-                                                className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/80 hover:bg-white/10"
-                                            >
-                                                {__('anketa.results.view') ?? 'View'}
-                                            </a>
-                                        </td>
-                                    </tr>
-                                ))}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-        </>
+
+            {/* --- FILTER POPUP (Modal) --- */}
+            {isFilterModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div 
+                        className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-in fade-in" 
+                        onClick={() => setIsFilterModalOpen(false)}
+                    />
+                    <div className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-slate-900 shadow-2xl animate-in zoom-in-95 duration-200">
+                        {/* Modal Header */}
+                        <div className="flex items-center justify-between border-b border-white/10 px-6 py-5 bg-slate-900">
+                            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                <Filter className="h-5 w-5 text-blue-400" />
+                                Filter Results
+                            </h3>
+                            <button 
+                                onClick={() => setIsFilterModalOpen(false)}
+                                className="rounded-lg p-2 text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        {/* Modal Body */}
+                        <form onSubmit={applyFilters} className="p-6 space-y-6">
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                                {/* Type */}
+                                <div className="col-span-2 sm:col-span-1">
+                                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Form Type</label>
+                                    <input
+                                        type="text"
+                                        value={localFilters.type ?? ''}
+                                        onChange={(e) => setLocalFilters(prev => ({ ...prev, type: e.target.value }))}
+                                        placeholder="e.g. psoriasis"
+                                        className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                    />
+                                </div>
+                                {/* Code */}
+                                <div className="col-span-2 sm:col-span-1">
+                                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Access Code</label>
+                                    <div className="relative">
+                                        <Hash className="absolute left-3 top-3 h-4 w-4 text-slate-500" />
+                                        <input
+                                            type="text"
+                                            value={localFilters.code ?? ''}
+                                            onChange={(e) => setLocalFilters(prev => ({ ...prev, code: e.target.value }))}
+                                            placeholder="Code..."
+                                            className="w-full rounded-xl border border-white/10 bg-black/20 pl-10 pr-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Date Range */}
+                            <div>
+                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Submission Date Range</label>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span className="text-xs text-slate-500">From</span>
+                                        </div>
+                                        <input
+                                            type="date"
+                                            value={localFilters.from ?? ''}
+                                            onChange={(e) => setLocalFilters(prev => ({ ...prev, from: e.target.value }))}
+                                            className="w-full rounded-xl border border-white/10 bg-black/20 pl-12 pr-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none"
+                                        />
+                                    </div>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span className="text-xs text-slate-500">To</span>
+                                        </div>
+                                        <input
+                                            type="date"
+                                            value={localFilters.to ?? ''}
+                                            onChange={(e) => setLocalFilters(prev => ({ ...prev, to: e.target.value }))}
+                                            className="w-full rounded-xl border border-white/10 bg-black/20 pl-8 pr-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Sorting */}
+                            <div>
+                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Sort Order</label>
+                                <div className="relative">
+                                    <ArrowUpDown className="absolute left-3 top-3 h-4 w-4 text-slate-500" />
+                                    <select
+                                        value={localFilters.orderDir ?? 'desc'}
+                                        onChange={(e) => setLocalFilters(prev => ({ ...prev, orderBy: 'created_at', orderDir: e.target.value as 'asc'|'desc' }))}
+                                        className="w-full appearance-none rounded-xl border border-white/10 bg-black/20 pl-10 pr-10 py-3 text-sm text-white focus:border-blue-500 focus:outline-none cursor-pointer"
+                                    >
+                                        <option value="desc" className="bg-slate-900">Newest First</option>
+                                        <option value="asc" className="bg-slate-900">Oldest First</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex gap-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={resetFilters}
+                                    className="flex-1 rounded-xl border border-white/10 bg-white/5 py-3 text-sm font-bold text-white hover:bg-white/10 transition-colors"
+                                >
+                                    Clear All
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="flex-1 rounded-xl bg-blue-500 py-3 text-sm font-bold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-600 transition-colors"
+                                >
+                                    Apply Filters
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 };
 
