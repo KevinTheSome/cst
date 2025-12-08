@@ -16,4 +16,6 @@
     <livewire:pulse.slow-jobs cols="6" />
 
     <livewire:pulse.slow-outgoing-requests cols="6" />
+
+    <livewire:pulse.country-visits cols="4" />
 </x-pulse>

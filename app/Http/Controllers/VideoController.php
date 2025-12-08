@@ -15,7 +15,6 @@ class VideoController extends Controller
     public function generateTempLink($filename)
     {
         $path = 'videos/' . $filename;
-
         if (!Storage::disk('public')->exists($path)) {
             abort(404, 'File not found');
         }
