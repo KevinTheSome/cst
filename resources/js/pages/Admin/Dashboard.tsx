@@ -1,5 +1,27 @@
 import { Head } from '@inertiajs/react';
+import { useState } from 'react';
 import AdminLayout from '../../Layouts/AdminLayout';
+import { 
+    Activity, 
+    TrendingUp, 
+    TrendingDown,
+    Users, 
+    FileText, 
+    CheckCircle2, 
+    Clock, 
+    Zap, 
+    UserPlus, 
+    Send, 
+    MoreHorizontal, 
+    Server, 
+    Wifi, 
+    Layers, 
+    X,
+    ArrowRight,
+    AlertCircle
+} from 'lucide-react';
+
+// --- Types & Data ---
 
 type BadgeTone = 'emerald' | 'sky' | 'violet' | 'amber';
 
@@ -10,20 +32,7 @@ type StatHighlight = {
     trend: string;
     trendDescription: string;
     accent: BadgeTone;
-};
-
-const badgeToneClasses: Record<BadgeTone, string> = {
-    emerald: 'bg-emerald-400/15 text-emerald-200 ring-emerald-400/40',
-    sky: 'bg-sky-400/15 text-sky-200 ring-sky-400/40',
-    violet: 'bg-violet-400/15 text-violet-200 ring-violet-400/40',
-    amber: 'bg-amber-400/15 text-amber-100 ring-amber-400/40',
-};
-
-export const statAccentClasses: Record<BadgeTone, string> = {
-    emerald: 'from-emerald-400/20 to-emerald-500/0 ring-emerald-400/30',
-    sky: 'from-sky-400/20 to-sky-500/0 ring-sky-400/30',
-    violet: 'from-violet-400/20 to-fuchsia-500/0 ring-violet-400/30',
-    amber: 'from-amber-400/25 to-orange-500/0 ring-amber-400/30',
+    icon: any;
 };
 
 const statHighlights: StatHighlight[] = [
@@ -34,6 +43,7 @@ const statHighlights: StatHighlight[] = [
         trend: '+18%',
         trendDescription: 'vs last 7 days',
         accent: 'emerald',
+        icon: Users
     },
     {
         id: 'requests',
@@ -42,6 +52,7 @@ const statHighlights: StatHighlight[] = [
         trend: '-6%',
         trendDescription: 'response time',
         accent: 'sky',
+        icon: FileText
     },
     {
         id: 'delivery',
@@ -50,47 +61,42 @@ const statHighlights: StatHighlight[] = [
         trend: '+2.1%',
         trendDescription: 'quality index',
         accent: 'violet',
+        icon: CheckCircle2
     },
     {
         id: 'budget',
         label: 'Budget runway',
         value: '84 days',
         trend: '+12',
-        trendDescription: 'days saved this week',
+        trendDescription: 'days saved',
         accent: 'amber',
+        icon: Clock
     },
 ];
 
-const quickActions = [
-    { label: 'Launch story', description: 'Create a new highlight', accent: 'emerald' as BadgeTone },
-    { label: 'Invite member', description: 'Bring someone onboard', accent: 'sky' as BadgeTone },
-    { label: 'Share update', description: 'Send a pulse note', accent: 'violet' as BadgeTone },
-];
+
 
 const activityFeed = [
     {
+        id: 1,
         title: 'Adrians approved “Biochip spotlight”',
         detail: 'Moved to live queue • Marketing',
         time: '08:42',
         accent: 'emerald',
     },
     {
+        id: 2,
         title: 'New partnership request',
         detail: 'Cēsis BioLabs • Needs response',
         time: '07:55',
         accent: 'amber',
     },
     {
+        id: 3,
         title: 'Security report exported',
         detail: 'Sent to leadership',
         time: '06:12',
         accent: 'sky',
-    },
-    {
-        title: '3 teammates at capacity',
-        detail: 'Sends nudge to redistribute',
-        time: 'Yesterday',
-        accent: 'violet',
     },
 ];
 
@@ -107,131 +113,160 @@ const taskColumns = [
         title: 'Next',
         caption: 'Up next in pipeline',
         items: [
-            { title: 'QA new landing prototype', owner: 'Design lab', eta: 'Tomorrow 09:00' },
-            { title: 'Budget review draft', owner: 'Finance', eta: 'Friday 11:30' },
+            { title: 'QA new landing prototype', owner: 'Design lab', eta: 'Tomorrow' },
+            { title: 'Budget review draft', owner: 'Finance', eta: 'Friday' },
         ],
     },
 ];
 
-const insights = [
-    { label: 'Engagement', value: '64%', sublabel: '↑ steady growth', accent: 'emerald' as BadgeTone },
-    { label: 'Response SLA', value: '1h 12m', sublabel: 'avg turnaround', accent: 'sky' as BadgeTone },
-    { label: 'Focus time', value: '73%', sublabel: 'team in deep work', accent: 'violet' as BadgeTone },
-];
-
 const systemHealth = [
-    { label: 'API latency', value: '268ms', status: 'Good' },
-    { label: 'Web uptime', value: '99.98%', status: 'Green' },
-    { label: 'Queue depth', value: '42 items', status: 'Stable' },
+    { label: 'API latency', value: '268ms', status: 'Good', icon: Wifi },
+    { label: 'Web uptime', value: '99.98%', status: 'Green', icon: Server },
+    { label: 'Queue depth', value: '42 items', status: 'Stable', icon: Layers },
 ];
 
 export default function Dashboard() {
+    const [activeModal, setActiveModal] = useState<string | null>(null);
+
+    // Helpers for styles
+    const getAccentColors = (tone: BadgeTone) => {
+        switch(tone) {
+            case 'emerald': return 'from-emerald-500/20 to-emerald-500/5 text-emerald-400 border-emerald-500/20';
+            case 'sky': return 'from-sky-500/20 to-sky-500/5 text-sky-400 border-sky-500/20';
+            case 'violet': return 'from-violet-500/20 to-violet-500/5 text-violet-400 border-violet-500/20';
+            case 'amber': return 'from-amber-500/20 to-amber-500/5 text-amber-400 border-amber-500/20';
+            default: return 'from-slate-500/20 to-slate-500/5 text-slate-400 border-slate-500/20';
+        }
+    };
+
     return (
-        <>
+        <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
             <Head title="Control room" />
-            <div className="space-y-8 text-white">
-                <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-slate-900/80 via-slate-900/30 to-slate-900/10 px-6 py-8 shadow-inner shadow-black/20 lg:px-8">
-                    <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+            
+            <div className="mx-auto max-w-7xl space-y-8">
+                
+                {/* --- Command Center Header --- */}
+                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-900/50 p-8 shadow-2xl backdrop-blur-xl">
+                    <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none"></div>
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div>
-                            <p className="text-xs uppercase tracking-[0.4em] text-white/60">Welcome back</p>
-                            <h1 className="mt-2 text-3xl font-semibold text-white">Command dashboard</h1>
-                            <p className="mt-1 text-sm text-white/70">Live overview of missions, requests, and system health.</p>
+                            <p className="text-xs font-bold uppercase tracking-[0.3em] text-indigo-400 mb-2">Welcome Back</p>
+                            <h1 className="text-3xl font-bold text-white tracking-tight">Command Dashboard</h1>
+                            <p className="mt-2 text-slate-400 max-w-lg">
+                                Live overview of missions, team requests, and system health status.
+                            </p>
                         </div>
-                        <div className="flex gap-3 text-sm">
-                            <div className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-white/80">Latency 268ms</div>
-                            <div className="rounded-2xl border border-emerald-200/25 bg-emerald-400/10 px-4 py-2 text-emerald-100">Systems Stable</div>
-                        </div>
-                    </div>
-                    <div className="mt-6 grid gap-4 text-sm text-white/70 sm:grid-cols-3">
-                        <div>
-                            <p className="text-xs uppercase tracking-[0.3em] text-white/40">Signals</p>
-                            <p className="mt-1 text-lg font-semibold text-white">21 realtime watchers</p>
-                        </div>
-                        <div>
-                            <p className="text-xs uppercase tracking-[0.3em] text-white/40">Approvals</p>
-                            <p className="mt-1 text-lg font-semibold text-white">3 waiting • SLA 1h</p>
-                        </div>
-                        <div>
-                            <p className="text-xs uppercase tracking-[0.3em] text-white/40">Focus mode</p>
-                            <p className="mt-1 text-lg font-semibold text-white">Team 73% in deep work</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-                    {statHighlights.map((stat) => (
-                        <div
-                            key={stat.id}
-                            className={`rounded-3xl border border-white/10 bg-gradient-to-b ${statAccentClasses[stat.accent]} p-6 text-white shadow-lg shadow-black/30 ring-1 ring-white/5`}
-                        >
-                            <p className="text-xs uppercase tracking-[0.3em] text-white/60">{stat.label}</p>
-                            <p className="mt-4 text-3xl font-semibold">{stat.value}</p>
-                            <div className="mt-3 flex items-center gap-2 text-sm">
-                                <span className={`rounded-full px-3 py-1 text-xs font-semibold ${badgeToneClasses[stat.accent]}`}>{stat.trend}</span>
-                                <span className="text-white/70">{stat.trendDescription}</span>
+                        <div className="flex gap-3">
+                            <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm font-bold text-emerald-400 shadow-lg shadow-emerald-500/10">
+                                <span className="relative flex h-2 w-2">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                </span>
+                                Systems Stable
+                            </div>
+                            <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-300">
+                                <Wifi className="h-4 w-4" />
+                                268ms
                             </div>
                         </div>
-                    ))}
+                    </div>
                 </div>
 
-                <div className="grid gap-6 lg:grid-cols-3">
-                    <div className="space-y-6 lg:col-span-2">
-                        <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-xs uppercase tracking-[0.3em] text-white/60">Activity</p>
-                                    <p className="text-lg font-semibold text-white">Realtime feed</p>
+                {/* --- Stat Highlights --- */}
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    {statHighlights.map((stat) => {
+                        const Icon = stat.icon;
+                        return (
+                            <div
+                                key={stat.id}
+                                className={`group relative overflow-hidden rounded-3xl border bg-gradient-to-b p-6 shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl ${getAccentColors(stat.accent)}`}
+                            >
+                                <div className="mb-4 flex items-center justify-between">
+                                    <div className={`rounded-xl bg-white/5 p-2.5 backdrop-blur-sm group-hover:bg-white/10 transition-colors`}>
+                                        <Icon className="h-6 w-6" />
+                                    </div>
+                                    <div className={`flex items-center gap-1 text-xs font-bold ${stat.trend.startsWith('-') ? 'text-amber-400' : 'text-emerald-400'}`}>
+                                        {stat.trend}
+                                        {stat.trend.startsWith('-') ? <TrendingDown className="h-3 w-3" /> : <TrendingUp className="h-3 w-3" />}
+                                    </div>
                                 </div>
-                                <button className="text-xs font-semibold text-white/70 underline underline-offset-4">View log</button>
+                                
+                                <h3 className="text-3xl font-bold text-white tracking-tight">{stat.value}</h3>
+                                <div className="mt-1 flex items-center gap-2">
+                                    <span className="text-sm font-medium text-white/80">{stat.label}</span>
+                                </div>
+                                <p className="mt-4 text-xs font-medium uppercase tracking-wider opacity-60">{stat.trendDescription}</p>
                             </div>
-                            <div className="mt-6 space-y-6">
-                                {activityFeed.map((activity, index) => (
-                                    <div key={activity.title} className="flex gap-4">
-                                        <div className="flex flex-col items-center">
-                                            <span
-                                                className={`h-3 w-3 rounded-full ${
-                                                    activity.accent === 'emerald'
-                                                        ? 'bg-emerald-400 shadow shadow-emerald-400/40'
-                                                        : activity.accent === 'amber'
-                                                          ? 'bg-amber-400 shadow shadow-amber-400/40'
-                                                          : activity.accent === 'sky'
-                                                            ? 'bg-sky-400 shadow shadow-sky-400/40'
-                                                            : 'bg-violet-400 shadow shadow-violet-400/40'
-                                                }`}
-                                            />
-                                            {index !== activityFeed.length - 1 && <span className="mt-1 w-px flex-1 bg-white/10" />}
-                                        </div>
-                                        <div className="flex-1 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                                            <div className="flex items-center justify-between">
-                                                <p className="text-sm font-semibold text-white">{activity.title}</p>
-                                                <p className="text-xs text-white/50">{activity.time}</p>
+                        );
+                    })}
+                </div>
+
+                <div className="grid gap-8 lg:grid-cols-3">
+                    
+                    {/* --- Left Column (Activity & Tasks) --- */}
+                    <div className="lg:col-span-2 space-y-8">
+                        
+                        {/* Activity Feed */}
+                        <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="font-bold text-white flex items-center gap-2">
+                                    <Activity className="h-5 w-5 text-indigo-400" />
+                                    Realtime Activity
+                                </h3>
+                                <button className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors">View Log</button>
+                            </div>
+                            
+                            <div className="relative space-y-8 pl-2">
+                                {/* Connector Line */}
+                                <div className="absolute left-[19px] top-4 bottom-4 w-px bg-gradient-to-b from-indigo-500/50 to-transparent" />
+
+                                {activityFeed.map((item, i) => (
+                                    <div key={item.id} className="relative flex gap-4 items-start">
+                                        <div className={`relative z-10 h-2.5 w-2.5 mt-2 rounded-full border-2 border-slate-900 ${
+                                            item.accent === 'emerald' ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]' :
+                                            item.accent === 'amber' ? 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]' :
+                                            'bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.6)]'
+                                        }`} />
+                                        
+                                        <div className="flex-1 rounded-2xl border border-white/5 bg-white/[0.02] p-4 transition-colors hover:bg-white/[0.04]">
+                                            <div className="flex justify-between items-start mb-1">
+                                                <p className="text-sm font-semibold text-white">{item.title}</p>
+                                                <span className="text-xs font-mono text-slate-500">{item.time}</span>
                                             </div>
-                                            <p className="text-xs text-white/60">{activity.detail}</p>
+                                            <p className="text-xs text-slate-400">{item.detail}</p>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-xs uppercase tracking-[0.3em] text-white/60">Task lanes</p>
-                                    <p className="text-lg font-semibold text-white">Execution board</p>
-                                </div>
-                                <button className="text-xs font-semibold text-white/70 underline underline-offset-4">Open board</button>
+                        {/* Task Lanes */}
+                        <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="font-bold text-white flex items-center gap-2">
+                                    <Layers className="h-5 w-5 text-indigo-400" />
+                                    Execution Board
+                                </h3>
+                                <button className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors">Open Board</button>
                             </div>
-                            <div className="mt-6 grid gap-4 md:grid-cols-2">
-                                {taskColumns.map((column) => (
-                                    <div key={column.title} className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
-                                        <p className="text-sm font-semibold text-white">{column.title}</p>
-                                        <p className="text-xs text-white/60">{column.caption}</p>
-                                        <div className="mt-4 space-y-3">
-                                            {column.items.map((item) => (
-                                                <div key={item.title} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                                                    <p className="text-sm font-semibold text-white">{item.title}</p>
-                                                    <p className="text-xs text-white/60">{item.owner}</p>
-                                                    <p className="text-xs text-white/40">{item.eta}</p>
+
+                            <div className="grid gap-6 md:grid-cols-2">
+                                {taskColumns.map((col) => (
+                                    <div key={col.title} className="space-y-4">
+                                        <div className="flex items-center justify-between px-1">
+                                            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{col.title}</span>
+                                            <span className="text-[10px] text-slate-600 bg-slate-900 px-2 py-0.5 rounded border border-white/5">{col.items.length} items</span>
+                                        </div>
+                                        <div className="space-y-3">
+                                            {col.items.map((task, i) => (
+                                                <div key={i} className="group p-4 rounded-2xl bg-slate-950/40 border border-white/5 hover:border-indigo-500/30 transition-all cursor-pointer">
+                                                    <p className="text-sm font-medium text-white group-hover:text-indigo-200 transition-colors">{task.title}</p>
+                                                    <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
+                                                        <span>{task.owner}</span>
+                                                        <span className="flex items-center gap-1 text-slate-400 bg-white/5 px-2 py-0.5 rounded">
+                                                            <Clock className="h-3 w-3" /> {task.eta}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -241,64 +276,118 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    <div className="space-y-6">
-                        <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                            <p className="text-xs uppercase tracking-[0.3em] text-white/60">Quick actions</p>
-                            <div className="mt-4 space-y-3">
-                                {quickActions.map((action) => (
-                                    <button
-                                        key={action.label}
-                                        type="button"
-                                        className={`w-full rounded-2xl border border-white/10 bg-gradient-to-r ${statAccentClasses[action.accent]} px-4 py-3 text-left ring-1 ring-white/5`}
-                                    >
-                                        <p className="text-sm font-semibold text-white">{action.label}</p>
-                                        <p className="text-xs text-white/70">{action.description}</p>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                    {/* --- Right Column (Actions & Health) --- */}
+                    <div className="space-y-8">
 
-                        <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                            <p className="text-xs uppercase tracking-[0.3em] text-white/60">Signals</p>
-                            <div className="mt-4 space-y-4">
-                                {insights.map((insight) => (
-                                    <div key={insight.label} className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
-                                        <div className="flex items-center justify-between">
-                                            <div>
-                                                <p className="text-sm font-semibold text-white">{insight.label}</p>
-                                                <p className="text-xs text-white/60">{insight.sublabel}</p>
+                        {/* System Health */}
+                        <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
+                            <div className="flex items-center gap-2 mb-6">
+                                <Server className="h-5 w-5 text-indigo-400" />
+                                <h3 className="font-bold text-white">System Status</h3>
+                            </div>
+                            
+                            <div className="space-y-4">
+                                {systemHealth.map((sys) => {
+                                    const Icon = sys.icon;
+                                    return (
+                                        <div key={sys.label} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+                                            <div className="flex items-center gap-3">
+                                                <Icon className="h-4 w-4 text-slate-400" />
+                                                <span className="text-sm font-medium text-slate-200">{sys.label}</span>
                                             </div>
-                                            <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${badgeToneClasses[insight.accent]}`}>{insight.value}</span>
+                                            <div className="text-right">
+                                                <p className="text-sm font-bold text-white">{sys.value}</p>
+                                                <p className={`text-[10px] uppercase font-bold tracking-wider ${
+                                                    sys.status === 'Good' || sys.status === 'Green' || sys.status === 'Stable'
+                                                    ? 'text-emerald-400' : 'text-amber-400'
+                                                }`}>{sys.status}</p>
+                                            </div>
                                         </div>
-                                        <div className="mt-3 h-2 rounded-full bg-white/10">
-                                            <div
-                                                className={`h-full rounded-full bg-gradient-to-r ${statAccentClasses[insight.accent]}`}
-                                                style={{ width: insight.accent === 'amber' ? '48%' : insight.accent === 'sky' ? '70%' : '82%' }}
-                                            />
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
 
-                        <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-transparent p-6">
-                            <p className="text-xs uppercase tracking-[0.3em] text-white/60">Systems</p>
-                            <div className="mt-4 space-y-3">
-                                {systemHealth.map((system) => (
-                                    <div key={system.label} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                                        <div>
-                                            <p className="text-sm font-semibold text-white">{system.label}</p>
-                                            <p className="text-xs text-white/60">{system.status}</p>
-                                        </div>
-                                        <p className="text-sm font-semibold text-white">{system.value}</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* --- ACTION MODAL --- */}
+            {activeModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div 
+                        className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-in fade-in" 
+                        onClick={() => setActiveModal(null)}
+                    />
+                    <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-slate-900 shadow-2xl animate-in zoom-in-95 duration-200">
+                        {/* Modal Header */}
+                        <div className="flex items-center justify-between border-b border-white/10 px-6 py-4 bg-slate-900">
+                            <h3 className="font-bold text-white flex items-center gap-2">
+                                {activeModal === 'story' && <Zap className="h-5 w-5 text-emerald-400" />}
+                                {activeModal === 'invite' && <UserPlus className="h-5 w-5 text-sky-400" />}
+                                {activeModal === 'update' && <Send className="h-5 w-5 text-violet-400" />}
+                                
+                                {activeModal === 'story' && 'Launch Story'}
+                                {activeModal === 'invite' && 'Invite Member'}
+                                {activeModal === 'update' && 'Share Update'}
+                            </h3>
+                            <button 
+                                onClick={() => setActiveModal(null)}
+                                className="rounded-lg p-2 text-slate-400 hover:bg-white/10 hover:text-white transition-colors"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+                        
+                        <div className="p-6">
+                            <p className="text-sm text-slate-400 mb-6">
+                                {activeModal === 'story' && 'Draft a new highlight story for the dashboard feed.'}
+                                {activeModal === 'invite' && 'Send an invitation link to a new team member.'}
+                                {activeModal === 'update' && 'Broadcast a quick status update to the entire team.'}
+                            </p>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                                        {activeModal === 'invite' ? 'Email Address' : 'Title'}
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none"
+                                        placeholder={activeModal === 'invite' ? 'colleague@example.com' : 'Enter title...'}
+                                    />
+                                </div>
+                                
+                                {activeModal !== 'invite' && (
+                                    <div>
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Details</label>
+                                        <textarea 
+                                            rows={3}
+                                            className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white focus:border-indigo-500 focus:outline-none resize-none"
+                                            placeholder="Add more context..."
+                                        />
                                     </div>
-                                ))}
+                                )}
+
+                                <div className="pt-2 flex gap-3">
+                                    <button 
+                                        onClick={() => setActiveModal(null)}
+                                        className="flex-1 rounded-xl border border-white/10 bg-white/5 py-3 text-sm font-bold text-white hover:bg-white/10 transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button 
+                                        className="flex-1 rounded-xl bg-indigo-500 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-400 transition-colors"
+                                    >
+                                        {activeModal === 'invite' ? 'Send Invite' : 'Create'}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </>
+            )}
+        </div>
     );
 }
 

@@ -1,8 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import AdminLayout from '../../Layouts/AdminLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Link } from '@inertiajs/react';
 import { useLang } from '@/hooks/useLang';
+import { 
+    Trash2, 
+    Clock, 
+    BarChart3, 
+    FileText, 
+    ArrowLeft, 
+    Sparkles, 
+    AlertTriangle, 
+    CheckCircle,
+    Copy,
+    Plus
+} from 'lucide-react';
 
 type Form = {
   id: number;
@@ -22,6 +34,13 @@ type FormCode = {
 
 type Props = { codes: FormCode[]; forms: Form[] };
 
+// --- Custom Modal Icon ---
+const IconWarning = () => (
+    <svg className="h-12 w-12 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+    </svg>
+);
+
 export default function FormCodes({ codes: initialCodes, forms }: Props) {
   const { trans, __ } = useLang();
 
@@ -31,8 +50,13 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
   const [expirationHours, setExpirationHours] = useState<number>(24);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string[] | undefined>>({});
-  const [deletingId, setDeletingId] = useState<number | null>(null);
+  
+  // Modal States
   const [pendingDelete, setPendingDelete] = useState<FormCode | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  
+  // Notification State
+  const [notification, setNotification] = useState<{type: 'success' | 'error', message: string} | null>(null);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -53,7 +77,11 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
       });
 
       const newCode = res.data?.code as FormCode | undefined;
-      if (newCode?.id) setCodes((prev) => [newCode, ...prev]);
+      if (newCode?.id) {
+          setCodes((prev) => [newCode, ...prev]);
+          setNotification({ type: 'success', message: 'Code generated successfully!' });
+          setTimeout(() => setNotification(null), 3000);
+      }
 
       // reset inputs
       setUses(1);
@@ -64,6 +92,8 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
         const resp = err.response;
         if (resp?.status === 422 && resp.data?.errors) {
           setErrors(resp.data.errors);
+        } else {
+            setNotification({ type: 'error', message: 'Failed to generate code.' });
         }
       }
     } finally {
@@ -73,14 +103,18 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
 
   async function confirmDelete() {
     if (!pendingDelete) return;
+    setIsDeleting(true);
 
     try {
-      setDeletingId(pendingDelete.id);
       await axios.delete(`/admin/form-codes/${pendingDelete.id}`);
       setCodes((prev) => prev.filter((c) => c.id !== pendingDelete.id));
       setPendingDelete(null);
+      setNotification({ type: 'success', message: 'Code deleted successfully.' });
+      setTimeout(() => setNotification(null), 3000);
+    } catch (error) {
+        setNotification({ type: 'error', message: 'Failed to delete code.' });
     } finally {
-      setDeletingId(null);
+      setIsDeleting(false);
     }
   }
 
@@ -92,189 +126,295 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
     { label: '48h', value: 48 },
   ];
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setNotification({ type: 'success', message: 'Code copied to clipboard!' });
+    setTimeout(() => setNotification(null), 2000);
+  };
+
   return (
-    <div className="mx-auto max-w-5xl space-y-8 px-6 py-10 text-white">
-      {/* HEADER */}
-      <div className="rounded-[32px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900/60 to-slate-900/30 p-8 shadow-2xl shadow-black/40">
-        <div className="flex flex-wrap justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-semibold">{trans('formcodes.title')}</h1>
-            <p className="mt-3 text-white/70">{trans('formcodes.subtitle')}</p>
-          </div>
-
-          <Link
-            href="/admin"
-            className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white/80 hover:text-white"
-          >
-            {trans('formcodes.back')}
-          </Link>
-        </div>
-      </div>
-
-      {/* FORM */}
-      <div className="grid gap-6 lg:grid-cols-[1.1fr,0.9fr]">
-        <form
-          onSubmit={submit}
-          className="space-y-6 rounded-3xl border border-white/10 bg-white/5 p-6"
-        >
-          <div className="flex justify-between">
-            <h2 className="text-xl font-semibold">{__('formcodes.title')}</h2>
-            <span className="text-xs">{trans('formcodes.create_step')}</span>
-          </div>
-          <p className="text-sm text-white/70">{trans('formcodes.create_description')}</p>
-
-          {/* SELECT SURVEY */}
-          <div>
-            <label className="text-sm font-semibold">{trans('formcodes.select_survey')}</label>
-            {forms.length ? (
-              <select
-                value={selectedFormId}
-                disabled={submitting}
-                onChange={(e) => setSelectedFormId(Number(e.target.value))}
-                className="w-full rounded-xl bg-slate-800 px-4 py-3 text-white mt-2"
-              >
-                {forms.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.title}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <p className="text-red-400 mt-2">No surveys available. You cannot generate a code.</p>
-            )}
-            {errors.form_id && <p className="text-red-400 text-sm mt-1">{errors.form_id[0]}</p>}
-          </div>
-
-          {/* USES */}
-          <div>
-            <label className="text-sm font-semibold">{trans('formcodes.max_uses')}</label>
-            <input
-              type="number"
-              min={1}
-              value={uses}
-              disabled={submitting || !forms.length}
-              onChange={(e) => setUses(Number(e.target.value))}
-              className="w-full rounded-xl bg-slate-800 px-4 py-3 text-white"
-            />
-          </div>
-
-          {/* EXPIRATION */}
-          <div>
-            <label className="text-sm font-semibold">{trans('formcodes.valid_hours')}</label>
-            <div className="flex gap-2 mt-2">
-              {presetButtons.map((p) => (
-                <button
-                  key={p.value}
-                  type="button"
-                  onClick={() => setExpirationHours(p.value)}
-                  className={`rounded-full px-3 py-2 text-sm ${
-                    expirationHours === p.value ? 'bg-emerald-500/20 ring-2 ring-emerald-400' : 'bg-white/10'
-                  }`}
+    <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
+      
+      <div className="mx-auto max-w-7xl space-y-8">
+        
+        {/* --- Header Card --- */}
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-900/50 p-8 shadow-2xl backdrop-blur-xl">
+            <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <div className="flex items-center gap-2 mb-2">
+                        <Sparkles className="h-5 w-5 text-emerald-400" />
+                        <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">Access Management</span>
+                    </div>
+                    <h1 className="text-3xl font-bold text-white tracking-tight">{trans('formcodes.title')}</h1>
+                    <p className="mt-2 text-slate-400 max-w-lg">{trans('formcodes.subtitle')}</p>
+                </div>
+                <Link
+                    href="/admin"
+                    className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
                 >
-                  {p.label}
-                </button>
-              ))}
+                    <ArrowLeft className="h-4 w-4" />
+                    {trans('formcodes.back')}
+                </Link>
             </div>
+        </div>
 
-            <input
-              type="number"
-              min={1}
-              value={expirationHours}
-              disabled={submitting || !forms.length}
-              onChange={(e) => setExpirationHours(Number(e.target.value))}
-              className="w-full rounded-xl bg-slate-800 px-4 py-3 mt-3 text-white"
-            />
-            <p className="text-xs text-white/60">{trans('formcodes.preset_hint')}</p>
-          </div>
+        {/* --- Notification Toast --- */}
+        {notification && (
+            <div className={`fixed top-6 right-6 z-50 flex items-center gap-3 rounded-2xl border p-4 shadow-xl backdrop-blur-xl animate-in slide-in-from-right-10 fade-in duration-300 ${
+                notification.type === 'success' 
+                ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-200' 
+                : 'border-rose-500/20 bg-rose-500/10 text-rose-200'
+            }`}>
+                {notification.type === 'success' ? <CheckCircle className="h-5 w-5" /> : <AlertTriangle className="h-5 w-5" />}
+                <span className="text-sm font-medium">{notification.message}</span>
+            </div>
+        )}
 
-          <button
-            type="submit"
-            disabled={submitting || !forms.length}
-            className="rounded-full bg-emerald-500 px-6 py-3 font-semibold"
-          >
-            {submitting ? trans('formcodes.generating') : trans('formcodes.generate_btn')}
-          </button>
-        </form>
+        {/* --- Main Grid --- */}
+        <div className="grid gap-8 lg:grid-cols-[1.2fr,0.8fr]">
+            
+            {/* Left Column: Create Form */}
+            <form onSubmit={submit} className="flex flex-col gap-6">
+                <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/20 text-blue-400">
+                            <Plus className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-bold text-white">{__('formcodes.title')}</h2>
+                            <p className="text-xs text-slate-400">{trans('formcodes.create_step')}</p>
+                        </div>
+                    </div>
 
-        {/* STATS PANEL */}
-        <div className="rounded-3xl border border-white/10 bg-slate-950/60 p-6">
-          <h3 className="text-lg font-semibold">{trans('formcodes.stats_title')}</h3>
-          <p className="text-white/70 mt-3">
-            {trans('formcodes.stats_avg_uses')}:{' '}
-            {codes.length ? Math.round(codes.reduce((a, c) => a + c.uses, 0) / codes.length) : 0}
-          </p>
-          <p className="text-white/70">
-            {trans('formcodes.stats_last_created')}:{' '}
-            {codes[0] ? new Date(codes[0].created_at).toLocaleString() : '—'}
-          </p>
-          <p className="mt-4 text-xs text-emerald-100 bg-emerald-500/10 px-4 py-3 rounded-xl">
-            {trans('formcodes.stats_hint')}
-          </p>
+                    <div className="space-y-5">
+                        {/* Survey Select */}
+                        <div>
+                            <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                {trans('formcodes.select_survey')}
+                            </label>
+                            {forms.length ? (
+                                <div className="relative">
+                                    <FileText className="absolute left-3 top-3 h-5 w-5 text-slate-500" />
+                                    <select
+                                        value={selectedFormId}
+                                        disabled={submitting}
+                                        onChange={(e) => setSelectedFormId(Number(e.target.value))}
+                                        className="w-full appearance-none rounded-xl border border-white/10 bg-black/20 pl-10 pr-4 py-3 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                                    >
+                                        {forms.map((f) => (
+                                            <option key={f.id} value={f.id} className="bg-slate-900">
+                                                {f.title}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            ) : (
+                                <div className="rounded-xl border border-rose-500/20 bg-rose-500/10 p-3 text-sm text-rose-300">
+                                    No surveys available.
+                                </div>
+                            )}
+                            {errors.form_id && <p className="mt-1 text-xs text-rose-400">{errors.form_id[0]}</p>}
+                        </div>
+
+                        {/* Uses */}
+                        <div>
+                            <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                {trans('formcodes.max_uses')}
+                            </label>
+                            <input
+                                type="number"
+                                min={1}
+                                value={uses}
+                                disabled={submitting || !forms.length}
+                                onChange={(e) => setUses(Number(e.target.value))}
+                                className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                            />
+                        </div>
+
+                        {/* Expiration */}
+                        <div>
+                            <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                                {trans('formcodes.valid_hours')}
+                            </label>
+                            <div className="flex flex-wrap gap-2 mb-3">
+                                {presetButtons.map((p) => (
+                                    <button
+                                        key={p.value}
+                                        type="button"
+                                        onClick={() => setExpirationHours(p.value)}
+                                        className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+                                            expirationHours === p.value 
+                                            ? 'bg-emerald-500 text-slate-900 shadow-lg shadow-emerald-500/20 scale-105' 
+                                            : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'
+                                        }`}
+                                    >
+                                        {p.label}
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="relative">
+                                <Clock className="absolute left-3 top-3 h-5 w-5 text-slate-500" />
+                                <input
+                                    type="number"
+                                    min={1}
+                                    value={expirationHours}
+                                    disabled={submitting || !forms.length}
+                                    onChange={(e) => setExpirationHours(Number(e.target.value))}
+                                    className="w-full rounded-xl border border-white/10 bg-black/20 pl-10 pr-4 py-3 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                                />
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={submitting || !forms.length}
+                            className="w-full rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 py-3.5 text-sm font-bold text-slate-900 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] hover:shadow-emerald-500/30 disabled:opacity-50 disabled:hover:scale-100"
+                        >
+                            {submitting ? trans('formcodes.generating') : trans('formcodes.generate_btn')}
+                        </button>
+                    </div>
+                </div>
+
+                {/* Stats Panel */}
+                <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 to-slate-950 p-6 shadow-xl">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-400">
+                            <BarChart3 className="h-5 w-5" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-white">{trans('formcodes.stats_title')}</h3>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="rounded-2xl bg-white/5 p-4 border border-white/5">
+                            <p className="text-xs text-slate-400">{trans('formcodes.stats_avg_uses')}</p>
+                            <p className="text-2xl font-bold text-white mt-1">
+                                {codes.length ? Math.round(codes.reduce((a, c) => a + c.uses, 0) / codes.length) : 0}
+                            </p>
+                        </div>
+                        <div className="rounded-2xl bg-white/5 p-4 border border-white/5">
+                            <p className="text-xs text-slate-400">Total Codes</p>
+                            <p className="text-2xl font-bold text-white mt-1">{codes.length}</p>
+                        </div>
+                    </div>
+                    
+                    <div className="mt-4 flex items-start gap-3 rounded-xl bg-indigo-500/10 p-4 text-xs leading-relaxed text-indigo-200">
+                        <Sparkles className="h-4 w-4 shrink-0 mt-0.5" />
+                        <p>{trans('formcodes.stats_hint')}</p>
+                    </div>
+                </div>
+            </form>
+
+            {/* Right Column: Code List */}
+            <div className="rounded-3xl border border-white/10 bg-slate-900/50 flex flex-col shadow-2xl backdrop-blur-xl overflow-hidden h-fit">
+                <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between bg-slate-900/50">
+                    <h2 className="text-lg font-bold text-white">{trans('formcodes.table_title')}</h2>
+                    <span className="text-xs font-mono text-slate-500 bg-black/30 px-2 py-1 rounded border border-white/5">
+                        {codes.length} active
+                    </span>
+                </div>
+                
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                        <thead>
+                            <tr className="border-b border-white/5 bg-white/5 text-xs font-bold uppercase tracking-wider text-slate-400">
+                                <th className="px-6 py-4">{trans('formcodes.col_code')}</th>
+                                <th className="px-6 py-4">{trans('formcodes.col_survey')}</th>
+                                <th className="px-6 py-4 text-center">{trans('formcodes.col_uses')}</th>
+                                <th className="px-6 py-4 text-right">{trans('formcodes.col_action')}</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                            {codes.map((code) => (
+                                <tr key={code.id} className="group hover:bg-white/[0.02] transition-colors">
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-mono text-emerald-400 font-medium">{code.code}</span>
+                                            <button 
+                                                onClick={() => copyToClipboard(code.code)}
+                                                className="opacity-0 group-hover:opacity-100 text-slate-500 hover:text-white transition-opacity"
+                                                title="Copy Code"
+                                            >
+                                                <Copy className="h-3 w-3" />
+                                            </button>
+                                        </div>
+                                        <div className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                                            <Clock className="h-3 w-3" />
+                                            {new Date(code.expiration_date).toLocaleDateString()}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="text-slate-300 font-medium line-clamp-1">{code.form?.title ?? '—'}</div>
+                                        <div className="text-xs text-slate-500 mt-0.5">By: {code.admin?.email ?? 'Unknown'}</div>
+                                    </td>
+                                    <td className="px-6 py-4 text-center">
+                                        <span className="inline-flex items-center justify-center rounded-md bg-slate-800 px-2.5 py-1 text-xs font-medium text-slate-300 border border-white/5">
+                                            {code.uses}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-right">
+                                        <button
+                                            onClick={() => setPendingDelete(code)}
+                                            className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 transition-colors"
+                                            title={trans('formcodes.delete_btn')}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            {codes.length === 0 && (
+                                <tr>
+                                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
+                                        No codes generated yet.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
       </div>
 
-      {/* TABLE */}
-      <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h2 className="text-2xl font-semibold">{trans('formcodes.table_title')}</h2>
-        <table className="w-full mt-4 text-sm">
-          <thead>
-            <tr className="text-white/50 uppercase text-xs">
-              <th>{trans('formcodes.col_code')}</th>
-              <th>{trans('formcodes.col_uses')}</th>
-              <th>{trans('formcodes.col_created_by')}</th>
-              <th>{trans('formcodes.col_survey')}</th>
-              <th>{trans('formcodes.col_expiration')}</th>
-              <th>{trans('formcodes.col_created')}</th>
-              <th className="text-right">{trans('formcodes.col_action')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {codes.map((code) => (
-              <tr key={code.id}>
-                <td>{code.code}</td>
-                <td>{code.uses}</td>
-                <td>{code.admin?.email ?? '—'}</td>
-                <td>{code.form?.title ?? '—'}</td>
-                <td>{new Date(code.expiration_date).toLocaleString()}</td>
-                <td>{new Date(code.created_at).toLocaleString()}</td>
-                <td className="text-right">
-                  <button
-                    onClick={() => setPendingDelete(code)}
-                    className="text-red-300 underline"
-                  >
-                    {trans('formcodes.delete_btn')}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* DELETE MODAL */}
+      {/* --- Delete Confirmation Modal --- */}
       {pendingDelete && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center">
-          <div className="bg-slate-900 p-6 rounded-xl text-white max-w-md w-full">
-            <h3 className="text-xl font-semibold">{trans('formcodes.delete_title')}</h3>
-            <p className="mt-2">
-              {trans('formcodes.delete_desc')}{' '}
-              <span className="font-mono">{pendingDelete.code}</span>.
-            </p>
-            <div className="flex gap-3 mt-4">
-              <button
-                onClick={() => setPendingDelete(null)}
-                className="flex-1 border px-4 py-2 rounded-xl"
-              >
-                {trans('formcodes.delete_cancel')}
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="flex-1 bg-red-500 px-4 py-2 rounded-xl"
-              >
-                {deletingId === pendingDelete.id
-                  ? trans('formcodes.delete_deleting')
-                  : trans('formcodes.delete_confirm')}
-              </button>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-in fade-in" 
+            onClick={() => !isDeleting && setPendingDelete(null)}
+          />
+          <div className="relative w-full max-w-sm overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-6 text-center">
+              <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-slate-800/50">
+                <IconWarning />
+              </div>
+              
+              <h3 className="mb-2 text-xl font-bold text-white">
+                {trans('formcodes.delete_title')}
+              </h3>
+              
+              <p className="mb-6 text-sm text-slate-400 leading-relaxed">
+                {trans('formcodes.delete_desc')}{' '}
+                <span className="font-mono text-emerald-400 font-bold bg-emerald-500/10 px-1 rounded">{pendingDelete.code}</span>.
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  disabled={isDeleting}
+                  onClick={() => setPendingDelete(null)}
+                  className="flex-1 rounded-xl border border-white/10 bg-transparent py-3 text-sm font-semibold text-white transition-colors hover:bg-white/5"
+                >
+                  {trans('formcodes.delete_cancel')}
+                </button>
+                <button
+                  disabled={isDeleting}
+                  onClick={confirmDelete}
+                  className="flex-1 rounded-xl bg-rose-500 py-3 text-sm font-bold text-white shadow-lg shadow-rose-500/20 transition-all hover:scale-[1.02] hover:bg-rose-600"
+                >
+                  {isDeleting ? trans('formcodes.delete_deleting') : trans('formcodes.delete_confirm')}
+                </button>
+              </div>
             </div>
           </div>
         </div>
