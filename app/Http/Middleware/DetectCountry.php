@@ -8,8 +8,7 @@ use Stevebauman\Location\Facades\Location;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
-
-// NEW imports
+use Illuminate\Support\Facades\Cookie;
 use App\Models\Visit;
 use Laravel\Pulse\Facades\Pulse;
 
@@ -21,6 +20,7 @@ class DetectCountry
         $testCountry = $request->query('test_country');
         $ip = $testIp ?: $request->ip();
 
+        // Localhost handling
         if (in_array($ip, ['127.0.0.1', '::1'])) {
 
             $host = $request->getHost();
@@ -44,68 +44,84 @@ class DetectCountry
             $request->attributes->set('geo_country', $countryCode);
             Inertia::share('geoCountry', $countryCode);
 
-            // Persist a visit for local development as well (optional)
-            $this->recordVisit($request, $ip, $countryCode);
+            $this->maybeRecordVisit($request, $ip, $countryCode);
 
             return $next($request);
         }
 
+        // Remote IP handling with caching
         $cacheKey = "geo_country_{$ip}";
-        $countryCode = Cache::remember($cacheKey, now()->addHours(12), function () use ($ip) {
+        $geo = Cache::remember($cacheKey, now()->addHours(12), function () use ($ip) {
             try {
-                $position = Location::get($ip);
-                return $position?->countryCode ? strtoupper($position->countryCode) : null;
+                return Location::get($ip);
             } catch (\Throwable $e) {
                 Log::warning("Location lookup failed for {$ip}: " . $e->getMessage());
                 return null;
             }
         });
 
-        if (empty($countryCode)) {
-            $countryCode = config('geo.default_country', 'US');
-            Log::debug("Falling back to default geo country: {$countryCode} for IP: {$ip}");
-        }
+        $countryCode = $geo && $geo->countryCode ? strtoupper($geo->countryCode) : config('geo.default_country', 'US');
 
         $request->attributes->set('geo_country', $countryCode);
         Inertia::share('geoCountry', $countryCode);
 
         Log::info("Detected country {$countryCode} for IP: {$ip}");
 
-        // RECORD the visit (DB + Pulse)
-        $this->recordVisit($request, $ip, $countryCode);
+        $this->maybeRecordVisit($request, $ip, $countryCode);
 
         return $next($request);
     }
 
-    /**
-     * Record visit to DB and to Pulse (privacy: store hashed IP).
-     */
-    protected function recordVisit(Request $request, ?string $ip, ?string $countryCode): void
+    protected function maybeRecordVisit(Request $request, ?string $ip, ?string $countryCode): void
     {
         try {
-            // Privacy: store hash of IP, not raw IP
-            $ipHash = $ip ? hash('sha256', $ip) : null;
+            if (! $request->isMethod('GET')) {
+                return;
+            }
 
-            Visit::create([
-                'country_code' => $countryCode,
-                'country_name' => null, // optional - Location package can provide name if you want $position->countryName
-                'path' => $request->path(),
-                'ip_hash' => $ipHash,
-                'user_agent' => substr($request->header('User-Agent') ?? '', 0, 255),
-            ]);
-        } catch (\Throwable $e) {
-            // Fail silent, but log in debug
-            Log::debug('Failed to persist visit: '.$e->getMessage());
-        }
+            $userAgent = $request->header('User-Agent') ?? '';
+            $cookieName = 'visitor_hash';
+            $visitorHash = $request->cookie($cookieName);
 
-        // Also record into Pulse for easy aggregation if Pulse is installed & configured
-        try {
-            // metric name 'visits.by_country', group by country code, increment by 1
-            if (class_exists(Pulse::class)) {
-                Pulse::record('visits.by_country', $countryCode ?? 'unknown', 1)->sum();
+            if (empty($visitorHash)) {
+                $visitorHash = hash('sha256', ($ip ?? '') . '|' . substr($userAgent, 0, 255));
+                Cookie::queue($cookieName, $visitorHash, 1440);
+            }
+
+            $today = now()->toDateString();
+            $lockKey = "visit_lock:{$visitorHash}:{$today}";
+            $lock = Cache::lock($lockKey, 5);
+
+            if (! $lock->get()) {
+                return;
+            }
+
+            try {
+                $alreadyVisited = Visit::query()
+                    ->where('ip_hash', $visitorHash)
+                    ->whereDate('created_at', $today)
+                    ->exists();
+
+                if ($alreadyVisited) {
+                    return;
+                }
+
+                Visit::create([
+                    'country_code' => $countryCode,
+                    'country_name' => null,
+                    'path' => $request->path(),
+                    'ip_hash' => $visitorHash,
+                    'user_agent' => substr($userAgent, 0, 255),
+                ]);
+
+                if (class_exists(Pulse::class)) {
+                    Pulse::record('visits.by_country', $countryCode ?? 'unknown', 1)->sum();
+                }
+            } finally {
+                $lock->release();
             }
         } catch (\Throwable $e) {
-            Log::debug('Pulse record failed: '.$e->getMessage());
+            Log::debug('Failed to record unique visit: ' . $e->getMessage());
         }
     }
 }
