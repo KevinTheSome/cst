@@ -91,38 +91,7 @@
         <livewire:pulse.country-visits cols="4" />
     </div>
 
+    <livewire:pulse.country-visits cols="4" />
+
+    <livewire:pulse.total-site-visits cols="4" />
 </x-pulse>
-
-<script>
-    (function () {
-        const input = document.getElementById('pulse-card-search');
-        const clearBtn = document.getElementById('pulse-card-search-clear');
-        const cards = () => Array.from(document.querySelectorAll('[data-pulse-card]'));
-
-        function applyFilter() {
-            const q = (input.value || '').trim().toLowerCase();
-
-            cards().forEach(el => {
-                const hay = (el.getAttribute('data-pulse-card') || '').toLowerCase();
-                const match = q === '' || hay.includes(q);
-                el.style.display = match ? '' : 'none';
-            });
-        }
-
-        if (input) {
-            input.addEventListener('input', applyFilter);
-        }
-
-        if (clearBtn) {
-            clearBtn.addEventListener('click', () => {
-                input.value = '';
-                applyFilter();
-                input.focus();
-            });
-        }
-
-        // Initial run (in case you later want to prefill search)
-        applyFilter();
-    })();
-</script>
-
