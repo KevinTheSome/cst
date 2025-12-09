@@ -25,4 +25,6 @@
     <livewire:pulse.slow-outgoing-requests cols="6" />
 
     <livewire:pulse.country-visits cols="4" />
+
+    <livewire:pulse.total-site-visits cols="4" />
 </x-pulse>
