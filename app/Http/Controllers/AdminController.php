@@ -32,9 +32,13 @@ class AdminController extends Controller
             $request->session()->put('is_admin', true);
             $request->session()->put('admin_id', $admin->id);
 
+            // ✅ Redirect back to intended page if set (e.g. /pulse)
+            $intended = $request->session()->pull('admin_intended');
+            $redirectTo = $intended ?: route('admin.dashboard');
+
             return response()->json([
                 'message' => 'Logged in!',
-                'redirect' => route('admin.dashboard')
+                'redirect' => $redirectTo,
             ]);
         }
 
@@ -45,7 +49,7 @@ class AdminController extends Controller
 
     // ---------- CRUD for admin accounts ----------
 
-    // List all admins
+    // List all admins (if you ever need a separate page)
     public function adminsIndex()
     {
         $admins = Admin::select('id', 'email', 'created_at')
@@ -104,7 +108,7 @@ class AdminController extends Controller
     // Delete admin
     public function adminsDestroy(Request $request, Admin $admin)
     {
-        // optional: prevent deleting yourself
+        // Prevent deleting yourself
         if ($request->session()->get('admin_id') === $admin->id) {
             return redirect()
                 ->route('admin.security')
