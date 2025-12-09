@@ -41,7 +41,8 @@ class DetectCountry
                 Log::info("Using DEV_GEO fallback={$countryCode} for local request");
             }
 
-            $request->attributes->set('geo_country', $countryCode);
+            // ✅ unified attribute
+            $request->attributes->set('country_code', $countryCode);
             Inertia::share('geoCountry', $countryCode);
 
             $this->maybeRecordVisit($request, $ip, $countryCode);
@@ -60,9 +61,12 @@ class DetectCountry
             }
         });
 
-        $countryCode = $geo && $geo->countryCode ? strtoupper($geo->countryCode) : config('geo.default_country', 'US');
+        $countryCode = $geo && $geo->countryCode
+            ? strtoupper($geo->countryCode)
+            : config('geo.default_country', 'US');
 
-        $request->attributes->set('geo_country', $countryCode);
+        // ✅ unified attribute (same key as localhost path)
+        $request->attributes->set('country_code', $countryCode);
         Inertia::share('geoCountry', $countryCode);
 
         Log::info("Detected country {$countryCode} for IP: {$ip}");
@@ -114,6 +118,7 @@ class DetectCountry
                     'user_agent' => substr($userAgent, 0, 255),
                 ]);
 
+                // Record a Pulse metric (optional)
                 if (class_exists(Pulse::class)) {
                     Pulse::record('visits.by_country', $countryCode ?? 'unknown', 1)->sum();
                 }
