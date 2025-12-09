@@ -6,6 +6,8 @@
 
     <livewire:pulse.cst-form-submissions cols="4" />
 
+    <livewire:pulse.top-routes cols="6" />
+
     <livewire:pulse.servers cols="full" />
 
     <livewire:pulse.usage cols="4" rows="2" />
