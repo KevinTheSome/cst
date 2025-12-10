@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\StoredFile;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class StoredFileController extends Controller
 {
@@ -37,5 +37,55 @@ class StoredFileController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'File uploaded successfully!');
+    }
+    public function show(){
+        $files = StoredFile::all();
+        return Inertia::render('Admin/Fails/showFiles', [
+            'files' => $files
+        ]);
+
+    }
+    public function edit($id)
+    {
+        $file = StoredFile::FindOrFail($id);
+        return Inertia::render('Admin/Fails/editFile', [
+            'file' => $file
+        ]);
+    }
+    
+    public function update(Request $request, $id)
+    {
+        $fileRecord = StoredFile::findOrFail($id);
+
+        $data = $request->validate([
+            'title_lv' => 'required|string|max:255',
+            'title_en' => 'required|string|max:255',
+            'file' => 'nullable|file|max:10240|mimes:csv,txt,pdf,jpg,jpeg,png,zip,xlsx,xls,doc,docx',
+        ]);
+
+        if ($request->file('file')) {
+            $newFile = $request->file('file');
+
+            if ($fileRecord->path && Storage::disk('public')->exists($fileRecord->path)) {
+                Storage::disk('public')->delete($fileRecord->path);
+            }
+
+            $filePath = $newFile->store('files', 'public');
+
+            $fileRecord->update([
+                'title_lv' => $data['title_lv'],
+                'title_en' => $data['title_en'],
+                'path' => $filePath,
+                'mime_type' => $newFile->getClientMimeType(),
+                'size' => $newFile->getSize(),
+            ]);
+        } else {
+            $fileRecord->update([
+                'title_lv' => $data['title_lv'],
+                'title_en' => $data['title_en'],
+            ]);
+        }
+
+        return back()->with('success', 'File updated successfully');
     }
 }
