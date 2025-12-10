@@ -149,7 +149,7 @@ const navSections: NavSection[] = [
             id: 'files',
             label: 'Manage Files',
             description: 'Upload and manage stored files',
-            href: '/admin/files/upload',
+            href: '/admin/files/show',
             icon: Settings2,
         },
     ],

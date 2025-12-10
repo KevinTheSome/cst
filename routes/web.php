@@ -195,9 +195,10 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::delete('/lecture/codes/{id}', [LectureController::class, 'destroy'])->name('codes.destroy');
     Route::post('/lecture/codes/{id}/regenerate', [LectureController::class, 'regenerate'])->name('codes.regenerate');
 
-    Route::get('files/upload', [StoredFileController::class, 'create'])->name('files.create');
-    Route::post('files', [StoredFileController::class, 'store'])->name('files.store');
+    Route::get('/files/upload', [StoredFileController::class, 'create'])->name('files.create');
+    Route::post('/files', [StoredFileController::class, 'store'])->name('files.store');
     Route::get('/files/show', [StoredFileController::class, 'show'])->name('files.show');
     Route::get('/files/{id}/edit', [StoredFileController::class, 'edit'])->name('files.edit');
     Route::put('/files/update/{id}', [StoredFileController::class, 'update'])->name('files.update');
+    Route::delete('/files/{id}', [StoredFileController::class, 'destroy'])->name('files.destroy');
 });

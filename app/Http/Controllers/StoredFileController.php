@@ -88,4 +88,24 @@ class StoredFileController extends Controller
 
         return back()->with('success', 'File updated successfully');
     }
+
+    public function destroy($id)
+    {
+        $file = StoredFile::findOrFail($id);
+
+        // Delete the physical file if present
+        if ($file->path && Storage::disk('public')->exists($file->path)) {
+            try {
+                Storage::disk('public')->delete($file->path);
+            } catch (\Throwable $e) {
+                // Log and continue — we don't want a storage error to block the DB delete
+                \Log::warning("Failed to delete stored file '{$file->path}': " . $e->getMessage());
+            }
+        }
+
+        // Delete the DB record
+        $file->delete();
+
+        return redirect()->back()->with('success', 'File deleted successfully');
+    }
 }
