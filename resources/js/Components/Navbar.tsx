@@ -128,7 +128,7 @@ function Navbar() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
+                                <Link href="/specialistiem/atmp" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
                                     {__('head.nav_specialists_plants')}
                                 </Link>
                             </li>
@@ -357,7 +357,7 @@ function Navbar() {
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="#" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link href="/specialistiem/atmp" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
                                                     {__('head.nav_specialists_plants')}
                                                 </Link>
                                             </li>
