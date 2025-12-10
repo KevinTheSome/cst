@@ -47,7 +47,7 @@ function UploadFile() {
         </div>
 
         <Link
-          href="/admin/files"
+          href="/admin/files/show"
           className="group flex items-center gap-2 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-all shadow-sm"
         >
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
