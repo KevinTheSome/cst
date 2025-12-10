@@ -235,4 +235,11 @@ return [
             ],
         ],
     ],
+
+    'cards' => [
+        App\Livewire\Pulse\TopRoutes::class => [
+            'width' => '1/2',
+            'order' => 10,
+        ],
+    ],
 ];

@@ -142,6 +142,19 @@ const navSections: NavSection[] = [
             },
         ],
     },
+    {
+    label: 'Files',
+    items: [
+        {
+            id: 'files',
+            label: 'Manage Files',
+            description: 'Upload and manage stored files',
+            href: '/admin/files/show',
+            icon: Settings2,
+        },
+    ],
+}
+
 ];
 
 export default function AdminLayout({ children, title = 'Admin Panel' }: PropsWithChildren<AdminLayoutProps>) {

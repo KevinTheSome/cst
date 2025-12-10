@@ -22,7 +22,6 @@ class DetectCountry
 
         // Localhost handling
         if (in_array($ip, ['127.0.0.1', '::1'])) {
-
             $host = $request->getHost();
             $map = [
                 'lab-lv.local' => 'LV',
@@ -41,9 +40,7 @@ class DetectCountry
                 Log::info("Using DEV_GEO fallback={$countryCode} for local request");
             }
 
-            $request->attributes->set('geo_country', $countryCode);
-            Inertia::share('geoCountry', $countryCode);
-
+            $this->applyCountryToRequestAndInertia($request, $countryCode);
             $this->maybeRecordVisit($request, $ip, $countryCode);
 
             return $next($request);
@@ -60,16 +57,35 @@ class DetectCountry
             }
         });
 
-        $countryCode = $geo && $geo->countryCode ? strtoupper($geo->countryCode) : config('geo.default_country', 'US');
+        $countryCode = $geo && !empty($geo->countryCode)
+            ? strtoupper($geo->countryCode)
+            : config('geo.default_country', 'US');
 
-        $request->attributes->set('geo_country', $countryCode);
-        Inertia::share('geoCountry', $countryCode);
+        $this->applyCountryToRequestAndInertia($request, $countryCode);
 
         Log::info("Detected country {$countryCode} for IP: {$ip}");
 
         $this->maybeRecordVisit($request, $ip, $countryCode);
 
         return $next($request);
+    }
+
+    /**
+     * Set multiple request attributes and Inertia shares so callers using
+     * different keys (geo_country vs country_code vs geoCountry) all work.
+     */
+    protected function applyCountryToRequestAndInertia(Request $request, string $countryCode): void
+    {
+        // Normalize to uppercase
+        $countryCode = strtoupper($countryCode ?? '');
+
+        // Set both attribute keys (your routes read geo_country; other code may use country_code)
+        $request->attributes->set('country_code', $countryCode);
+        $request->attributes->set('geo_country', $countryCode);
+
+        // Share with Inertia using camelCase keys (frontend commonly expects geoCountry)
+        Inertia::share('geoCountry', $countryCode);
+        Inertia::share('detectedCountry', $countryCode);
     }
 
     protected function maybeRecordVisit(Request $request, ?string $ip, ?string $countryCode): void
@@ -114,6 +130,7 @@ class DetectCountry
                     'user_agent' => substr($userAgent, 0, 255),
                 ]);
 
+                // Record a Pulse metric (optional)
                 if (class_exists(Pulse::class)) {
                     Pulse::record('visits.by_country', $countryCode ?? 'unknown', 1)->sum();
                 }
