@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Laravel\Pulse\Livewire\Card;
 use App\Models\Visit;
 
-class CountryVisits extends Card
+class TotalSiteVisits extends Card
 {
     protected $listeners = ['visit-filters-updated' => '$refresh'];
 
@@ -16,34 +16,35 @@ class CountryVisits extends Card
         $from = request()->query('from');
         $to = request()->query('to');
 
-        // Default: last 30 days (same as your current behavior)
+        // If filters are NOT used -> keep original Pulse behavior
+        if (! $country && ! ($from && $to)) {
+            $total = $this->aggregateTotal('site_visit', 'count');
+
+            return view('livewire.pulse.total-site-visits', [
+                'total' => $total ?? 0,
+            ]);
+        }
+
+        // If filters ARE used -> compute from visits table
         $start = now()->subDays(30);
         $end = now();
 
-        // If date filters are provided, use them instead
         if ($from && $to) {
             $start = Carbon::parse($from)->startOfDay();
             $end = Carbon::parse($to)->endOfDay();
         }
 
         $query = Visit::query()
-            ->selectRaw('country_code, COUNT(*) as total')
-            ->whereNotNull('country_code')
             ->whereBetween('created_at', [$start, $end]);
 
-        // Optional country filter
         if ($country) {
             $query->where('country_code', $country);
         }
 
-        $data = $query
-            ->groupBy('country_code')
-            ->orderByDesc('total')
-            ->limit(30)
-            ->get();
+        $total = $query->count();
 
-        return view('livewire.pulse.country-visits', [
-            'data' => $data,
+        return view('livewire.pulse.total-site-visits', [
+            'total' => $total ?? 0,
         ]);
     }
 }
