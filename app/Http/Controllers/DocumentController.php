@@ -11,34 +11,55 @@ class DocumentController extends Controller
      */
     public function index()
     {
-        // TODO: replace this static data with real data from the database
-        $documents = [
-            [
-                'id'          => 1,
-                'title_lv'    => 'ATMP fails LV',
-                'title_en'    => 'ATMP document EN',
-                'file_size'   => 345678, // bytes
-                'mime_type'   => 'application/pdf',
-                'created_at'  => now()->toIso8601String(),
-                'download_url'=> route('documents.download', ['document' => 1]),
-                'tags'        => [
-                    ['id' => 1, 'name' => 'ATMP'],
-                    ['id' => 2, 'name' => 'Ražotnes'],
-                ],
-            ],
-            [
-                'id'          => 2,
-                'title_lv'    => 'Pacientu informācija',
-                'title_en'    => 'Patient information',
-                'file_size'   => 123456,
-                'mime_type'   => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'created_at'  => now()->subDays(3)->toIso8601String(),
-                'download_url'=> route('documents.download', ['document' => 2]),
-                'tags'        => [
-                    ['id' => 3, 'name' => 'Pacienti'],
-                ],
-            ],
-        ];
+        $storedFiles = \App\Models\StoredFile::all();
+
+        $documents = $storedFiles->map(function ($file) {
+            // Convert JSON tags to the format expected by frontend
+            $tags = [];
+            if ($file->tags) {
+                $tagData = $file->tags;
+                // If it's a string, decode it from JSON
+                if (is_string($tagData)) {
+                    $tagData = json_decode($tagData, true);
+                }
+                // Process tags if we have a valid array
+                if (is_array($tagData)) {
+                    foreach ($tagData as $index => $tag) {
+                        // Handle both simple string tags and complex tag objects with lv/en fields
+                        $tagLv = null;
+                        $tagEn = null;
+
+                        if (is_string($tag)) {
+                            $tagLv = $tag;
+                            $tagEn = $tag;
+                        } elseif (is_array($tag)) {
+                            $tagLv = $tag['lv'] ?? null;
+                            $tagEn = $tag['en'] ?? $tag['lv'] ?? null;
+                        }
+
+                        if ($tagLv || $tagEn) {
+                            $tags[] = [
+                                'id' => $index + 1,
+                                'name_lv' => trim($tagLv ?? ''),
+                                'name_en' => trim($tagEn ?? ''),
+                                'name' => trim($tagLv ?? $tagEn ?? '') // Fallback for compatibility
+                            ];
+                        }
+                    }
+                }
+            }
+
+            return [
+                'id' => $file->id,
+                'title_lv' => $file->title_lv,
+                'title_en' => $file->title_en,
+                'file_size' => $file->size,
+                'mime_type' => $file->mime_type,
+                'created_at' => $file->created_at->toIso8601String(),
+                'download_url' => route('documents.download', ['document' => $file->id]),
+                'tags' => $tags,
+            ];
+        });
 
         return Inertia::render('Database/index', [
             'documents' => $documents,
@@ -46,12 +67,20 @@ class DocumentController extends Controller
     }
 
     /**
-     * Download handler – stub for now
+     * Download handler for stored files
      */
     public function download($documentId)
     {
-        // Later you can implement real file downloads here.
-        // For now just show 404 so the route exists.
-        abort(404, 'Download not implemented yet.');
+        $file = \App\Models\StoredFile::findOrFail($documentId);
+
+        $filePath = storage_path('app/public/' . $file->path);
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found.');
+        }
+
+        return response()->download($filePath, $file->title_lv ?: 'document', [
+            'Content-Type' => $file->mime_type ?: 'application/octet-stream',
+        ]);
     }
 }
