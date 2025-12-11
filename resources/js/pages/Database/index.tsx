@@ -269,7 +269,7 @@ export default function DatabaseIndex() {
                                                 <td className="px-6 py-4 text-right align-top">
                                                     {doc.download_url ? (
                                                         <a
-                                                            href={doc.download_url}
+                                                            href={`/admin/files/${doc.id}/download`}
                                                             className="inline-flex items-center rounded-xl bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-600 hover:shadow-md"
                                                         >
                                                             {__('Lejupielādēt')}
