@@ -12,8 +12,13 @@ class StoredFile extends Model
         'path',
         'mime_type',
         'size',
+        'tags',
     ];
 
+    protected $casts = [
+        'tags' => 'array',
+    ];
+    
     public function url()
     {
         return asset('storage/' . $this->path);
