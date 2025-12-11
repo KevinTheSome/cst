@@ -8,7 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class CountryPulseMetric extends Model
 {
     protected $fillable = [
-        'metric', 'country_code', 'value', 'occurred_at',
+        'metric',
+        'label',
+        'country_code',
+        'value',
+        'occurred_at',
     ];
 
     protected $casts = [
