@@ -135,6 +135,9 @@ Route::post('/form-codes/verify', [FormCodeController::class, 'verify'])->name('
 
 Route::post('/lecture-codes/verify', [LectureController::class, 'verifyCode'])->name('lectureCodes.verify');
 
+Route::get('/datubaze', [DocumentController::class, 'index'])->name('documents.index');
+Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
+
 // <<<<<<<<<< Video >>>>>>>>>>>>>>>>>
 Route::post('/generate-temp-link/{filename}', [VideoController::class, 'generateTempLink'])->name('generate.temp.link');
 Route::get('/download/{token}', [VideoController::class, 'downloadTemp'])->name('download.temp');

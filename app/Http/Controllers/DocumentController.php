@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\StoredFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class DocumentController extends Controller
