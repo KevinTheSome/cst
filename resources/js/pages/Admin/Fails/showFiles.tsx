@@ -3,7 +3,38 @@ import { Download, Edit, FileText, FolderOpen, Plus, Search, Trash } from 'lucid
 import React from 'react';
 import AdminLayout from '../../../Layouts/AdminLayout';
 
-export default function AllFiles() {
+function formatBytes(bytes: number | null | undefined) {
+    if (!bytes || bytes === 0) return "0 B";
+    const k = 1024;
+    const sizes = ["B", "KB", "MB", "GB", "TB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+}
+
+function formatFileType(mime?: string | null) {
+    if (!mime) return "Unknown";
+    const map: Record<string, string> = {
+        "application/pdf": "PDF Document",
+        "application/msword": "Word Document (.doc)",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+            "Word Document (.docx)",
+        "application/vnd.ms-excel": "Excel Spreadsheet (.xls)",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+            "Excel Spreadsheet (.xlsx)",
+        "image/png": "PNG Image",
+        "image/jpeg": "JPEG Image",
+        "image/jpg": "JPEG Image",
+        "image/webp": "WebP Image",
+        "text/plain": "Text File",
+        "application/zip": "ZIP Archive",
+        "application/vnd.ms-powerpoint": "PowerPoint (.ppt)",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+            "PowerPoint (.pptx)",
+    };
+    return map[mime] ?? (mime.split("/").pop()?.toUpperCase() || "Unknown");
+}
+
+export default function showFiles() {
     const { props } = usePage<any>();
     const files = props.files ?? [];
     const [searchTerm, setSearchTerm] = React.useState('');
@@ -76,7 +107,9 @@ export default function AllFiles() {
                         <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-gray-700 bg-gray-800/50">
                             <FileText className="h-8 w-8 text-gray-500" />
                         </div>
-                        <h3 className="mb-2 text-xl font-semibold text-white">{searchTerm ? 'No files found' : 'No files uploaded yet'}</h3>
+                        <h3 className="mb-2 text-xl font-semibold text-white">
+                            {searchTerm ? 'No files found' : 'No files uploaded yet'}
+                        </h3>
                         <p className="mb-6 text-gray-400">
                             {searchTerm
                                 ? `No files match "${searchTerm}". Try a different search term.`
@@ -119,6 +152,12 @@ export default function AllFiles() {
                                                     <div className="flex items-center gap-3 text-xs text-gray-500">
                                                         <span className="rounded border border-gray-700/50 bg-gray-800/50 px-2 py-0.5 font-mono">
                                                             ID: {file.id}
+                                                        </span>
+                                                        <span className="rounded border border-gray-700/50 bg-gray-800/50 px-2 py-0.5 font-mono">
+                                                            Type: {formatFileType(file.mime_type)}
+                                                        </span>
+                                                        <span className="rounded border border-gray-700/50 bg-gray-800/50 px-2 py-0.5 font-mono">
+                                                            Size: {formatBytes(file.size)}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -163,4 +202,6 @@ export default function AllFiles() {
     );
 }
 
-(AllFiles as any).layout = (page: React.ReactNode) => <AdminLayout title="All Files">{page}</AdminLayout>;
+(showFiles as any).layout = (page: React.ReactNode) => (
+    <AdminLayout title="All Files">{page}</AdminLayout>
+);
