@@ -205,3 +205,15 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::delete('/files/{id}', [StoredFileController::class, 'destroy'])->name('files.destroy');
     Route::get('/files/{id}/download', [StoredFileController::class, 'download'])->name('files.download');
 });
+
+// <<<<<<<<<< ADMIN AUTH (outside admin prefix) >>>>>>>>>>>>>>>>>>
+
+// login routes stay as-is
+Route::get('/admin/login', fn() => Inertia::render('Admin/login'))->name('admin.login');
+Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
+
+Route::post('/admin/logout', function () {
+    session()->forget('is_admin');
+    return redirect()->route('admin.login');
+})->name('admin.logout');
+
