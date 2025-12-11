@@ -8,6 +8,42 @@ export default function AllFiles() {
   const files = props.files ?? [];
   const [searchTerm, setSearchTerm] = React.useState('');
   const [searchFocused, setSearchFocused] = React.useState(false);
+function formatBytes(bytes: number | null | undefined) {
+    if (!bytes || bytes === 0) return "0 B";
+    const k = 1024;
+    const sizes = ["B", "KB", "MB", "GB", "TB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+}
+
+function formatFileType(mime?: string | null) {
+    if (!mime) return "Unknown";
+    const map: Record<string, string> = {
+        "application/pdf": "PDF Document",
+        "application/msword": "Word Document (.doc)",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+            "Word Document (.docx)",
+        "application/vnd.ms-excel": "Excel Spreadsheet (.xls)",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+            "Excel Spreadsheet (.xlsx)",
+        "image/png": "PNG Image",
+        "image/jpeg": "JPEG Image",
+        "image/jpg": "JPEG Image",
+        "image/webp": "WebP Image",
+        "text/plain": "Text File",
+        "application/zip": "ZIP Archive",
+        "application/vnd.ms-powerpoint": "PowerPoint (.ppt)",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+            "PowerPoint (.pptx)",
+    };
+    return map[mime] ?? (mime.split("/").pop()?.toUpperCase() || "Unknown");
+}
+
+export default function showFiles() {
+    const { props } = usePage<any>();
+    const files = props.files ?? [];
+    const [searchTerm, setSearchTerm] = React.useState('');
+    const [searchFocused, setSearchFocused] = React.useState(false);
 
   const filteredFiles = files.filter(
     (file: any) =>
@@ -120,6 +156,37 @@ export default function AllFiles() {
                                   <span className="text-gray-300">{t.en || <span className="text-gray-500">—</span>}</span>
                                 </span>
                               ))}
+            {/* Files Grid */}
+            <div className="space-y-4">
+                {filteredFiles.length === 0 ? (
+                    <div className="py-16 text-center">
+                        <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-gray-700 bg-gray-800/50">
+                            <FileText className="h-8 w-8 text-gray-500" />
+                        </div>
+                        <h3 className="mb-2 text-xl font-semibold text-white">
+                            {searchTerm ? 'No files found' : 'No files uploaded yet'}
+                        </h3>
+                        <p className="mb-6 text-gray-400">
+                            {searchTerm
+                                ? `No files match "${searchTerm}". Try a different search term.`
+                                : 'Get started by uploading your first file.'}
+                        </p>
+                        {!searchTerm && (
+                            <Link
+                                href="/admin/files"
+                                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-emerald-600 to-green-600 px-5 py-2.5 font-medium text-white shadow-lg transition-all hover:from-emerald-700 hover:to-green-700 hover:shadow-emerald-500/25"
+                            >
+                                <Plus className="h-4 w-4" />
+                                Upload Your First File
+                            </Link>
+                        )}
+                    </div>
+                ) : (
+                    <div className="grid gap-4">
+                        {/* Results count */}
+                        {searchTerm && (
+                            <div className="px-1 text-sm text-gray-400">
+                                Found {filteredFiles.length} {filteredFiles.length === 1 ? 'file' : 'files'} matching "{searchTerm}"
                             </div>
                           )}
 
@@ -130,6 +197,36 @@ export default function AllFiles() {
                       </div>
                     </div>
                   </div>
+                        {filteredFiles.map((file: any) => (
+                            <div
+                                key={file.id}
+                                className="group rounded-xl border border-gray-700/50 bg-gradient-to-r from-gray-800/50 to-gray-800/30 p-6 transition-all hover:border-gray-600/50 hover:shadow-lg hover:shadow-black/20"
+                            >
+                                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                                    <div className="min-w-0 flex-1">
+                                        <div className="flex items-start gap-3">
+                                            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10">
+                                                <FileText className="h-5 w-5 text-emerald-400" />
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <div className="space-y-1">
+                                                    <p className="truncate text-lg font-semibold text-white">{file.title_lv || 'Untitled'}</p>
+                                                    {file.title_en && <p className="truncate text-sm text-gray-400">{file.title_en}</p>}
+                                                    <div className="flex items-center gap-3 text-xs text-gray-500">
+                                                        <span className="rounded border border-gray-700/50 bg-gray-800/50 px-2 py-0.5 font-mono">
+                                                            ID: {file.id}
+                                                        </span>
+                                                        <span className="rounded border border-gray-700/50 bg-gray-800/50 px-2 py-0.5 font-mono">
+                                                            Type: {formatFileType(file.mime_type)}
+                                                        </span>
+                                                        <span className="rounded border border-gray-700/50 bg-gray-800/50 px-2 py-0.5 font-mono">
+                                                            Size: {formatBytes(file.size)}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                   <div className="flex flex-shrink-0 items-center gap-2">
                     <a
@@ -170,4 +267,6 @@ export default function AllFiles() {
   );
 }
 
-(AllFiles as any).layout = (page: React.ReactNode) => <AdminLayout title="All Files">{page}</AdminLayout>;
+(showFiles as any).layout = (page: React.ReactNode) => (
+    <AdminLayout title="All Files">{page}</AdminLayout>
+);
