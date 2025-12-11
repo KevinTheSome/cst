@@ -201,4 +201,5 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/files/{id}/edit', [StoredFileController::class, 'edit'])->name('files.edit');
     Route::put('/files/update/{id}', [StoredFileController::class, 'update'])->name('files.update');
     Route::delete('/files/{id}', [StoredFileController::class, 'destroy'])->name('files.destroy');
+    Route::get('/files/{id}/download', [StoredFileController::class, 'download'])->name('files.download');
 });

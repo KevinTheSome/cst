@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\StoredFile;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class StoredFileController extends Controller
 {
@@ -38,11 +39,20 @@ class StoredFileController extends Controller
 
         return redirect()->back()->with('success', 'File uploaded successfully!');
     }
+
     public function show(){
-        $files = StoredFile::all();
-        return Inertia::render('Admin/Fails/showFiles', [
-            'files' => $files
-        ]);
+        $files = StoredFile::all()->map(function ($file) {
+        $path = $file->path;
+
+        $file->mime_type = Storage::disk('public')->mimeType($path) ?? 'Unknown';
+        $file->size = Storage::disk('public')->size($path) ?? 0;
+
+        return $file;
+    });
+
+    return Inertia::render('Admin/Fails/showFiles', [
+        'files' => $files,
+    ]);
 
     }
     public function edit($id)
@@ -107,5 +117,35 @@ class StoredFileController extends Controller
         $file->delete();
 
         return redirect()->back()->with('success', 'File deleted successfully');
+    }
+
+    public function download($id)
+    {
+        $file = StoredFile::findOrFail($id);
+
+        // Path stored in DB (relative to the 'public' disk root)
+        $path = $file->path;
+
+        if (! $path || ! Storage::disk('public')->exists($path)) {
+            return redirect()->back()->with('error', 'File not found on disk.');
+        }
+
+        // Create a user-friendly filename: prefer original file base name if recorded,
+        // otherwise use DB title or the path basename.
+        $originalName = pathinfo($path, PATHINFO_BASENAME);
+        $ext = pathinfo($path, PATHINFO_EXTENSION);
+
+        // Build a nice download filename using title + extension
+        $downloadName = null;
+        if (!empty($file->title_en)) {
+            $downloadName = \Illuminate\Support\Str::slug($file->title_en) . ($ext ? '.' . $ext : '');
+        } elseif (!empty($file->title_lv)) {
+            $downloadName = \Illuminate\Support\Str::slug($file->title_lv) . ($ext ? '.' . $ext : '');
+        } else {
+            $downloadName = $originalName;
+        }
+
+        // Return the disk download response (sets Content-Disposition headers)
+        return Storage::disk('public')->download($path, $downloadName);
     }
 }
