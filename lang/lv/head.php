@@ -16,6 +16,7 @@ return [
     'nav_research' => 'PĒTNIECĪBA',
     'nav_research_postdoc' => 'PostDock anketa',
     'nav_research_code' => 'Koda anketa',
+    'nav_research_documents' => 'Dokumentu datubāze',
 
     'nav_about' => 'PAR MUMS',
     'nav_about_team' => 'Komanda',
