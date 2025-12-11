@@ -14,6 +14,7 @@ return new class extends Migration {
         $table->string('path');
         $table->string('mime_type')->nullable();
         $table->unsignedBigInteger('size')->nullable();
+        $table->json('tags')->nullable();
         $table->timestamps();
 });
 
