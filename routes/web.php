@@ -208,10 +208,12 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
 // <<<<<<<<<< ADMIN AUTH (outside admin prefix) >>>>>>>>>>>>>>>>>>
 
+// login routes stay as-is
 Route::get('/admin/login', fn() => Inertia::render('Admin/login'))->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
 
-Route::get('/admin/logout', function () {
-    session()->forget('is_admin');   // remove the admin flag
+Route::post('/admin/logout', function () {
+    session()->forget('is_admin');
     return redirect()->route('admin.login');
 })->name('admin.logout');
+
