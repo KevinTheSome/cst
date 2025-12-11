@@ -6,136 +6,139 @@ use Illuminate\Http\Request;
 use App\Models\StoredFile;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Support\Str;
 
 class StoredFileController extends Controller
 {
+    // Show upload form
     public function create()
     {
-        return inertia('Admin/Fails/uploadFile');
+        return Inertia::render('Admin/Fails/uploadFile');
     }
 
+    // Store uploaded file
     public function store(Request $request)
-{
-    $request->validate([
-        'title_lv' => 'nullable|string|max:255',
-        'title_en' => 'nullable|string|max:255',
-        'file' => 'required|file|max:10240|mimes:csv,txt,pdf,jpg,jpeg,png,zip,xlsx,xls,doc,docx',
-        'tags' => 'nullable',
-        'tags.*.lv' => 'nullable|string|max:255',
-        'tags.*.en' => 'nullable|string|max:255',
-    ]);
-
-    $file = $request->file('file');
-    $filePath = $file->store('files', 'public');
-
-    $tags = null;
-    if ($request->has('tags')) {
-        $incoming = $request->input('tags');
-        if (is_array($incoming)) $tags = $incoming;
-        elseif (is_string($incoming)) {
-            $decoded = json_decode($incoming, true);
-            if (is_array($decoded)) $tags = $decoded;
-        }
-    }
-
-    StoredFile::create([
-        'title_lv' => $request->input('title_lv'),
-        'title_en' => $request->input('title_en'),
-        'path' => $filePath,
-        'mime_type' => $file->getClientMimeType(),
-        'size' => $file->getSize(),
-        'tags' => $tags,
-    ]);
-
-    return redirect()->back()->with('success', 'File uploaded successfully!');
-}
-
-
-    public function show()
     {
-        $files = StoredFile::all();
-        return Inertia::render('Admin/Fails/showFiles', [
-            'files' => $files
+        $request->validate([
+            'title_lv' => 'nullable|string|max:255',
+            'title_en' => 'nullable|string|max:255',
+            'file' => 'required|file|max:10240|mimes:csv,txt,pdf,jpg,jpeg,png,zip,xlsx,xls,doc,docx',
+            'tags' => 'nullable',
+            'tags.*.lv' => 'nullable|string|max:255',
+            'tags.*.en' => 'nullable|string|max:255',
         ]);
+
+        $uploaded = $request->file('file');
+        $filePath = $uploaded->store('files', 'public');
+
+        $tags = null;
+        if ($request->has('tags')) {
+            $incoming = $request->input('tags');
+            if (is_array($incoming)) {
+                $tags = $incoming;
+            } elseif (is_string($incoming)) {
+                $decoded = json_decode($incoming, true);
+                if (is_array($decoded)) $tags = $decoded;
+            }
+        }
+
+        StoredFile::create([
+            'title_lv' => $request->input('title_lv'),
+            'title_en' => $request->input('title_en'),
+            'path' => $filePath,
+            'mime_type' => $uploaded->getClientMimeType(),
+            'size' => $uploaded->getSize(),
+            'tags' => $tags,
+        ]);
+
         return redirect()->back()->with('success', 'File uploaded successfully!');
     }
 
-    public function show(){
+    // Show all files (single, cleaned implementation)
+    public function show()
+    {
         $files = StoredFile::all()->map(function ($file) {
-        $path = $file->path;
+            $path = $file->path;
 
-        $file->mime_type = Storage::disk('public')->mimeType($path) ?? 'Unknown';
-        $file->size = Storage::disk('public')->size($path) ?? 0;
+            $file->mime_type = $path && Storage::disk('public')->exists($path)
+                ? Storage::disk('public')->mimeType($path)
+                : ($file->mime_type ?? 'Unknown');
 
-        return $file;
-    });
+            $file->size = $path && Storage::disk('public')->exists($path)
+                ? Storage::disk('public')->size($path)
+                : ($file->size ?? 0);
 
-    return Inertia::render('Admin/Fails/showFiles', [
-        'files' => $files,
-    ]);
+            return $file;
+        });
 
+        return Inertia::render('Admin/Fails/showFiles', [
+            'files' => $files,
+        ]);
     }
 
+    // Edit metadata form
     public function edit($id)
     {
-        $file = StoredFile::FindOrFail($id);
+        $file = StoredFile::findOrFail($id);
         return Inertia::render('Admin/Fails/editFile', [
             'file' => $file
         ]);
     }
 
+    // Update metadata and optionally replace file
     public function update(Request $request, $id)
-{
-    $fileRecord = StoredFile::findOrFail($id);
+    {
+        $fileRecord = StoredFile::findOrFail($id);
 
-    $data = $request->validate([
-        'title_lv' => 'nullable|string|max:255',
-        'title_en' => 'nullable|string|max:255',
-        'file' => 'nullable|file|max:10240|mimes:csv,txt,pdf,jpg,jpeg,png,zip,xlsx,xls,doc,docx',
-        'tags' => 'nullable',
-        'tags.*.lv' => 'nullable|string|max:255',
-        'tags.*.en' => 'nullable|string|max:255',
-    ]);
+        $data = $request->validate([
+            'title_lv' => 'nullable|string|max:255',
+            'title_en' => 'nullable|string|max:255',
+            'file' => 'nullable|file|max:10240|mimes:csv,txt,pdf,jpg,jpeg,png,zip,xlsx,xls,doc,docx',
+            'tags' => 'nullable',
+            'tags.*.lv' => 'nullable|string|max:255',
+            'tags.*.en' => 'nullable|string|max:255',
+        ]);
 
-    
-    $tags = null;
-    if ($request->has('tags')) {
-        $incoming = $request->input('tags');
-        if (is_array($incoming)) $tags = $incoming;
-        elseif (is_string($incoming)) {
-            $decoded = json_decode($incoming, true);
-            if (is_array($decoded)) $tags = $decoded;
-        }
-    }
-
-    if ($request->file('file')) {
-        $newFile = $request->file('file');
-
-        if ($fileRecord->path && Storage::disk('public')->exists($fileRecord->path)) {
-            Storage::disk('public')->delete($fileRecord->path);
+        $tags = null;
+        if ($request->has('tags')) {
+            $incoming = $request->input('tags');
+            if (is_array($incoming)) {
+                $tags = $incoming;
+            } elseif (is_string($incoming)) {
+                $decoded = json_decode($incoming, true);
+                if (is_array($decoded)) $tags = $decoded;
+            }
         }
 
-        $filePath = $newFile->store('files', 'public');
+        if ($request->file('file')) {
+            $newFile = $request->file('file');
 
-        $fileRecord->update([
-            'title_lv' => $data['title_lv'],
-            'title_en' => $data['title_en'],
-            'path' => $filePath,
-            'mime_type' => $newFile->getClientMimeType(),
-            'size' => $newFile->getSize(),
-            'tags' => $tags,
-        ]);
-    } else {
-        $fileRecord->update([
-            'title_lv' => $data['title_lv'],
-            'title_en' => $data['title_en'],
-            'tags' => $tags,
-        ]);
+            if ($fileRecord->path && Storage::disk('public')->exists($fileRecord->path)) {
+                Storage::disk('public')->delete($fileRecord->path);
+            }
+
+            $filePath = $newFile->store('files', 'public');
+
+            $fileRecord->update([
+                'title_lv' => $data['title_lv'] ?? $fileRecord->title_lv,
+                'title_en' => $data['title_en'] ?? $fileRecord->title_en,
+                'path' => $filePath,
+                'mime_type' => $newFile->getClientMimeType(),
+                'size' => $newFile->getSize(),
+                'tags' => $tags,
+            ]);
+        } else {
+            $fileRecord->update([
+                'title_lv' => $data['title_lv'] ?? $fileRecord->title_lv,
+                'title_en' => $data['title_en'] ?? $fileRecord->title_en,
+                'tags' => $tags,
+            ]);
+        }
+
+        return back()->with('success', 'File updated successfully');
     }
 
-    return back()->with('success', 'File updated successfully');
-}
+    // Delete file & DB record
     public function destroy($id)
     {
         $file = StoredFile::findOrFail($id);
@@ -152,35 +155,29 @@ class StoredFileController extends Controller
 
         return redirect()->back()->with('success', 'File deleted successfully');
     }
-}
 
+    // Download file to user (inside the class, where it belongs)
     public function download($id)
     {
         $file = StoredFile::findOrFail($id);
 
-        // Path stored in DB (relative to the 'public' disk root)
         $path = $file->path;
 
         if (! $path || ! Storage::disk('public')->exists($path)) {
             return redirect()->back()->with('error', 'File not found on disk.');
         }
 
-        // Create a user-friendly filename: prefer original file base name if recorded,
-        // otherwise use DB title or the path basename.
         $originalName = pathinfo($path, PATHINFO_BASENAME);
         $ext = pathinfo($path, PATHINFO_EXTENSION);
 
-        // Build a nice download filename using title + extension
-        $downloadName = null;
         if (!empty($file->title_en)) {
-            $downloadName = \Illuminate\Support\Str::slug($file->title_en) . ($ext ? '.' . $ext : '');
+            $downloadName = Str::slug($file->title_en) . ($ext ? '.' . $ext : '');
         } elseif (!empty($file->title_lv)) {
-            $downloadName = \Illuminate\Support\Str::slug($file->title_lv) . ($ext ? '.' . $ext : '');
+            $downloadName = Str::slug($file->title_lv) . ($ext ? '.' . $ext : '');
         } else {
             $downloadName = $originalName;
         }
 
-        // Return the disk download response (sets Content-Disposition headers)
         return Storage::disk('public')->download($path, $downloadName);
     }
 }
