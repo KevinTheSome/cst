@@ -205,3 +205,13 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::delete('/files/{id}', [StoredFileController::class, 'destroy'])->name('files.destroy');
     Route::get('/files/{id}/download', [StoredFileController::class, 'download'])->name('files.download');
 });
+
+// <<<<<<<<<< ADMIN AUTH (outside admin prefix) >>>>>>>>>>>>>>>>>>
+
+Route::get('/admin/login', fn() => Inertia::render('Admin/login'))->name('admin.login');
+Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
+
+Route::get('/admin/logout', function () {
+    session()->forget('is_admin');   // remove the admin flag
+    return redirect()->route('admin.login');
+})->name('admin.logout');
