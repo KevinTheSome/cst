@@ -35,11 +35,9 @@ const Icons = {
         </svg>
     ),
     Stethoscope: ({ className }: { className?: string }) => (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" className={className}>
             <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M11.25 4.533A9.707 9.707 0 006 3a9.735 9.735 0 00-3.25.555.75.75 0 00-.5.707v14.25a.75.75 0 001 .708A8.237 8.237 0 016 18.75c1.995 0 3.823.707 5.25 1.886V4.533zM12.75 20.636A8.214 8.214 0 0118 18.75c.966 0 1.89.166 2.75.47a.75.75 0 001-.708V4.262a.75.75 0 00-.5-.707A9.735 9.735 0 0018 3a9.707 9.707 0 00-5.25 1.533v16.103z"
+                d="M5.5,7C4.1193,7,3,5.8807,3,4.5l0,0v-2C3,2.2239,3.2239,2,3.5,2H4c0.2761,0,0.5-0.2239,0.5-0.5S4.2761,1,4,1H3.5&#xA;&#x9;C2.6716,1,2,1.6716,2,2.5v2c0.0013,1.1466,0.5658,2.2195,1.51,2.87l0,0C4.4131,8.1662,4.9514,9.297,5,10.5C5,12.433,6.567,14,8.5,14&#xA;&#x9;s3.5-1.567,3.5-3.5V9.93c1.0695-0.2761,1.7126-1.367,1.4365-2.4365C13.1603,6.424,12.0695,5.7809,11,6.057&#xA;&#x9;C9.9305,6.3332,9.2874,7.424,9.5635,8.4935C9.7454,9.198,10.2955,9.7481,11,9.93v0.57c0,1.3807-1.1193,2.5-2.5,2.5S6,11.8807,6,10.5&#xA;&#x9;c0.0511-1.2045,0.5932-2.3356,1.5-3.13l0,0C8.4404,6.7172,9.001,5.6448,9,4.5v-2C9,1.6716,8.3284,1,7.5,1H7&#xA;&#x9;C6.7239,1,6.5,1.2239,6.5,1.5S6.7239,2,7,2h0.5C7.7761,2,8,2.2239,8,2.5v2l0,0C8,5.8807,6.8807,7,5.5,7 M11.5,9&#xA;&#x9;c-0.5523,0-1-0.4477-1-1s0.4477-1,1-1s1,0.4477,1,1S12.0523,9,11.5,9z"
             />
         </svg>
     ),
@@ -104,6 +102,10 @@ export default function PostDockanketa() {
                             Izvēlieties atbilstošo <br />
                             <span className="bg-gradient-to-r from-emerald-600 to-sky-600 bg-clip-text text-transparent">Anketu</span>
                         </h1>
+                        <p className="mx-auto max-w-4xl text-lg text-slate-600">
+                            Šī anketēšana tiek veikta promocijas darba ietvarā Biznesa augstskolā Turība, doktorantūras programmā uzņēmējdarbības
+                            vadībā.
+                        </p>
                     </div>
 
                     {/* MAIN CONTENT GRID */}
