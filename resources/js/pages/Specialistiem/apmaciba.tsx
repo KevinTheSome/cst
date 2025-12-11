@@ -19,6 +19,7 @@ type Lecture = {
     url?: string; // Optional external URL
     starts_at?: string; // Optional timestamp
     ends_at?: string; // Optional timestamp
+    rating?: number; // Rating out of 5
 };
 
 // --- ICONS ---
@@ -65,14 +66,19 @@ const Icons = {
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
     ),
+    Book: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+            <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+    ),
 };
 
 // --- MOCK DATA (Fallback) ---
 const MOCK_LECTURES: Lecture[] = [
-    { id: 'l1', title: 'Ievads ATMP un MSC šūnu terapijā', duration: '10:24', description: 'Kas ir ATMP un kas jāzina pacientam.' },
-    { id: 'l2', title: 'Klīniskie pētījumi un drošība', duration: '18:12', description: 'Apskats par pierādījumiem un riskiem.' },
-    { id: 'l3', title: 'Kas notiek procedūras laikā?', duration: '12:05', description: 'Soli pa solim - ko sagaidīt.' },
-    { id: 'l4', title: 'Biežākie jautājumi un resursi', duration: '08:40', description: 'Praktiski padomi un saites.' },
+    { id: 'l1', title: 'Ievads ATMP un MSC šūnu terapijā', duration: '10:24', description: 'Kas ir ATMP un kas jāzina pacientam.', rating: 4 },
+    { id: 'l2', title: 'Klīniskie pētījumi un drošība', duration: '18:12', description: 'Apskats par pierādījumiem un riskiem.', rating: 5 },
+    { id: 'l3', title: 'Kas notiek procedūras laikā?', duration: '12:05', description: 'Soli pa solim - ko sagaidīt.', rating: 3.5 },
+    { id: 'l4', title: 'Biežākie jautājumi un resursi', duration: '08:40', description: 'Praktiski padomi un saites.', rating: 4.5 },
 ];
 
 export default function OnlineTraining() {
@@ -220,10 +226,94 @@ export default function OnlineTraining() {
 
                             {error && <div className="mb-4 rounded-xl border border-rose-100 bg-rose-50 p-3 text-sm text-rose-600">{error}</div>}
 
-                            {/* Lectures area */}
+                            {/* Example Lessons - Always Visible */}
+                            <div className="mt-8 animate-fade-in-up space-y-6">
+                                <div className="h-px w-full bg-slate-100"></div>
+                                <div className="text-center">
+                                    <p className="text-sm font-medium text-slate-600 mb-4">Piemēru lekcijas (vienmēr pieejamas)</p>
+                                </div>
+
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                    {MOCK_LECTURES.map((lec) => (
+                                            <div
+                                                key={lec.id}
+                                                className={`group relative cursor-pointer rounded-2xl border p-5 transition-all ${
+                                                    selectedLecture === lec.id
+                                                        ? 'border-emerald-500 bg-emerald-50 ring-1 ring-emerald-500'
+                                                        : 'border-slate-200 bg-white hover:border-emerald-300 hover:shadow-lg'
+                                                }`}
+                                                onClick={() => setSelectedLecture(lec.id)}
+                                            >
+                                                <div className="flex items-start justify-between gap-3">
+                                                    <div>
+                                                        <h3
+                                                            className={`mb-1 text-base font-bold ${selectedLecture === lec.id ? 'text-emerald-900' : 'text-slate-900'}`}
+                                                        >
+                                                            {renderTitle(lec.title)}
+                                                        </h3>
+                                                        <p className="line-clamp-2 text-xs text-slate-500">{lec.description}</p>
+
+                                                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                                                            {lec.duration && (
+                                                                <div className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-500 uppercase">
+                                                                    {lec.duration} min
+                                                                </div>
+                                                            )}
+                                                            
+                                                            {lec.rating && (
+                                                                <div className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-1 text-[10px] font-bold text-amber-600">
+                                                                    <div className="flex items-center">
+                                                                        {[...Array(5)].map((_, i) => (
+                                                                            <svg
+                                                                                key={i}
+                                                                                className={`h-3 w-3 ${i < Math.floor(lec.rating || 0) ? 'fill-amber-400 text-amber-400' : 'fill-transparent text-amber-400'}`}
+                                                                                viewBox="0 0 24 24"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="2"
+                                                                            >
+                                                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                                                            </svg>
+                                                                        ))}
+                                                                        <span className="ml-1 text-xs">{lec.rating.toFixed(1)}</span>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        {lec.starts_at && (
+                                                            <p className="mt-2 text-xs font-medium text-emerald-600">
+                                                                Sākums: {new Date(lec.starts_at).toLocaleString('lv-LV')}
+                                                            </p>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="flex flex-col items-center gap-2">
+                                                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                                                            <Icons.Book className="h-4 w-4" />
+                                                        </div>
+                                                        <div
+                                                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors ${
+                                                                selectedLecture === lec.id
+                                                                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
+                                                                    : 'bg-slate-100 text-slate-400 group-hover:bg-emerald-500 group-hover:text-white'
+                                                            }`}
+                                                        >
+                                                            <Icons.Play className="ml-0.5 h-5 w-5" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                            </div>
+
+                            {/* Lectures area - Only when unlocked */}
                             {unlocked && (
                                 <div className="animate-fade-in-up space-y-6">
                                     <div className="h-px w-full bg-slate-100"></div>
+                                    <div className="text-center">
+                                        <p className="text-sm font-medium text-slate-600 mb-4">Jūsu pieejamās lekcijas</p>
+                                    </div>
 
                                     <div className="grid gap-4 sm:grid-cols-2">
                                         {lectures.map((lec) => (
@@ -245,11 +335,32 @@ export default function OnlineTraining() {
                                                         </h3>
                                                         <p className="line-clamp-2 text-xs text-slate-500">{lec.description}</p>
 
-                                                        {lec.duration && (
-                                                            <div className="mt-3 inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-500 uppercase">
-                                                                {lec.duration} min
-                                                            </div>
-                                                        )}
+                                                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                                                            {lec.duration && (
+                                                                <div className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-500 uppercase">
+                                                                    {lec.duration} min
+                                                                </div>
+                                                            )}
+                                                            
+                                                            {lec.rating && (
+                                                                <div className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-1 text-[10px] font-bold text-amber-600">
+                                                                    <div className="flex items-center">
+                                                                        {[...Array(5)].map((_, i) => (
+                                                                            <svg
+                                                                                key={i}
+                                                                                className={`h-3 w-3 ${i < Math.floor(lec.rating || 0) ? 'fill-amber-400 text-amber-400' : 'fill-transparent text-amber-400'}`}
+                                                                                viewBox="0 0 24 24"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="2"
+                                                                            >
+                                                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                                                            </svg>
+                                                                        ))}
+                                                                        <span className="ml-1 text-xs">{lec.rating.toFixed(1)}</span>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
 
                                                         {lec.starts_at && (
                                                             <p className="mt-2 text-xs font-medium text-emerald-600">
@@ -258,99 +369,104 @@ export default function OnlineTraining() {
                                                         )}
                                                     </div>
 
-                                                    <div
-                                                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors ${
-                                                            selectedLecture === lec.id
-                                                                ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
-                                                                : 'bg-slate-100 text-slate-400 group-hover:bg-emerald-500 group-hover:text-white'
-                                                        }`}
-                                                    >
-                                                        <Icons.Play className="ml-0.5 h-5 w-5" />
+                                                    <div className="flex flex-col items-center gap-2">
+                                                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                                                            <Icons.Book className="h-4 w-4" />
+                                                        </div>
+                                                        <div
+                                                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors ${
+                                                                selectedLecture === lec.id
+                                                                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
+                                                                    : 'bg-slate-100 text-slate-400 group-hover:bg-emerald-500 group-hover:text-white'
+                                                            }`}
+                                                        >
+                                                            <Icons.Play className="ml-0.5 h-5 w-5" />
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
+                                </div>
+                            )}
 
-                                    {/* Selected Lecture Details / Player Placeholder */}
-                                    {selectedLecture && (
-                                        <div className="animate-fade-in-up mt-6 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
-                                            <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 p-4">
-                                                <div className="flex items-center gap-2">
-                                                    <Icons.Monitor className="h-5 w-5 text-emerald-600" />
-                                                    <h4 className="text-sm font-bold text-slate-900">Lekcijas saturs</h4>
-                                                </div>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setSelectedLecture(null)}
-                                                    className="rounded-full p-1.5 text-slate-400 transition-colors hover:bg-slate-200"
-                                                >
-                                                    <Icons.Close className="h-5 w-5" />
-                                                </button>
-                                            </div>
-
-                                            <div className="p-6 sm:p-8">
-                                                {(() => {
-                                                    const lecture = lectures.find((l) => l.id === selectedLecture);
-                                                    if (!lecture) return <p>Lekcija nav atrasta.</p>;
-
-                                                    return (
-                                                        <div className="space-y-6">
-                                                            <div>
-                                                                <h2 className="mb-2 text-2xl font-bold text-slate-900">
-                                                                    {renderTitle(lecture.title)}
-                                                                </h2>
-                                                                <p className="leading-relaxed text-slate-600">{lecture.description}</p>
-                                                            </div>
-
-                                                            {lecture.url ? (
-                                                                <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-6 text-center">
-                                                                    <p className="mb-4 text-sm font-medium text-emerald-800">
-                                                                        Šī lekcija ir pieejama ārējā resursā:
-                                                                    </p>
-                                                                    <a
-                                                                        href={lecture.url}
-                                                                        target="_blank"
-                                                                        rel="noopener noreferrer"
-                                                                        className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/30 transition-all hover:bg-emerald-700"
-                                                                    >
-                                                                        Atvērt Lekciju <Icons.Play className="h-4 w-4" />
-                                                                    </a>
-                                                                </div>
-                                                            ) : (
-                                                                <div className="group relative flex aspect-video flex-col items-center justify-center overflow-hidden rounded-2xl bg-slate-900 text-white">
-                                                                    <div className="absolute inset-0 bg-gradient-to-tr from-emerald-900/40 to-transparent"></div>
-                                                                    <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-white/10 backdrop-blur transition-transform group-hover:scale-110">
-                                                                        <Icons.Play className="ml-1 h-8 w-8" />
-                                                                    </div>
-                                                                    <p className="relative z-10 font-medium">Video atskaņotājs (Demo)</p>
-                                                                </div>
-                                                            )}
-
-                                                            <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-4">
-                                                                {lecture.starts_at && (
-                                                                    <div>
-                                                                        <p className="text-xs font-bold text-slate-400 uppercase">Sākums</p>
-                                                                        <p className="text-sm font-medium text-slate-700">
-                                                                            {new Date(lecture.starts_at).toLocaleString('lv-LV')}
-                                                                        </p>
-                                                                    </div>
-                                                                )}
-                                                                {lecture.ends_at && (
-                                                                    <div>
-                                                                        <p className="text-xs font-bold text-slate-400 uppercase">Beigas</p>
-                                                                        <p className="text-sm font-medium text-slate-700">
-                                                                            {new Date(lecture.ends_at).toLocaleString('lv-LV')}
-                                                                        </p>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })()}
-                                            </div>
+                            {/* Selected Lecture Details / Player Placeholder */}
+                            {selectedLecture && (
+                                <div className="animate-fade-in-up mt-6 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
+                                    <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 p-4">
+                                        <div className="flex items-center gap-2">
+                                            <Icons.Monitor className="h-5 w-5 text-emerald-600" />
+                                            <h4 className="text-sm font-bold text-slate-900">Lekcijas saturs</h4>
                                         </div>
-                                    )}
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelectedLecture(null)}
+                                            className="rounded-full p-1.5 text-slate-400 transition-colors hover:bg-slate-200"
+                                        >
+                                            <Icons.Close className="h-5 w-5" />
+                                        </button>
+                                    </div>
+
+                                    <div className="p-6 sm:p-8">
+                                        {(() => {
+                                            const lecture = lectures.find((l) => l.id === selectedLecture);
+                                            if (!lecture) return <p>Lekcija nav atrasta.</p>;
+
+                                            return (
+                                                <div className="space-y-6">
+                                                    <div>
+                                                        <h2 className="mb-2 text-2xl font-bold text-slate-900">
+                                                            {renderTitle(lecture.title)}
+                                                        </h2>
+                                                        <p className="leading-relaxed text-slate-600">{lecture.description}</p>
+                                                    </div>
+
+                                                    {lecture.url ? (
+                                                        <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-6 text-center">
+                                                            <p className="mb-4 text-sm font-medium text-emerald-800">
+                                                                Šī lekcija ir pieejama ārējā resursā:
+                                                            </p>
+                                                            <a
+                                                                href={lecture.url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/30 transition-all hover:bg-emerald-700"
+                                                            >
+                                                                Atvērt Lekciju <Icons.Play className="h-4 w-4" />
+                                                            </a>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="group relative flex aspect-video flex-col items-center justify-center overflow-hidden rounded-2xl bg-slate-900 text-white">
+                                                            <div className="absolute inset-0 bg-gradient-to-tr from-emerald-900/40 to-transparent"></div>
+                                                            <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-white/10 backdrop-blur transition-transform group-hover:scale-110">
+                                                                <Icons.Play className="ml-1 h-8 w-8" />
+                                                            </div>
+                                                            <p className="relative z-10 font-medium">Video atskaņotājs (Demo)</p>
+                                                        </div>
+                                                    )}
+
+                                                    <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-4">
+                                                        {lecture.starts_at && (
+                                                            <div>
+                                                                <p className="text-xs font-bold text-slate-400 uppercase">Sākums</p>
+                                                                <p className="text-sm font-medium text-slate-700">
+                                                                    {new Date(lecture.starts_at).toLocaleString('lv-LV')}
+                                                                </p>
+                                                            </div>
+                                                        )}
+                                                        {lecture.ends_at && (
+                                                            <div>
+                                                                <p className="text-xs font-bold text-slate-400 uppercase">Beigas</p>
+                                                                <p className="text-sm font-medium text-slate-700">
+                                                                    {new Date(lecture.ends_at).toLocaleString('lv-LV')}
+                                                                </p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()}
+                                    </div>
                                 </div>
                             )}
 
