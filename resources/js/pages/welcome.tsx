@@ -1,5 +1,5 @@
 import { useLang } from '@/hooks/useLang';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 
 // --- Icons (Inline SVGs for performance/no dependencies) ---
 const Icons = {
@@ -10,23 +10,37 @@ const Icons = {
     ),
     User: ({ className }: { className?: string }) => (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+            />
         </svg>
     ),
     Doctor: ({ className }: { className?: string }) => (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
+            />
         </svg>
     ),
     Science: ({ className }: { className?: string }) => (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.514V19.5h14v-4.986l-4.091-4.096a2.25 2.25 0 01-.659-1.591V3.104M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082" />
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.514V19.5h14v-4.986l-4.091-4.096a2.25 2.25 0 01-.659-1.591V3.104M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082"
+            />
         </svg>
     ),
 };
 
 export default function Welcome() {
     const { __ } = useLang();
+    const { props } = usePage<any>();
+    const completedFormsCount = props.completedFormsCount || 0;
 
     return (
         <>
@@ -43,19 +57,10 @@ export default function Welcome() {
 
                 <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     {/* --- HERO --- */}
-                    <main className="py-12 text-center lg:py-20">
-                        <h1 className="mx-auto mb-6 max-w-4xl text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl">
-                            Cilmes šūnu diagnostika un terapija vienā platformā
-                        </h1>
-
-                        <p className="mx-auto mb-12 max-w-2xl text-lg leading-relaxed text-slate-600">
-                            RTU Biočipu laboratorija apvieno zinātni un inženieriju, lai cilmes šūnu terapijas kļūtu drošākas un pieejamākas.
-                        </p>
-
+                    <main className="py-20 text-center lg:py-26">
                         {/* --- 3 CARDS SECTION --- */}
                         {/* Changed grid-cols-2 to md:grid-cols-3 and max-w-2xl to max-w-6xl for better 3-card layout */}
-                        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-3">
-                            
+                        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-3">
                             {/* 1. Patient Card (Emerald) */}
                             <Link
                                 href="/postdock-anketa"
@@ -65,10 +70,8 @@ export default function Welcome() {
                                     <div className="mb-5 inline-flex rounded-xl bg-emerald-50 p-3 text-emerald-600 ring-1 ring-emerald-100 transition-colors group-hover:bg-emerald-600 group-hover:text-white group-hover:ring-emerald-600">
                                         <Icons.User className="h-6 w-6" />
                                     </div>
-                                    <h3 className="mb-2 text-xl font-bold text-slate-900">Pacientiem</h3>
-                                    <p className="text-sm leading-relaxed text-slate-500">
-                                        Meklēju risinājumu imunitātei, locītavām vai atlabšanai.
-                                    </p>
+                                    <h3 className="mb-2 text-xl font-bold text-slate-900">Pacientu aptaujas anketa</h3>
+                                    <p className="text-sm leading-relaxed text-slate-500">Meklēju risinājumu imunitātei, locītavām vai atlabšanai.</p>
                                 </div>
                                 <div className="mt-6 flex items-center text-sm font-bold text-emerald-600 transition-colors group-hover:text-emerald-700">
                                     Aizpildīt anketu <Icons.ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -84,13 +87,11 @@ export default function Welcome() {
                                     <div className="mb-5 inline-flex rounded-xl bg-sky-50 p-3 text-sky-600 ring-1 ring-sky-100 transition-colors group-hover:bg-sky-600 group-hover:text-white group-hover:ring-sky-600">
                                         <Icons.Doctor className="h-6 w-6" />
                                     </div>
-                                    <h3 className="mb-2 text-xl font-bold text-slate-900">Ārstiem</h3>
-                                    <p className="text-sm leading-relaxed text-slate-500">
-                                        Vēlos sadarboties pētniecībā vai nosūtīt pacientus.
-                                    </p>
+                                    <h3 className="mb-2 text-xl font-bold text-slate-900">Speciālistu/Ārstu aptajuas anketa</h3>
+                                    <p className="text-sm leading-relaxed text-slate-500">Vēlos sadarboties pētniecībā vai nosūtīt pacientus.</p>
                                 </div>
                                 <div className="mt-6 flex items-center text-sm font-bold text-sky-600 transition-colors group-hover:text-sky-700">
-                                    Speciālista reģistrācija <Icons.ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    Ispaust savu viedokli <Icons.ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                                 </div>
                             </Link>
 
@@ -104,18 +105,23 @@ export default function Welcome() {
                                     <div className="mb-5 inline-flex rounded-xl bg-violet-50 p-3 text-violet-600 ring-1 ring-violet-100 transition-colors group-hover:bg-violet-600 group-hover:text-white group-hover:ring-violet-600">
                                         <Icons.Science className="h-6 w-6" />
                                     </div>
-                                    <h3 className="mb-2 text-xl font-bold text-slate-900">Cilmes šūnu tehnoloģija</h3>
-                                    <p className="text-sm leading-relaxed text-slate-500">
-                                        Vēlos uzzināt vairāk par biočipu un šūnu tehnoloģijām.
-                                    </p>
+                                    <h3 className="mb-2 text-xl font-bold text-slate-900">Mācību programmas ārstiem/speciālistiem</h3>
+                                    <p className="text-sm leading-relaxed text-slate-500">Vēlos uzzināt vairāk par medicīnu.</p>
                                 </div>
                                 <div className="mt-6 flex items-center text-sm font-bold text-violet-600 transition-colors group-hover:text-violet-700">
                                     Uzzināt vairāk <Icons.ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                                 </div>
                             </Link>
-
                         </div>
                     </main>
+
+                    {/* --- COMPLETED FORMS COUNT --- */}
+                    <div className="py-8 text-center">
+                        <div className="mx-auto max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+                            <div className="mb-1 text-sm font-medium text-slate-600">Izpildīto anketu skaits</div>
+                            <div className="text-3xl font-bold text-emerald-600">{completedFormsCount.toLocaleString()}</div>
+                        </div>
+                    </div>
 
                     {/* --- FINAL CTA --- */}
                     <div className="py-12 text-center">
