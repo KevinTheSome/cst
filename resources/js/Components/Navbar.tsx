@@ -187,6 +187,15 @@ function Navbar() {
                                     {__('head.nav_research_code')}
                                 </Link>
                             </li>
+                            {/* NEW: document DB */}
+                            <li>
+                                <Link
+                                    href="/datubaze"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
+                                >
+                                    {__('head.nav_research_documents')}
+                                </Link>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -330,6 +339,16 @@ function Navbar() {
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
                                                     {__('head.nav_research_code')}
+                                                </Link>
+                                            </li>
+                                            {/* NEW: document DB */}
+                                            <li>
+                                                <Link
+                                                    href="/datubaze"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
+                                                    {__('head.nav_research_documents')}
                                                 </Link>
                                             </li>
                                         </ul>

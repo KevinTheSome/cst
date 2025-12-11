@@ -16,6 +16,7 @@ return [
     'nav_research' => 'RESEARCH',
     'nav_research_postdoc' => 'PostDoc form',
     'nav_research_code' => 'Code form',
+    'nav_research_documents' => 'Document database',
 
     'nav_about' => 'ABOUT US',
     'nav_about_team' => 'Team',
