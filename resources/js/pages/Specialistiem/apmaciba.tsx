@@ -81,6 +81,7 @@ const MOCK_LECTURES: Lecture[] = [
     { id: 'l4', title: 'Biežākie jautājumi un resursi', duration: '08:40', description: 'Praktiski padomi un saites.', rating: 4.5 },
 ];
 
+
 export default function OnlineTraining() {
     const { __, locale } = useLang();
 
@@ -90,7 +91,7 @@ export default function OnlineTraining() {
     const [unlocked, setUnlocked] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [selectedLecture, setSelectedLecture] = useState<string | null>(null);
-
+    const [userRatings, setUserRatings] = useState<{ [key: string]: number }>({});
     // We initialize with empty, but if API fails or for demo, we can use MOCK_LECTURES
     const [lectures, setLectures] = useState<Lecture[]>([]);
 
@@ -142,6 +143,55 @@ export default function OnlineTraining() {
         if (typeof title === 'string') return title;
         // Try current locale, then 'lv', then 'en', then first available key
         return title[locale] || title['lv'] || title['en'] || Object.values(title)[0] || '';
+    };
+    const StarRating = ({
+        value,
+        onChange,
+    }: {
+        value: number;
+        onChange: (v: number) => void;
+    }) => {
+        return (
+            <div className="flex gap-1 mt-4">
+                {[1, 2, 3, 4, 5].map((star) => (
+                   <svg
+                    key={star}
+                    onClick={() => onChange(star)}
+                    className={`h-6 w-6 cursor-pointer transition ${star <= value ? 'fill-amber-400 text-amber-400' : 'fill-none text-slate-400'}`}
+                    viewBox="0 0 24 24"                        
+                    stroke="currentColor"                        
+                    strokeWidth="2"
+                   >
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                   </svg>     
+                ))}
+            </div>
+        )
+    }
+    const handleSubmitRating = async () => {
+        if (!selectedLecture || userRatings[selectedLecture] === undefined) return;
+
+        setSubmitting(true);
+        try {
+            await fetch('/ratings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement).content,
+            },
+            body: JSON.stringify({
+                lectureId: selectedLecture,
+                rating: userRatings[selectedLecture],
+            }),
+            });
+
+            alert('Vērtējums veiksmīgi nosūtīts!');
+        } catch (err) {
+            console.error('error submitting rating:', err);
+            alert('Kļūda nosūtot vērtējumu');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -467,6 +517,41 @@ export default function OnlineTraining() {
                                             );
                                         })()}
                                     </div>
+                                    {selectedLecture && (
+                                        <div className="mt-6 p-5 border rounded-2xl bg-white shadow-md">
+                                            <h2 className="text-lg font-bold text-slate-900 mb-2">
+                                                {renderTitle(lectures.find(l => l.id === selectedLecture)?.title || '')}
+                                            </h2>
+
+                                            <p className="text-sm text-slate-600 mb-4">
+                                                {lectures.find(l => l.id === selectedLecture)?.description}
+                                            </p>
+
+                                            <StarRating
+                                                value={userRatings[selectedLecture] || 0}
+                                                onChange={(v) =>
+                                                    setUserRatings((prev) => ({
+                                                        ...prev,
+                                                        [selectedLecture]: v,
+                                                    }))
+                                                }
+                                            />
+                                            <button
+                                                onClick={handleSubmitRating}
+                                                disabled={submitting}
+                                                className={`mt-4 rounded-2xl px-6 py-3 text-sm font-semibold text-white transition 
+                                                ${
+                                                    submitting ? 'bg-slate-400' : 'bg-slate-900 hover:bg-emerald-600'
+                                                }`}
+                                            >
+                                                {submitting ? 'Nosūtot...' : 'Iesniegt Vērtējumu'}
+                                            </button>
+
+                                            <p className="text-xs mt-2 text-slate-500">
+                                                Jūsu vērtējums: {userRatings[selectedLecture] || 'nav'}
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 

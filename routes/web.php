@@ -17,6 +17,7 @@ use App\Http\Controllers\LectureController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\StoredFileController;
 use App\Models\FormResult;
+use App\Http\Controllers\RatingController;
 
 if (!function_exists('findPageComponent')) {
 
@@ -147,6 +148,10 @@ Route::get('/download/{token}', [VideoController::class, 'downloadTemp'])->name(
 // <<<<<<<<<<<<<<<< DOKUMENTU DATUBĀZE (USER VIEW) >>>>>>>>>>>>>>>>>
 Route::get('/datubaze', [DocumentController::class, 'index'])->name('documents.index');
 Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
+
+// <<<<<<<<<< Rating >>>>>>>>>>>>>>>>>>
+
+Route::post('/ratings', [RatingController::class, 'store']);
 
 // <<<<<<<<<< ADMIN >>>>>>>>>>>>>>>>>>
 

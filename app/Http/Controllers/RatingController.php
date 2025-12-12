@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Rating;
 use Illuminate\Http\Request;
+use App\Models\OnlineTraining;
+use Illuminate\Validation\ValidationException;
 
 class RatingController extends Controller
 {
@@ -28,7 +30,23 @@ class RatingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request);
+        $validated = $request->validate([
+            'lectureId' => ['required', 'integer', 'exists:lectures,id'],
+            'rating'    => ['required', 'integer', 'between:1,5'],
+        ]);
+
+        $lecture = OnlineTraining::findOrFail($validated['lectureId']);
+
+        // Just create a new rating each time
+        $lecture->ratings()->create([
+            'score' => $validated['rating'],
+        ]);
+
+        return response()->json([
+            'message' => 'Rating submitted successfully!',
+            'rating'  => $validated['rating'],
+        ], 201);
     }
 
     /**
