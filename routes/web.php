@@ -16,6 +16,7 @@ use App\Http\Controllers\OnlineTrainingController;
 use App\Http\Controllers\LectureController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\StoredFileController;
+use App\Models\FormResult;
 
 if (!function_exists('findPageComponent')) {
 
@@ -78,6 +79,7 @@ Route::get('/', function (Request $request) {
     return Inertia::render($component, [
         'detectedCountry' => $country,
         'locale' => $locale,
+        'completedFormsCount' => FormResult::count(),
     ]);
 })->name('home');
 
@@ -219,4 +221,3 @@ Route::post('/admin/logout', function () {
     session()->forget('is_admin');
     return redirect()->route('admin.login');
 })->name('admin.logout');
-
