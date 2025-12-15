@@ -819,8 +819,8 @@ class FormSeeder extends Seeder
             [
                 'code' => 'public',
                 'title' => [
-                    'lv' => 'Aptaujas anketa ārstiem par gatavību ārstēt psoriāzes un Krona slimības pacientus ar ATMP HE / MSC terapijām',
-                    'en' => 'Physician survey on readiness to treat psoriasis and Crohn’s disease patients with ATMP HE / MSC therapies',
+                    'lv' => 'Ārstu anketa par ATMP / MSC terapijām',
+                    'en' => 'Physician Survey on ATMP / MSC Therapies',
                 ],
                 'data' => [
                     'fields' => [
