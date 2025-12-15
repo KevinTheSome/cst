@@ -14,27 +14,39 @@ class FormTypeSeeder extends Seeder
     public function run(): void
     {
         // atrodam abas formas
-        $privateForm = Form::where('code', 'private')->first();
-        $publicForm = Form::where('code', 'public')->first();
-
-        // 1. CHRONIC form type -> private forma
-        if ($privateForm) {
+        // Assign form types based on database IDs
+        // ID 1 -> psoriasis
+        $form1 = Form::find(1);
+        if ($form1) {
             FormType::firstOrCreate([
-                'form_id' => $privateForm->id,
-                'type' => 'chronic'
-            ]);
-        } else {
-            $this->command->warn("Private form not found.");
-        }
-
-        // 2. SPECIALISTS form type -> public forma
-        if ($publicForm) {
-            FormType::firstOrCreate([
-                'form_id' => $publicForm->id,
+                'form_id' => $form1->id,
                 'type' => 'psoriasis'
             ]);
         } else {
-            $this->command->warn("Public form not found.");
+            $this->command->warn("Form with ID 1 not found.");
         }
+
+        // ID 2 -> chronic
+        $form2 = Form::find(2);
+        if ($form2) {
+            FormType::firstOrCreate([
+                'form_id' => $form2->id,
+                'type' => 'chronic'
+            ]);
+        } else {
+            $this->command->warn("Form with ID 2 not found.");
+        }
+
+        // ID 3 -> specialists
+        $form3 = Form::find(3);
+        if ($form3) {
+            FormType::firstOrCreate([
+                'form_id' => $form3->id,
+                'type' => 'specialists'
+            ]);
+        } else {
+            $this->command->warn("Form with ID 3 not found.");
+        }
+
     }
 }
