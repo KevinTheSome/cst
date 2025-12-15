@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\OnlineTraining;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class OnlineTrainingController extends Controller
@@ -24,11 +25,73 @@ class OnlineTrainingController extends Controller
             });
         }
 
-        // return a collection (no pagination to keep frontend simple)
+        // Get trainings (no pagination to keep frontend simple)
         $trainings = $query->orderBy('starts_at', 'desc')->get();
 
+        // Preload ratings aggregates (count & avg) efficiently
+        // withCount and withAvg add attributes ratings_count and ratings_avg
+        $trainings = $trainings->loadCount('ratings')->loadAvg('ratings', 'score');
+
+        $ids = $trainings->pluck('id')->all();
+        if (!empty($ids)) {
+            // Get breakdown grouped by training and score
+            $rows = DB::table('ratings')
+                ->select('online_training_id', 'score', DB::raw('count(*) as cnt'))
+                ->whereIn('online_training_id', $ids)
+                ->groupBy('online_training_id', 'score')
+                ->get();
+        } else {
+            $rows = collect();
+        }
+
+        // Group rows by training id for easy lookup
+        $grouped = $rows->groupBy('online_training_id');
+
+        // Map trainings to plain arrays with rating aggregates
+        $out = $trainings->map(function ($t) use ($grouped) {
+            $rowsFor = $grouped->get($t->id, collect());
+
+            // build breakdown 1..5
+            $breakdown = [];
+            for ($s = 1; $s <= 5; $s++) {
+                $found = $rowsFor->firstWhere('score', $s);
+                $breakdown[$s] = $found ? (int)$found->cnt : 0;
+            }
+
+            $count = $t->ratings_count ?? array_sum($breakdown);
+            // prefer DB average if present otherwise compute from breakdown
+            if (!is_null($t->ratings_avg)) {
+                $avg = round((float)$t->ratings_avg, 2);
+            } else {
+                $total = max(1, $count);
+                $avg = $count ? round(
+                    (
+                        5 * ($breakdown[5] ?? 0) +
+                        4 * ($breakdown[4] ?? 0) +
+                        3 * ($breakdown[3] ?? 0) +
+                        2 * ($breakdown[2] ?? 0) +
+                        1 * ($breakdown[1] ?? 0)
+                    ) / $total, 2
+                ) : null;
+            }
+
+            return [
+                'id' => $t->id,
+                'title' => (array) $t->title,
+                'description' => $t->description,
+                'url' => $t->url,
+                'starts_at' => $t->starts_at,
+                'ends_at' => $t->ends_at,
+                'is_active' => (bool) $t->is_active,
+                // ratings
+                'ratings_count' => (int) $count,
+                'ratings_avg' => $count ? $avg : null,
+                'ratings_breakdown' => $breakdown, // keyed by score 1..5
+            ];
+        })->values();
+
         return Inertia::render('Admin/Apmaciba/indexApmaciba', [
-            'trainings' => $trainings,
+            'trainings' => $out,
             'filters' => ['q' => $q ?? ''],
         ]);
     }
