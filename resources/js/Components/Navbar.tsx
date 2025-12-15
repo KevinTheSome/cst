@@ -29,9 +29,9 @@ function Navbar() {
                 <Link href="/" className="flex items-center gap-4">
                     <img src="/bzl-site-icon-01.png" alt="Biočipu zinātniskā laboratorija" className="h-16 w-auto md:h-20" />
                     <span className="text-xl leading-tight font-semibold text-green-700 md:text-2xl">
-                        SIA cilmes šunu
+                        Cilmes Šūnu
                         <br />
-                        tehnoloģijas
+                        Tehnoloģijas SIA
                     </span>
                 </Link>
 
@@ -128,7 +128,10 @@ function Navbar() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/specialistiem/atmp" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
+                                <Link
+                                    href="/specialistiem/atmp"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
+                                >
                                     {__('head.nav_specialists_plants')}
                                 </Link>
                             </li>
@@ -189,10 +192,7 @@ function Navbar() {
                             </li>
                             {/* NEW: document DB */}
                             <li>
-                                <Link
-                                    href="/datubaze"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
+                                <Link href="/datubaze" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
                                     {__('head.nav_research_documents')}
                                 </Link>
                             </li>
@@ -376,7 +376,11 @@ function Navbar() {
                                                 </Link>
                                             </li>
                                             <li>
-                                                <Link href="/specialistiem/atmp" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
+                                                <Link
+                                                    href="/specialistiem/atmp"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
                                                     {__('head.nav_specialists_plants')}
                                                 </Link>
                                             </li>

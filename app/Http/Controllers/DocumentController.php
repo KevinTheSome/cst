@@ -14,52 +14,53 @@ class DocumentController extends Controller
      */
     public function index()
     {
-        $locale = app()->getLocale() ?? 'lv';
+        $storedFiles = \App\Models\StoredFile::all();
 
-        $files = StoredFile::orderByDesc('created_at')->get();
-
-        $documents = $files->map(function (StoredFile $file) use ($locale) {
-            // Normalize tags (they are stored as JSON / array with lv/en)
-            $rawTags = $file->tags ?? [];
-            if (! is_array($rawTags)) {
-                $decoded = json_decode($rawTags, true);
-                $rawTags = is_array($decoded) ? $decoded : [];
-            }
-
+        $documents = $storedFiles->map(function ($file) {
+            // Convert JSON tags to the format expected by frontend
             $tags = [];
-            $i = 1;
-            foreach ($rawTags as $tag) {
-                $name = null;
-
-                if (is_array($tag)) {
-                    if ($locale === 'en' && ! empty($tag['en'])) {
-                        $name = $tag['en'];
-                    } elseif (! empty($tag['lv'])) {
-                        $name = $tag['lv'];
-                    } else {
-                        $name = $tag['en'] ?? $tag['lv'] ?? null;
-                    }
-                } elseif (is_string($tag)) {
-                    $name = $tag;
+            if ($file->tags) {
+                $tagData = $file->tags;
+                // If it's a string, decode it from JSON
+                if (is_string($tagData)) {
+                    $tagData = json_decode($tagData, true);
                 }
+                // Process tags if we have a valid array
+                if (is_array($tagData)) {
+                    foreach ($tagData as $index => $tag) {
+                        // Handle both simple string tags and complex tag objects with lv/en fields
+                        $tagLv = null;
+                        $tagEn = null;
 
-                if ($name) {
-                    $tags[] = [
-                        'id'   => $i++,
-                        'name' => $name,
-                    ];
+                        if (is_string($tag)) {
+                            $tagLv = $tag;
+                            $tagEn = $tag;
+                        } elseif (is_array($tag)) {
+                            $tagLv = $tag['lv'] ?? null;
+                            $tagEn = $tag['en'] ?? $tag['lv'] ?? null;
+                        }
+
+                        if ($tagLv || $tagEn) {
+                            $tags[] = [
+                                'id' => $index + 1,
+                                'name_lv' => trim($tagLv ?? ''),
+                                'name_en' => trim($tagEn ?? ''),
+                                'name' => trim($tagLv ?? $tagEn ?? '') // Fallback for compatibility
+                            ];
+                        }
+                    }
                 }
             }
 
             return [
-                'id'           => $file->id,
-                'title_lv'     => $file->title_lv,
-                'title_en'     => $file->title_en,
-                'file_size'    => $file->size ?? 0,
-                'mime_type'    => $file->mime_type ?? 'application/octet-stream',
-                'created_at'   => optional($file->created_at)->toIso8601String(),
+                'id' => $file->id,
+                'title_lv' => $file->title_lv,
+                'title_en' => $file->title_en,
+                'file_size' => $file->size,
+                'mime_type' => $file->mime_type,
+                'created_at' => $file->created_at->toIso8601String(),
                 'download_url' => route('documents.download', ['document' => $file->id]),
-                'tags'         => $tags,
+                'tags' => $tags,
             ];
         });
 
@@ -69,28 +70,20 @@ class DocumentController extends Controller
     }
 
     /**
-     * Download handler: serve the actual StoredFile uploaded by admin
+     * Download handler for stored files
      */
     public function download($documentId)
     {
-        $file = StoredFile::findOrFail($documentId);
+        $file = \App\Models\StoredFile::findOrFail($documentId);
 
-        $path = $file->path;
+        $filePath = storage_path('app/public/' . $file->path);
 
-        if (! $path || ! Storage::disk('public')->exists($path)) {
-            abort(404, 'File not found on disk.');
+        if (!file_exists($filePath)) {
+            abort(404, 'File not found.');
         }
 
-        $originalName = pathinfo($path, PATHINFO_BASENAME);
-        $ext = pathinfo($path, PATHINFO_EXTENSION);
-
-        // Nice download name based on title_en / title_lv
-        $baseTitle = $file->title_en ?: $file->title_lv ?: pathinfo($originalName, PATHINFO_FILENAME);
-        $downloadName = Str::slug($baseTitle ?: 'document');
-        if ($ext) {
-            $downloadName .= '.' . $ext;
-        }
-
-        return Storage::disk('public')->download($path, $downloadName);
+        return response()->download($filePath, $file->title_lv ?: 'document', [
+            'Content-Type' => $file->mime_type ?: 'application/octet-stream',
+        ]);
     }
 }
