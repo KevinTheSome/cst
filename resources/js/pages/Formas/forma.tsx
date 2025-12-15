@@ -1,4 +1,3 @@
-// resources/js/pages/Formas/forma.tsx
 import axios from 'axios';
 import { useState } from 'react';
 
@@ -196,24 +195,42 @@ export default function Anketa({ form }: { form: FormData | null }) {
                         />
                       )}
 
-                      {/* SCALE */}
+                      {/* SCALE (REITINGS AR POGĀM) */}
                       {field.type === 'scale' && field.scale && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm text-slate-600 mb-1">
-                            <span>{tr(field.scale.minLabel) ?? field.scale.min ?? 0}</span>
-                            <span>{tr(field.scale.maxLabel) ?? field.scale.max ?? 10}</span>
+                        <div className="mt-4">
+                          {/* Etiķetes (Mazāk - Vairāk) */}
+                          <div className="mb-3 flex justify-between text-xs font-bold uppercase tracking-widest text-slate-400">
+                            <span>{tr(field.scale.minLabel) ?? 'Mazāk'}</span>
+                            <span>{tr(field.scale.maxLabel) ?? 'Vairāk'}</span>
                           </div>
-                          <input
-                            type="range"
-                            min={field.scale.min ?? 0}
-                            max={field.scale.max ?? 10}
-                            step={1}
-                            value={answers[field.id] ?? field.scale.min ?? 0}
-                            onChange={(e) => handleChange(field.id, Number(e.target.value))}
-                            className="w-full accent-emerald-500"
-                          />
-                          <div className="text-center text-sm text-slate-700">
-                            {answers[field.id] ?? field.scale.min ?? 0}
+
+                          {/* Pogas */}
+                          <div className="flex flex-wrap gap-2 sm:justify-between">
+                            {Array.from(
+                              { 
+                                length: (field.scale?.max ?? 10) - (field.scale?.min ?? 1) + 1 
+                              },
+                              (_, i) => (field.scale?.min ?? 1) + i
+                            ).map((val) => {
+                              const isSelected = answers[field.id] === val;
+                              return (
+                                <button
+                                  key={val}
+                                  type="button"
+                                  onClick={() => handleChange(field.id, val)}
+                                  className={`
+                                    flex h-10 w-10 items-center justify-center rounded-lg text-sm font-semibold transition-all sm:h-12 sm:w-12 sm:text-base
+                                    ${
+                                      isSelected
+                                        ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/40 ring-2 ring-emerald-600 ring-offset-2 scale-110'
+                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                                    }
+                                  `}
+                                >
+                                  {val}
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
                       )}
