@@ -2,6 +2,7 @@ import { useLang } from '@/hooks/useLang';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
 import { useState } from 'react';
+import { router } from '@inertiajs/react';
 
 // --- TYPES ---
 
@@ -95,6 +96,7 @@ export default function OnlineTraining() {
     // We initialize with empty, but if API fails or for demo, we can use MOCK_LECTURES
     const [lectures, setLectures] = useState<Lecture[]>([]);
 
+
     const validateCode = (c: string) => (c ?? '').trim().length >= 3;
 
     const handleSubmitCode = async (e?: React.FormEvent) => {
@@ -169,30 +171,31 @@ export default function OnlineTraining() {
         )
     }
     const handleSubmitRating = async () => {
-        if (!selectedLecture || userRatings[selectedLecture] === undefined) return;
+        if (!selectedLecture) return;
 
-        setSubmitting(true);
+        // ONLY allow rating unlocked (real) lectures
+        const lecture = lectures.find(l => l.id === selectedLecture);
+        if (!lecture) {
+            alert('Šai lekcijai nevar iesniegt vērtējumu.');
+            return;
+        }
+
+        const rating = userRatings[selectedLecture];
+        if (!rating) return;
+
         try {
-            await fetch('/ratings', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement).content,
-            },
-            body: JSON.stringify({
-                lectureId: selectedLecture,
-                rating: userRatings[selectedLecture],
-            }),
+            await axios.post('/ratings', {
+                lectureId: lecture.id,
+                rating: rating,
             });
 
             alert('Vērtējums veiksmīgi nosūtīts!');
-        } catch (err) {
-            console.error('error submitting rating:', err);
+        } catch (err: any) {
+            console.error(err.response?.data);
             alert('Kļūda nosūtot vērtējumu');
-        } finally {
-            setSubmitting(false);
         }
     };
+
 
     return (
         <>

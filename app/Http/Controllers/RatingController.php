@@ -30,24 +30,36 @@ class RatingController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request);
         $validated = $request->validate([
-            'lectureId' => ['required', 'integer', 'exists:lectures,id'],
+            'lectureId' => ['required', 'integer', 'exists:online_trainings,id'],
             'rating'    => ['required', 'integer', 'between:1,5'],
         ]);
 
+        $rated = session('rated_lectures', []);
+
+        // Block duplicate rating in this session
+        if (isset($rated[$validated['lectureId']])) {
+            return response()->json([
+                'message' => 'Jūs jau esat novērtējis šo lekciju.',
+            ], 409);
+        }
+
         $lecture = OnlineTraining::findOrFail($validated['lectureId']);
 
-        // Just create a new rating each time
         $lecture->ratings()->create([
             'score' => $validated['rating'],
         ]);
 
+        // Mark as rated in session
+        $rated[$validated['lectureId']] = true;
+        session(['rated_lectures' => $rated]);
+
         return response()->json([
-            'message' => 'Rating submitted successfully!',
-            'rating'  => $validated['rating'],
+            'message' => 'Vērtējums saglabāts!',
         ], 201);
     }
+
+
 
     /**
      * Display the specified resource.
