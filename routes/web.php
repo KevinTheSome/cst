@@ -96,7 +96,7 @@ Route::get('pacientiem/faq', fn() => Inertia::render('Pacientiem/faq'))->name('P
 
 // <<<<<<<<<<<<<<< SPECIALISTIEM >>>>>>>>>>>>>>>>>>
 
-Route::get('specialistiem/apmaciba', fn() => Inertia::render('Specialistiem/apmaciba'))->name('Specialistiem/apmaciba');
+Route::get('specialistiem/apmaciba', [OnlineTrainingController::class,  'lectures'])->name('Specialistiem/apmaciba');
 Route::get('specialistiem/atmp', fn() => Inertia::render('Specialistiem/atmp'))->name('Specialistiem/atmp');
 Route::get('specialistiem/likumi', fn() => Inertia::render('Specialistiem/likumi'))->name('Specialistiem/likumi');
 

@@ -32,7 +32,31 @@ class OnlineTrainingController extends Controller
             'filters' => ['q' => $q ?? ''],
         ]);
     }
+    public function lectures()
+    {
+        $trainings = OnlineTraining::query()
+            ->withCount('ratings')          // number of ratings per lecture
+            ->withAvg('ratings', 'score')   // average rating per lecture
+            ->orderBy('starts_at', 'desc')
+            ->get()
+            ->map(function ($training) {
+                return [
+                    'id' => $training->id,
+                    'title' => $training->title,
+                    'description' => $training->description,
+                    'url' => $training->url,
+                    'starts_at' => $training->starts_at,
+                    'ends_at' => $training->ends_at,
+                    'ratings_count' => $training->ratings_count ?? 0,
+                    'rating_avg' => $training->ratings_avg_score !== null ? round($training->ratings_avg_score, 1) : 0,
+                ];
+            });
 
+        return Inertia::render('Specialistiem/apmaciba', [
+            'initialLectures' => $trainings,
+            'unlockedLectures' => session('unlocked_lectures', []),
+        ]);
+    }
     // GET /admin/trainings/create
     public function create()
     {
