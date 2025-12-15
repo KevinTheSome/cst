@@ -1,10 +1,11 @@
+// resources/js/pages/Admin/Fails/showFiles.tsx
 import React from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import { Download, Edit, FileText, FolderOpen, Plus, Search, Trash } from 'lucide-react';
 import AdminLayout from '../../../Layouts/AdminLayout';
 
 type FileItem = {
-  id: number;
+  id: number | string;
   title_lv?: string | null;
   title_en?: string | null;
   path?: string | null;
@@ -47,6 +48,7 @@ const AllFiles: React.FC = () => {
 
   const [searchTerm, setSearchTerm] = React.useState('');
   const [searchFocused, setSearchFocused] = React.useState(false);
+  const [deletingIds, setDeletingIds] = React.useState<Array<number | string>>([]);
 
   const filteredFiles = React.useMemo(() => {
     const q = searchTerm.toLowerCase();
@@ -57,6 +59,36 @@ const AllFiles: React.FC = () => {
         (file.id?.toString() ?? '').includes(q)
     );
   }, [files, searchTerm]);
+
+  const isDeleting = (id: number | string) => deletingIds.includes(id);
+
+  function startDeleting(id: number | string) {
+    setDeletingIds((prev) => [...prev, id]);
+  }
+
+  function stopDeleting(id: number | string) {
+    setDeletingIds((prev) => prev.filter((x) => x !== id));
+  }
+
+  function handleDelete(id: number | string) {
+    if (!confirm('Are you sure you want to delete this file? This action cannot be undone.')) return;
+
+    startDeleting(id);
+
+    // Use POST + _method=DELETE so Apache/skipped verbs won't block the request
+    router.post(`/admin/files/${id}`, { _method: 'DELETE' }, {
+      preserveScroll: true,
+      onSuccess: () => {
+        // nothing special — Laravel redirects back or returns updated props
+      },
+      onError: () => {
+        // optionally show error toast (server-side flash will usually cover it)
+      },
+      onFinish: () => {
+        stopDeleting(id);
+      },
+    });
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
@@ -140,14 +172,13 @@ const AllFiles: React.FC = () => {
           <div className="grid gap-4">
             {searchTerm && (
               <div className="px-1 text-sm text-gray-400">
-                Found {filteredFiles.length} {filteredFiles.length === 1 ? 'file' : 'files'} matching "
-                {searchTerm}"
+                Found {filteredFiles.length} {filteredFiles.length === 1 ? 'file' : 'files'} matching "{searchTerm}"
               </div>
             )}
 
             {filteredFiles.map((file) => (
               <div
-                key={file.id}
+                key={String(file.id)}
                 className="group rounded-xl border border-gray-700/50 bg-gradient-to-r from-gray-800/50 to-gray-800/30 p-6 transition-all hover:border-gray-600/50 hover:shadow-lg hover:shadow-black/20"
               >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -193,7 +224,7 @@ const AllFiles: React.FC = () => {
                   </div>
 
                   <div className="flex flex-shrink-0 items-center gap-2">
-                    {/* FIXED DOWNLOAD LINK */}
+                    {/* Download */}
                     <a
                       href={`/admin/files/${file.id}/download`}
                       className="flex items-center gap-2 rounded-lg border border-blue-500/20 bg-blue-500/10 px-3 py-2 text-sm font-medium text-blue-400 transition-all hover:bg-blue-500/20 hover:text-blue-300"
@@ -202,6 +233,7 @@ const AllFiles: React.FC = () => {
                       <span className="hidden sm:inline">Download</span>
                     </a>
 
+                    {/* Edit */}
                     <Link
                       href={`/admin/files/${file.id}/edit`}
                       className="flex items-center gap-2 rounded-lg border border-yellow-500/20 bg-yellow-500/10 px-3 py-2 text-sm font-medium text-yellow-400 transition-all hover:bg-yellow-500/20 hover:text-yellow-300"
@@ -210,15 +242,20 @@ const AllFiles: React.FC = () => {
                       <span className="hidden sm:inline">Edit</span>
                     </Link>
 
-                    <Link
-                      href={`/admin/files/${file.id}`}
-                      method="delete"
-                      as="button"
-                      className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm font-medium text-red-400 transition-all hover:bg-red-500/20 hover:text-red-300"
+                    {/* Delete (uses POST + _method=DELETE under the hood) */}
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(file.id)}
+                      disabled={isDeleting(file.id)}
+                      className={`flex items-center gap-2 rounded-lg border border-red-500/20 px-3 py-2 text-sm font-medium transition-all ${
+                        isDeleting(file.id)
+                          ? 'bg-red-600/20 text-red-200 opacity-75 cursor-wait'
+                          : 'bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300'
+                      }`}
                     >
                       <Trash className="h-4 w-4" />
-                      <span className="hidden sm:inline">Delete</span>
-                    </Link>
+                      <span className="hidden sm:inline">{isDeleting(file.id) ? 'Deleting...' : 'Delete'}</span>
+                    </button>
                   </div>
                 </div>
               </div>
