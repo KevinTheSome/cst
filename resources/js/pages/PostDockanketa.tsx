@@ -1,4 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
+import type { ComponentType } from 'react';
 
 // --- ICONS ---
 const Icons = {
@@ -48,13 +49,23 @@ const Icons = {
     ),
 };
 
-const clientButtons = [
+type CardButton = {
+    label: string;
+    href: string;
+    icon: ComponentType<{ className?: string }>;
+    colorClass: string;
+    iconBg: string;
+    subtitle?: string;
+};
+
+const clientButtons: CardButton[] = [
     {
         label: 'Psoriāze',
         href: '/anketa-psoriāze',
         icon: Icons.User,
         colorClass: 'group-hover:border-emerald-400 group-hover:shadow-emerald-100',
         iconBg: 'bg-emerald-50 text-emerald-600',
+        subtitle: 'Anketa pacientiem ar psoriāzi un citām ādas slimībām.',
     },
     {
         label: 'Krona slimības',
@@ -62,6 +73,7 @@ const clientButtons = [
         icon: Icons.Activity,
         colorClass: 'group-hover:border-emerald-400 group-hover:shadow-emerald-100',
         iconBg: 'bg-emerald-50 text-emerald-600',
+        subtitle: 'Hronisku zarnu saslimšanu anketēšana.',
     },
     {
         label: 'Koda formas',
@@ -69,16 +81,26 @@ const clientButtons = [
         icon: Icons.Code,
         colorClass: 'group-hover:border-violet-400 group-hover:shadow-violet-100',
         iconBg: 'bg-violet-50 text-violet-600',
+        subtitle: 'Ievadiet vai pieprasiet individuālus piekļuves kodus.',
     },
 ];
 
-const specialistButtons = [
+const specialistButtons: CardButton[] = [
     {
         label: 'Speciālistiem',
         href: '/anketa-specialiste',
         icon: Icons.Stethoscope,
         colorClass: 'group-hover:border-sky-400 group-hover:shadow-sky-100',
         iconBg: 'bg-sky-50 text-sky-600',
+        subtitle: 'Sadarbības un nosūtījumu forma ārstiem.',
+    },
+    {
+        label: 'Kodu forma',
+        href: '/anketa-kods',
+        icon: Icons.Code,
+        colorClass: 'group-hover:border-violet-400 group-hover:shadow-violet-100',
+        iconBg: 'bg-violet-50 text-violet-600',
+        subtitle: 'Nosūtījumu kodi un piekļuves pārvaldība speciālistiem.',
     },
 ];
 
@@ -143,7 +165,7 @@ export default function PostDockanketa() {
                                             </div>
 
                                             <h3 className="mb-2 text-xl font-bold text-slate-900">{btn.label}</h3>
-                                            <p className="text-sm leading-relaxed text-slate-500">{btn.subtitle}</p>
+                                            {btn.subtitle && <p className="text-sm leading-relaxed text-slate-500">{btn.subtitle}</p>}
                                         </Link>
                                     ))}
                                 </div>
