@@ -449,7 +449,7 @@ export default function UpdateAnketa() {
               </Link>
              <Link
                   as="button"
-                  method="put" // or "post" if your route uses POST
+                  method="post" // or "post" if your route uses POST
                   href={`/admin/anketa/update/${initialForm.id}`}
                   data={{
                       title: {
@@ -458,6 +458,7 @@ export default function UpdateAnketa() {
                       },
                       code: visibility,
                       data: {
+                        _method: 'PUT',
                           fields: fields.map(f => {
                               const base: any = {
                                   id: f.id,
