@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import axios from 'axios';
+import { router } from '@inertiajs/react';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import AdminLayout from '../../../Layouts/AdminLayout';
 import { 
@@ -421,78 +421,106 @@ export default function UpdateAnketa() {
     }
   }, [title, visibility, fields]);
 
-  const submitForm = async () => {
-    setAttemptedSubmit(true);
-    const next = validateAll();
-    setErrors(next);
+const submitForm = () => {
+  setAttemptedSubmit(true);
 
-    if (Object.keys(next.fieldErrors).length > 0 || next.titleLv || next.fields || next.visibility) {
-      const firstFail = fields.find((f) => next.fieldErrors[f.id]);
-      if (firstFail) {
-        const el = document.querySelector(`[data-field-id="${firstFail.id}"]`);
-        if (el) (el as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-      setModalState({ 
-          isOpen: true, 
-          type: 'error', 
-          title: 'Validation Error', 
-          message: 'Lūdzu izlabojiet kļūdas formā pirms saglabāšanas.' 
-      });
-      return;
-    }
+  const next = validateAll();
+  setErrors(next);
 
-    const payload = {
-      title: {
-        lv: title.lv.trim(),
-        en: title.en.trim(),
-      },
-      code: visibility,
-      data: {
-        fields: fields.map((f) => {
-          const base: any = {
-            id: f.id,
-            type: f.type,
-            label: { lv: f.label.lv.trim(), en: f.label.en.trim() },
-          };
-          if (f.type === 'text') {
-            base.placeholder = { lv: (f as TextField).placeholder.lv.trim(), en: (f as TextField).placeholder.en.trim() };
-          } else if (f.type === 'scale') {
-            base.scale = { ...(f as ScaleField).scale };
-          } else {
-            base.options = {
-              lv: (f as OptionField).options.lv.map((o) => o.trim()).filter(Boolean),
-              en: (f as OptionField).options.en.map((o) => o.trim()).filter(Boolean),
-            };
-          }
-          return base;
-        }),
-      },
-    };
-
-    try {
-      const response = await axios.put(`/admin/anketa/update/${initialForm.id}`, payload, {
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      if (response.status >= 200 && response.status < 300) {
-        setModalState({ 
-            isOpen: true, 
-            type: 'success', 
-            title: 'Anketa Atjaunināta', 
-            message: 'Izmaiņas ir veiksmīgi saglabātas.',
-            onClose: () => window.location.href = '/admin/anketa'
+  if (
+    Object.keys(next.fieldErrors).length > 0 ||
+    next.titleLv ||
+    next.fields ||
+    next.visibility
+  ) {
+    const firstFail = fields.find((f) => next.fieldErrors[f.id]);
+    if (firstFail) {
+      const el = document.querySelector(
+        `[data-field-id="${firstFail.id}"]`
+      );
+      if (el) {
+        (el as HTMLElement).scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
         });
       }
-    } catch (err: any) {
-      const serverMsg = err?.response?.data?.message ?? err?.message ?? 'Nezināma kļūda.';
-      setModalState({ 
-          isOpen: true, 
-          type: 'error', 
-          title: 'Kļūda', 
-          message: `Neizdevās saglabāt: ${serverMsg}` 
-      });
     }
+
+    setModalState({
+      isOpen: true,
+      type: 'error',
+      title: 'Validation Error',
+      message: 'Lūdzu izlabojiet kļūdas formā pirms saglabāšanas.',
+    });
+    return;
+  }
+
+  const payload = {
+    title: {
+      lv: title.lv.trim(),
+      en: title.en.trim(),
+    },
+    code: visibility,
+    data: {
+      fields: fields.map((f) => {
+        const base: any = {
+          id: f.id,
+          type: f.type,
+          label: {
+            lv: f.label.lv.trim(),
+            en: f.label.en.trim(),
+          },
+        };
+
+        if (f.type === 'text') {
+          base.placeholder = {
+            lv: (f as TextField).placeholder.lv.trim(),
+            en: (f as TextField).placeholder.en.trim(),
+          };
+        } else if (f.type === 'scale') {
+          base.scale = { ...(f as ScaleField).scale };
+        } else {
+          base.options = {
+            lv: (f as OptionField).options.lv
+              .map((o) => o.trim())
+              .filter(Boolean),
+            en: (f as OptionField).options.en
+              .map((o) => o.trim())
+              .filter(Boolean),
+          };
+        }
+
+        return base;
+      }),
+    },
   };
+
+  router.put(
+    `/admin/anketa/update/${initialForm.id}`,
+    payload,
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        setModalState({
+          isOpen: true,
+          type: 'success',
+          title: 'Anketa Atjaunināta',
+          message: 'Izmaiņas ir veiksmīgi saglabātas.',
+          onClose: () => router.visit('/admin/anketa'),
+        });
+      },
+      onError: (errors) => {
+        setModalState({
+          isOpen: true,
+          type: 'error',
+          title: 'Kļūda',
+          message: 'Neizdevās saglabāt anketu.',
+        });
+      },
+    }
+  );
+};
+
 
   return (
     <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
