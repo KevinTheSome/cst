@@ -23,13 +23,6 @@ if (!function_exists('findPageComponent')) {
 
     function findPageComponent(string $country): string
     {
-        // Map geo country code -> Inertia component name (must match filenames in resources/js/pages)
-        $map = [
-            'LV' => 'WelcomeLv',
-            'LT' => 'WelcomeLt',
-            'EE' => 'WelcomeEE',
-            'NO' => 'WelcomeNO',
-        ];
 
         // Default to generic welcome page if no specific mapping
         $name = $map[$country] ?? 'welcome';
