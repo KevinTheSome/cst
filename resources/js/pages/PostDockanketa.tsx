@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 
 // --- ICONS ---
 const Icons = {
@@ -83,6 +83,14 @@ const specialistButtons = [
 ];
 
 export default function PostDockanketa() {
+    const { url } = usePage();
+    const searchParams = new URLSearchParams(url.split('?')[1] ?? '');
+    const role = searchParams.get('role');
+    const isSpecialistOnly = role === 'specialists';
+    const isPatientOnly = role === 'patients';
+    const showPatientSection = !isSpecialistOnly;
+    const showSpecialistSection = !isPatientOnly;
+
     return (
         <>
             <Head title="PostDock anketa" />
@@ -111,65 +119,69 @@ export default function PostDockanketa() {
                     {/* MAIN CONTENT GRID */}
                     <div className="grid gap-12">
                         {/* SECTION: CLIENTS */}
-                        <div>
-                            <div className="mb-6 flex items-center gap-3">
-                                <h2 className="text-xl font-bold text-slate-900">Pacientiem</h2>
-                                <div className="h-px flex-1 bg-slate-200"></div>
-                            </div>
+                        {showPatientSection && (
+                            <div>
+                                <div className="mb-6 flex items-center gap-3">
+                                    <h2 className="text-xl font-bold text-slate-900">Pacientiem</h2>
+                                    <div className="h-px flex-1 bg-slate-200"></div>
+                                </div>
 
-                            <div className="grid gap-6 sm:grid-cols-2">
-                                {clientButtons.map((btn) => (
-                                    <Link
-                                        key={btn.label}
-                                        href={btn.href}
-                                        className={`group relative flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${btn.colorClass}`}
-                                    >
-                                        <div className="mb-4 flex items-start justify-between">
-                                            <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${btn.iconBg}`}>
-                                                <btn.icon className="h-6 w-6" />
+                                <div className="grid gap-6 sm:grid-cols-2">
+                                    {clientButtons.map((btn) => (
+                                        <Link
+                                            key={btn.label}
+                                            href={btn.href}
+                                            className={`group relative flex flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${btn.colorClass}`}
+                                        >
+                                            <div className="mb-4 flex items-start justify-between">
+                                                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${btn.iconBg}`}>
+                                                    <btn.icon className="h-6 w-6" />
+                                                </div>
+                                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-colors group-hover:bg-emerald-500 group-hover:text-white">
+                                                    <Icons.ArrowRight className="h-4 w-4" />
+                                                </div>
                                             </div>
-                                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-colors group-hover:bg-emerald-500 group-hover:text-white">
-                                                <Icons.ArrowRight className="h-4 w-4" />
-                                            </div>
-                                        </div>
 
-                                        <h3 className="mb-2 text-xl font-bold text-slate-900">{btn.label}</h3>
-                                        <p className="text-sm leading-relaxed text-slate-500">{btn.subtitle}</p>
-                                    </Link>
-                                ))}
+                                            <h3 className="mb-2 text-xl font-bold text-slate-900">{btn.label}</h3>
+                                            <p className="text-sm leading-relaxed text-slate-500">{btn.subtitle}</p>
+                                        </Link>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* SECTION: SPECIALISTS */}
-                        <div>
-                            <div className="mb-6 flex items-center gap-3">
-                                <h2 className="text-xl font-bold text-slate-900">Speciālistiem</h2>
-                                <div className="h-px flex-1 bg-slate-200"></div>
+                        {showSpecialistSection && (
+                            <div>
+                                <div className="mb-6 flex items-center gap-3">
+                                    <h2 className="text-xl font-bold text-slate-900">Speciālistiem</h2>
+                                    <div className="h-px flex-1 bg-slate-200"></div>
+                                </div>
+
+                                <div className="grid gap-6">
+                                    {specialistButtons.map((btn) => (
+                                        <Link
+                                            key={btn.label}
+                                            href={btn.href}
+                                            className={`group relative flex flex-col gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:flex-row sm:items-center ${btn.colorClass}`}
+                                        >
+                                            <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${btn.iconBg}`}>
+                                                <btn.icon className="h-7 w-7" />
+                                            </div>
+
+                                            <div className="flex-1">
+                                                <h3 className={`text-xl font-bold text-slate-900 ${btn.subtitle ? 'mb-1' : 'mb-0'}`}>{btn.label}</h3>
+                                                {btn.subtitle && <p className="text-sm text-slate-500">{btn.subtitle}</p>}
+                                            </div>
+
+                                            <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-sky-600 group-hover:text-sky-700 sm:mt-0">
+                                                Atvērt paneli <Icons.ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
                             </div>
-
-                            <div className="grid gap-6">
-                                {specialistButtons.map((btn) => (
-                                    <Link
-                                        key={btn.label}
-                                        href={btn.href}
-                                        className={`group relative flex flex-col gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:flex-row sm:items-center ${btn.colorClass}`}
-                                    >
-                                        <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${btn.iconBg}`}>
-                                            <btn.icon className="h-7 w-7" />
-                                        </div>
-
-                                        <div className="flex-1">
-                                            <h3 className={`text-xl font-bold text-slate-900 ${btn.subtitle ? 'mb-1' : 'mb-0'}`}>{btn.label}</h3>
-                                            {btn.subtitle && <p className="text-sm text-slate-500">{btn.subtitle}</p>}
-                                        </div>
-
-                                        <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-sky-600 group-hover:text-sky-700 sm:mt-0">
-                                            Atvērt paneli <Icons.ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                                        </div>
-                                    </Link>
-                                ))}
-                            </div>
-                        </div>
+                        )}
                     </div>
                 </div>
             </div>

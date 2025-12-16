@@ -143,6 +143,14 @@ function Navbar() {
                                     {__('head.nav_specialists_training')}
                                 </Link>
                             </li>
+                            <li>
+                                <Link
+                                    href="/postdock-anketa?role=specialists"
+                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
+                                >
+                                    {__('head.nav_specialists_survey')}
+                                </Link>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -176,7 +184,7 @@ function Navbar() {
                             </li>
                             <li>
                                 <Link
-                                    href="/postdock-anketa"
+                                    href="/postdock-anketa?role=patients"
                                     className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
                                 >
                                     {__('head.nav_research_postdoc')}
@@ -325,7 +333,7 @@ function Navbar() {
                                             </li>
                                             <li>
                                                 <Link
-                                                    href="/postdock-anketa"
+                                                    href="/postdock-anketa?role=patients"
                                                     className="block w-full hover:text-orange-400"
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
@@ -391,6 +399,15 @@ function Navbar() {
                                                     onClick={() => setSidebarOpen(false)}
                                                 >
                                                     {__('head.nav_specialists_training')}
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link
+                                                    href="/postdock-anketa?role=specialists"
+                                                    className="block w-full hover:text-orange-400"
+                                                    onClick={() => setSidebarOpen(false)}
+                                                >
+                                                    {__('head.nav_specialists_survey')}
                                                 </Link>
                                             </li>
                                         </ul>

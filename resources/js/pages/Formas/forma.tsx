@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Link } from '@inertiajs/react';
 import { useState } from 'react';
 
 interface LocalizedString {
@@ -89,6 +90,16 @@ export default function Anketa({ form }: { form: FormData | null }) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f4f8ff] via-white to-[#ecfbf3] px-4 py-16 text-slate-900 sm:px-8">
       <div className="mx-auto w-full max-w-3xl space-y-8">
+        <div className="flex">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-emerald-200 hover:text-emerald-600"
+          >
+            <span aria-hidden="true">←</span>
+            Uz sākumlapu
+          </Link>
+        </div>
+
         {/* Header */}
         <div className="rounded-[32px] border border-white/70 bg-white/90 p-8 text-center shadow-2xl shadow-slate-200/80">
           <p className="text-xs uppercase tracking-[0.4em] text-emerald-500">PostDock anketa</p>
