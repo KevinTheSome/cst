@@ -1,6 +1,7 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { useLang } from '@/hooks/useLang';
 import { Head, router } from '@inertiajs/react';
+import { useEffect } from 'react';
 import React, { useState } from 'react';
 import { 
     FileText, 
@@ -70,6 +71,17 @@ export default function SelectorAnketa({ anketas = [], formTypes = [], locale = 
         });
         return initialState;
     });
+
+    useEffect(() => {
+        const nextState: { [key: string]: number | null } = {};
+
+        sectionDefinitions.forEach(section => {
+            const found = formTypes.find(ft => ft.type === section.type);
+            nextState[section.type] = found ? found.form_id : null;
+        });
+
+        setSelectedFormsByType(nextState);
+    }, [formTypes]);
     
     // Custom Modal State for feedback
     const [modalState, setModalState] = useState<{
@@ -118,17 +130,21 @@ export default function SelectorAnketa({ anketas = [], formTypes = [], locale = 
                 type: type,
             },
             {
+                preserveScroll: true,
                 onSuccess: () => {
+                    // 🔄 Re-fetch updated formTypes from backend
+                    router.reload({ only: ['formTypes'] });
+
                     setModalState({
                         isOpen: true,
                         type: 'success',
                         title: 'Saglabāts',
                         message: __('anketa.selector.success') || 'Anketas piesaiste veiksmīgi saglabāta.'
                     });
+
                     setProcessingType(null);
                 },
-                onError: (errors) => {
-                    console.error(errors);
+                onError: () => {
                     setModalState({
                         isOpen: true,
                         type: 'error',
@@ -137,7 +153,7 @@ export default function SelectorAnketa({ anketas = [], formTypes = [], locale = 
                     });
                     setProcessingType(null);
                 },
-            },
+            }
         );
     };
 

@@ -1,6 +1,6 @@
-<livewire:pulse.visit-filters />
-
 <x-pulse>
+    <livewire:pulse.visit-filters cols="full" />
+
     <livewire:pulse.country-application-usage cols="4" />
     <livewire:pulse.country-queues cols="4" />
     <livewire:pulse.country-exceptions cols="6" />
