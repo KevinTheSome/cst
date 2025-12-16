@@ -96,7 +96,7 @@ Route::get('pacientiem/faq', fn() => Inertia::render('Pacientiem/faq'))->name('P
 
 // <<<<<<<<<<<<<<< SPECIALISTIEM >>>>>>>>>>>>>>>>>>
 
-Route::get('specialistiem/apmaciba', [OnlineTrainingController::class,  'lectures'])->name('Specialistiem/apmaciba');
+Route::get('specialistiem/apmaciba', [OnlineTrainingController::class, 'lectures'])->name('Specialistiem/apmaciba');
 Route::get('specialistiem/atmp', fn() => Inertia::render('Specialistiem/atmp'))->name('Specialistiem/atmp');
 Route::get('specialistiem/likumi', fn() => Inertia::render('Specialistiem/likumi'))->name('Specialistiem/likumi');
 
@@ -181,8 +181,8 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
     Route::get('/anketa/show/{id}', [AnketaController::class, 'show'])->name('admin.anketa.show');
     Route::get('/anketa/edit/{id}', [AnketaController::class, 'edit'])->name('admin.anketa.edit');
-    Route::put('/anketa/update/{id}', [AnketaController::class, 'update'])->name('admin.anketa.update');
-    Route::delete('/anketa/destroy/{id}', [AnketaController::class, 'destroy'])->name('admin.anketa.destroy');
+    Route::post('/anketa/update/{id}', [AnketaController::class, 'update'])->name('admin.anketa.update');
+    Route::post('/anketa/{id}/delete', [AnketaController::class, 'destroy'])->name('admin.anketa.destroy');
 
     Route::get('/selector', [FormTypeController::class, 'index'])->name('admin.selector');
     Route::post('/selector/add', [FormTypeController::class, 'add'])->name('admin.selector.add');
@@ -196,9 +196,9 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
     Route::get('/trainings/show/{id}', [OnlineTrainingController::class, 'show'])->name('admin.trainings.show');
     Route::get('/trainings/edit/{id}', [OnlineTrainingController::class, 'edit'])->name('admin.trainings.edit');
-    Route::put('/trainings/update/{id}', [OnlineTrainingController::class, 'update'])->name('admin.trainings.update');
+    Route::post('/trainings/update/{id}', [OnlineTrainingController::class, 'update'])->name('admin.trainings.update');
 
-    Route::delete('/trainings/destroy/{id}', [OnlineTrainingController::class, 'destroy'])->name('admin.trainings.destroy');
+    Route::post('/trainings/destroy/{id}', [OnlineTrainingController::class, 'destroy'])->name('admin.trainings.destroy');
 
     Route::get('/lecture/codes', [LectureController::class, 'index'])->name('codes.index');
     Route::post('/lecture/codes', [LectureController::class, 'store'])->name('codes.store');
