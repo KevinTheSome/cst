@@ -342,10 +342,7 @@ class AnketaController extends Controller
             'data' => $dataPayload,
         ]);
 
-        return response()->json([
-            'message' => 'Form updated successfully',
-            'form' => $form->fresh(),
-        ], 200);
+        return back();
     }
 
     /**
