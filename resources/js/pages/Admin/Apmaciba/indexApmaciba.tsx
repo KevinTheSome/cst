@@ -41,11 +41,11 @@ function formatDate(dateString?: string | null) {
 
 // format bytes if needed (not used here, but kept for parity)
 function formatBytes(bytes: number | null | undefined) {
-    if (!bytes || bytes === 0) return "0 B";
+    if (!bytes || bytes === 0) return '0 B';
     const k = 1024;
-    const sizes = ["B", "KB", "MB", "GB", "TB"];
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
 const StarDisplay = ({ avg, max = 5 }: { avg: number | null | undefined; max?: number }) => {
@@ -94,16 +94,20 @@ const IndexApmaciba: React.FC = () => {
     function confirmDelete() {
         if (deleteId === null) return;
         setIsDeleting(true);
-        router.delete(`/admin/trainings/destroy/${deleteId}`, {
-            onFinish: () => {
-                setIsDeleting(false);
-                setDeleteId(null);
+        router.post(
+            `/admin/trainings/destroy/${deleteId}`,
+            {},
+            {
+                onFinish: () => {
+                    setIsDeleting(false);
+                    setDeleteId(null);
+                },
             },
-        });
+        );
     }
 
     const toggleExpand = (id: number) => {
-        setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
+        setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
     };
 
     return (
@@ -160,11 +164,19 @@ const IndexApmaciba: React.FC = () => {
                     ) : (
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                             {trainings.map((t: Training) => {
-                                const breakdown = t.ratings_breakdown ?? {1:0,2:0,3:0,4:0,5:0};
-                                const total = t.ratings_count ?? Object.values(breakdown).reduce((a,b)=>a+b,0);
-                                const avg = typeof t.ratings_avg === 'number' ? t.ratings_avg : (total ? (
-                                    (5*(breakdown[5]||0) + 4*(breakdown[4]||0) + 3*(breakdown[3]||0) + 2*(breakdown[2]||0) + 1*(breakdown[1]||0)) / total
-                                ) : null);
+                                const breakdown = t.ratings_breakdown ?? { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+                                const total = t.ratings_count ?? Object.values(breakdown).reduce((a, b) => a + b, 0);
+                                const avg =
+                                    typeof t.ratings_avg === 'number'
+                                        ? t.ratings_avg
+                                        : total
+                                          ? (5 * (breakdown[5] || 0) +
+                                                4 * (breakdown[4] || 0) +
+                                                3 * (breakdown[3] || 0) +
+                                                2 * (breakdown[2] || 0) +
+                                                1 * (breakdown[1] || 0)) /
+                                            total
+                                          : null;
 
                                 return (
                                     <article
@@ -215,10 +227,7 @@ const IndexApmaciba: React.FC = () => {
                                                     <span className="ml-2 text-xs text-gray-400">({total ?? 0})</span>
                                                 </div>
 
-                                                <button
-                                                    onClick={() => toggleExpand(t.id)}
-                                                    className="text-xs text-gray-400 hover:text-gray-200"
-                                                >
+                                                <button onClick={() => toggleExpand(t.id)} className="text-xs text-gray-400 hover:text-gray-200">
                                                     {expanded[t.id] ? 'Hide detail' : 'Show detail'}
                                                 </button>
                                             </div>
@@ -250,7 +259,7 @@ const IndexApmaciba: React.FC = () => {
                                             {/* Expanded breakdown */}
                                             {expanded[t.id] && (
                                                 <div className="mt-3 space-y-2">
-                                                    {[5,4,3,2,1].map(star => {
+                                                    {[5, 4, 3, 2, 1].map((star) => {
                                                         const cnt = breakdown[star] ?? 0;
                                                         const pct = total ? Math.round((cnt / total) * 100) : 0;
                                                         return (
@@ -259,12 +268,14 @@ const IndexApmaciba: React.FC = () => {
                                                                 <div className="flex-1">
                                                                     <div className="relative h-3 w-full overflow-hidden rounded bg-gray-700">
                                                                         <div
-                                                                            className="absolute left-0 top-0 h-full bg-yellow-400 transition-all"
+                                                                            className="absolute top-0 left-0 h-full bg-yellow-400 transition-all"
                                                                             style={{ width: `${pct}%` }}
                                                                         />
                                                                     </div>
                                                                 </div>
-                                                                <div className="w-14 text-right text-gray-300">{cnt} ({pct}%)</div>
+                                                                <div className="w-14 text-right text-gray-300">
+                                                                    {cnt} ({pct}%)
+                                                                </div>
                                                             </div>
                                                         );
                                                     })}
