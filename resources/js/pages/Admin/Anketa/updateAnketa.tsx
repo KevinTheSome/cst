@@ -421,107 +421,6 @@ export default function UpdateAnketa() {
     }
   }, [title, visibility, fields]);
 
-const submitForm = () => {
-  setAttemptedSubmit(true);
-
-  const next = validateAll();
-  setErrors(next);
-
-  if (
-    Object.keys(next.fieldErrors).length > 0 ||
-    next.titleLv ||
-    next.fields ||
-    next.visibility
-  ) {
-    const firstFail = fields.find((f) => next.fieldErrors[f.id]);
-    if (firstFail) {
-      const el = document.querySelector(
-        `[data-field-id="${firstFail.id}"]`
-      );
-      if (el) {
-        (el as HTMLElement).scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-        });
-      }
-    }
-
-    setModalState({
-      isOpen: true,
-      type: 'error',
-      title: 'Validation Error',
-      message: 'Lūdzu izlabojiet kļūdas formā pirms saglabāšanas.',
-    });
-    return;
-  }
-
-  const payload = {
-    title: {
-      lv: title.lv.trim(),
-      en: title.en.trim(),
-    },
-    code: visibility,
-    data: {
-      fields: fields.map((f) => {
-        const base: any = {
-          id: f.id,
-          type: f.type,
-          label: {
-            lv: f.label.lv.trim(),
-            en: f.label.en.trim(),
-          },
-        };
-
-        if (f.type === 'text') {
-          base.placeholder = {
-            lv: (f as TextField).placeholder.lv.trim(),
-            en: (f as TextField).placeholder.en.trim(),
-          };
-        } else if (f.type === 'scale') {
-          base.scale = { ...(f as ScaleField).scale };
-        } else {
-          base.options = {
-            lv: (f as OptionField).options.lv
-              .map((o) => o.trim())
-              .filter(Boolean),
-            en: (f as OptionField).options.en
-              .map((o) => o.trim())
-              .filter(Boolean),
-          };
-        }
-
-        return base;
-      }),
-    },
-  };
-
-  router.put(
-    `/admin/anketa/update/${initialForm.id}`,
-    payload,
-    {
-      preserveScroll: true,
-      onSuccess: () => {
-        setModalState({
-          isOpen: true,
-          type: 'success',
-          title: 'Anketa Atjaunināta',
-          message: 'Izmaiņas ir veiksmīgi saglabātas.',
-          onClose: () => router.visit('/admin/anketa'),
-        });
-      },
-      onError: (errors) => {
-        setModalState({
-          isOpen: true,
-          type: 'error',
-          title: 'Kļūda',
-          message: 'Neizdevās saglabāt anketu.',
-        });
-      },
-    }
-  );
-};
-
-
   return (
     <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl space-y-8">
@@ -548,13 +447,48 @@ const submitForm = () => {
                 <ArrowLeft className="h-4 w-4" />
                 Atpakaļ
               </Link>
-              <button
-                onClick={submitForm}
-                className="flex items-center gap-2 rounded-xl bg-emerald-500 px-6 py-2 text-sm font-bold text-slate-900 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400 hover:scale-105"
+             <Link
+                  as="button"
+                  method="put" // or "post" if your route uses POST
+                  href={`/admin/anketa/update/${initialForm.id}`}
+                  data={{
+                      title: {
+                          lv: title.lv.trim(),
+                          en: title.en.trim(),
+                      },
+                      code: visibility,
+                      data: {
+                          fields: fields.map(f => {
+                              const base: any = {
+                                  id: f.id,
+                                  type: f.type,
+                                  label: {
+                                      lv: f.label.lv.trim(),
+                                      en: f.label.en.trim(),
+                                  },
+                              };
+                              if (f.type === 'text') {
+                                  base.placeholder = {
+                                      lv: (f as TextField).placeholder.lv.trim(),
+                                      en: (f as TextField).placeholder.en.trim(),
+                                  };
+                              } else if (f.type === 'scale') {
+                                  base.scale = { ...(f as ScaleField).scale };
+                              } else {
+                                  base.options = {
+                                      lv: (f as OptionField).options.lv.map(o => o.trim()).filter(Boolean),
+                                      en: (f as OptionField).options.en.map(o => o.trim()).filter(Boolean),
+                                  };
+                              }
+                              return base;
+                          }),
+                      },
+                  }}
+                  className="flex items-center gap-2 rounded-xl bg-emerald-500 px-6 py-2 text-sm font-bold text-slate-900 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400 hover:scale-105"
               >
-                <Save className="h-4 w-4" />
-                Saglabāt
-              </button>
+                  <Save className="h-4 w-4" />
+                  Saglabāt
+              </Link>
             </div>
           </div>
         </div>
@@ -835,12 +769,49 @@ const submitForm = () => {
                             </div>
                         </div>
 
-                        <button
-                            onClick={submitForm}
-                            className="w-full rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 py-3 text-sm font-bold text-slate-900 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] hover:shadow-emerald-500/30"
+                        <Link
+                            as="button"
+                            method="put" // or "post" if your route uses POST
+                            href={`/admin/anketa/update/${initialForm.id}`}
+                            data={{
+                                title: {
+                                    lv: title.lv.trim(),
+                                    en: title.en.trim(),
+                                },
+                                code: visibility,
+                                data: {
+                                    fields: fields.map(f => {
+                                        const base: any = {
+                                            id: f.id,
+                                            type: f.type,
+                                            label: {
+                                                lv: f.label.lv.trim(),
+                                                en: f.label.en.trim(),
+                                            },
+                                        };
+                                        if (f.type === 'text') {
+                                            base.placeholder = {
+                                                lv: (f as TextField).placeholder.lv.trim(),
+                                                en: (f as TextField).placeholder.en.trim(),
+                                            };
+                                        } else if (f.type === 'scale') {
+                                            base.scale = { ...(f as ScaleField).scale };
+                                        } else {
+                                            base.options = {
+                                                lv: (f as OptionField).options.lv.map(o => o.trim()).filter(Boolean),
+                                                en: (f as OptionField).options.en.map(o => o.trim()).filter(Boolean),
+                                            };
+                                        }
+                                        return base;
+                                    }),
+                                },
+                            }}
+                            className="flex items-center gap-2 rounded-xl bg-emerald-500 px-6 py-2 text-sm font-bold text-slate-900 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400 hover:scale-105"
                         >
-                            Saglabāt Izmaiņas
-                        </button>
+                            <Save className="h-4 w-4" />
+                            Saglabāt
+                        </Link>
+
                     </div>
                 </div>
             </div>
