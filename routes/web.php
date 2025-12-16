@@ -181,7 +181,7 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
     Route::get('/anketa/show/{id}', [AnketaController::class, 'show'])->name('admin.anketa.show');
     Route::get('/anketa/edit/{id}', [AnketaController::class, 'edit'])->name('admin.anketa.edit');
-    Route::put('/anketa/update/{id}', [AnketaController::class, 'update'])->name('admin.anketa.update');
+    Route::post('/anketa/update/{id}', [AnketaController::class, 'update'])->name('admin.anketa.update');
     Route::post('/anketa/{id}/delete', [AnketaController::class, 'destroy'])->name('admin.anketa.destroy');
 
     Route::get('/selector', [FormTypeController::class, 'index'])->name('admin.selector');
