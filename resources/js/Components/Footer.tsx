@@ -50,12 +50,13 @@ const NAV_GROUPS = [
             { label: 'ES regula un likumi', href: '/specialistiem/likumi' },
             { label: 'ATMP ražotnes Eiropā', href: '/speciālistiem/atmp' },
             { label: 'Apmācības', href: '/specialistiem/apmaciba' },
+            { label: 'Aptauja', href: '/postdock-anketa?role=specialists' },
         ],
     },
     {
         title: 'Pētniecība',
         items: [
-            { label: 'PostDock anketa', href: '/postdock-anketa' },
+            { label: 'PostDock anketa', href: '/postdock-anketa?role=patients' },
             { label: 'Koda anketa', href: '/anketa-kods' },
             { label: 'Publikācijas', href: '#' }, // Placeholder to balance UI
         ],

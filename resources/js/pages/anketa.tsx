@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { FormEvent, useMemo, useState } from 'react';
 
 // --- ICONS ---
@@ -412,7 +412,16 @@ export default function Anketa() {
                 </div>
 
                 <section className="relative z-10 mx-auto min-h-screen max-w-3xl px-4 py-12 sm:px-6">
-                    
+                    <div className="mb-6 flex">
+                        <Link
+                            href="/"
+                            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:text-emerald-600 hover:border-emerald-200"
+                        >
+                            <Icons.ChevronLeft className="h-4 w-4" />
+                            Uz sākumlapu
+                        </Link>
+                    </div>
+
                     {/* Header */}
                     <div className="text-center mb-10">
                         <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-emerald-700 mb-6">
