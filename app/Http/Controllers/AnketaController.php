@@ -15,8 +15,6 @@ class AnketaController extends Controller
     /**
      * Admin: list stored form data
      */
-    // app/Http/Controllers/AnketaController.php
-
     public function index(Request $request)
     {
         // Savācam filtrus no query string
@@ -80,12 +78,12 @@ class AnketaController extends Controller
 
         $formData = $forms->map(function ($form) {
             return [
-                'id' => $form->id,
-                'code' => $form->code,
-                'title' => $form->title,
-                'created_at' => $form->created_at?->toDateTimeString(),
-                'data' => [
-                    'title' => $form->title,
+                'id'        => $form->id,
+                'code'      => $form->code,
+                'title'     => $form->title,
+                'created_at'=> $form->created_at?->toDateTimeString(),
+                'data'      => [
+                    'title'  => $form->title,
                     'fields' => $form->data['fields'] ?? [],
                 ],
             ];
@@ -93,18 +91,17 @@ class AnketaController extends Controller
 
         return Inertia::render('Admin/Anketa/indexAnketa', [
             'formData' => $formData,
-            'filters' => [
-                'type' => $filters['type'] ?? '',
-                'code' => $filters['code'] ?? '',
-                'from' => $filters['from'] ?? '',
-                'to' => $filters['to'] ?? '',
-                'search' => $filters['search'] ?? '',
-                'orderBy' => $orderBy,
+            'filters'  => [
+                'type'     => $filters['type'] ?? '',
+                'code'     => $filters['code'] ?? '',
+                'from'     => $filters['from'] ?? '',
+                'to'       => $filters['to'] ?? '',
+                'search'   => $filters['search'] ?? '',
+                'orderBy'  => $orderBy,
                 'orderDir' => $orderDir,
             ],
         ]);
     }
-
 
     /**
      * Admin: show single stored result
@@ -135,11 +132,11 @@ class AnketaController extends Controller
 
         return Inertia::render('Admin/Anketa/showAnketa', [
             'formResult' => [
-                'id' => $form->id,
+                'id'   => $form->id,
                 'code' => $form->code,
-                'title' => $form->title,
+                'title'=> $form->title,
                 'data' => [
-                    'title' => $data['title'] ?? $form->title,
+                    'title'  => $data['title'] ?? $form->title,
                     'fields' => $normalizedFields,
                 ],
             ],
@@ -187,17 +184,17 @@ class AnketaController extends Controller
         ]);
 
         $form = Form::create([
-            'code' => $data['visibility'],
+            'code' => $data['visibility'],  // using visibility as simple code
             'title' => $data['title'],
             'data' => [
                 'fields' => collect($data['schema']['fields'] ?? [])->map(function ($f) {
                     return [
-                        'id' => $f['id'],
-                        'type' => $f['type'],
-                        'label' => $f['label'] ?? [],
-                        'options' => $f['options'] ?? [],
+                        'id'          => $f['id'],
+                        'type'        => $f['type'],
+                        'label'       => $f['label'] ?? [],
+                        'options'     => $f['options'] ?? [],
                         'placeholder' => $f['placeholder'] ?? null,
-                        'scale' => $f['scale'] ?? null,
+                        'scale'       => $f['scale'] ?? null,
                     ];
                 })->toArray(),
             ],
@@ -269,7 +266,6 @@ class AnketaController extends Controller
         ]);
     }
 
-
     /**
      * Admin: update form template
      */
@@ -323,12 +319,12 @@ class AnketaController extends Controller
         $dataPayload = [
             'fields' => collect($validated['data']['fields'] ?? [])->map(function ($f) {
                 return [
-                    'id' => $f['id'],
-                    'type' => $f['type'],
-                    'label' => $f['label'] ?? [],
-                    'options' => $f['options'] ?? [],
+                    'id'          => $f['id'],
+                    'type'        => $f['type'],
+                    'label'       => $f['label'] ?? [],
+                    'options'     => $f['options'] ?? [],
                     'placeholder' => $f['placeholder'] ?? null,
-                    'scale' => $f['scale'] ?? null,
+                    'scale'       => $f['scale'] ?? null,
                 ];
             })->toArray(),
         ];
@@ -348,12 +344,18 @@ class AnketaController extends Controller
     /**
      * Admin: delete form template
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $formResult = Form::findOrFail($id);
-        $formResult->delete();
+        $form = Form::findOrFail($id);
+        $form->delete();
 
-        return redirect()->route('admin.anketa');
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Anketa dzēsta.']);
+        }
+
+        return redirect()
+            ->route('admin.anketa')
+            ->with('success', 'Anketa dzēsta.');
     }
 
     /**
@@ -390,9 +392,6 @@ class AnketaController extends Controller
         ]);
     }
 
-    /**
-     * Public: show the code entry page for forms
-     */
     public function showCode()
     {
         return Inertia::render('Formas/questions', [
@@ -400,27 +399,22 @@ class AnketaController extends Controller
         ]);
     }
 
-    /**
-     * Public: store submitted answers to form_results table.
-     */
     public function storeAnswers(Request $request)
     {
         $data = $request->validate([
             'form_id' => 'nullable|integer',
-            'code' => 'required|string',   // likely the access code
+            'code' => 'required|string',
             'title' => 'nullable',
             'answers' => 'required|array',
         ]);
 
         $title = $data['title'] ?? null;
-        $formTypeString = null; // <--- we'll try to figure out the "type" here
+        $formTypeString = null;
 
-        // If form_id given, attempt to load the form and use its title + type
         if (isset($data['form_id'])) {
             try {
                 $form = Form::find($data['form_id']);
                 if ($form) {
-                    // normalize title
                     if (is_array($form->title)) {
                         $locale = app()->getLocale();
                         $title = $form->title[$locale]
@@ -431,10 +425,9 @@ class AnketaController extends Controller
                         $title = (string) $form->title;
                     }
 
-                    // try to get FormType (so we can filter by type later)
                     $formType = FormType::where('form_id', $form->id)->first();
                     if ($formType) {
-                        $formTypeString = $formType->type; // e.g. 'psoriasis', 'chronic', etc.
+                        $formTypeString = $formType->type;
                     }
                 }
             } catch (\Exception $e) {
@@ -469,22 +462,20 @@ class AnketaController extends Controller
         ]);
     }
 
-
     public function resultsIndex(Request $request)
     {
         $filters = $request->only([
-            'type',      // form_type (or falls back to code)
-            'code',      // access code
-            'from',      // date from (YYYY-MM-DD)
-            'to',        // date to   (YYYY-MM-DD)
-            'search',    // free text search in title/code
-            'orderBy',   // id | code | created_at
-            'orderDir',  // asc | desc
+            'type',
+            'code',
+            'from',
+            'to',
+            'search',
+            'orderBy',
+            'orderDir',
         ]);
 
         $query = FormResult::query();
 
-        // TYPE filter (prefer results->form_type, fall back to code)
         if (!empty($filters['type'])) {
             $type = $filters['type'];
             $query->where(function ($q) use ($type) {
@@ -493,12 +484,10 @@ class AnketaController extends Controller
             });
         }
 
-        // CODE filter (access code)
         if (!empty($filters['code'])) {
             $query->where('code', 'like', '%' . $filters['code'] . '%');
         }
 
-        // DATE filters (completion time -> created_at)
         if (!empty($filters['from'])) {
             $query->whereDate('created_at', '>=', $filters['from']);
         }
@@ -507,7 +496,6 @@ class AnketaController extends Controller
             $query->whereDate('created_at', '<=', $filters['to']);
         }
 
-        // SEARCH in title + code
         if (!empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
@@ -516,7 +504,6 @@ class AnketaController extends Controller
             });
         }
 
-        // ORDER BY
         $allowedOrderBy = ['id', 'code', 'created_at'];
         $orderBy = in_array($filters['orderBy'] ?? '', $allowedOrderBy, true)
             ? $filters['orderBy']
@@ -562,9 +549,6 @@ class AnketaController extends Controller
         ]);
     }
 
-    /**
-     * Admin: show full answers for one submission
-     */
     public function resultsShow($id)
     {
         $result = FormResult::findOrFail($id);
@@ -583,5 +567,4 @@ class AnketaController extends Controller
             'result' => $payload,
         ]);
     }
-
 }
