@@ -55,13 +55,13 @@ class OnlineTrainingController extends Controller
             $breakdown = [];
             for ($s = 1; $s <= 5; $s++) {
                 $found = $rowsFor->firstWhere('score', $s);
-                $breakdown[$s] = $found ? (int)$found->cnt : 0;
+                $breakdown[$s] = $found ? (int) $found->cnt : 0;
             }
 
             $count = $t->ratings_count ?? array_sum($breakdown);
             // prefer DB average if present otherwise compute from breakdown
             if (!is_null($t->ratings_avg)) {
-                $avg = round((float)$t->ratings_avg, 2);
+                $avg = round((float) $t->ratings_avg, 2);
             } else {
                 $total = max(1, $count);
                 $avg = $count ? round(
@@ -71,7 +71,8 @@ class OnlineTrainingController extends Controller
                         3 * ($breakdown[3] ?? 0) +
                         2 * ($breakdown[2] ?? 0) +
                         1 * ($breakdown[1] ?? 0)
-                    ) / $total, 2
+                    ) / $total,
+                    2
                 ) : null;
             }
 
@@ -136,18 +137,16 @@ class OnlineTrainingController extends Controller
             'title.en' => 'required|string|max:255',
             'description' => 'nullable|string',
             'url' => 'nullable|url|max:1024',
-            'starts_at' => 'nullable|date',
-            'ends_at' => 'nullable|date|after_or_equal:starts_at',
             'is_active' => 'nullable|boolean',
         ]);
 
         // Normalize datetimes
-        if (!empty($validated['starts_at'])) {
-            $validated['starts_at'] = Carbon::parse($validated['starts_at'])->toDateTimeString();
-        }
-        if (!empty($validated['ends_at'])) {
-            $validated['ends_at'] = Carbon::parse($validated['ends_at'])->toDateTimeString();
-        }
+        // if (!empty($validated['starts_at'])) {
+        //     $validated['starts_at'] = Carbon::parse($validated['starts_at'])->toDateTimeString();
+        // }
+        // if (!empty($validated['ends_at'])) {
+        //     $validated['ends_at'] = Carbon::parse($validated['ends_at'])->toDateTimeString();
+        // }
 
         $payload = [
             'title' => [
@@ -158,7 +157,7 @@ class OnlineTrainingController extends Controller
             'url' => $validated['url'] ?? null,
             'starts_at' => $validated['starts_at'] ?? null,
             'ends_at' => $validated['ends_at'] ?? null,
-            'is_active' => isset($validated['is_active']) ? (bool)$validated['is_active'] : true,
+            'is_active' => isset($validated['is_active']) ? (bool) $validated['is_active'] : true,
         ];
 
         OnlineTraining::create($payload);
@@ -217,7 +216,7 @@ class OnlineTrainingController extends Controller
             'url' => $validated['url'] ?? $training->url,
             'starts_at' => $validated['starts_at'] ?? $training->starts_at,
             'ends_at' => $validated['ends_at'] ?? $training->ends_at,
-            'is_active' => isset($validated['is_active']) ? (bool)$validated['is_active'] : $training->is_active,
+            'is_active' => isset($validated['is_active']) ? (bool) $validated['is_active'] : $training->is_active,
         ];
 
         $training->update($payload);

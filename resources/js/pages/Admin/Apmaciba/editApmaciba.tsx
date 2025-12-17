@@ -1,5 +1,5 @@
 import { Link, router, useForm, usePage } from '@inertiajs/react';
-import { AlignLeft, ArrowLeft, Calendar, Link as LinkIcon, Loader2, Save, Type } from 'lucide-react';
+import { AlignLeft, ArrowLeft, Link as LinkIcon, Loader2, Save, Type } from 'lucide-react';
 import React from 'react';
 import AdminLayout from '../../../Layouts/AdminLayout';
 
@@ -14,8 +14,6 @@ const EditApmaciba: React.FC = () => {
         },
         description: training?.description ?? '',
         url: training?.url ?? '',
-        starts_at: training?.starts_at ?? '',
-        ends_at: training?.ends_at ?? '',
         is_active: training?.is_active ?? true,
     });
 
@@ -109,11 +107,11 @@ const EditApmaciba: React.FC = () => {
 
                         <hr className="border-gray-700" />
 
-                        {/* Schedule & Links */}
+                        {/* Links */}
                         <div>
                             <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold tracking-wider text-gray-200 uppercase">
-                                <Calendar className="h-4 w-4 text-gray-500" />
-                                Schedule & Links
+                                <LinkIcon className="h-4 w-4 text-gray-500" />
+                                External Resources
                             </h3>
 
                             <div className="space-y-6">
@@ -129,29 +127,6 @@ const EditApmaciba: React.FC = () => {
                                             className={inputClass}
                                             placeholder="https://example.com/training"
                                         />
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                    <div>
-                                        <label className={labelClass}>Starts At</label>
-                                        <input
-                                            type="datetime-local"
-                                            value={data.starts_at}
-                                            onChange={(e) => setData((d: any) => ({ ...d, starts_at: e.target.value }))}
-                                            className={`${inputClass} pl-4 [color-scheme:dark]`}
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className={labelClass}>Ends At</label>
-                                        <input
-                                            type="datetime-local"
-                                            value={data.ends_at}
-                                            onChange={(e) => setData((d: any) => ({ ...d, ends_at: e.target.value }))}
-                                            className={`${inputClass} pl-4 [color-scheme:dark]`}
-                                        />
-                                        {errors.ends_at && <p className="mt-1 text-sm text-red-400">{errors.ends_at}</p>}
                                     </div>
                                 </div>
                             </div>
