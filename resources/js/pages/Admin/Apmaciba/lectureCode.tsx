@@ -1,3 +1,4 @@
+// resources/js/pages/Admin/Apmaciba/lectureCode.tsx
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, usePage } from '@inertiajs/react';
 import axios from 'axios';
@@ -79,6 +80,11 @@ const IconCheck = () => (
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
 );
+
+// --- CSRF helper (used for destructive requests) ---
+function getCsrfToken() {
+    return (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null)?.content ?? '';
+}
 
 export default function LectureCode() {
     const { props } = usePage();
@@ -170,7 +176,10 @@ export default function LectureCode() {
                 payload.online_training_id = null;
             }
 
-            const res = await axios.post('/admin/lecture/codes', payload);
+            const csrf = getCsrfToken();
+            const res = await axios.post('/admin/lecture/codes', payload, {
+                headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json' },
+            });
             const created: OnlineCode = res.data.code;
             setCodes((prev) => [created, ...prev]);
 
@@ -204,12 +213,16 @@ export default function LectureCode() {
         setProcessingAction(true);
 
         try {
+            const csrf = getCsrfToken();
+
             if (confirmState.type === 'delete') {
-                await axios.delete(`/admin/lecture/codes/${confirmState.id}`);
+                // POST to destroy endpoint (server expects POST /lecture/codes/{id} or /admin/lecture/codes/{id})
+                await axios.post(`/admin/lecture/codes/${confirmState.id}`, {}, { headers: { 'X-CSRF-TOKEN': csrf } });
                 setCodes((prev) => prev.filter((c) => c.id !== confirmState.id));
                 setAlertState({ type: 'success', message: 'Access code deleted.' });
             } else if (confirmState.type === 'regenerate') {
-                const res = await axios.post(`/admin/lecture/codes/${confirmState.id}/regenerate`);
+                // regenerate endpoint kept as /admin/lecture/codes/{id}/regenerate (POST)
+                const res = await axios.post(`/admin/lecture/codes/${confirmState.id}/regenerate`, {}, { headers: { 'X-CSRF-TOKEN': csrf } });
                 const updated: OnlineCode = res.data.code;
                 setCodes((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
                 setAlertState({ type: 'success', message: 'Code regenerated successfully.' });
@@ -251,7 +264,9 @@ export default function LectureCode() {
                 payload.online_training_id = null;
             }
 
-            const res = await axios.put(`/admin/lecture/codes/${editing.id}`, payload);
+            // POST to the safe update endpoint (server has POST route for update)
+            const csrf = getCsrfToken();
+            const res = await axios.post(`/admin/lecture/codes/${editing.id}/update`, payload, { headers: { 'X-CSRF-TOKEN': csrf } });
             const updated: OnlineCode = res.data.code;
             setCodes((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
             setEditing(null);
