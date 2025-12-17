@@ -59,9 +59,16 @@ class FormCodeController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'uses'            => 'required|integer|min:1',
-            'expiration_hours'=> 'required|integer|min:1',
-            'form_id'         => 'nullable|integer|exists:forms,id',
+            'uses'             => 'required|integer|min:1',
+            'expiration_hours' => 'required|integer|min:1',
+            'form_id'          => 'nullable|integer|exists:forms,id',
+            'code'             => [
+                'nullable',
+                'string',
+                'size:12',
+                'regex:/^\S+$/',
+                'unique:form_codes,code',
+            ],
         ]);
 
         $formId = $request->input('form_id');
@@ -82,7 +89,11 @@ class FormCodeController extends Controller
         $userId = session('admin_id');
 
         $code = FormCode::create([
-            'code'            => strtoupper(Str::random(12)),
+            'code' => strtoupper(
+                $request->filled('code')
+                    ? $request->code
+                    : Str::random(12)
+            ),
             'user_created'    => $userId,
             'expiration_date' => $expiration,
             'uses'            => $request->uses,
