@@ -41,6 +41,11 @@ const IconWarning = () => (
     </svg>
 );
 
+// CSRF helper
+function getCsrfToken() {
+  return (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null)?.content ?? '';
+}
+
 export default function FormCodes({ codes: initialCodes, forms }: Props) {
   const { trans, __ } = useLang();
 
@@ -82,11 +87,14 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
     }
 
     try {
+      const csrf = getCsrfToken();
       const res = await axios.post('/admin/form-codes', {
         uses,
         expiration_hours: expirationHours,
         form_id: selectedFormId,
         code: customCode || null,
+      }, {
+        headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json' }
       });
 
       const newCode = res.data?.code as FormCode | undefined;
@@ -124,7 +132,10 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
     setIsDeleting(true);
 
     try {
-      await axios.delete(`/admin/form-codes/${pendingDelete.id}`);
+      // Convert DELETE -> POST (server expects POST for destroy)
+      const csrf = getCsrfToken();
+      await axios.post(`/admin/form-codes/${pendingDelete.id}`, {}, { headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json' } });
+
       setCodes((prev) => prev.filter((c) => c.id !== pendingDelete.id));
       setPendingDelete(null);
       setNotification({ type: 'success', message: 'Code deleted successfully.' });

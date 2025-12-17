@@ -166,7 +166,7 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
     Route::get('/form-codes', [FormCodeController::class, 'index'])->name('admin.formCodes');
     Route::post('/form-codes', [FormCodeController::class, 'store'])->name('admin.formCodes.store');
-    Route::delete('/form-codes/{formCode}', [FormCodeController::class, 'destroy'])->name('admin.formCodes.destroy');
+    Route::post('/form-codes/{formCode}', [FormCodeController::class, 'destroy'])->name('admin.formCodes.destroy');
 
     Route::get('/anketa', [AnketaController::class, 'index'])->name('admin.anketa');
     Route::get('/anketa/create', [AnketaController::class, 'create'])->name('admin.anketa.create');
@@ -197,7 +197,7 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::post('/lecture/codes', [LectureController::class, 'store'])->name('codes.store');
     Route::get('/lecture/codes/{id}', [LectureController::class, 'show'])->name('codes.show');
     Route::put('/lecture/codes/{id}', [LectureController::class, 'update'])->name('codes.update');
-    Route::delete('/lecture/codes/{id}', [LectureController::class, 'destroy'])->name('codes.destroy');
+    Route::post('/lecture/codes/{id}', [LectureController::class, 'destroy'])->name('codes.destroy');
     Route::post('/lecture/codes/{id}/regenerate', [LectureController::class, 'regenerate'])->name('codes.regenerate');
 
     Route::get('/files/upload', [StoredFileController::class, 'create'])->name('files.create');
