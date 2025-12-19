@@ -55,7 +55,7 @@ export default function MusuGrupa() {
         {
             name: 'Kristers Skrastiņš',
             title: 'Programmētājs',
-            description: 'Realizē uzdevumus, izstrādā nepieceišamo funkcionalitāti.',
+            description: 'Realizē uzdevumus, izstrādā nepieciešamo funkcionalitāti.',
             image: '/bzl-6.jpg',
         },
         {
