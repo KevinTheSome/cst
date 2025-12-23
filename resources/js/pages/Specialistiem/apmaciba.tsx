@@ -218,12 +218,23 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
                             Jaunieviestās terapijas zālēm (ATMP), arī mezenhimālo stromālo šūnu (MSC) lietošanu izņēmuma gadījumos.
                         </p>
                     </div>
+                    {initialLectures.length === 0 ? (
+                        <div className="mt-16 text-center">
+                            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                                <Icons.Lock className="h-8 w-8" />
+                            </div>
 
-                    <div className="grid gap-4 sm:grid-cols-2">
-                        {initialLectures.map((lec) => (
-                            <LectureCard key={lec.id} lecture={lec} />
-                        ))}
-                    </div>
+                            <h2 className="mt-4 text-lg font-semibold text-slate-900">
+                                Pašlaik nav pieejamas mācības
+                            </h2>
+                        </div>
+                    ) : (
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            {initialLectures.map((lec) => (
+                                <LectureCard key={lec.id} lecture={lec} />
+                            ))}
+                        </div>
+                    )}
                 </section>
             </div>
         </>

@@ -133,7 +133,7 @@ export default function Welcome() {
                                 href="/pacientiem/faq"
                                 className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"
                             >
-                                Lidz biežāk jautātie jautājumi
+                                Biežāk uzdotie jautājumi
                             </Link>
                             <a
                                 href="/ParMums/contacts"
