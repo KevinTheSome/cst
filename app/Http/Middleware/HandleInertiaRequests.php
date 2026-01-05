@@ -51,6 +51,7 @@ class HandleInertiaRequests extends Middleware
                 'anketa'    => Lang::get('anketa'),
                 'formcodes' => Lang::get('formcodes'),
                 'admin'     => Lang::get('admin'),
+                'lecture_codes' => Lang::get('lecture_codes'),  
             ],
 
             'name'  => config('app.name'),
