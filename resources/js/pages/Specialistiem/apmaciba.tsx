@@ -59,7 +59,7 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
     const [error, setError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
     const [userRatings, setUserRatings] = useState<{ [key: string]: number }>({});
-    const [showRating, setShowRating] = useState<{ [key: string]: boolean }>({}); // to show rating only after clicking play
+    const [showRating, setShowRating] = useState<{ [key: string]: boolean }>({});
 
     const renderTitle = (title: string | MultilingualTitle) =>
         typeof title === 'string' ? title : title[locale] || title['lv'] || title['en'] || Object.values(title)[0] || '';
@@ -72,7 +72,7 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
 
         setError(null);
         if (!validateCode(code)) {
-            setError('Lūdzu ievadiet derīgu kodu.');
+            setError(__('specialistiem.apmaciba.form.error_invalid'));
             return;
         }
 
@@ -82,9 +82,9 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
             if (data.valid) {
                 setUnlockedLectures((prev) => [...prev, selectedLecture]);
                 setError(null);
-            } else setError(data.message || 'Nederīgs kods');
+            } else setError(data.message || __('specialistiem.apmaciba.form.error_invalid'));
         } catch (err: any) {
-            setError(err?.response?.data?.message || 'Kļūda pārbaudē.');
+            setError(err?.response?.data?.message || __('specialistiem.apmaciba.form.error_invalid'));
         } finally {
             setSubmitting(false);
             setCode('');
@@ -98,9 +98,9 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
 
         try {
             await axios.post('/ratings', { lectureId: lecture.id, rating });
-            alert('Vērtējums veiksmīgi nosūtīts!');
+            alert(__('specialistiem.apmaciba.rating.submit') + ' ' + __('specialistiem.apmaciba.form.submit') + '!');
         } catch {
-            alert('Kļūda nosūtot vērtējumu');
+            alert(__('specialistiem.apmaciba.rating.submit') + ' ' + 'Kļūda');
         }
     };
 
@@ -115,7 +115,6 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
                     isSelected ? 'border-emerald-500 bg-emerald-50 ring-1 ring-emerald-500' : 'border-slate-200 bg-white hover:border-emerald-300 hover:shadow-lg'
                 }`}
             >
-                {/* Header */}
                 <div className="flex items-start justify-between gap-3">
                     <div>
                         <h3 className={`mb-1 text-base font-bold ${isSelected ? 'text-emerald-900' : 'text-slate-900'}`}>
@@ -123,7 +122,6 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
                         </h3>
                         <p className="line-clamp-2 text-xs text-slate-500">{lecture.description}</p>
 
-                        {/* Avg Rating */}
                         {lecture.rating_avg !== undefined && (
                             <div className="mt-2 flex items-center gap-2 text-xs text-amber-600">
                                 {[1, 2, 3, 4, 5].map((i) => (
@@ -142,7 +140,6 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
                         )}
                     </div>
 
-                    {/* Play / Lock button */}
                     <div className="flex flex-col items-center gap-2">
                         {unlocked && lecture.url ? (
                             <a
@@ -165,13 +162,12 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
                     </div>
                 </div>
 
-                {/* Unlock code input or rating */}
                 {isSelected && !unlocked && (
                     <form className="mt-4 flex gap-2" onSubmit={handleSubmitCode}>
                         <input
                             value={code}
                             onChange={(e) => setCode(e.target.value)}
-                            placeholder="Ievadiet kodu"
+                            placeholder={__('specialistiem.apmaciba.form.placeholder')}
                             className="w-full rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
                         />
                         <button
@@ -181,7 +177,7 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
                                 submitting ? 'cursor-wait bg-slate-400' : 'bg-slate-900 hover:bg-emerald-600'
                             }`}
                         >
-                            {submitting ? '...' : 'Atbloķēt'}
+                            {submitting ? '...' : __('specialistiem.apmaciba.form.submit')}
                         </button>
                         {error && <div className="text-sm text-rose-600 mt-2">{error}</div>}
                     </form>
@@ -197,7 +193,7 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
                             onClick={() => handleSubmitRating(lecture.id)}
                             className="mt-2 rounded-2xl bg-slate-900 px-6 py-3 text-white hover:bg-emerald-600"
                         >
-                            Iesniegt Vērtējumu
+                            {__('specialistiem.apmaciba.rating.submit')}
                         </button>
                     </div>
                 )}
@@ -207,25 +203,25 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
 
     return (
         <>
-            <Head title={__('Online apmācība')} />
+            <Head title={__('specialistiem.apmaciba.meta.title')} />
             <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-[#eaf3ff] via-white to-[#e7f7f1]">
                 <section className="relative z-10 mx-auto min-h-screen max-w-5xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
                     <div className="mx-auto mb-8 max-w-2xl text-center">
                         <h1 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-                            Mācību programma ārstiem un citiem veselības aprūpes speciālistiem
+                            {__('specialistiem.apmaciba.hero.title')}
                         </h1>
                         <p className="mt-3 text-sm text-slate-600 sm:text-base">
-                            Jaunieviestās terapijas zālēm (ATMP), arī mezenhimālo stromālo šūnu (MSC) lietošanu izņēmuma gadījumos.
+                            {__('specialistiem.apmaciba.hero.text')}
                         </p>
                     </div>
+
                     {initialLectures.length === 0 ? (
                         <div className="mt-16 text-center">
                             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
                                 <Icons.Lock className="h-8 w-8" />
                             </div>
-
                             <h2 className="mt-4 text-lg font-semibold text-slate-900">
-                                Pašlaik nav pieejamas mācības
+                                {__('specialistiem.apmaciba.lock.title')}
                             </h2>
                         </div>
                     ) : (
