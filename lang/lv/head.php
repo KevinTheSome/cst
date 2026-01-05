@@ -1,7 +1,10 @@
 <?php
 
 return [
-    'title' => 'Biočipu zinātnisko laboratoriju',
+    'title' => 'Biočipu zinātniskā laboratorija',
+
+    'menu' => 'Izvēlne',
+
     'nav_patients' => 'PACIENTIEM',
     'nav_patients_atmp' => 'Kas ir ATMP?',
     'nav_patients_psoriasis' => 'Psoriāze un jaunās terapijas',
@@ -15,6 +18,7 @@ return [
     'nav_specialists_survey' => 'Aptauja',
 
     'nav_research' => 'PĒTNIECĪBA',
+    'nav_research_clinical_trials' => 'Klīniskie pētījumi',
     'nav_research_postdoc' => 'PostDock anketa',
     'nav_research_code' => 'Koda anketa',
     'nav_research_documents' => 'Dokumentu datubāze',

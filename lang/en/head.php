@@ -2,6 +2,9 @@
 
 return [
     'title' => 'Biochip scientific laboratory',
+
+    'menu' => 'Menu',
+
     'nav_patients' => 'FOR PATIENTS',
     'nav_patients_atmp' => 'What is ATMP?',
     'nav_patients_psoriasis' => 'Psoriasis and new therapies',
@@ -15,6 +18,7 @@ return [
     'nav_specialists_survey' => 'Survey form',
 
     'nav_research' => 'RESEARCH',
+    'nav_research_clinical_trials' => 'Clinical trials',
     'nav_research_postdoc' => 'PostDoc form',
     'nav_research_code' => 'Code form',
     'nav_research_documents' => 'Document database',
