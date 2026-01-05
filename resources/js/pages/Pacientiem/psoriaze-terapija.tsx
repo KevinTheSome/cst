@@ -1,3 +1,4 @@
+import { useLang } from '@/hooks/useLang';
 import { Head, Link } from '@inertiajs/react';
 
 // --- ICONS ---
@@ -19,10 +20,112 @@ const Icons = {
     )
 };
 
+const copy = {
+    lv: {
+        metaTitle: 'Psoriāzes Terapija',
+        badge: 'Dermatoloģijas Risinājumi',
+        hero: {
+            title: 'Personalizēta',
+            highlight: 'Psoriāzes Terapija',
+            description:
+                'Mēs apvienojam klīnisko pieredzi un modernus medikamentus, lai samazinātu plāksterus, niezi un uzlabotu dzīves kvalitāti ilgtermiņā.',
+            cta: 'Aizpildīt anketu',
+        },
+        stats: [
+            { value: '85%', label: 'Pacienti ar uzlabojumiem' },
+            { value: '12', label: 'Nedēļas vidējais kurss' },
+            { value: '15', label: 'Partneru klīnikas' },
+        ],
+        section: {
+            title: 'Terapijas Pieeja',
+            subtitle: 'Kā mēs sasniedzam remisiju un ādas komfortu.',
+        },
+        methods: {
+            badge: 'Metodes',
+            title: 'Trīs līmeņu risinājumi',
+            items: [
+                { t: 'Lokālā terapija', d: 'Krēmi un želejas iekaisuma mazināšanai.' },
+                { t: 'Sistemiskā terapija', d: 'Perorāli medikamenti smagākos gadījumos.' },
+                { t: 'Bioloģiskā terapija', d: 'Imūnmodulējoši preparāti injekcijās.' },
+            ],
+        },
+        process: {
+            title: 'Terapijas Gaita',
+            steps: [
+                { title: '1. Konsultācija', text: 'Ārsts novērtē ādas stāvokli.' },
+                { title: '2. Plāns', text: 'Individuāla shēma atbilstoši smagumam.' },
+                { title: '3. Uzraudzība', text: 'Regulāras pārbaudes optimālam rezultātam.' },
+            ],
+            footer: 'Klīniski pierādīta efektivitāte',
+        },
+        cards: [
+            {
+                title: 'Niezes mazināšana',
+                text: 'Komforta uzlabošana un dzīves kvalitātes atjaunošana.',
+            },
+            {
+                title: 'Imūnregulācija',
+                text: 'Ilgtermiņa remisijas panākšana ar stabilu imūnmodulāciju.',
+            },
+        ],
+    },
+    en: {
+        metaTitle: 'Psoriasis Therapy',
+        badge: 'Dermatology Solutions',
+        hero: {
+            title: 'Personalized',
+            highlight: 'Psoriasis Therapy',
+            description:
+                'We combine clinical experience and modern medications to reduce plaques, itching, and improve long-term quality of life.',
+            cta: 'Fill out the form',
+        },
+        stats: [
+            { value: '85%', label: 'Patients with improvements' },
+            { value: '12', label: 'Weeks average course' },
+            { value: '15', label: 'Partner clinics' },
+        ],
+        section: {
+            title: 'Therapy Approach',
+            subtitle: 'How we achieve remission and skin comfort.',
+        },
+        methods: {
+            badge: 'Methods',
+            title: 'Three-tier solutions',
+            items: [
+                { t: 'Topical therapy', d: 'Creams and gels to reduce inflammation.' },
+                { t: 'Systemic therapy', d: 'Oral medications for more severe cases.' },
+                { t: 'Biologic therapy', d: 'Immunomodulating injections.' },
+            ],
+        },
+        process: {
+            title: 'Therapy Pathway',
+            steps: [
+                { title: '1. Consultation', text: 'The doctor assesses the skin condition.' },
+                { title: '2. Plan', text: 'Individual regimen based on severity.' },
+                { title: '3. Monitoring', text: 'Regular checkups for optimal results.' },
+            ],
+            footer: 'Clinically proven effectiveness',
+        },
+        cards: [
+            {
+                title: 'Itch relief',
+                text: 'Improving comfort and restoring quality of life.',
+            },
+            {
+                title: 'Immune regulation',
+                text: 'Achieving long-term remission with stable immunomodulation.',
+            },
+        ],
+    },
+} as const;
+
 export default function PsoriasisTherapy() {
+    const { locale } = useLang();
+    const t = copy[locale === 'en' ? 'en' : 'lv'];
+
     return (
         <>
-            <Head title="Psoriāzes Terapija" />
+            <Head title={t.metaTitle} />
 
             {/* MAIN WRAPPER */}
             <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
@@ -40,24 +143,24 @@ export default function PsoriasisTherapy() {
                     <main className="py-16 lg:py-24 text-center">
                         <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-emerald-700 mb-6">
                             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                            Dermatoloģijas Risinājumi
+                            {t.badge}
                         </div>
                         
                         <h1 className="mx-auto max-w-4xl text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl mb-6">
-                            Personalizēta <br className="hidden sm:block" />
+                            {t.hero.title} <br className="hidden sm:block" />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-sky-600">
-                                Psoriāzes Terapija
+                                {t.hero.highlight}
                             </span>
                         </h1>
                         
                         <p className="mx-auto max-w-2xl text-lg text-slate-600 leading-relaxed mb-10">
-                            Mēs apvienojam klīnisko pieredzi un modernus medikamentus, lai samazinātu plāksterus, niezi un uzlabotu dzīves kvalitāti ilgtermiņā.
+                            {t.hero.description}
                         </p>
 
                         {/* CTA Button */}
                         <div className="flex justify-center mb-16">
                             <Link href="/anketa?role=pacients" className="group inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-500/20 transition-all hover:-translate-y-0.5 hover:shadow-emerald-500/30">
-                                Aizpildīt anketu
+                                {t.hero.cta}
                                 <Icons.ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                             </Link>
                         </div>
@@ -65,18 +168,18 @@ export default function PsoriasisTherapy() {
                         {/* Stats Bar */}
                         <div className="flex flex-wrap justify-center gap-8 md:gap-16 text-slate-500">
                              <div className="flex flex-col items-center">
-                                <span className="text-3xl font-bold text-slate-900">85%</span>
-                                <span className="text-sm font-medium">Pacienti ar uzlabojumiem</span>
+                                <span className="text-3xl font-bold text-slate-900">{t.stats[0].value}</span>
+                                <span className="text-sm font-medium">{t.stats[0].label}</span>
                              </div>
                              <div className="h-12 w-px bg-slate-200 hidden sm:block"></div>
                              <div className="flex flex-col items-center">
-                                <span className="text-3xl font-bold text-slate-900">12</span>
-                                <span className="text-sm font-medium">Nedēļas vidējais kurss</span>
+                                <span className="text-3xl font-bold text-slate-900">{t.stats[1].value}</span>
+                                <span className="text-sm font-medium">{t.stats[1].label}</span>
                              </div>
                              <div className="h-12 w-px bg-slate-200 hidden sm:block"></div>
                              <div className="flex flex-col items-center">
-                                <span className="text-3xl font-bold text-slate-900">15</span>
-                                <span className="text-sm font-medium">Partneru klīnikas</span>
+                                <span className="text-3xl font-bold text-slate-900">{t.stats[2].value}</span>
+                                <span className="text-sm font-medium">{t.stats[2].label}</span>
                              </div>
                         </div>
                     </main>
@@ -84,8 +187,8 @@ export default function PsoriasisTherapy() {
                     {/* --- BENTO GRID FEATURES --- */}
                     <section className="py-16 border-t border-slate-200/60">
                         <div className="mb-10">
-                            <h2 className="text-3xl font-bold text-slate-900">Terapijas Pieeja</h2>
-                            <p className="mt-2 text-slate-600">Kā mēs sasniedzam remisiju un ādas komfortu.</p>
+                            <h2 className="text-3xl font-bold text-slate-900">{t.section.title}</h2>
+                            <p className="mt-2 text-slate-600">{t.section.subtitle}</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -95,15 +198,11 @@ export default function PsoriasisTherapy() {
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
                                 <div className="relative z-10">
                                     <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/50 px-3 py-1 text-xs text-emerald-700 mb-4">
-                                        Metodes
+                                        {t.methods.badge}
                                     </div>
-                                    <h3 className="text-2xl font-bold text-slate-900 mb-4">Trīs līmeņu risinājumi</h3>
+                                    <h3 className="text-2xl font-bold text-slate-900 mb-4">{t.methods.title}</h3>
                                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-6">
-                                        {[
-                                            { t: 'Lokālā terapija', d: 'Krēmi un želejas iekaisuma mazināšanai.' },
-                                            { t: 'Sistemiskā terapija', d: 'Perorāli medikamenti smagākos gadījumos.' },
-                                            { t: 'Bioloģiskā terapija', d: 'Imūnmodulējoši preparāti injekcijās.' }
-                                        ].map((item, i) => (
+                                        {t.methods.items.map((item, i) => (
                                             <div key={i} className="bg-slate-50/80 rounded-xl p-4 border border-slate-100 hover:border-emerald-200 transition-colors">
                                                 <div className="h-2 w-2 rounded-full bg-emerald-500 mb-2"></div>
                                                 <h4 className="font-semibold text-slate-900 text-sm">{item.t}</h4>
@@ -119,14 +218,10 @@ export default function PsoriasisTherapy() {
                                 <div className="absolute inset-0 bg-gradient-to-b from-white to-slate-50/50 pointer-events-none"></div>
 
                                 <div className="relative z-10 h-full flex flex-col">
-                                    <h3 className="text-xl font-bold mb-6 text-slate-900">Terapijas Gaita</h3>
+                                    <h3 className="text-xl font-bold mb-6 text-slate-900">{t.process.title}</h3>
                                     
                                     <div className="space-y-8 flex-1">
-                                        {[
-                                            { title: '1. Konsultācija', text: 'Ārsts novērtē ādas stāvokli.' },
-                                            { title: '2. Plāns', text: 'Individuāla shēma atbilstoši smagumam.' },
-                                            { title: '3. Uzraudzība', text: 'Regulāras pārbaudes optimālam rezultātam.' }
-                                        ].map((step, i) => (
+                                        {t.process.steps.map((step, i) => (
                                             <div key={i} className="flex gap-4 group">
                                                 <div className="flex flex-col items-center">
                                                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs shadow-sm">
@@ -145,7 +240,7 @@ export default function PsoriasisTherapy() {
                                     <div className="mt-8 pt-6 border-t border-slate-200">
                                         <p className="text-xs font-semibold text-emerald-700 flex items-center gap-2">
                                             <Icons.Check className="h-4 w-4" />
-                                            Klīniski pierādīta efektivitāte
+                                            {t.process.footer}
                                         </p>
                                     </div>
                                 </div>
@@ -156,8 +251,8 @@ export default function PsoriasisTherapy() {
                                 <div className="h-10 w-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
                                     <Icons.Drop className="w-6 h-6" />
                                 </div>
-                                <h4 className="font-bold text-slate-900">Niezes mazināšana</h4>
-                                <p className="text-sm text-slate-600 mt-2">Komforta uzlabošana un dzīves kvalitātes atjaunošana.</p>
+                                <h4 className="font-bold text-slate-900">{t.cards[0].title}</h4>
+                                <p className="text-sm text-slate-600 mt-2">{t.cards[0].text}</p>
                             </div>
 
                             {/* Small Card 2 - Immunity */}
@@ -165,8 +260,8 @@ export default function PsoriasisTherapy() {
                                 <div className="h-10 w-10 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center mb-4">
                                     <Icons.Shield className="w-6 h-6" />
                                 </div>
-                                <h4 className="font-bold text-slate-900">Imūnregulācija</h4>
-                                <p className="text-sm text-slate-600 mt-2">Ilgtermiņa remisijas panākšana ar stabilu imūnmodulāciju.</p>
+                                <h4 className="font-bold text-slate-900">{t.cards[1].title}</h4>
+                                <p className="text-sm text-slate-600 mt-2">{t.cards[1].text}</p>
                             </div>
 
                         </div>

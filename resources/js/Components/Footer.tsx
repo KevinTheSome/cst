@@ -63,11 +63,15 @@ export default function Footer() {
     const { props } = usePage<any>();
     const currentLocale = props.locale || 'lv';
 
+    const getCsrfToken = () =>
+        (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null)?.content || '';
+
     const switchLanguage = async (locale: string) => {
         if (currentLocale === locale) return;
         try {
-            await axios.post('/locale', { locale });
-            router.visit(window.location.pathname, { replace: true });
+            const csrf = getCsrfToken();
+            await axios.post('/locale', { locale }, { headers: { 'X-CSRF-TOKEN': csrf } });
+            router.reload({ only: ['lang', 'locale'] });
         } catch (error) {
             console.error('Language switch failed:', error);
         }
