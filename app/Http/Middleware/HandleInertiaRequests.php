@@ -53,6 +53,10 @@ class HandleInertiaRequests extends Middleware
                 'head'   => Lang::get('head'),
                 'anketa' => Lang::get('anketa'),
                 'formcodes' => Lang::get('formcodes'),
+                'clinical_trials' => Lang::get('clinical_trials'),
+                'database' => Lang::get('database'),
+                'post_dockanketa' => Lang::get('post_dockanketa'),
+                'questions' => Lang::get('questions'),
             ],
 
             'name'  => config('app.name'),
