@@ -73,30 +73,6 @@ function FormsList() {
         (localFilters.orderBy !== 'created_at') ||
         (localFilters.orderDir !== 'desc');
 
-    const handleDelete = () => {
-        if (!deleteTarget) return;
-
-        setIsDeleting(true);
-
-        router.post(
-            `/admin/anketa/destroy/${deleteTarget.id}`,
-            { _method: 'delete' },
-            {
-                onSuccess: () => {
-                    setForms((prev) => prev.filter((f) => f.id !== deleteTarget.id));
-                    setDeleteTarget(null);
-                    setIsDeleting(false);
-                },
-
-                onError: (errors) => {
-                    console.error('Delete error:', errors);
-                    setIsDeleting(false);
-                },
-            }
-        );
-    };
-
-
     const applyFilters = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         setIsFilterModalOpen(false);

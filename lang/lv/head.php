@@ -12,6 +12,7 @@ return [
     'nav_specialists_laws' => 'ES regula un likumi',
     'nav_specialists_plants' => 'ATMP ražotnes Eiropā',
     'nav_specialists_training' => 'Apmācība',
+    'nav_specialists_survey' => 'Aptauja',
 
     'nav_research' => 'PĒTNIECĪBA',
     'nav_research_postdoc' => 'PostDock anketa',

@@ -1,6 +1,6 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, router, usePage } from '@inertiajs/react';
-import { Book, Calendar, CheckCircle, Edit, ExternalLink, Eye, Plus, Search as SearchIcon, Trash2, XCircle } from 'lucide-react';
+import { Book, CheckCircle, Edit, ExternalLink, Eye, Plus, Search as SearchIcon, Trash2, XCircle } from 'lucide-react';
 import React, { useState } from 'react';
 
 type Training = {
@@ -8,8 +8,6 @@ type Training = {
     title: { lv?: string | null; en?: string | null };
     description?: string | null;
     url?: string | null;
-    starts_at?: string | null;
-    ends_at?: string | null;
     is_active?: boolean;
     // rating fields added by controller
     ratings_count?: number;
@@ -24,20 +22,6 @@ type PageProps = {
 
 // small icons
 const BookIcon = () => <Book className="h-6 w-6" />;
-
-function formatDate(dateString?: string | null) {
-    if (!dateString) return 'Start not set';
-    try {
-        return new Date(dateString).toLocaleString('lv-LV', {
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-    } catch {
-        return dateString ?? '';
-    }
-}
 
 // format bytes if needed (not used here, but kept for parity)
 function formatBytes(bytes: number | null | undefined) {
@@ -230,14 +214,6 @@ const IndexApmaciba: React.FC = () => {
                                                 <button onClick={() => toggleExpand(t.id)} className="text-xs text-gray-400 hover:text-gray-200">
                                                     {expanded[t.id] ? 'Hide detail' : 'Show detail'}
                                                 </button>
-                                            </div>
-
-                                            {/* Date */}
-                                            <div className="flex items-center justify-between text-sm">
-                                                <span className="flex items-center gap-2 text-gray-500">
-                                                    <Calendar className="h-4 w-4" /> Start
-                                                </span>
-                                                <span className="font-medium text-gray-300">{formatDate(t.starts_at)}</span>
                                             </div>
 
                                             {/* URL */}

@@ -41,6 +41,11 @@ const IconWarning = () => (
     </svg>
 );
 
+// CSRF helper
+function getCsrfToken() {
+  return (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null)?.content ?? '';
+}
+
 export default function FormCodes({ codes: initialCodes, forms }: Props) {
   const { trans, __ } = useLang();
 
@@ -54,6 +59,8 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
   // Modal States
   const [pendingDelete, setPendingDelete] = useState<FormCode | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [customCode, setCustomCode] = useState('');
   
   // Notification State
   const [notification, setNotification] = useState<{type: 'success' | 'error', message: string} | null>(null);
@@ -63,6 +70,16 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
     setSubmitting(true);
     setErrors({});
 
+    if (customCode) {
+        if (customCode.length !== 12 || /\s/.test(customCode)) {
+            setErrors({
+            code: ['Custom code must be exactly 12 characters and contain no spaces'],
+            });
+            setSubmitting(false);
+            return;
+        }
+    };
+
     if (!selectedFormId) {
       setErrors({ form_id: ['No survey selected'] });
       setSubmitting(false);
@@ -70,10 +87,14 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
     }
 
     try {
+      const csrf = getCsrfToken();
       const res = await axios.post('/admin/form-codes', {
         uses,
         expiration_hours: expirationHours,
         form_id: selectedFormId,
+        code: customCode || null,
+      }, {
+        headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json' }
       });
 
       const newCode = res.data?.code as FormCode | undefined;
@@ -81,6 +102,11 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
           setCodes((prev) => [newCode, ...prev]);
           setNotification({ type: 'success', message: 'Code generated successfully!' });
           setTimeout(() => setNotification(null), 3000);
+
+          setUses(1);
+          setExpirationHours(24);
+          setSelectedFormId(forms[0]?.id ?? '');
+          setCustomCode('');
       }
 
       // reset inputs
@@ -106,7 +132,10 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
     setIsDeleting(true);
 
     try {
-      await axios.delete(`/admin/form-codes/${pendingDelete.id}`);
+      // Convert DELETE -> POST (server expects POST for destroy)
+      const csrf = getCsrfToken();
+      await axios.post(`/admin/form-codes/${pendingDelete.id}`, {}, { headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json' } });
+
       setCodes((prev) => prev.filter((c) => c.id !== pendingDelete.id));
       setPendingDelete(null);
       setNotification({ type: 'success', message: 'Code deleted successfully.' });
@@ -215,6 +244,40 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
                                 </div>
                             )}
                             {errors.form_id && <p className="mt-1 text-xs text-rose-400">{errors.form_id[0]}</p>}
+                        </div>
+
+                        {/* Custom Code */}
+                        <div>
+                        <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
+                            Custom Code (optional)
+                        </label>
+
+                        <input
+                            type="text"
+                            value={customCode}
+                            disabled={submitting}
+                            onChange={(e) => {
+                            const value = e.target.value.toUpperCase();
+                            if (!value.includes(' ')) {
+                                setCustomCode(value);
+                            }
+                            }}
+                            maxLength={12}
+                            placeholder="12 characters, no spaces"
+                            className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors font-mono"
+                        />
+
+                        {customCode && customCode.length !== 12 && (
+                            <p className="mt-1 text-xs text-rose-400">
+                            Code must be exactly 12 characters
+                            </p>
+                        )}
+
+                        {errors.code && (
+                            <p className="mt-1 text-xs text-rose-400">
+                            {errors.code[0]}
+                            </p>
+                        )}
                         </div>
 
                         {/* Uses */}

@@ -63,7 +63,7 @@ export default function Welcome() {
                         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-3">
                             {/* 1. Patient Card (Emerald) */}
                             <Link
-                                href="/postdock-anketa"
+                                href="/postdock-anketa?role=patients"
                                 className="group relative flex h-full flex-col items-start justify-between rounded-2xl border border-slate-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-400 hover:shadow-xl hover:shadow-emerald-500/10"
                             >
                                 <div>
@@ -133,7 +133,7 @@ export default function Welcome() {
                                 href="/pacientiem/faq"
                                 className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"
                             >
-                                Lidz biežāk jautātie jautājumi
+                                Biežāk uzdotie jautājumi
                             </Link>
                             <a
                                 href="/ParMums/contacts"

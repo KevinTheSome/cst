@@ -59,9 +59,16 @@ class FormCodeController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'uses'            => 'required|integer|min:1',
-            'expiration_hours'=> 'required|integer|min:1',
-            'form_id'         => 'nullable|integer|exists:forms,id',
+            'uses'             => 'required|integer|min:1',
+            'expiration_hours' => 'required|integer|min:1',
+            'form_id'          => 'nullable|integer|exists:forms,id',
+            'code'             => [
+                'nullable',
+                'string',
+                'size:12',
+                'regex:/^\S+$/',
+                'unique:form_codes,code',
+            ],
         ]);
 
         $formId = $request->input('form_id');
@@ -82,7 +89,11 @@ class FormCodeController extends Controller
         $userId = session('admin_id');
 
         $code = FormCode::create([
-            'code'            => strtoupper(Str::random(12)),
+            'code' => strtoupper(
+                $request->filled('code')
+                    ? $request->code
+                    : Str::random(12)
+            ),
             'user_created'    => $userId,
             'expiration_date' => $expiration,
             'uses'            => $request->uses,
@@ -97,13 +108,18 @@ class FormCodeController extends Controller
             'code'            => $code->code,
             'uses'            => (int) $code->uses,
             'user_created'    => $code->user_created,
-            'expiration_date' => $code->expiration_date ? $code->expiration_date->toDateTimeString() : null,
-            'created_at'      => $code->created_at ? $code->created_at->toDateTimeString() : null,
+            'expiration_date' => $code->expiration_date?->toDateTimeString(),
+            'created_at'      => $code->created_at?->toDateTimeString(),
             'admin'           => $code->admin ? [
                 'id'    => $code->admin->id,
                 'email' => $code->admin->email,
             ] : null,
-            'form_id'         => $code->form_id ?? null,
+            'form' => $code->form ? [
+                'id'    => $code->form->id,
+                'title' => $code->form->title[app()->getLocale()]
+                    ?? $code->form->title['lv']
+                    ?? 'No title',
+            ] : null,
         ];
 
         return response()->json([

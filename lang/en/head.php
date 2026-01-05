@@ -12,6 +12,7 @@ return [
     'nav_specialists_laws' => 'EU regulation and laws',
     'nav_specialists_plants' => 'ATMP manufacturing in Europe',
     'nav_specialists_training' => 'Training',
+    'nav_specialists_survey' => 'Survey form',
 
     'nav_research' => 'RESEARCH',
     'nav_research_postdoc' => 'PostDoc form',
