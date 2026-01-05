@@ -1,3 +1,4 @@
+import { useLang } from '@/hooks/useLang';
 import { Head, Link } from '@inertiajs/react';
 
 // --- ICONS ---
@@ -19,10 +20,102 @@ const Icons = {
     )
 };
 
+const copy = {
+    lv: {
+        metaTitle: 'Hroniskas Nieru Slimības',
+        badge: 'Nieru Veselības Centrs',
+        hero: {
+            title: 'Hroniskas nieru slimības',
+            highlight: 'Personalizēta Terapija',
+            description:
+                'Mēs apvienojam medicīnisko pieredzi un modernus terapijas veidus, lai saglabātu nieru funkciju, kontrolētu simptomus un uzlabotu dzīves kvalitāti.',
+            cta: 'Aizpildīt anketu',
+        },
+        section: {
+            title: 'Terapijas Pieeja',
+            subtitle: 'Kā mēs palīdzam saglabāt nieru funkciju ilgtermiņā.',
+        },
+        strategy: {
+            badge: 'Risinājumi',
+            title: 'Trīs pīlāru stratēģija',
+            items: [
+                { t: 'Medikamentozā terapija', d: 'Precīzi dozēti medikamenti nieru atbalstam.' },
+                { t: 'Dzīvesveida pielāgojumi', d: 'Diēta un aktivitātes nieru stabilizēšanai.' },
+                { t: 'Dialīze & Transplantācija', d: 'Sagatavošanās un plānošana smagos gadījumos.' },
+            ],
+        },
+        process: {
+            title: 'Terapijas Gaita',
+            steps: [
+                { title: '1. Diagnostika', text: 'Analīzes, nieru funkcijas testi un risku novērtējums.' },
+                { title: '2. Plāns', text: 'Individuāla stratēģija ar medikamentiem un diētu.' },
+                { title: '3. Uzraudzība', text: 'Regulāras pārbaudes un terapijas korekcijas.' },
+            ],
+            footer: 'Nieru funkcijas saglabāšana',
+        },
+        cards: [
+            {
+                title: 'Asinsspiediena kontrole',
+                text: 'Samazina komplikāciju risku un tieši atbalsta nieru veselību.',
+            },
+            {
+                title: 'Dzīves kvalitāte',
+                text: 'Personalizēts plāns, kas mazina simptomus un ikdienas stresu.',
+            },
+        ],
+    },
+    en: {
+        metaTitle: 'Chronic Kidney Disease',
+        badge: 'Kidney Health Center',
+        hero: {
+            title: 'Chronic kidney disease',
+            highlight: 'Personalized Therapy',
+            description:
+                'We combine medical expertise and modern therapies to preserve kidney function, control symptoms, and improve quality of life.',
+            cta: 'Fill out the form',
+        },
+        section: {
+            title: 'Therapy Approach',
+            subtitle: 'How we help preserve kidney function long-term.',
+        },
+        strategy: {
+            badge: 'Solutions',
+            title: 'Three-pillar strategy',
+            items: [
+                { t: 'Medication therapy', d: 'Precisely dosed medications to support the kidneys.' },
+                { t: 'Lifestyle adjustments', d: 'Diet and activity to stabilize kidney function.' },
+                { t: 'Dialysis & Transplantation', d: 'Preparation and planning for severe cases.' },
+            ],
+        },
+        process: {
+            title: 'Therapy Pathway',
+            steps: [
+                { title: '1. Diagnostics', text: 'Tests, kidney function assessments, and risk evaluation.' },
+                { title: '2. Plan', text: 'Personalized strategy with medication and diet.' },
+                { title: '3. Monitoring', text: 'Regular checkups and therapy adjustments.' },
+            ],
+            footer: 'Preserving kidney function',
+        },
+        cards: [
+            {
+                title: 'Blood pressure control',
+                text: 'Reduces complication risk and directly supports kidney health.',
+            },
+            {
+                title: 'Quality of life',
+                text: 'A personalized plan that eases symptoms and everyday stress.',
+            },
+        ],
+    },
+} as const;
+
 export default function ChronTherapy() {
+    const { locale } = useLang();
+    const t = copy[locale === 'en' ? 'en' : 'lv'];
+
     return (
         <>
-            <Head title="Hroniskas Nieru Slimības" />
+            <Head title={t.metaTitle} />
 
             {/* MAIN WRAPPER */}
             <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
@@ -40,24 +133,24 @@ export default function ChronTherapy() {
                     <main className="py-16 lg:py-24 text-center">
                         <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-emerald-700 mb-6">
                             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                            Nieru Veselības Centrs
+                            {t.badge}
                         </div>
                         
                         <h1 className="mx-auto max-w-4xl text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl mb-6">
-                            Hroniskas nieru slimības <br className="hidden sm:block" />
+                            {t.hero.title} <br className="hidden sm:block" />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-sky-600">
-                                Personalizēta Terapija
+                                {t.hero.highlight}
                             </span>
                         </h1>
                         
                         <p className="mx-auto max-w-2xl text-lg text-slate-600 leading-relaxed mb-10">
-                            Mēs apvienojam medicīnisko pieredzi un modernus terapijas veidus, lai saglabātu nieru funkciju, kontrolētu simptomus un uzlabotu dzīves kvalitāti.
+                            {t.hero.description}
                         </p>
 
                         {/* CTA Button */}
                         <div className="flex justify-center mb-16">
                             <Link href="/anketa?role=pacients" className="group inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-500/20 transition-all hover:-translate-y-0.5 hover:shadow-emerald-500/30">
-                                Aizpildīt anketu
+                                {t.hero.cta}
                                 <Icons.ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                             </Link>
                         </div>
@@ -66,8 +159,8 @@ export default function ChronTherapy() {
                     {/* --- BENTO GRID FEATURES --- */}
                     <section className="py-16 border-t border-slate-200/60">
                         <div className="mb-10">
-                            <h2 className="text-3xl font-bold text-slate-900">Terapijas Pieeja</h2>
-                            <p className="mt-2 text-slate-600">Kā mēs palīdzam saglabāt nieru funkciju ilgtermiņā.</p>
+                            <h2 className="text-3xl font-bold text-slate-900">{t.section.title}</h2>
+                            <p className="mt-2 text-slate-600">{t.section.subtitle}</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -77,15 +170,11 @@ export default function ChronTherapy() {
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
                                 <div className="relative z-10">
                                     <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/50 px-3 py-1 text-xs text-emerald-700 mb-4">
-                                        Risinājumi
+                                        {t.strategy.badge}
                                     </div>
-                                    <h3 className="text-2xl font-bold text-slate-900 mb-4">Trīs pīlāru stratēģija</h3>
+                                    <h3 className="text-2xl font-bold text-slate-900 mb-4">{t.strategy.title}</h3>
                                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-6">
-                                        {[
-                                            { t: 'Medikamentozā terapija', d: 'Precīzi dozēti medikamenti nieru atbalstam.' },
-                                            { t: 'Dzīvesveida pielāgojumi', d: 'Diēta un aktivitātes nieru stabilizēšanai.' },
-                                            { t: 'Dialīze & Transplantācija', d: 'Sagatavošanās un plānošana smagos gadījumos.' }
-                                        ].map((item, i) => (
+                                        {t.strategy.items.map((item, i) => (
                                             <div key={i} className="bg-slate-50/80 rounded-xl p-4 border border-slate-100 hover:border-emerald-200 transition-colors">
                                                 <div className="h-2 w-2 rounded-full bg-emerald-500 mb-2"></div>
                                                 <h4 className="font-semibold text-slate-900 text-sm">{item.t}</h4>
@@ -101,14 +190,10 @@ export default function ChronTherapy() {
                                 <div className="absolute inset-0 bg-gradient-to-b from-white to-slate-50/50 pointer-events-none"></div>
 
                                 <div className="relative z-10 h-full flex flex-col">
-                                    <h3 className="text-xl font-bold mb-6 text-slate-900">Terapijas Gaita</h3>
+                                    <h3 className="text-xl font-bold mb-6 text-slate-900">{t.process.title}</h3>
                                     
                                     <div className="space-y-8 flex-1">
-                                        {[
-                                            { title: '1. Diagnostika', text: 'Analīzes, nieru funkcijas testi un risku novērtējums.' },
-                                            { title: '2. Plāns', text: 'Individuāla stratēģija ar medikamentiem un diētu.' },
-                                            { title: '3. Uzraudzība', text: 'Regulāras pārbaudes un terapijas korekcijas.' }
-                                        ].map((step, i) => (
+                                        {t.process.steps.map((step, i) => (
                                             <div key={i} className="flex gap-4 group">
                                                 <div className="flex flex-col items-center">
                                                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs shadow-sm">
@@ -127,7 +212,7 @@ export default function ChronTherapy() {
                                     <div className="mt-8 pt-6 border-t border-slate-200">
                                         <p className="text-xs font-semibold text-emerald-700 flex items-center gap-2">
                                             <Icons.Check className="h-4 w-4" />
-                                            Nieru funkcijas saglabāšana
+                                            {t.process.footer}
                                         </p>
                                     </div>
                                 </div>
@@ -138,8 +223,8 @@ export default function ChronTherapy() {
                                 <div className="h-10 w-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
                                     <Icons.Activity className="w-6 h-6" />
                                 </div>
-                                <h4 className="font-bold text-slate-900">Asinsspiediena kontrole</h4>
-                                <p className="text-sm text-slate-600 mt-2">Samazina komplikāciju risku un tieši atbalsta nieru veselību.</p>
+                                <h4 className="font-bold text-slate-900">{t.cards[0].title}</h4>
+                                <p className="text-sm text-slate-600 mt-2">{t.cards[0].text}</p>
                             </div>
 
                             {/* Small Card 2 - Quality of Life */}
@@ -147,8 +232,8 @@ export default function ChronTherapy() {
                                 <div className="h-10 w-10 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center mb-4">
                                     <Icons.Heart className="w-6 h-6" />
                                 </div>
-                                <h4 className="font-bold text-slate-900">Dzīves kvalitāte</h4>
-                                <p className="text-sm text-slate-600 mt-2">Personalizēts plāns, kas mazina simptomus un ikdienas stresu.</p>
+                                <h4 className="font-bold text-slate-900">{t.cards[1].title}</h4>
+                                <p className="text-sm text-slate-600 mt-2">{t.cards[1].text}</p>
                             </div>
 
                         </div>
