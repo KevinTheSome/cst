@@ -2,29 +2,126 @@
 
 return [
     'index' => [
-        'page_title'      => 'Surveys',
-        'label'           => 'Surveys',
-        'heading'         => 'All surveys',
+        'page_title'      => 'Forms',
+        'label'           => 'Forms',
+        'heading'         => 'All forms',
         'subheading'      => 'Overview of all public and private forms.',
-        'create_button'   => '+ Create new survey',
-        'list_label'      => 'Form list',
-        'list_subheading' => 'Click view to open a form, or edit / delete it.',
+        'create_button'   => '+ Create new form',
+        'list_label'      => 'Forms list',
+        'list_subheading' => 'Click View to open a form, or Edit / Delete it.',
         'id_label'        => 'ID',
         'code_label'      => 'Code',
+
         'view'            => 'View',
         'edit'            => 'Edit',
         'delete'          => 'Delete',
-        'empty'           => 'There are no surveys yet.',
-        'confirm_delete'  => 'Are you sure you want to delete the survey "{title}"?',
-        'deleted_success' => 'Survey deleted successfully.',
-        'deleted_error'   => 'Error deleting survey.',
+
+        'empty'           => 'No forms yet.',
+        'confirm_delete'  => 'Are you sure you want to delete the form "{title}"?',
+        'deleted_success' => 'Form deleted successfully.',
+        'deleted_error'   => 'Error deleting form.',
+
+        'search_placeholder' => 'Search...',
+        'na' => 'N/A',
+
+        // Optional alias if any code uses delete_confirm
+        'delete_confirm' => 'Are you sure you want to delete this form?',
+
+        'filters' => [
+            'title' => 'Filters',
+            'type' => 'Type',
+            'any_type' => 'Any type',
+            'public' => 'Public',
+            'private' => 'Private',
+            'code' => 'Code',
+            'from' => 'From',
+            'to' => 'To',
+        ],
+
+        'actions' => [
+            'reset' => 'Reset',
+            'filters' => 'Filters',
+            'clear_filters' => 'Clear filters',
+            'clear' => 'Clear',
+            'apply' => 'Apply',
+            'create_new_aria' => 'Create new',
+        ],
+
+        'misc' => [
+            'untitled' => 'Untitled form',
+        ],
+    ],
+
+    // ✅ Added: results translations (list + show pages)
+    'results' => [
+        'page_title' => 'Submissions',
+        'layout_title' => 'Submissions',
+
+        'label' => 'Submissions',
+        'heading' => 'Submissions',
+        'subheading' => 'Overview of submitted answers and their content.',
+
+        'total_answers' => 'Total answers',
+        'search_placeholder' => 'Search submissions...',
+
+        'table' => [
+            'id_code' => 'ID / CODE',
+            'type' => 'TYPE',
+            'submitted' => 'SUBMITTED',
+            'answers' => 'ANSWERS',
+            'action' => 'ACTION',
+        ],
+
+        'empty' => 'No submissions found.',
+        'empty_hint' => 'Try adjusting your filters or search query.',
+
+        'actions' => [
+            'filters' => 'Filters',
+            'view' => 'View',
+            'reset' => 'Reset',
+            'clear' => 'Clear',
+            'apply' => 'Apply',
+        ],
+
+        // Filters inside results (used by ResultsIndex modal)
+        'filters' => [
+            'type' => 'Type',
+            'code' => 'Code',
+            'code_placeholder' => 'Code...',
+            'date_range' => 'Submission date range',
+            'from' => 'From',
+            'to' => 'To',
+            'sort' => 'Sort order',
+            'newest' => 'Newest first',
+            'oldest' => 'Oldest first',
+        ],
+
+        // Show page strings (ResultsShow)
+        'view_title' => 'Submission',
+        'view_layout_title' => 'Submission',
+        'view_label' => 'Submission',
+        'view_subheading' => 'Full answers from one questionnaire submission.',
+
+        'field_id' => 'ID',
+        'field_type' => 'Type',
+        'field_code' => 'Code',
+        'field_submitted' => 'Submitted',
+
+        'answers_heading' => 'Answers',
+        'answers_note' => 'Only administrators can view this information.',
+        'answers_empty' => 'No answers stored.',
+
+        'misc' => [
+            'dash' => '—',
+            'standard' => 'Standard',
+        ],
     ],
 
     'update' => [
         'back'                   => '← Back to list',
         'title'                  => 'Edit form',
         'form_title_placeholder' => 'Form title',
-        'visibility_public'      => 'Public — anyone with the link can answer',
+        'visibility_public'      => 'Public — anyone with the link can respond',
         'visibility_private'     => 'Private — restricted access',
         'add_question'           => 'Add question',
         'options_label'          => 'Options:',
@@ -33,24 +130,21 @@ return [
         'saving'                 => 'Saving...',
         'success'                => 'Form updated!',
         'error'                  => 'Error saving changes.',
-        
         'specialist'             => 'Specialist',
         'psoriasis'              => 'Psoriasis',
         'chronic'                => 'Chronic',
-        'form_title_placeholder' => 'Untitled form',
     ],
-   
+
     'selector' => [
-        'page_title'     => 'Selector',
-        'heading'        => 'Assign survey types',
-        'subheading'     => 'Choose a type for each form to control where responses are routed.',
+        'page_title'     => 'Form selector',
+        'heading'        => 'Assign form types',
+        'subheading'     => 'Select a type for each form to control where submissions go.',
         'code'           => 'Form code',
         'select_type'    => 'Select type…',
         'save'           => 'Save',
         'no_results'     => 'No forms found.',
-        'error_missing'  => 'Please choose a type before saving.',
+        'error_missing'  => 'Please select a type before saving.',
         'success'        => 'Type saved successfully.',
         'error'          => 'Failed to save. Please try again.',
     ],
-    
 ];
