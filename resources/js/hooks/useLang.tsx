@@ -61,5 +61,5 @@ export function useLang() {
         return typeof current === 'string' ? current : undefined;
     }
 
-    return { trans, __, has, locale };
+    return { trans, __, has, locale , lang};
 }
