@@ -249,7 +249,7 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
                         {/* Custom Code */}
                         <div>
                         <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400">
-                            Custom Code (optional)
+                            {__('formcodes.custom_code_title')}
                         </label>
 
                         <input
@@ -263,13 +263,13 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
                             }
                             }}
                             maxLength={12}
-                            placeholder="12 characters, no spaces"
+                            placeholder={__('formcodes.custom_code_example')}
                             className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors font-mono"
                         />
 
                         {customCode && customCode.length !== 12 && (
                             <p className="mt-1 text-xs text-rose-400">
-                            Code must be exactly 12 characters
+                                {__('formcodes.custom_code_example')}
                             </p>
                         )}
 
@@ -356,7 +356,7 @@ export default function FormCodes({ codes: initialCodes, forms }: Props) {
                             </p>
                         </div>
                         <div className="rounded-2xl bg-white/5 p-4 border border-white/5">
-                            <p className="text-xs text-slate-400">Total Codes</p>
+                            <p className="text-xs text-slate-400">{__('formcodes.total_code1')}</p>
                             <p className="text-2xl font-bold text-white mt-1">{codes.length}</p>
                         </div>
                     </div>
