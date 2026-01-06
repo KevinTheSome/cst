@@ -147,4 +147,91 @@ return [
         'success'        => 'Type saved successfully.',
         'error'          => 'Failed to save. Please try again.',
     ],
+    'create' => [
+    'page_title'   => 'Create form',
+    'layout_title' => 'Create form',
+
+    'label'      => 'Form studio',
+    'heading'    => 'Create a new form',
+    'subheading' => 'Configure titles, visibility, and add questions.',
+
+    'actions' => [
+        'cancel' => 'Cancel',
+        'save'   => 'Save',
+    ],
+
+    'basic' => [
+        'heading' => 'Basic information',
+
+        'title_lv' => 'Title (LV)',
+        'title_en' => 'Title (EN)',
+
+        'title_lv_placeholder' => 'e.g., Customer Satisfaction (LV)',
+        'title_en_placeholder' => 'e.g., Customer Satisfaction',
+    ],
+
+    'questions' => [
+        'heading' => 'Questions',
+        'total_suffix' => 'total',
+        'empty' => 'The list is empty. Add your first question.',
+        'add'   => 'Add question',
+    ],
+
+    'field' => [
+        'type' => 'Type',
+        'delete_title' => 'Delete question',
+
+        'types' => [
+            'radio'    => 'Radio choice',
+            'checkbox' => 'Checkbox',
+            'dropdown' => 'Dropdown',
+            'text'     => 'Text input',
+            'scale'    => 'Scale 1–10',
+        ],
+
+        'question_lv_placeholder' => 'Question (LV)',
+        'question_en_placeholder' => 'Question (EN)',
+    ],
+
+    'options' => [
+        'add' => 'Add option',
+        'lv_placeholder' => 'Option (LV)',
+        'en_placeholder' => 'Option (EN)',
+    ],
+
+    'text' => [
+        'placeholder_lv' => 'Placeholder (LV)',
+        'placeholder_en' => 'Placeholder (EN)',
+    ],
+
+    'scale' => [
+        'min_value' => 'Min value',
+        'max_value' => 'Max value',
+        'preview'   => 'Preview',
+        'min_fallback' => 'Min',
+        'max_fallback' => 'Max',
+    ],
+
+    'sidebar' => [
+        'settings' => 'Settings',
+        'visibility' => 'Visibility',
+        'public'  => 'Public',
+        'private' => 'Private',
+        'questions' => 'Questions',
+        'status' => 'Status',
+        'draft'  => 'Draft',
+        'save'   => 'Save form',
+    ],
+
+    'validation' => [
+        'title'   => 'Validation error',
+        'message' => 'Please fix errors before saving.',
+    ],
+
+    'modal' => [
+        'continue' => 'Continue',
+        'close'    => 'Close',
+    ],
+],
+
 ];
