@@ -88,11 +88,6 @@ const findDuplicates = (arr: string[]) => {
   return Object.keys(counts).filter((k) => counts[k] > 1);
 };
 
-const hasAnyErrors = (ve: ValidationErrors) => {
-  if (ve.titleLv || ve.titleEn || ve.visibility || ve.fields) return true;
-  return Object.keys(ve.fieldErrors || {}).length > 0;
-};
-
 const normalizeOptionArrays = (lv: string[], en: string[]) => {
   const max = Math.max(lv.length, en.length);
   const nl = [...lv];
@@ -101,8 +96,6 @@ const normalizeOptionArrays = (lv: string[], en: string[]) => {
   while (ne.length < max) ne.push('');
   return { lv: nl, en: ne };
 };
-
-const asLang = (v: any): Lang => (v === 'en' ? 'en' : 'lv');
 
 // --- Helper Icons ---
 const FieldIcon = ({ type }: { type: FieldType }) => {
@@ -122,16 +115,15 @@ export default function UpdateAnketa() {
   const { props } = usePage();
 
   /**
-   * ✅ Use the app-wide language switch from your Admin navbar
-   * Make sure your Inertia shared props include something like:
-   *   Inertia::share('locale', app()->getLocale());
+   * ✅ IMPORTANT:
+   * We ONLY use the app language (Admin navbar LV/EN) to translate UI labels.
+   * We DO NOT change/hide the editable LV/EN fields (questions/options) based on locale.
    */
-  const lang: Lang = useMemo(() => {
+  const locale = useMemo(() => {
     const p: any = props as any;
-    return asLang(p?.locale ?? p?.lang ?? p?.currentLocale ?? p?.app?.locale);
+    return (p?.locale ?? p?.lang ?? p?.currentLocale ?? p?.app?.locale ?? 'lv') as string;
   }, [props]);
-
-  const isLv = lang === 'lv';
+  const isLv = locale !== 'en';
 
   // props.form may be undefined during SSR/hydration; provide safe defaults
   const rawForm = (props as any)?.form ?? null;
@@ -195,7 +187,7 @@ export default function UpdateAnketa() {
         } as ScaleField;
       }
 
-      // option types
+      // option types (pad arrays to same length)
       const rawLv = Array.isArray(f.options?.lv) ? f.options.lv : Array.isArray(f.options) ? (f.options as any) : [];
       const rawEn = Array.isArray(f.options?.en) ? f.options.en : Array.isArray(f.options) ? (f.options as any) : [];
       const norm = normalizeOptionArrays(rawLv, rawEn);
@@ -277,12 +269,12 @@ export default function UpdateAnketa() {
             return { ...base, type: newType, options: { lv: norm.lv, en: norm.en } } as OptionField;
           }
           case 'text':
-            return { ...base, type: 'text', placeholder: { lv: '', en: '' } } as TextField;
+            return { ...base, type: 'text', placeholder: (f as any).placeholder ?? { lv: '', en: '' } } as TextField;
           case 'scale':
             return {
               ...base,
               type: 'scale',
-              scale: {
+              scale: (f as any).scale ?? {
                 min: 1,
                 max: 10,
                 minLabel: { lv: 'Mazāk', en: 'Less' },
@@ -296,8 +288,8 @@ export default function UpdateAnketa() {
     );
   };
 
-  const updateLabel = (fieldId: string, l: Lang, value: string) => {
-    setFields((prev) => prev.map((f) => (f.id === fieldId ? { ...f, label: { ...f.label, [l]: value } } : f)));
+  const updateLabel = (fieldId: string, lang: Lang, value: string) => {
+    setFields((prev) => prev.map((f) => (f.id === fieldId ? { ...f, label: { ...f.label, [lang]: value } } : f)));
     setErrors((prev) => {
       const fe = { ...prev.fieldErrors };
       if (fe[fieldId]) {
@@ -308,7 +300,7 @@ export default function UpdateAnketa() {
     });
   };
 
-  const updateOption = (fieldId: string, l: Lang, index: number, value: string) => {
+  const updateOption = (fieldId: string, lang: Lang, index: number, value: string) => {
     setFields((prev) =>
       prev.map((f) => {
         if (f.id !== fieldId) return f;
@@ -317,9 +309,7 @@ export default function UpdateAnketa() {
           const norm = normalizeOptionArrays(current.lv ?? [], current.en ?? []);
           const next = { ...norm };
 
-          while (next[l].length <= index) next[l].push('');
-          next[l][index] = value;
-
+          next[lang][index] = value;
           return { ...f, options: { lv: next.lv, en: next.en } } as OptionField;
         }
         return f;
@@ -375,20 +365,20 @@ export default function UpdateAnketa() {
     );
   };
 
-  const updatePlaceholder = (fieldId: string, l: Lang, value: string) => {
+  const updatePlaceholder = (fieldId: string, lang: Lang, value: string) => {
     setFields((prev) =>
       prev.map((f) => {
         if (f.id !== fieldId) return f;
         if (f.type === 'text') {
           const currentPlaceholder = (f as TextField).placeholder || { lv: '', en: '' };
-          return { ...f, placeholder: { ...currentPlaceholder, [l]: value } } as TextField;
+          return { ...f, placeholder: { ...currentPlaceholder, [lang]: value } } as TextField;
         }
         return f;
       })
     );
   };
 
-  const updateScaleValue = (fieldId: string, key: 'min' | 'max' | 'minLabel' | 'maxLabel', value: any, l?: Lang) => {
+  const updateScaleValue = (fieldId: string, key: 'min' | 'max' | 'minLabel' | 'maxLabel', value: any, lang?: Lang) => {
     setFields((prev) =>
       prev.map((f) => {
         if (f.id !== fieldId) return f;
@@ -409,11 +399,9 @@ export default function UpdateAnketa() {
               else s.min = Math.max(1, s.max - 1);
             }
           } else if (key === 'minLabel') {
-            const langKey = (l ?? 'lv') as Lang;
-            s.minLabel = { ...(s.minLabel || { lv: '', en: '' }), [langKey]: value };
+            s.minLabel = { ...(s.minLabel || { lv: '', en: '' }), [lang as Lang]: value };
           } else if (key === 'maxLabel') {
-            const langKey = (l ?? 'lv') as Lang;
-            s.maxLabel = { ...(s.maxLabel || { lv: '', en: '' }), [langKey]: value };
+            s.maxLabel = { ...(s.maxLabel || { lv: '', en: '' }), [lang as Lang]: value };
           }
 
           return { ...f, scale: s } as ScaleField;
@@ -444,17 +432,10 @@ export default function UpdateAnketa() {
       if (dupEn.length) fe.optionsEn = `Duplicate options EN: ${dupEn.join(', ')}.`;
     }
 
-    if (f.type === 'text') {
-      const p = (f as TextField).placeholder;
-      if (!trimStr(p?.lv)) fe.placeholderLv = 'Placeholder (LV) is required.';
-      if (!trimStr(p?.en)) fe.placeholderEn = 'Placeholder (EN) is required.';
-    }
-
     if (f.type === 'scale') {
       const s = (f as ScaleField).scale;
       const min = Number(s.min ?? 1);
       const max = Number(s.max ?? 5);
-
       if (!Number.isInteger(min) || !Number.isInteger(max)) fe.scale = 'Min/max must be integers.';
       else if (min >= max) fe.scale = 'Min must be less than max.';
       else if (max - min > 50) fe.scale = 'Range too large (max 50 steps).';
@@ -485,8 +466,7 @@ export default function UpdateAnketa() {
 
   useEffect(() => {
     if (attemptedSubmit) setErrors(validateAll());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, visibility, fields]);
+  }, [title, visibility, fields, attemptedSubmit]);
 
   const buildPayload = () => ({
     title: {
@@ -508,16 +488,15 @@ export default function UpdateAnketa() {
 
         if (f.type === 'text') {
           base.placeholder = {
-            lv: (f as TextField).placeholder?.lv?.trim?.() ?? '',
-            en: (f as TextField).placeholder?.en?.trim?.() ?? '',
+            lv: (f as TextField).placeholder.lv.trim(),
+            en: (f as TextField).placeholder.en.trim(),
           };
         } else if (f.type === 'scale') {
           base.scale = { ...(f as ScaleField).scale };
         } else {
-          const o = (f as OptionField).options ?? { lv: [], en: [] };
           base.options = {
-            lv: (o.lv ?? []).map((x) => (x ?? '').trim()).filter(Boolean),
-            en: (o.en ?? []).map((x) => (x ?? '').trim()).filter(Boolean),
+            lv: (f as OptionField).options.lv.map((o) => (o ?? '').trim()).filter(Boolean),
+            en: (f as OptionField).options.en.map((o) => (o ?? '').trim()).filter(Boolean),
           };
         }
 
@@ -532,36 +511,35 @@ export default function UpdateAnketa() {
     const ve = validateAll();
     setErrors(ve);
 
-    if (hasAnyErrors(ve)) {
+    const hasErr =
+      !!ve.titleLv || !!ve.titleEn || !!ve.visibility || !!ve.fields || Object.keys(ve.fieldErrors || {}).length > 0;
+
+    if (hasErr) {
       setModalState({
         isOpen: true,
         type: 'error',
         title: isLv ? 'Validācijas kļūda' : 'Validation error',
-        message: isLv
-          ? 'Lūdzu, izlabojiet kļūdas pirms saglabāšanas. Pārbaudiet arī otru valodu (LV/EN).'
-          : 'Please fix errors before saving. Also check the other language (LV/EN).',
+        message: isLv ? 'Lūdzu, izlabojiet kļūdas pirms saglabāšanas.' : 'Please fix errors before saving.',
       });
       return;
     }
 
     router.post(`/admin/anketa/update/${initialForm.id}`, buildPayload(), {
       preserveScroll: true,
-      onSuccess: () => {
+      onSuccess: () =>
         setModalState({
           isOpen: true,
           type: 'success',
           title: isLv ? 'Saglabāts' : 'Saved',
           message: isLv ? 'Anketa veiksmīgi atjaunināta.' : 'Form updated successfully.',
-        });
-      },
-      onError: () => {
+        }),
+      onError: () =>
         setModalState({
           isOpen: true,
           type: 'error',
           title: isLv ? 'Kļūda' : 'Error',
           message: isLv ? 'Neizdevās saglabāt izmaiņas.' : 'Error saving changes.',
-        });
-      },
+        }),
     });
   };
 
@@ -594,8 +572,6 @@ export default function UpdateAnketa() {
                 {isLv ? 'Atpakaļ' : 'Back'}
               </Link>
 
-              {/* ✅ Removed local LV/EN toggle (now uses Admin navbar language switch) */}
-
               <button
                 type="button"
                 onClick={handleSubmit}
@@ -609,7 +585,7 @@ export default function UpdateAnketa() {
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
-          {/* --- LEFT COLUMN: CONTENT BUILDER --- */}
+          {/* --- LEFT COLUMN --- */}
           <div className="space-y-8">
             {/* General Info Card */}
             <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
@@ -619,27 +595,35 @@ export default function UpdateAnketa() {
               </div>
 
               <div className="grid gap-5">
-                {/* Single-language title input */}
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    {isLv ? 'Nosaukums (LV)' : 'Title (EN)'}
-                  </label>
+                {/* ✅ ALWAYS show both LV/EN editable fields */}
+                <div className="grid gap-5 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Nosaukums (LV)</label>
+                    <input
+                      type="text"
+                      placeholder="Piem., Klientu apmierinātība"
+                      value={title.lv}
+                      onChange={(e) => setTitle((t) => ({ ...t, lv: e.target.value }))}
+                      className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:outline-none focus:ring-1 ${
+                        errors.titleLv ? 'border-rose-500 focus:border-rose-500' : 'border-white/10 focus:border-emerald-500'
+                      }`}
+                    />
+                    {errors.titleLv && <p className="text-xs text-rose-400">{errors.titleLv}</p>}
+                  </div>
 
-                  <input
-                    type="text"
-                    placeholder={isLv ? 'Piem., Klientu apmierinātība' : 'e.g., Customer Satisfaction'}
-                    value={title[lang]}
-                    onChange={(e) => setTitle((t) => ({ ...t, [lang]: e.target.value }))}
-                    className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:outline-none focus:ring-1 ${
-                      (isLv ? errors.titleLv : errors.titleEn)
-                        ? 'border-rose-500 focus:border-rose-500'
-                        : 'border-white/10 focus:border-emerald-500'
-                    }`}
-                  />
-
-                  {(isLv ? errors.titleLv : errors.titleEn) && (
-                    <p className="text-xs text-rose-400">{isLv ? errors.titleLv : errors.titleEn}</p>
-                  )}
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Title (EN)</label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Customer Satisfaction"
+                      value={title.en}
+                      onChange={(e) => setTitle((t) => ({ ...t, en: e.target.value }))}
+                      className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:outline-none focus:ring-1 ${
+                        errors.titleEn ? 'border-rose-500 focus:border-rose-500' : 'border-white/10 focus:border-emerald-500'
+                      }`}
+                    />
+                    {errors.titleEn && <p className="text-xs text-rose-400">{errors.titleEn}</p>}
+                  </div>
                 </div>
               </div>
             </div>
@@ -662,9 +646,7 @@ export default function UpdateAnketa() {
               {fields.length === 0 && (
                 <div className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-12 text-center">
                   <List className="mx-auto h-12 w-12 text-slate-600 mb-3" />
-                  <p className="text-slate-400">
-                    {isLv ? 'Saraksts ir tukšs. Pievienojiet pirmo jautājumu.' : 'The list is empty. Add your first question.'}
-                  </p>
+                  <p className="text-slate-400">{isLv ? 'Saraksts ir tukšs. Pievienojiet pirmo jautājumu.' : 'The list is empty. Add your first question.'}</p>
                 </div>
               )}
 
@@ -673,9 +655,22 @@ export default function UpdateAnketa() {
                   const ferr = errors.fieldErrors?.[field.id] ?? {};
                   const hasErr = Object.keys(ferr).length > 0;
 
-                  const activeLabelErr = isLv ? ferr.labelLv : ferr.labelEn;
-                  const activeOptionsErr = isLv ? ferr.optionsLv : ferr.optionsEn;
-                  const activePlaceholderErr = isLv ? ferr.placeholderLv : ferr.placeholderEn;
+                  const typeLabel = (t: FieldType) => {
+                    if (isLv) {
+                      if (t === 'radio') return 'Radio izvēle';
+                      if (t === 'checkbox') return 'Checkbox';
+                      if (t === 'dropdown') return 'Dropdown';
+                      if (t === 'text') return 'Teksta ievade';
+                      if (t === 'scale') return 'Skala';
+                      return 'Radio izvēle';
+                    }
+                    if (t === 'radio') return 'Radio Choice';
+                    if (t === 'checkbox') return 'Checkbox';
+                    if (t === 'dropdown') return 'Dropdown';
+                    if (t === 'text') return 'Text Input';
+                    if (t === 'scale') return 'Scale';
+                    return 'Radio Choice';
+                  };
 
                   return (
                     <div
@@ -690,8 +685,12 @@ export default function UpdateAnketa() {
                           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800 text-slate-400 font-mono text-sm border border-white/5">
                             {idx + 1}
                           </div>
+
                           <div className="flex flex-col">
-                            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">{isLv ? 'Tips' : 'Type'}</span>
+                            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                              {isLv ? 'Tips' : 'Type'}
+                            </span>
+
                             <div className="flex items-center gap-2 text-sm font-medium text-white">
                               <FieldIcon type={field.type} />
                               <select
@@ -700,19 +699,19 @@ export default function UpdateAnketa() {
                                 className="bg-transparent outline-none cursor-pointer hover:text-emerald-400 transition-colors"
                               >
                                 <option value="radio" className="bg-slate-900">
-                                  {isLv ? 'Radio izvēle' : 'Radio Choice'}
+                                  {typeLabel('radio')}
                                 </option>
                                 <option value="checkbox" className="bg-slate-900">
-                                  Checkbox
+                                  {typeLabel('checkbox')}
                                 </option>
                                 <option value="dropdown" className="bg-slate-900">
-                                  Dropdown
+                                  {typeLabel('dropdown')}
                                 </option>
                                 <option value="text" className="bg-slate-900">
-                                  {isLv ? 'Teksta ievade' : 'Text Input'}
+                                  {typeLabel('text')}
                                 </option>
                                 <option value="scale" className="bg-slate-900">
-                                  {isLv ? 'Skala' : 'Scale'}
+                                  {isLv ? 'Skala 1-10' : 'Scale 1-10'}
                                 </option>
                               </select>
                             </div>
@@ -723,58 +722,77 @@ export default function UpdateAnketa() {
                           type="button"
                           onClick={() => removeField(field.id)}
                           className="rounded-lg p-2 text-slate-500 hover:bg-rose-500/10 hover:text-rose-400 transition-colors"
-                          title={isLv ? 'Dzēst jautājumu' : 'Delete Question'}
+                          title={isLv ? 'Dzēst jautājumu' : 'Delete question'}
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
 
                       <div className="grid gap-6">
-                        {/* Single-language question label */}
-                        <div className="space-y-1.5">
-                          <input
-                            type="text"
-                            placeholder={isLv ? 'Jautājums (LV)' : 'Question (EN)'}
-                            value={field.label[lang]}
-                            onChange={(e) => updateLabel(field.id, lang, e.target.value)}
-                            className={`w-full rounded-xl border bg-black/20 px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:ring-1 ${
-                              activeLabelErr ? 'border-rose-500' : 'border-white/10 focus:border-emerald-500'
-                            }`}
-                          />
-                          {activeLabelErr && <p className="text-xs text-rose-400">{activeLabelErr}</p>}
+                        {/* ✅ ALWAYS show both LV/EN question inputs */}
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div className="space-y-1.5">
+                            <input
+                              type="text"
+                              placeholder="Jautājums (LV)"
+                              value={field.label.lv}
+                              onChange={(e) => updateLabel(field.id, 'lv', e.target.value)}
+                              className={`w-full rounded-xl border bg-black/20 px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:ring-1 ${
+                                ferr.labelLv ? 'border-rose-500' : 'border-white/10 focus:border-emerald-500'
+                              }`}
+                            />
+                            {ferr.labelLv && <p className="text-xs text-rose-400">{ferr.labelLv}</p>}
+                          </div>
 
-                          {/* hint if other language has error */}
-                          {attemptedSubmit && !activeLabelErr && (isLv ? ferr.labelEn : ferr.labelLv) && (
-                            <p className="text-[11px] text-amber-300/80">
-                              {isLv ? 'EN versijā trūkst jautājuma.' : 'LV version is missing the question.'}
-                            </p>
-                          )}
+                          <div className="space-y-1.5">
+                            <input
+                              type="text"
+                              placeholder="Question (EN)"
+                              value={field.label.en}
+                              onChange={(e) => updateLabel(field.id, 'en', e.target.value)}
+                              className={`w-full rounded-xl border bg-black/20 px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:ring-1 ${
+                                ferr.labelEn ? 'border-rose-500' : 'border-white/10 focus:border-emerald-500'
+                              }`}
+                            />
+                            {ferr.labelEn && <p className="text-xs text-rose-400">{ferr.labelEn}</p>}
+                          </div>
                         </div>
 
-                        {/* Dynamic Fields */}
                         <div className="rounded-xl bg-black/20 p-4 border border-white/5">
-                          {/* OPTIONS (single-language view; still stored in both) */}
+                          {/* ✅ OPTIONS EDITOR: ALWAYS show LV + EN columns */}
                           {'options' in field && (
                             <div className="space-y-3">
-                              {(field.options?.[lang] ?? []).map((_, optIdx) => (
-                                <div key={optIdx} className="flex gap-2 items-center group/opt">
-                                  <div className="h-2 w-2 rounded-full bg-slate-600 shrink-0" />
-                                  <input
-                                    value={field.options?.[lang]?.[optIdx] ?? ''}
-                                    onChange={(e) => updateOption(field.id, lang, optIdx, e.target.value)}
-                                    className="flex-1 bg-transparent border-b border-white/10 px-2 py-1 text-sm text-white focus:border-emerald-500 focus:outline-none"
-                                    placeholder={isLv ? 'Opcija (LV)' : 'Option (EN)'}
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => removeOption(field.id, optIdx)}
-                                    className="opacity-0 group-hover/opt:opacity-100 p-1 text-slate-500 hover:text-rose-400 transition-opacity"
-                                    title={isLv ? 'Noņemt opciju' : 'Remove option'}
-                                  >
-                                    <X className="h-3.5 w-3.5" />
-                                  </button>
-                                </div>
-                              ))}
+                              {(() => {
+                                const norm = normalizeOptionArrays(field.options.lv ?? [], field.options.en ?? []);
+                                return norm.lv.map((_, optIdx) => (
+                                  <div key={optIdx} className="flex gap-2 items-center group/opt">
+                                    <div className="h-2 w-2 rounded-full bg-slate-600 shrink-0" />
+
+                                    <input
+                                      value={norm.lv[optIdx] ?? ''}
+                                      onChange={(e) => updateOption(field.id, 'lv', optIdx, e.target.value)}
+                                      className="flex-1 bg-transparent border-b border-white/10 px-2 py-1 text-sm text-white focus:border-emerald-500 focus:outline-none"
+                                      placeholder="Opcija (LV)"
+                                    />
+
+                                    <input
+                                      value={norm.en[optIdx] ?? ''}
+                                      onChange={(e) => updateOption(field.id, 'en', optIdx, e.target.value)}
+                                      className="flex-1 bg-transparent border-b border-white/10 px-2 py-1 text-sm text-white focus:border-emerald-500 focus:outline-none"
+                                      placeholder="Option (EN)"
+                                    />
+
+                                    <button
+                                      type="button"
+                                      onClick={() => removeOption(field.id, optIdx)}
+                                      className="opacity-0 group-hover/opt:opacity-100 p-1 text-slate-500 hover:text-rose-400 transition-opacity"
+                                      title={isLv ? 'Noņemt opciju' : 'Remove option'}
+                                    >
+                                      <X className="h-3.5 w-3.5" />
+                                    </button>
+                                  </div>
+                                ));
+                              })()}
 
                               <button
                                 type="button"
@@ -784,38 +802,31 @@ export default function UpdateAnketa() {
                                 <Plus className="h-3 w-3" /> {isLv ? 'Pievienot opciju' : 'Add option'}
                               </button>
 
-                              {activeOptionsErr && <p className="text-xs text-rose-400 pt-1">{activeOptionsErr}</p>}
-
-                              {attemptedSubmit && !activeOptionsErr && (isLv ? ferr.optionsEn : ferr.optionsLv) && (
-                                <p className="text-[11px] text-amber-300/80">
-                                  {isLv ? 'EN versijā trūkst opciju / ir kļūda opcijās.' : 'LV version has option errors or missing options.'}
-                                </p>
+                              {(ferr.optionsLv || ferr.optionsEn) && (
+                                <p className="text-xs text-rose-400 pt-1">{ferr.optionsLv || ferr.optionsEn}</p>
                               )}
                             </div>
                           )}
 
-                          {/* TEXT PLACEHOLDER (single-language) */}
+                          {/* ✅ TEXT PLACEHOLDER: ALWAYS show LV + EN */}
                           {field.type === 'text' && (
-                            <div className="space-y-2">
+                            <div className="grid gap-4 md:grid-cols-2">
                               <input
-                                value={(field as TextField).placeholder?.[lang] ?? ''}
-                                onChange={(e) => updatePlaceholder(field.id, lang, e.target.value)}
-                                placeholder={isLv ? 'Viettura teksts (LV)' : 'Placeholder (EN)'}
-                                className={`w-full bg-slate-900/50 rounded-lg border px-3 py-2 text-sm text-white focus:outline-none ${
-                                  activePlaceholderErr ? 'border-rose-500' : 'border-white/10 focus:border-emerald-500'
-                                }`}
+                                value={(field as TextField).placeholder.lv}
+                                onChange={(e) => updatePlaceholder(field.id, 'lv', e.target.value)}
+                                placeholder="Placeholder (LV)"
+                                className="w-full bg-slate-900/50 rounded-lg border border-white/10 px-3 py-2 text-sm text-white focus:border-emerald-500 focus:outline-none"
                               />
-                              {activePlaceholderErr && <p className="text-xs text-rose-400">{activePlaceholderErr}</p>}
-
-                              {attemptedSubmit && !activePlaceholderErr && (isLv ? ferr.placeholderEn : ferr.placeholderLv) && (
-                                <p className="text-[11px] text-amber-300/80">
-                                  {isLv ? 'EN versijā trūkst placeholder.' : 'LV version is missing the placeholder.'}
-                                </p>
-                              )}
+                              <input
+                                value={(field as TextField).placeholder.en}
+                                onChange={(e) => updatePlaceholder(field.id, 'en', e.target.value)}
+                                placeholder="Placeholder (EN)"
+                                className="w-full bg-slate-900/50 rounded-lg border border-white/10 px-3 py-2 text-sm text-white focus:border-emerald-500 focus:outline-none"
+                              />
                             </div>
                           )}
 
-                          {/* SCALE (min/max shared; labels edited for current lang) */}
+                          {/* SCALE CONFIG (min/max shared; labels preview uses LV labels like your old code) */}
                           {field.type === 'scale' && (
                             <div className="space-y-4">
                               <div className="flex gap-4">
@@ -839,40 +850,12 @@ export default function UpdateAnketa() {
                                 </div>
                               </div>
 
-                              <div className="grid gap-3 md:grid-cols-2">
-                                <div>
-                                  <label className="text-xs text-slate-500 block mb-1">
-                                    {isLv ? 'Min etiķete (LV)' : 'Min label (EN)'}
-                                  </label>
-                                  <input
-                                    value={(field as ScaleField).scale.minLabel?.[lang] ?? ''}
-                                    onChange={(e) => updateScaleValue(field.id, 'minLabel', e.target.value, lang)}
-                                    className="w-full bg-slate-900/50 rounded-lg border border-white/10 px-3 py-2 text-sm text-white focus:border-purple-500 outline-none"
-                                  />
-                                </div>
-                                <div>
-                                  <label className="text-xs text-slate-500 block mb-1">
-                                    {isLv ? 'Max etiķete (LV)' : 'Max label (EN)'}
-                                  </label>
-                                  <input
-                                    value={(field as ScaleField).scale.maxLabel?.[lang] ?? ''}
-                                    onChange={(e) => updateScaleValue(field.id, 'maxLabel', e.target.value, lang)}
-                                    className="w-full bg-slate-900/50 rounded-lg border border-white/10 px-3 py-2 text-sm text-white focus:border-purple-500 outline-none"
-                                  />
-                                </div>
-                              </div>
-
-                              {ferr.scale && <p className="text-xs text-rose-400">{ferr.scale}</p>}
-
                               <div className="p-3 bg-slate-900/50 rounded-lg border border-white/5">
                                 <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                                   {isLv ? 'Priekšskatījums' : 'Preview'}
                                 </p>
                                 <div className="flex items-center justify-between gap-2">
-                                  <span className="text-xs text-slate-400">
-                                    {(field as ScaleField).scale.minLabel?.[lang] || 'Min'}
-                                  </span>
-
+                                  <span className="text-xs text-slate-400">{(field as ScaleField).scale.minLabel?.lv || 'Min'}</span>
                                   <div className="flex gap-1 flex-wrap justify-center">
                                     {Array.from({
                                       length: Math.min(10, (field as ScaleField).scale.max - (field as ScaleField).scale.min + 1),
@@ -885,10 +868,7 @@ export default function UpdateAnketa() {
                                       </div>
                                     ))}
                                   </div>
-
-                                  <span className="text-xs text-slate-400">
-                                    {(field as ScaleField).scale.maxLabel?.[lang] || 'Max'}
-                                  </span>
+                                  <span className="text-xs text-slate-400">{(field as ScaleField).scale.maxLabel?.lv || 'Max'}</span>
                                 </div>
                               </div>
                             </div>
@@ -905,7 +885,7 @@ export default function UpdateAnketa() {
                 onClick={addField}
                 className="w-full rounded-2xl border-2 border-dashed border-emerald-500/20 bg-emerald-500/5 p-4 text-sm font-bold text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/40 transition-all flex items-center justify-center gap-2"
               >
-                <Plus className="h-5 w-5" /> {isLv ? 'Pievienot Jautājumu' : 'Add Question'}
+                <Plus className="h-5 w-5" /> {isLv ? 'Pievienot Jautājumu' : 'Add question'}
               </button>
             </div>
           </div>
@@ -914,9 +894,7 @@ export default function UpdateAnketa() {
           <div className="space-y-6">
             <div className="sticky top-6 space-y-6">
               <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">
-                  {isLv ? 'Iestatījumi' : 'Settings'}
-                </h3>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">{isLv ? 'Iestatījumi' : 'Settings'}</h3>
 
                 <div className="space-y-4">
                   <div>
