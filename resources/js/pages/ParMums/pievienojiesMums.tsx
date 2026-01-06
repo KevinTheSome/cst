@@ -1,5 +1,6 @@
 import { Head, useForm } from '@inertiajs/react';
 import { useState, type FormEvent } from 'react';
+import { useLang } from '@/hooks/useLang';
 
 // --- ICONS ---
 const Icons = {
@@ -40,6 +41,7 @@ const resolveContactRoute = () => {
 };
 
 export default function PievienojiesMums() {
+    const { __ } = useLang();
     const { data, setData, post, processing, errors, reset, recentlySuccessful } = useForm<ContactForm>({
         name: '',
         email: '',
@@ -54,7 +56,7 @@ export default function PievienojiesMums() {
         event.preventDefault();
 
         if (!data.email.trim() || !data.message.trim()) {
-            setClientError('Lūdzu, aizpildiet e-pasta adresi un ziņas saturu.');
+            setClientError(__('parmums.contact_validation_error'));
             return;
         }
 
@@ -87,13 +89,13 @@ export default function PievienojiesMums() {
                     <div className="text-center mb-12">
                         <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-emerald-700 mb-6">
                             <Icons.Mail className="h-4 w-4" />
-                            Saziņas Forma
+                            {__('parmums.contact_badge')}
                         </div>
                         <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl mb-4">
-                            Sazinies ar mums
+                            {__('parmums.contact_title')}
                         </h1>
                         <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-                            Aizpildi formu un pastāsti, kā vari palīdzēt laboratorijai vai uzdod sev interesējošu jautājumu.
+                            {__('parmums.contact_subtitle')}
                         </p>
                     </div>
 
@@ -105,8 +107,8 @@ export default function PievienojiesMums() {
                                     <Icons.Check className="h-5 w-5 text-emerald-600" />
                                 </div>
                                 <div>
-                                    <p className="font-semibold">Ziņa nosūtīta!</p>
-                                    <p className="text-sm">Paldies par saziņu. Mēs atbildēsim drīzumā.</p>
+                                    <p className="font-semibold">{__('parmums.contact_success_title')}</p>
+                                    <p className="text-sm">{__('parmums.contact_success_text')}</p>
                                 </div>
                             </div>
                         )}
@@ -115,7 +117,7 @@ export default function PievienojiesMums() {
                             <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 flex items-start gap-3 text-rose-800 shadow-sm animate-fade-in">
                                 <Icons.Alert className="h-5 w-5 mt-0.5 shrink-0" />
                                 <div>
-                                    <p className="font-semibold">Lūdzu, pārbaudiet ievadīto informāciju:</p>
+                                    <p className="font-semibold">{__('parmums.contact_error_title')}</p>
                                     <ul className="mt-1 list-disc list-inside text-sm">
                                         {errorEntries.map(([field, message]) => (
                                             <li key={field}>{message}</li>
@@ -151,27 +153,27 @@ export default function PievienojiesMums() {
 
                             <div className="grid gap-8 sm:grid-cols-2">
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Vārds un Uzvārds</label>
+                                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">{__('parmums.contact_name_label')}</label>
                                     <input
                                         name="name"
                                         type="text"
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
-                                        placeholder="Jānis Bērziņš"
+                                        placeholder={__('parmums.contact_name_placeholder')}
                                         className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
                                     />
                                 </div>
 
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                                        E-pasts <span className="text-rose-500">*</span>
+                                        {__('parmums.contact_email_label')} <span className="text-rose-500">*</span>
                                     </label>
                                     <input
                                         name="email"
                                         type="email"
                                         value={data.email}
                                         onChange={(e) => setData('email', e.target.value)}
-                                        placeholder="janis@example.com"
+                                        placeholder={__('parmums.contact_email_placeholder')}
                                         required
                                         className={`w-full rounded-xl border px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition-all ${
                                             errors.email 
@@ -182,27 +184,27 @@ export default function PievienojiesMums() {
                                 </div>
 
                                 <div className="sm:col-span-2 space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Temats</label>
+                                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">{__('parmums.contact_subject_label')}</label>
                                     <input
                                         name="subject"
                                         type="text"
                                         value={data.subject}
                                         onChange={(e) => setData('subject', e.target.value)}
-                                        placeholder="Sadarbības piedāvājums..."
+                                        placeholder={__('parmums.contact_subject_placeholder')}
                                         className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
                                     />
                                 </div>
 
                                 <div className="sm:col-span-2 space-y-2">
                                     <label className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                                        Ziņa <span className="text-rose-500">*</span>
+                                        {__('parmums.contact_message_label')} <span className="text-rose-500">*</span>
                                     </label>
                                     <textarea
                                         name="message"
                                         rows={6}
                                         value={data.message}
                                         onChange={(e) => setData('message', e.target.value)}
-                                        placeholder="Rakstiet savu ziņu šeit..."
+                                        placeholder={__('parmums.contact_message_placeholder')}
                                         required
                                         className={`w-full rounded-xl border px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition-all resize-y min-h-[120px] ${
                                             errors.message 
@@ -215,14 +217,14 @@ export default function PievienojiesMums() {
 
                             <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-6 border-t border-slate-100">
                                 <p className="text-xs text-slate-500 text-center sm:text-left">
-                                    * Jūsu dati tiks apstrādāti saskaņā ar privātuma politiku.
+                                    {__('parmums.contact_privacy_notice')}
                                 </p>
                                 <button
                                     type="submit"
                                     disabled={isDisabled}
                                     className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition-all hover:bg-emerald-600 hover:shadow-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto justify-center"
                                 >
-                                    {processing ? 'Sūtām...' : <>Nosūtīt Ziņu <Icons.Send className="h-4 w-4" /></>}
+                                    {processing ? __('parmums.contact_submitting') : <>{__('parmums.contact_submit')} <Icons.Send className="h-4 w-4" /></>}
                                 </button>
                             </div>
                         </form>
