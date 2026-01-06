@@ -8,8 +8,11 @@ function Navbar() {
     const [scrolled, setScrolled] = useState(false);
 
     const { props } = usePage<any>();
-    const currentLocale = props.locale;
+    const currentLocale = props.locale || 'lv';
     const { __ } = useLang();
+
+    const getCsrfToken = () =>
+        (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null)?.content || '';
 
     // 1. Detect scroll for styling changes (Shadow only, background stays white)
     useEffect(() => {
@@ -35,8 +38,9 @@ function Navbar() {
     const switchLanguage = async (locale: string) => {
         if (currentLocale === locale) return;
         try {
-            await axios.post('/locale', { locale });
-            router.visit(window.location.pathname, { replace: true });
+            const csrf = getCsrfToken();
+            await axios.post('/locale', { locale }, { headers: { 'X-CSRF-TOKEN': csrf } });
+            router.reload({ only: ['lang', 'locale'] });
         } catch (error) {
             console.error('Language switch failed:', error);
         }
@@ -44,9 +48,9 @@ function Navbar() {
 
     return (
         <nav
-            className={`sticky top-0 z-50 w-full bg-white transition-all duration-300 ease-in-out ${
-                scrolled ? 'py-3 shadow-md' : 'py-5 lg:py-6 border-b border-slate-100'
-            }`}
+            className={`sticky top-0 z-50 w-full bg-white transition-shadow duration-300 ease-in-out ${
+                scrolled ? 'shadow-md' : 'border-b border-slate-100'
+            } py-5 lg:py-6`}
         >
             <div className="mx-auto flex max-w-[90rem] items-center justify-between px-6 lg:px-12">
                 {/* --- LOGO --- */}
@@ -55,22 +59,14 @@ function Navbar() {
                         <img
                             src="/bzl-site-icon-01.png"
                             alt="Logo"
-                            className={`relative transition-all duration-500 ${scrolled ? 'h-12' : 'h-16 lg:h-20'}`}
+                            className="relative h-16 transition-all duration-500 lg:h-20"
                         />
                     </div>
                     <div className="flex flex-col leading-none">
-                        <span
-                            className={`font-extrabold tracking-tight text-slate-900 transition-all duration-300 ${
-                                scrolled ? 'text-xl' : 'text-2xl lg:text-3xl'
-                            }`}
-                        >
+                        <span className="font-extrabold tracking-tight text-slate-900 transition-all duration-300 text-2xl lg:text-3xl">
                             Cilmes Šūnu
                         </span>
-                        <span
-                            className={`font-bold text-emerald-600 transition-all duration-300 ${
-                                scrolled ? 'text-sm' : 'text-base lg:text-lg'
-                            }`}
-                        >
+                        <span className="font-bold text-emerald-600 transition-all duration-300 text-base lg:text-lg">
                             Tehnoloģijas SIA
                         </span>
                     </div>

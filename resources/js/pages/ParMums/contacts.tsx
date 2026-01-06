@@ -1,4 +1,5 @@
 import { Head } from '@inertiajs/react';
+import { useLang } from '@/hooks/useLang';
 
 // --- ICONS (With TypeScript definitions fixed) ---
 const Icons = {
@@ -17,6 +18,8 @@ const Icons = {
 };
 
 export default function Contacts() {
+    const { __ } = useLang();
+    
     return (
         <>
             <Head title="Kontakti" />
@@ -35,14 +38,14 @@ export default function Contacts() {
                     {/* Header */}
                     <div className="text-center mb-16">
                         <div className="inline-block rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600 border border-emerald-100 mb-4">
-                            SAZINIES AR MUMS
+                            {__('parmums.contacts_badge')}
                         </div>
                         <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
-                            Laboratorijas kontakti
+                            {__('parmums.contacts_title')}
                         </h1>
                         <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
-                            Mēs atrodamies RTU zinātniskajā kompleksā Ķīpsalā. <br className="hidden sm:block" />
-                            Sazinies ar mums par sadarbības iespējām vai vizīti.
+                            {__('parmums.contacts_subtitle')} <br className="hidden sm:block" />
+                            {__('parmums.contacts_subtitle2')}
                         </p>
                     </div>
 
@@ -59,7 +62,7 @@ export default function Contacts() {
                                         <Icons.Phone className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Tālrunis</p>
+                                        <p className="text-xs font-bold uppercase tracking-wider text-slate-400">{__('parmums.contacts_phone')}</p>
                                         <p className="text-lg font-semibold text-slate-900">+371 29252975</p>
                                     </div>
                                 </div>
@@ -72,7 +75,7 @@ export default function Contacts() {
                                         <Icons.Mail className="h-6 w-6" />
                                     </div>
                                     <div className="overflow-hidden">
-                                        <p className="text-xs font-bold uppercase tracking-wider text-slate-400">E-pasts</p>
+                                        <p className="text-xs font-bold uppercase tracking-wider text-slate-400">{__('parmums.contacts_email')}</p>
                                         <p className="text-lg font-semibold text-slate-900 truncate group-hover:text-sky-600 transition-colors">
                                             uldis.berzins.4@rtu.lv
                                         </p>
@@ -87,17 +90,17 @@ export default function Contacts() {
                                     <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900 text-white mb-4">
                                         <Icons.MapPin className="h-5 w-5" />
                                     </div>
-                                    <h3 className="text-xl font-bold text-slate-900 mb-2">Adrese</h3>
+                                    <h3 className="text-xl font-bold text-slate-900 mb-2">{__('parmums.contacts_address')}</h3>
                                     <p className="text-slate-600 leading-relaxed">
-                                        Rīgas Tehniskā universitāte<br />
-                                        Materiālzinātnes un lietišķās ķīmijas fakultāte<br />
-                                        <strong>Ķīpsalas iela 6B – 316. kab.</strong><br />
-                                        Rīga, LV-1064, Latvija
+                                        {__('parmums.contacts_address_full')}<br />
+                                        {__('parmums.contacts_address_faculty')}<br />
+                                        <strong>{__('parmums.contacts_address_room')}</strong><br />
+                                        {__('parmums.contacts_address_city')}
                                     </p>
                                     
                                     <div className="mt-6 flex items-center gap-2 text-sm text-slate-400">
                                         <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
-                                        Atvērts darba dienās 9:00 - 17:00
+                                        {__('parmums.contacts_open_hours')}
                                     </div>
                                 </div>
                             </div>
@@ -107,7 +110,7 @@ export default function Contacts() {
                         <div className="lg:col-span-7 h-[400px] lg:h-auto min-h-[400px]">
                             <div className="w-full h-full rounded-3xl overflow-hidden shadow-lg border border-slate-200 relative bg-slate-200 group">
                                 <div className="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur px-3 py-1.5 rounded-lg shadow-sm border border-white/50 text-xs font-semibold text-slate-700 pointer-events-none">
-                                    RTU Ķīpsalas komplekss
+                                    {__('parmums.contacts_map_label')}
                                 </div>
                                 <a 
                                     href="https://www.google.com/maps/search/?api=1&query=Ķīpsalas+iela+6B+Rīga" 
@@ -115,7 +118,7 @@ export default function Contacts() {
                                     rel="noreferrer"
                                     className="absolute bottom-4 right-4 z-10 bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium hover:bg-slate-800 transition-colors flex items-center gap-2"
                                 >
-                                    Atvērt Google Maps <Icons.External className="w-3 h-3" />
+                                    {__('parmums.contacts_open_maps')} <Icons.External className="w-3 h-3" />
                                 </a>
 
                                 {/* MAP FIX EXPLAINED:

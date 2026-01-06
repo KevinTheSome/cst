@@ -56,6 +56,9 @@ class HandleInertiaRequests extends Middleware
                 'questions' => Lang::get('questions'),
                 'admin'     => Lang::get('admin'),
                 'admin_dashboard'     => Lang::get('admin_dashboard'),
+                'specialistiem' => Lang::get('specialistiem'),
+                'lecture_codes' => Lang::get('lecture_codes'),  
+                'parmums' => Lang::get('parMums'),
             ],
 
             'name'  => config('app.name'),
