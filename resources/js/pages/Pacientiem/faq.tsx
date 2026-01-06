@@ -1,4 +1,5 @@
-import { Head, Link } from '@inertiajs/react';
+import { useLang } from '@/hooks/useLang';
+import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 
 // --- ICONS ---
@@ -19,24 +20,76 @@ type FAQItemType = {
     answer: string;
 };
 
-const faqItems: FAQItemType[] = [
-    {
-        question: 'Kas ir hroniskas slimības cilmes šūnu terapija?',
-        answer: 'Tā ir personalizēta terapija, kuras mērķis ir stimulēt organisma šūnu atjaunošanu un uzlabot funkcionalitāti ilgstošu slimību gadījumos. Mēs izmantojam pacienta paša šūnas, lai mazinātu atgrūšanas risku.',
+const copy = {
+    lv: {
+        metaTitle: 'Bieži uzdotie jautājumi',
+        badge: 'Atbalsta Centrs',
+        title: 'Bieži uzdotie',
+        titleHighlight: 'jautājumi',
+        intro:
+            'Atbildes uz populārākajiem jautājumiem par cilmes šūnu terapijas procesu, drošību un rezultātiem.',
+        contactTitle: 'Neatradāt atbildi?',
+        contactText: 'Mūsu speciālisti ir gatavi palīdzēt jums individuāli.',
+        contactLink: 'Sazināties ar mums →',
+        disclaimer: '* Šī informācija ir informatīva un neaizstāj ārsta konsultāciju.',
+        items: [
+            {
+                question: 'Kas ir hroniskas slimības cilmes šūnu terapija?',
+                answer:
+                    'Tā ir personalizēta terapija, kuras mērķis ir stimulēt organisma šūnu atjaunošanu un uzlabot funkcionalitāti ilgstošu slimību gadījumos. Mēs izmantojam pacienta paša šūnas, lai mazinātu atgrūšanas risku.',
+            },
+            {
+                question: 'Kā tiek sagatavotas cilmes šūnas?',
+                answer:
+                    'Šūnas tiek izolētas, analizētas un “trenētas” mikrofluidikā. Šis process notiek ISO klases tīrtelpās, nodrošinot augstāko drošības un efektivitātes līmeni pirms terapijas uzsākšanas.',
+            },
+            {
+                question: 'Vai terapija ir droša?',
+                answer:
+                    'Jā, terapija tiek veikta saskaņā ar klīniski pārbaudītiem protokoliem un ārstu uzraudzībā. Pirms procedūras tiek veikta rūpīga pacienta veselības pārbaude.',
+            },
+            {
+                question: 'Cik ilgs ir terapijas kurss?',
+                answer:
+                    'Terapijas ilgums ir individuāls, balstoties uz pacienta veselības stāvokli un slimības smagumu. Parasti tas ietver vienu procedūru un sekojošu uzraudzības periodu 3-6 mēnešu garumā.',
+            },
+        ] as FAQItemType[],
     },
-    {
-        question: 'Kā tiek sagatavotas cilmes šūnas?',
-        answer: 'Šūnas tiek izolētas, analizētas un “trenētas” mikrofluidikā. Šis process notiek ISO klases tīrtelpās, nodrošinot augstāko drošības un efektivitātes līmeni pirms terapijas uzsākšanas.',
+    en: {
+        metaTitle: 'Frequently Asked Questions',
+        badge: 'Support Center',
+        title: 'Frequently asked',
+        titleHighlight: 'questions',
+        intro:
+            'Answers to the most common questions about the stem cell therapy process, safety, and results.',
+        contactTitle: "Didn't find an answer?",
+        contactText: 'Our specialists are ready to help you individually.',
+        contactLink: 'Contact us →',
+        disclaimer: "* This information is for informational purposes and does not replace a doctor's consultation.",
+        items: [
+            {
+                question: 'What is stem cell therapy for chronic diseases?',
+                answer:
+                    "It is a personalized therapy aimed at stimulating the body's cell regeneration and improving function in long-term illnesses. We use the patient's own cells to reduce the risk of rejection.",
+            },
+            {
+                question: 'How are stem cells prepared?',
+                answer:
+                    "Cells are isolated, analyzed, and 'trained' in microfluidics. This process takes place in ISO-class cleanrooms, ensuring the highest level of safety and effectiveness before therapy begins.",
+            },
+            {
+                question: 'Is the therapy safe?',
+                answer:
+                    'Yes, the therapy is carried out under clinically validated protocols and physician supervision. A thorough health assessment is performed before the procedure.',
+            },
+            {
+                question: 'How long is the course of therapy?',
+                answer:
+                    "The therapy duration is individual, based on the patient's health status and disease severity. Typically, it includes one procedure and a follow-up monitoring period of 3-6 months.",
+            },
+        ] as FAQItemType[],
     },
-    {
-        question: 'Vai terapija ir droša?',
-        answer: 'Jā, terapija tiek veikta saskaņā ar klīniski pārbaudītiem protokoliem un ārstu uzraudzībā. Pirms procedūras tiek veikta rūpīga pacienta veselības pārbaude.',
-    },
-    {
-        question: 'Cik ilgs ir terapijas kurss?',
-        answer: 'Terapijas ilgums ir individuāls, balstoties uz pacienta veselības stāvokli un slimības smagumu. Parasti tas ietver vienu procedūru un sekojošu uzraudzības periodu 3-6 mēnešu garumā.',
-    },
-];
+} as const;
 
 function FAQItem({ item, index }: { item: FAQItemType; index: number }) {
     const [open, setOpen] = useState(false);
@@ -86,9 +139,12 @@ function FAQItem({ item, index }: { item: FAQItemType; index: number }) {
 }
 
 export default function ChronicFAQ() {
+    const { locale } = useLang();
+    const t = copy[locale === 'en' ? 'en' : 'lv'];
+
     return (
         <>
-            <Head title="Bieži uzdotie jautājumi" />
+            <Head title={t.metaTitle} />
 
             <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
                 
@@ -105,7 +161,7 @@ export default function ChronicFAQ() {
                     <div className="mb-8">
                          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-emerald-700">
                             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                            Atbalsta Centrs
+                            {t.badge}
                         </div>
                     </div>
 
@@ -114,13 +170,13 @@ export default function ChronicFAQ() {
                         {/* LEFT COLUMN: Context & Contact */}
                         <div className="lg:col-span-4 lg:sticky lg:top-8 h-fit">
                             <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-6">
-                                Bieži uzdotie <br />
+                                {t.title} <br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-sky-600">
-                                    jautājumi
+                                    {t.titleHighlight}
                                 </span>
                             </h1>
                             <p className="text-slate-600 text-lg mb-8 leading-relaxed">
-                                Atbildes uz populārākajiem jautājumiem par cilmes šūnu terapijas procesu, drošību un rezultātiem.
+                                {t.intro}
                             </p>
 
                             {/* Contact Card */}
@@ -130,12 +186,12 @@ export default function ChronicFAQ() {
                                     <div className="h-10 w-10 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center mb-4">
                                         <Icons.Chat className="w-5 h-5" />
                                     </div>
-                                    <h4 className="font-bold text-slate-900">Neatradāt atbildi?</h4>
+                                    <h4 className="font-bold text-slate-900">{t.contactTitle}</h4>
                                     <p className="text-sm text-slate-500 mt-2 mb-4">
-                                        Mūsu speciālisti ir gatavi palīdzēt jums individuāli.
+                                        {t.contactText}
                                     </p>
                                     <a href="/ParMums/pievienojies-mums" className="text-sm font-semibold text-sky-600 hover:text-sky-700 hover:underline">
-                                        Sazināties ar mums &rarr;
+                                        {t.contactLink}
                                     </a>
                                 </div>
                             </div>
@@ -144,14 +200,14 @@ export default function ChronicFAQ() {
                         {/* RIGHT COLUMN: FAQ List */}
                         <div className="lg:col-span-8">
                             <div className="space-y-4">
-                                {faqItems.map((item, index) => (
+                                {t.items.map((item, index) => (
                                     <FAQItem key={item.question} item={item} index={index} />
                                 ))}
                             </div>
 
                             <div className="mt-8 border-t border-slate-200 pt-6">
                                 <p className="text-xs text-slate-400 text-center sm:text-left">
-                                    * Šī informācija ir informatīva un neaizstāj ārsta konsultāciju.
+                                    {t.disclaimer}
                                 </p>
                             </div>
                         </div>

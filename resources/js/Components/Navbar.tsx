@@ -8,8 +8,11 @@ function Navbar() {
     const [scrolled, setScrolled] = useState(false);
 
     const { props } = usePage<any>();
-    const currentLocale = props.locale;
+    const currentLocale = props.locale || 'lv';
     const { __ } = useLang();
+
+    const getCsrfToken = () =>
+        (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null)?.content || '';
 
     // 1. Detect scroll for styling changes (Shadow only, background stays white)
     useEffect(() => {
@@ -18,14 +21,14 @@ function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // 2. NEW: Lock body scroll when mobile sidebar is open
+    // 2. Lock body scroll when mobile sidebar is open
     useEffect(() => {
         if (sidebarOpen) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'unset';
         }
-        
+
         // Cleanup function to reset overflow if component unmounts
         return () => {
             document.body.style.overflow = 'unset';
@@ -35,37 +38,35 @@ function Navbar() {
     const switchLanguage = async (locale: string) => {
         if (currentLocale === locale) return;
         try {
-            await axios.post('/locale', { locale });
-            router.visit(window.location.pathname, { replace: true });
+            const csrf = getCsrfToken();
+            await axios.post('/locale', { locale }, { headers: { 'X-CSRF-TOKEN': csrf } });
+            router.reload({ only: ['lang', 'locale'] });
         } catch (error) {
             console.error('Language switch failed:', error);
         }
     };
 
     return (
-        <nav 
-            className={`sticky top-0 z-50 w-full bg-white transition-all duration-300 ease-in-out ${
-                scrolled 
-                ? 'py-3 shadow-md' 
-                : 'py-5 lg:py-6 border-b border-slate-100'
-            }`}
+        <nav
+            className={`sticky top-0 z-50 w-full bg-white transition-shadow duration-300 ease-in-out ${
+                scrolled ? 'shadow-md' : 'border-b border-slate-100'
+            } py-5 lg:py-6`}
         >
             <div className="mx-auto flex max-w-[90rem] items-center justify-between px-6 lg:px-12">
-                
                 {/* --- LOGO --- */}
                 <Link href="/" className="group flex items-center gap-5 transition-transform duration-300 hover:scale-[1.02]">
                     <div className="relative">
-                        <img 
-                            src="/bzl-site-icon-01.png" 
-                            alt="Logo" 
-                            className={`relative transition-all duration-500 ${scrolled ? 'h-12' : 'h-16 lg:h-20'}`} 
+                        <img
+                            src="/bzl-site-icon-01.png"
+                            alt="Logo"
+                            className="relative h-16 transition-all duration-500 lg:h-20"
                         />
                     </div>
                     <div className="flex flex-col leading-none">
-                        <span className={`font-extrabold tracking-tight text-slate-900 transition-all duration-300 ${scrolled ? 'text-xl' : 'text-2xl lg:text-3xl'}`}>
+                        <span className="font-extrabold tracking-tight text-slate-900 transition-all duration-300 text-2xl lg:text-3xl">
                             Cilmes Šūnu
                         </span>
-                        <span className={`font-bold text-emerald-600 transition-all duration-300 ${scrolled ? 'text-sm' : 'text-base lg:text-lg'}`}>
+                        <span className="font-bold text-emerald-600 transition-all duration-300 text-base lg:text-lg">
                             Tehnoloģijas SIA
                         </span>
                     </div>
@@ -88,7 +89,7 @@ function Navbar() {
                     </NavDropdown>
 
                     <NavDropdown label={__('head.nav_research')}>
-                        <DropdownLink href="/clinical-trials">Klīniskie pētijumi</DropdownLink>
+                        <DropdownLink href="/clinical-trials">{__('head.nav_research_clinical_trials')}</DropdownLink>
                         <DropdownLink href="/postdock-anketa?role=patients">{__('head.nav_research_postdoc')}</DropdownLink>
                         <DropdownLink href="/anketa-kods">{__('head.nav_research_code')}</DropdownLink>
                         <DropdownLink href="/datubaze">{__('head.nav_research_documents')}</DropdownLink>
@@ -102,13 +103,17 @@ function Navbar() {
                     </NavDropdown>
 
                     <div className="ml-8 flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 p-1.5 shadow-sm transition-all hover:border-emerald-200">
-                        <LangBtn locale="lv" current={currentLocale} onClick={switchLanguage}>🇱🇻</LangBtn>
-                        <LangBtn locale="en" current={currentLocale} onClick={switchLanguage}>🇬🇧</LangBtn>
+                        <LangBtn locale="lv" current={currentLocale} onClick={switchLanguage}>
+                            🇱🇻
+                        </LangBtn>
+                        <LangBtn locale="en" current={currentLocale} onClick={switchLanguage}>
+                            🇬🇧
+                        </LangBtn>
                     </div>
                 </ul>
 
                 {/* --- MOBILE TOGGLE BUTTON --- */}
-                <button 
+                <button
                     className="group flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-slate-800 transition-all duration-300 hover:bg-emerald-500 hover:text-white lg:hidden"
                     onClick={() => setSidebarOpen(true)}
                     aria-label="Open Menu"
@@ -123,20 +128,18 @@ function Navbar() {
             {sidebarOpen && (
                 <div className="fixed inset-0 z-[100] lg:hidden">
                     {/* Dark Backdrop */}
-                    <div 
-                        className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" 
-                        onClick={() => setSidebarOpen(false)} 
-                    />
-                    
+                    <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onClick={() => setSidebarOpen(false)} />
+
                     {/* Sidebar Content */}
                     <aside className="absolute right-0 h-full w-[85vw] max-w-md transform bg-white shadow-2xl transition-transform duration-300 ease-out">
                         <div className="flex h-full flex-col">
                             {/* Mobile Header */}
                             <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
-                                <span className="text-xl font-extrabold text-slate-900">Izvēlne</span>
-                                <button 
-                                    onClick={() => setSidebarOpen(false)} 
+                                <span className="text-xl font-extrabold text-slate-900">{__('head.menu')}</span>
+                                <button
+                                    onClick={() => setSidebarOpen(false)}
                                     className="rounded-full bg-slate-100 p-3 text-slate-500 transition hover:bg-rose-100 hover:text-rose-600"
+                                    aria-label="Close Menu"
                                 >
                                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -162,7 +165,7 @@ function Navbar() {
                                     </MobileSection>
 
                                     <MobileSection label={__('head.nav_research')} icon={<IconResearch />}>
-                                        <MobileLink href="/clinical-trials">Klīniskie pētijumi</MobileLink>
+                                        <MobileLink href="/clinical-trials">{__('head.nav_research_clinical_trials')}</MobileLink>
                                         <MobileLink href="/postdock-anketa?role=patients">{__('head.nav_research_postdoc')}</MobileLink>
                                         <MobileLink href="/anketa-kods">{__('head.nav_research_code')}</MobileLink>
                                         <MobileLink href="/datubaze">{__('head.nav_research_documents')}</MobileLink>
@@ -180,8 +183,12 @@ function Navbar() {
                             {/* Mobile Footer */}
                             <div className="border-t border-slate-100 bg-slate-50 p-6">
                                 <div className="flex justify-center gap-3">
-                                    <MobileLangBtn locale="lv" current={currentLocale} onClick={switchLanguage}>Latviešu 🇱🇻</MobileLangBtn>
-                                    <MobileLangBtn locale="en" current={currentLocale} onClick={switchLanguage}>English 🇬🇧</MobileLangBtn>
+                                    <MobileLangBtn locale="lv" current={currentLocale} onClick={switchLanguage}>
+                                        Latviešu 🇱🇻
+                                    </MobileLangBtn>
+                                    <MobileLangBtn locale="en" current={currentLocale} onClick={switchLanguage}>
+                                        English 🇬🇧
+                                    </MobileLangBtn>
                                 </div>
                             </div>
                         </div>
@@ -194,7 +201,7 @@ function Navbar() {
 
 /* --- REUSABLE COMPONENTS --- */
 
-const NavDropdown = ({ label, children }: { label: string, children: React.ReactNode }) => (
+const NavDropdown = ({ label, children }: { label: string; children: React.ReactNode }) => (
     <li className="group relative px-1">
         <button className="flex items-center gap-2 rounded-full px-5 py-3 text-lg font-bold text-slate-700 transition-all duration-300 hover:bg-emerald-50 hover:text-emerald-700">
             {label}
@@ -205,15 +212,13 @@ const NavDropdown = ({ label, children }: { label: string, children: React.React
         <div className="absolute left-1/2 top-full mt-2 w-80 -translate-x-1/2 origin-top scale-95 opacity-0 invisible transition-all duration-300 ease-out group-hover:visible group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100">
             <div className="absolute -top-4 h-4 w-full bg-transparent"></div>
             <div className="overflow-hidden rounded-3xl border border-slate-100 bg-white p-3 shadow-2xl ring-1 ring-black/5">
-                <div className="flex flex-col gap-1">
-                    {children}
-                </div>
+                <div className="flex flex-col gap-1">{children}</div>
             </div>
         </div>
     </li>
 );
 
-const DropdownLink = ({ href, children }: { href: string, children: React.ReactNode }) => (
+const DropdownLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
     <Link href={href} className="block rounded-2xl px-6 py-3.5 text-base font-semibold text-slate-600 transition-all duration-200 hover:bg-emerald-50 hover:pl-7 hover:text-emerald-700">
         {children}
     </Link>
@@ -223,9 +228,7 @@ const LangBtn = ({ locale, current, onClick, children }: any) => (
     <button
         onClick={() => onClick(locale)}
         className={`flex h-10 w-10 items-center justify-center rounded-full text-base transition-all duration-300 ${
-            current === locale 
-                ? 'bg-white text-slate-900 shadow-md ring-1 ring-black/5 scale-105' 
-                : 'text-slate-400 grayscale hover:bg-white/60 hover:grayscale-0 hover:text-slate-600'
+            current === locale ? 'bg-white text-slate-900 shadow-md ring-1 ring-black/5 scale-105' : 'text-slate-400 grayscale hover:bg-white/60 hover:grayscale-0 hover:text-slate-600'
         }`}
     >
         {children}
@@ -236,14 +239,9 @@ const MobileSection = ({ label, icon, children }: any) => {
     const [open, setOpen] = useState(false);
     return (
         <div className={`overflow-hidden rounded-2xl border transition-all duration-300 ${open ? 'border-emerald-100 bg-emerald-50/30' : 'border-slate-100 bg-white'}`}>
-            <button 
-                onClick={() => setOpen(!open)}
-                className="flex w-full items-center justify-between px-5 py-4 text-left text-lg font-bold text-slate-800 hover:bg-slate-50/50"
-            >
+            <button onClick={() => setOpen(!open)} className="flex w-full items-center justify-between px-5 py-4 text-left text-lg font-bold text-slate-800 hover:bg-slate-50/50">
                 <div className="flex items-center gap-4">
-                    <div className={`rounded-xl p-2 transition-colors ${open ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
-                        {icon}
-                    </div>
+                    <div className={`rounded-xl p-2 transition-colors ${open ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>{icon}</div>
                     <span>{label}</span>
                 </div>
                 <svg className={`h-6 w-6 text-slate-400 transition-transform duration-300 ${open ? 'rotate-180 text-emerald-600' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -267,9 +265,7 @@ const MobileLangBtn = ({ locale, current, onClick, children }: any) => (
     <button
         onClick={() => onClick(locale)}
         className={`w-full rounded-xl px-4 py-3 text-base font-bold shadow-sm transition-all active:scale-95 ${
-            current === locale 
-                ? 'bg-emerald-500 text-white shadow-emerald-200' 
-                : 'bg-white text-slate-600 hover:bg-slate-100'
+            current === locale ? 'bg-emerald-500 text-white shadow-emerald-200' : 'bg-white text-slate-600 hover:bg-slate-100'
         }`}
     >
         {children}
@@ -277,9 +273,36 @@ const MobileLangBtn = ({ locale, current, onClick, children }: any) => (
 );
 
 // --- Icons ---
-const IconUser = () => <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>;
-const IconDoctor = () => <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>;
-const IconResearch = () => <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>;
-const IconInfo = () => <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+const IconUser = () => (
+    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+    </svg>
+);
+
+const IconDoctor = () => (
+    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+        />
+    </svg>
+);
+
+const IconResearch = () => (
+    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+        />
+    </svg>
+);
+
+const IconInfo = () => (
+    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+);
 
 export default Navbar;

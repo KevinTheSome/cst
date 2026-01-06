@@ -1,3 +1,4 @@
+import { useLang } from '@/hooks/useLang';
 import { Head, Link } from '@inertiajs/react';
 
 // --- ICONS ---
@@ -25,10 +26,136 @@ const Icons = {
     )
 };
 
+const copy = {
+    lv: {
+        metaTitle: 'ATMP Terapija',
+        hero: {
+            title: 'ATMP šūnu terapija &',
+            highlight: 'Diagnostika vienā platformā',
+            description:
+                'RTU Biočipu laboratorija apvieno mikrofluidiku un šūnu inženieriju, lai ATMP (Advanced Therapy Medicinal Products) kļūtu precīzāki un drošāki.',
+        },
+        ctas: {
+            patients: {
+                title: 'Pacientiem',
+                description: 'Pieteikšanās personalizētai ATMP konsultācijai un terapijai.',
+                action: 'Atvērt anketu',
+            },
+            specialists: {
+                title: 'Speciālistiem',
+                description: 'ATMP protokoli, validācija, pētniecība un sadarbība.',
+                action: 'Sākt sadarbību',
+            },
+        },
+        stats: [
+            { value: '10k+', label: 'Šūnu profili' },
+            { value: '1k+', label: 'Parametri' },
+            { value: 'ISO', label: 'Validētas telpas' },
+        ],
+        technology: {
+            title: 'Tehnoloģija & Fokus',
+            subtitle: 'ATMP saderīgi risinājumi reģeneratīvajā medicīnā.',
+            badge: 'Mikrofluidika',
+            precisionTitle: 'Biočipu precizitāte',
+            precisionText:
+                'Mikrofluidika ļauj analizēt un kondicionēt šūnas ar striktiem regulatīviem parametriem. Tas nodrošina ATMP prasībām atbilstošu kvalitāti.',
+            precisionList: [
+                'MSC un hematopoētiskās šūnas',
+                'Regulatīvie parametri vienā skrējienā',
+                'ISO klases drošas telpas',
+            ],
+            processTitle: 'ATMP Process',
+            steps: [
+                { title: '1. Analīze', text: 'Biočips sagatavo ATMP saderīgu profilu.' },
+                { title: '2. Kondicionēšana', text: 'Šūnas tiek aktivizētas un trenētas.' },
+                { title: '3. Terapija', text: 'Validēts protokols nodots ārstam.' },
+            ],
+            processFooter: 'ISO Validēti Procesa Soļi',
+            cards: [
+                {
+                    title: 'Regenerācija',
+                    text: 'ATMP pieeja audu atjaunošanai pēc traumas vai hroniskas pārslodzes.',
+                },
+                {
+                    title: 'Imūnmodulācija',
+                    text: 'Šūnu terapijas, kas regulē imūnsistēmu autoimūnos procesos.',
+                },
+            ],
+        },
+        finalCta: {
+            title: 'Vēlaties uzzināt vairāk par ATMP?',
+            action: 'Pieteikties konsultācijai',
+        },
+    },
+    en: {
+        metaTitle: 'ATMP Therapy',
+        hero: {
+            title: 'ATMP cell therapy &',
+            highlight: 'Diagnostics on one platform',
+            description:
+                'The RTU Biochip laboratory combines microfluidics and cell engineering to make ATMP (Advanced Therapy Medicinal Products) more precise and safer.',
+        },
+        ctas: {
+            patients: {
+                title: 'For Patients',
+                description: 'Apply for a personalized ATMP consultation and therapy.',
+                action: 'Open the form',
+            },
+            specialists: {
+                title: 'For Specialists',
+                description: 'ATMP protocols, validation, research, and collaboration.',
+                action: 'Start collaboration',
+            },
+        },
+        stats: [
+            { value: '10k+', label: 'Cell profiles' },
+            { value: '1k+', label: 'Parameters' },
+            { value: 'ISO', label: 'Validated facilities' },
+        ],
+        technology: {
+            title: 'Technology & Focus',
+            subtitle: 'ATMP-ready solutions in regenerative medicine.',
+            badge: 'Microfluidics',
+            precisionTitle: 'Biochip precision',
+            precisionText:
+                'Microfluidics lets us analyze and condition cells with strict regulatory parameters. This ensures ATMP-compliant quality.',
+            precisionList: [
+                'MSC and hematopoietic cells',
+                'Regulatory parameters in a single run',
+                'ISO-class safe facilities',
+            ],
+            processTitle: 'ATMP Process',
+            steps: [
+                { title: '1. Analysis', text: 'The biochip prepares an ATMP-compatible profile.' },
+                { title: '2. Conditioning', text: 'Cells are activated and trained.' },
+                { title: '3. Therapy', text: 'A validated protocol is delivered to the physician.' },
+            ],
+            processFooter: 'ISO-validated process steps',
+            cards: [
+                {
+                    title: 'Regeneration',
+                    text: 'ATMP approach to tissue recovery after injury or chronic overload.',
+                },
+                {
+                    title: 'Immunomodulation',
+                    text: 'Cell therapies that regulate the immune system in autoimmune processes.',
+                },
+            ],
+        },
+        finalCta: {
+            title: 'Want to learn more about ATMP?',
+            action: 'Book a consultation',
+        },
+    },
+} as const;
+
 export default function Welcome() {
+    const { locale } = useLang();
+    const t = copy[locale === 'en' ? 'en' : 'lv'];
+
     return (
         <>
-            <Head title="ATMP Terapija" />
+            <Head title={t.metaTitle} />
 
             <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
                 
@@ -44,14 +171,14 @@ export default function Welcome() {
                     {/* --- HERO SECTION --- */}
                     <main className="py-12 lg:py-20 text-center">
                         <h1 className="mx-auto max-w-4xl text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl mb-6">
-                            ATMP šūnu terapija & <br className="hidden sm:block" />
+                            {t.hero.title} <br className="hidden sm:block" />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-sky-600">
-                                Diagnostika vienā platformā
+                                {t.hero.highlight}
                             </span>
                         </h1>
                         
                         <p className="mx-auto max-w-2xl text-lg text-slate-600 leading-relaxed mb-10">
-                            RTU Biočipu laboratorija apvieno mikrofluidiku un šūnu inženieriju, lai ATMP (Advanced Therapy Medicinal Products) kļūtu precīzāki un drošāki.
+                            {t.hero.description}
                         </p>
 
                         {/* SPLIT CTA */}
@@ -60,10 +187,10 @@ export default function Welcome() {
                                 <div className="mb-4 rounded-full bg-emerald-50 p-3 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                                     <Icons.User className="h-6 w-6" />
                                 </div>
-                                <h3 className="text-lg font-bold text-slate-900">Pacientiem</h3>
-                                <p className="mt-1 text-sm text-slate-500 text-left">Pieteikšanās personalizētai ATMP konsultācijai un terapijai.</p>
+                                <h3 className="text-lg font-bold text-slate-900">{t.ctas.patients.title}</h3>
+                                <p className="mt-1 text-sm text-slate-500 text-left">{t.ctas.patients.description}</p>
                                 <div className="mt-4 flex items-center text-sm font-semibold text-emerald-600 group-hover:underline">
-                                    Atvērt anketu <Icons.ArrowRight className="ml-2 h-4 w-4" />
+                                    {t.ctas.patients.action} <Icons.ArrowRight className="ml-2 h-4 w-4" />
                                 </div>
                             </Link>
 
@@ -71,10 +198,10 @@ export default function Welcome() {
                                 <div className="mb-4 rounded-full bg-sky-50 p-3 text-sky-600 group-hover:bg-sky-600 group-hover:text-white transition-colors">
                                     <Icons.Doctor className="h-6 w-6" />
                                 </div>
-                                <h3 className="text-lg font-bold text-slate-900">Speciālistiem</h3>
-                                <p className="mt-1 text-sm text-slate-500 text-left">ATMP protokoli, validācija, pētniecība un sadarbība.</p>
+                                <h3 className="text-lg font-bold text-slate-900">{t.ctas.specialists.title}</h3>
+                                <p className="mt-1 text-sm text-slate-500 text-left">{t.ctas.specialists.description}</p>
                                 <div className="mt-4 flex items-center text-sm font-semibold text-sky-600 group-hover:underline">
-                                    Sākt sadarbību <Icons.ArrowRight className="ml-2 h-4 w-4" />
+                                    {t.ctas.specialists.action} <Icons.ArrowRight className="ml-2 h-4 w-4" />
                                 </div>
                             </Link>
                         </div>
@@ -82,18 +209,18 @@ export default function Welcome() {
                         {/* Stats */}
                         <div className="mt-12 flex flex-wrap justify-center gap-8 text-slate-400 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all">
                              <div className="flex flex-col items-center">
-                                <span className="text-2xl font-bold text-slate-800">10k+</span>
-                                <span className="text-xs uppercase tracking-wider">Šūnu profili</span>
+                                <span className="text-2xl font-bold text-slate-800">{t.stats[0].value}</span>
+                                <span className="text-xs uppercase tracking-wider">{t.stats[0].label}</span>
                              </div>
                              <div className="h-10 w-px bg-slate-200 hidden sm:block"></div>
                              <div className="flex flex-col items-center">
-                                <span className="text-2xl font-bold text-slate-800">1k+</span>
-                                <span className="text-xs uppercase tracking-wider">Parametri</span>
+                                <span className="text-2xl font-bold text-slate-800">{t.stats[1].value}</span>
+                                <span className="text-xs uppercase tracking-wider">{t.stats[1].label}</span>
                              </div>
                              <div className="h-10 w-px bg-slate-200 hidden sm:block"></div>
                              <div className="flex flex-col items-center">
-                                <span className="text-2xl font-bold text-slate-800">ISO</span>
-                                <span className="text-xs uppercase tracking-wider">Validētas telpas</span>
+                                <span className="text-2xl font-bold text-slate-800">{t.stats[2].value}</span>
+                                <span className="text-xs uppercase tracking-wider">{t.stats[2].label}</span>
                              </div>
                         </div>
                     </main>
@@ -102,8 +229,8 @@ export default function Welcome() {
                     <section className="py-16">
                         <div className="mb-10 flex items-end justify-between">
                             <div>
-                                <h2 className="text-3xl font-bold text-slate-900">Tehnoloģija & Fokus</h2>
-                                <p className="mt-2 text-slate-600">ATMP saderīgi risinājumi reģeneratīvajā medicīnā.</p>
+                                <h2 className="text-3xl font-bold text-slate-900">{t.technology.title}</h2>
+                                <p className="mt-2 text-slate-600">{t.technology.subtitle}</p>
                             </div>
                         </div>
 
@@ -114,18 +241,14 @@ export default function Welcome() {
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
                                 <div className="relative z-10">
                                     <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/50 px-3 py-1 text-xs text-emerald-700 mb-4">
-                                        Mikrofluidika
+                                        {t.technology.badge}
                                     </div>
-                                    <h3 className="text-2xl font-bold text-slate-900 mb-3">Biočipu precizitāte</h3>
+                                    <h3 className="text-2xl font-bold text-slate-900 mb-3">{t.technology.precisionTitle}</h3>
                                     <p className="text-slate-600 max-w-md leading-relaxed">
-                                        Mikrofluidika ļauj analizēt un kondicionēt šūnas ar striktiem regulatīviem parametriem. Tas nodrošina ATMP prasībām atbilstošu kvalitāti.
+                                        {t.technology.precisionText}
                                     </p>
                                     <ul className="mt-6 space-y-2">
-                                        {[
-                                            'MSC un hematopoētiskās šūnas', 
-                                            'Regulatīvie parametri vienā skrējienā', 
-                                            'ISO klases drošas telpas'
-                                        ].map(item => (
+                                        {t.technology.precisionList.map((item) => (
                                             <li key={item} className="flex items-center gap-2 text-sm text-slate-700 font-medium">
                                                 <Icons.Check className="h-4 w-4 text-emerald-500" /> {item}
                                             </li>
@@ -140,14 +263,10 @@ export default function Welcome() {
                                 <div className="absolute inset-0 bg-gradient-to-b from-white to-slate-50/50 pointer-events-none"></div>
 
                                 <div className="relative z-10 h-full flex flex-col">
-                                    <h3 className="text-xl font-bold mb-6 text-slate-900">ATMP Process</h3>
+                                    <h3 className="text-xl font-bold mb-6 text-slate-900">{t.technology.processTitle}</h3>
                                     
                                     <div className="space-y-8 flex-1">
-                                        {[
-                                            { title: '1. Analīze', text: 'Biočips sagatavo ATMP saderīgu profilu.' },
-                                            { title: '2. Kondicionēšana', text: 'Šūnas tiek aktivizētas un trenētas.' },
-                                            { title: '3. Terapija', text: 'Validēts protokols nodots ārstam.' }
-                                        ].map((step, i) => (
+                                        {t.technology.steps.map((step, i) => (
                                             <div key={i} className="flex gap-4 group">
                                                 <div className="flex flex-col items-center">
                                                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs shadow-sm">
@@ -166,7 +285,7 @@ export default function Welcome() {
                                     <div className="mt-8 pt-6 border-t border-slate-200">
                                         <p className="text-xs font-semibold text-emerald-700 flex items-center gap-2">
                                             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                            ISO Validēti Procesa Soļi
+                                            {t.technology.processFooter}
                                         </p>
                                     </div>
                                 </div>
@@ -177,8 +296,8 @@ export default function Welcome() {
                                 <div className="h-10 w-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
                                     <Icons.Regen className="w-6 h-6" />
                                 </div>
-                                <h4 className="font-bold text-slate-900">Regenerācija</h4>
-                                <p className="text-sm text-slate-600 mt-2">ATMP pieeja audu atjaunošanai pēc traumas vai hroniskas pārslodzes.</p>
+                                <h4 className="font-bold text-slate-900">{t.technology.cards[0].title}</h4>
+                                <p className="text-sm text-slate-600 mt-2">{t.technology.cards[0].text}</p>
                             </div>
 
                             {/* Small Card 2 */}
@@ -186,8 +305,8 @@ export default function Welcome() {
                                 <div className="h-10 w-10 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center mb-4">
                                     <Icons.Shield className="w-6 h-6" />
                                 </div>
-                                <h4 className="font-bold text-slate-900">Imūnmodulācija</h4>
-                                <p className="text-sm text-slate-600 mt-2">Šūnu terapijas, kas regulē imūnsistēmu autoimūnos procesos.</p>
+                                <h4 className="font-bold text-slate-900">{t.technology.cards[1].title}</h4>
+                                <p className="text-sm text-slate-600 mt-2">{t.technology.cards[1].text}</p>
                             </div>
 
                         </div>
@@ -195,10 +314,10 @@ export default function Welcome() {
 
                     {/* --- FINAL CTA --- */}
                     <div className="py-20 text-center">
-                        <h2 className="text-2xl font-bold text-slate-900">Vēlaties uzzināt vairāk par ATMP?</h2>
+                        <h2 className="text-2xl font-bold text-slate-900">{t.finalCta.title}</h2>
                         <div className="mt-6 flex justify-center gap-4">
                              <Link href="/ParMums/pievienojies-mums" className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900">
-                                Pieteikties konsultācijai
+                                {t.finalCta.action}
                              </Link>
                         </div>
                     </div>

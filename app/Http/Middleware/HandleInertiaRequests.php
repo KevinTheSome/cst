@@ -32,27 +32,27 @@ class HandleInertiaRequests extends Middleware
     {
         // Determine locale from session, or use default
         $locale = $request->session()->get('locale', config('app.locale'));
-        logger('Current locale: ' . $locale);
 
         // Set Laravel locale **before any translations**
         App::setLocale($locale);
 
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
-        
 
         return [
             ...parent::share($request),
 
             // current locale for frontend
             'locale' => $locale,
-            
 
-            // 🔹 All translation bundles you want in JS
+            // All translation bundles you want in JS
             'lang' => [
-                'test'   => Lang::get('test'),
-                'head'   => Lang::get('head'),
-                'anketa' => Lang::get('anketa'),
+                'test'      => Lang::get('test'),
+                'head'      => Lang::get('head'),
+                'anketa'    => Lang::get('anketa'),
                 'formcodes' => Lang::get('formcodes'),
+                'admin'     => Lang::get('admin'),
+                'specialistiem' => Lang::get('specialistiem'),
+                'lecture_codes' => Lang::get('lecture_codes'),  
             ],
 
             'name'  => config('app.name'),
