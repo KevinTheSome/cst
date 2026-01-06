@@ -1,9 +1,58 @@
+import { useLang } from '@/hooks/useLang';
 import { Link, useForm } from '@inertiajs/react';
 import { AlignLeft, ArrowLeft, CheckCircle2, Globe, Link as LinkIcon, Loader2, Save } from 'lucide-react';
 import React from 'react';
 import AdminLayout from '../../../Layouts/AdminLayout';
 
+const copy = {
+    lv: {
+        pageTitle: 'Izveidot apmācību',
+        pageSubtitle: 'Konfigurējiet jaunas apmācības informāciju.',
+        back: 'Atpakaļ uz sarakstu',
+        contentDetails: 'Satura informācija',
+        titleLv: 'Nosaukums (latviešu)',
+        titleEn: 'Nosaukums (angļu)',
+        titleLvPlaceholder: 'Apmācības nosaukums',
+        titleEnPlaceholder: 'Apmācības nosaukums angliski',
+        required: 'Obligāts lauks',
+        description: 'Apraksts',
+        descriptionPlaceholder: 'Ievadiet detalizētu apmācības moduļa aprakstu...',
+        externalResources: 'Ārējie resursi',
+        resourceUrl: 'Resursa URL',
+        status: 'Statuss',
+        published: 'Publicēts',
+        publishedHint: 'Redzams studentiem',
+        saving: 'Saglabā...',
+        create: 'Izveidot apmācību',
+        layoutTitle: 'Izveidot apmācību',
+    },
+    en: {
+        pageTitle: 'Create Training',
+        pageSubtitle: 'Configure the details for a new educational event.',
+        back: 'Back to List',
+        contentDetails: 'Content Details',
+        titleLv: 'Title (Latvian)',
+        titleEn: 'Title (English)',
+        titleLvPlaceholder: 'Training title in Latvian',
+        titleEnPlaceholder: 'Training Title',
+        required: 'Required field',
+        description: 'Description',
+        descriptionPlaceholder: 'Enter a detailed description of the training module...',
+        externalResources: 'External Resources',
+        resourceUrl: 'Resource URL',
+        status: 'Status',
+        published: 'Published',
+        publishedHint: 'Visible to students',
+        saving: 'Saving...',
+        create: 'Create Training',
+        layoutTitle: 'Create Training',
+    },
+} as const;
+
 const CreateApmaciba: React.FC = () => {
+    const { locale } = useLang();
+    const t = copy[locale === 'en' ? 'en' : 'lv'];
+
     const { data, setData, post, processing, errors } = useForm<Record<string, any>>({
         title: { lv: '', en: '' },
         description: '',
@@ -29,15 +78,15 @@ const CreateApmaciba: React.FC = () => {
                 {/* Page Header */}
                 <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-white">Create Training</h1>
-                        <p className="mt-1 text-sm text-slate-400">Configure the details for a new educational event.</p>
+                        <h1 className="text-3xl font-bold tracking-tight text-white">{t.pageTitle}</h1>
+                        <p className="mt-1 text-sm text-slate-400">{t.pageSubtitle}</p>
                     </div>
                     <Link
                         href="/admin/trainings"
                         className="group flex items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-5 py-2.5 text-sm font-medium text-slate-300 transition-all duration-200 hover:bg-slate-700"
                     >
                         <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-                        Back to List
+                        {t.back}
                     </Link>
                 </div>
 
@@ -48,7 +97,7 @@ const CreateApmaciba: React.FC = () => {
                         <div className="overflow-hidden rounded-xl border border-slate-700/50 bg-slate-800 shadow-xl">
                             <div className="flex items-center gap-2 border-b border-slate-700/50 bg-slate-800/50 px-6 py-4">
                                 <Globe className="h-4 w-4 text-indigo-400" />
-                                <h3 className="text-sm font-semibold text-white">Content Details</h3>
+                                <h3 className="text-sm font-semibold text-white">{t.contentDetails}</h3>
                             </div>
 
                             <div className="space-y-6 p-6">
@@ -56,7 +105,7 @@ const CreateApmaciba: React.FC = () => {
                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                     {/* Title LV */}
                                     <div className="group relative">
-                                        <label className={labelClass}>Title (Latvian)</label>
+                                        <label className={labelClass}>{t.titleLv}</label>
                                         <div className="relative">
                                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                                 <span className="rounded border border-indigo-500/20 bg-indigo-500/10 px-1.5 py-0.5 text-[10px] font-bold text-indigo-400">
@@ -68,15 +117,15 @@ const CreateApmaciba: React.FC = () => {
                                                 value={data.title.lv}
                                                 onChange={(e) => setData((d: any) => ({ ...d, title: { ...d.title, lv: e.target.value } }))}
                                                 className={`${baseInputClass} pl-12`}
-                                                placeholder="Apmācības nosaukums"
+                                                placeholder={t.titleLvPlaceholder}
                                             />
                                         </div>
-                                        {errors['title.lv'] && <p className="mt-1.5 flex items-center gap-1 text-xs text-rose-400">Required field</p>}
+                                        {errors['title.lv'] && <p className="mt-1.5 flex items-center gap-1 text-xs text-rose-400">{t.required}</p>}
                                     </div>
 
                                     {/* Title EN */}
                                     <div className="group relative">
-                                        <label className={labelClass}>Title (English)</label>
+                                        <label className={labelClass}>{t.titleEn}</label>
                                         <div className="relative">
                                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                                 <span className="rounded border border-slate-600 bg-slate-700 px-1.5 py-0.5 text-[10px] font-bold text-slate-300">
@@ -88,16 +137,16 @@ const CreateApmaciba: React.FC = () => {
                                                 value={data.title.en}
                                                 onChange={(e) => setData((d: any) => ({ ...d, title: { ...d.title, en: e.target.value } }))}
                                                 className={`${baseInputClass} pl-12`}
-                                                placeholder="Training Title"
+                                                placeholder={t.titleEnPlaceholder}
                                             />
                                         </div>
-                                        {errors['title.en'] && <p className="mt-1.5 text-xs text-rose-400">Required field</p>}
+                                        {errors['title.en'] && <p className="mt-1.5 text-xs text-rose-400">{t.required}</p>}
                                     </div>
                                 </div>
 
                                 {/* Description */}
                                 <div>
-                                    <label className={labelClass}>Description</label>
+                                    <label className={labelClass}>{t.description}</label>
                                     <div className="relative">
                                         <div className="pointer-events-none absolute top-3 left-3">
                                             <AlignLeft className="h-5 w-5 text-slate-500" />
@@ -107,7 +156,7 @@ const CreateApmaciba: React.FC = () => {
                                             onChange={(e) => setData((d: any) => ({ ...d, description: e.target.value }))}
                                             rows={5}
                                             className={`${baseInputClass} min-h-[140px] resize-y py-3`}
-                                            placeholder="Enter a detailed description of the training module..."
+                                            placeholder={t.descriptionPlaceholder}
                                         />
                                     </div>
                                 </div>
@@ -118,11 +167,11 @@ const CreateApmaciba: React.FC = () => {
                         <div className="overflow-hidden rounded-xl border border-slate-700/50 bg-slate-800 shadow-xl">
                             <div className="flex items-center gap-2 border-b border-slate-700/50 bg-slate-800/50 px-6 py-4">
                                 <LinkIcon className="h-4 w-4 text-emerald-400" />
-                                <h3 className="text-sm font-semibold text-white">External Resources</h3>
+                                <h3 className="text-sm font-semibold text-white">{t.externalResources}</h3>
                             </div>
                             <div className="p-6">
                                 <div>
-                                    <label className={labelClass}>Resource URL</label>
+                                    <label className={labelClass}>{t.resourceUrl}</label>
                                     <div className="relative">
                                         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                             <LinkIcon className="h-4 w-4 text-slate-500" />
@@ -147,13 +196,13 @@ const CreateApmaciba: React.FC = () => {
                         <div className="overflow-hidden rounded-xl border border-slate-700/50 bg-slate-800 shadow-xl">
                             <div className="flex items-center gap-2 border-b border-slate-700/50 bg-slate-800/50 px-6 py-4">
                                 <CheckCircle2 className="h-4 w-4 text-blue-400" />
-                                <h3 className="text-sm font-semibold text-white">Status</h3>
+                                <h3 className="text-sm font-semibold text-white">{t.status}</h3>
                             </div>
                             <div className="p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <span className="block text-sm font-medium text-slate-200">Published</span>
-                                        <span className="text-xs text-slate-500">Visible to students</span>
+                                        <span className="block text-sm font-medium text-slate-200">{t.published}</span>
+                                        <span className="text-xs text-slate-500">{t.publishedHint}</span>
                                     </div>
 
                                     {/* Modern Toggle Switch */}
@@ -176,7 +225,7 @@ const CreateApmaciba: React.FC = () => {
                                     className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-3 text-sm font-medium text-white shadow-lg shadow-indigo-500/20 transition-all hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-70"
                                 >
                                     {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                                    {processing ? 'Saving...' : 'Create Training'}
+                                    {processing ? t.saving : t.create}
                                 </button>
                             </div>
                         </div>
@@ -187,6 +236,12 @@ const CreateApmaciba: React.FC = () => {
     );
 };
 
-(CreateApmaciba as any).layout = (page: React.ReactNode) => <AdminLayout title="Create Training">{page}</AdminLayout>;
+const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
+    const { locale } = useLang();
+    const t = copy[locale === 'en' ? 'en' : 'lv'];
+    return <AdminLayout title={t.layoutTitle}>{children}</AdminLayout>;
+};
+
+(CreateApmaciba as any).layout = (page: React.ReactNode) => <LayoutWrapper>{page}</LayoutWrapper>;
 
 export default CreateApmaciba;
