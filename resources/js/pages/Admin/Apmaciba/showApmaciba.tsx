@@ -1,4 +1,5 @@
 import AdminLayout from '@/Layouts/AdminLayout';
+import { useLang } from '@/hooks/useLang';
 import { Link, router, usePage } from '@inertiajs/react';
 import { ArrowLeft, CheckCircle, Edit, ExternalLink, Globe, Trash2, XCircle } from 'lucide-react';
 import React, { useState } from 'react';
@@ -27,9 +28,50 @@ type PageProps = {
     training: Training;
 };
 
+const copy = {
+    lv: {
+        back: 'Atpakaļ uz apmācībām',
+        active: 'Aktīva',
+        inactive: 'Neaktīva',
+        untitled: 'Bez nosaukuma',
+        edit: 'Rediģēt',
+        delete: 'Dzēst',
+        description: 'Apraksts',
+        noDescription: 'Šai apmācībai nav norādīts apraksts.',
+        resources: 'Resursi',
+        openUrl: 'Atvērt saiti / URL',
+        deleteTitle: 'Dzēst apmācību?',
+        deleteBody: 'Vai tiešām vēlaties neatgriezeniski dzēst {title}? Šo darbību nevar atcelt.',
+        cancel: 'Atcelt',
+        deleting: 'Dzēš...',
+        confirmDelete: 'Jā, dzēst',
+        layoutTitle: 'Apmācības informācija',
+    },
+    en: {
+        back: 'Back to Trainings',
+        active: 'Active',
+        inactive: 'Inactive',
+        untitled: 'Untitled Training',
+        edit: 'Edit',
+        delete: 'Delete',
+        description: 'Description',
+        noDescription: 'No description provided for this training.',
+        resources: 'Resources',
+        openUrl: 'Open Meeting / URL',
+        deleteTitle: 'Delete Training?',
+        deleteBody: 'Are you sure you want to permanently delete {title}? This action cannot be undone.',
+        cancel: 'Cancel',
+        deleting: 'Deleting...',
+        confirmDelete: 'Yes, Delete',
+        layoutTitle: 'Training Details',
+    },
+} as const;
+
 const ShowApmaciba: React.FC = () => {
     const page = usePage<PageProps>();
     const t = page.props.training;
+    const { locale } = useLang();
+    const copySet = copy[locale === 'en' ? 'en' : 'lv'];
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -44,6 +86,11 @@ const ShowApmaciba: React.FC = () => {
         });
     }
 
+    const getTitle = () => {
+        if (locale === 'en') return t.title?.en ?? t.title?.lv ?? copySet.untitled;
+        return t.title?.lv ?? t.title?.en ?? copySet.untitled;
+    };
+
     return (
         <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
             {/* Header / Nav */}
@@ -53,7 +100,7 @@ const ShowApmaciba: React.FC = () => {
                     className="inline-flex items-center gap-2 text-sm font-medium text-slate-400 transition-colors hover:text-white"
                 >
                     <ArrowLeft className="h-4 w-4" />
-                    Back to Trainings
+                    {copySet.back}
                 </Link>
             </div>
 
@@ -72,15 +119,15 @@ const ShowApmaciba: React.FC = () => {
                                 </span>
                                 {t.is_active ? (
                                     <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">
-                                        <CheckCircle className="h-3.5 w-3.5" /> Active
+                                        <CheckCircle className="h-3.5 w-3.5" /> {copySet.active}
                                     </span>
                                 ) : (
                                     <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-500/20 bg-rose-500/10 px-3 py-1 text-xs font-medium text-rose-400">
-                                        <XCircle className="h-3.5 w-3.5" /> Inactive
+                                        <XCircle className="h-3.5 w-3.5" /> {copySet.inactive}
                                     </span>
                                 )}
                             </div>
-                            <h1 className="text-3xl font-bold tracking-tight text-white">{t.title?.lv ?? t.title?.en ?? 'Untitled Training'}</h1>
+                            <h1 className="text-3xl font-bold tracking-tight text-white">{getTitle()}</h1>
                         </div>
 
                         {/* Actions */}
@@ -89,13 +136,13 @@ const ShowApmaciba: React.FC = () => {
                                 href={`/admin/trainings/edit/${t.id}`}
                                 className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-bold text-slate-900 shadow-lg shadow-emerald-500/20 transition-all hover:scale-105 hover:bg-emerald-400"
                             >
-                                <Edit className="h-4 w-4" /> Edit
+                                <Edit className="h-4 w-4" /> {copySet.edit}
                             </Link>
                             <button
                                 onClick={handleDeleteClick}
                                 className="inline-flex items-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 px-4 py-2.5 text-sm font-bold text-rose-400 transition-all hover:bg-rose-500/20 hover:text-rose-300"
                             >
-                                <Trash2 className="h-4 w-4" /> Delete
+                                <Trash2 className="h-4 w-4" /> {copySet.delete}
                             </button>
                         </div>
                     </div>
@@ -104,12 +151,12 @@ const ShowApmaciba: React.FC = () => {
                     <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-3">
                         {/* Description */}
                         <div className="space-y-4 md:col-span-2">
-                            <h3 className="text-sm font-medium tracking-wider text-slate-500 uppercase">Description</h3>
+                            <h3 className="text-sm font-medium tracking-wider text-slate-500 uppercase">{copySet.description}</h3>
                             <div className="prose-invert prose max-w-none rounded-2xl border border-white/5 bg-black/20 p-6 text-slate-300">
                                 {t.description ? (
                                     <p className="leading-relaxed whitespace-pre-wrap">{t.description}</p>
                                 ) : (
-                                    <p className="text-slate-500 italic">No description provided for this training.</p>
+                                    <p className="text-slate-500 italic">{copySet.noDescription}</p>
                                 )}
                             </div>
                         </div>
@@ -118,7 +165,7 @@ const ShowApmaciba: React.FC = () => {
                         <div className="space-y-6">
                             {t.url && (
                                 <div>
-                                    <h3 className="mb-3 text-sm font-medium tracking-wider text-slate-500 uppercase">Resources</h3>
+                                    <h3 className="mb-3 text-sm font-medium tracking-wider text-slate-500 uppercase">{copySet.resources}</h3>
                                     <a
                                         href={t.url}
                                         target="_blank"
@@ -127,7 +174,7 @@ const ShowApmaciba: React.FC = () => {
                                     >
                                         <div className="flex items-center gap-3 text-blue-400 group-hover:text-blue-300">
                                             <Globe className="h-5 w-5" />
-                                            <span className="text-sm font-bold">Open Meeting / URL</span>
+                                            <span className="text-sm font-bold">{copySet.openUrl}</span>
                                             <ExternalLink className="ml-auto h-4 w-4 opacity-50 group-hover:opacity-100" />
                                         </div>
                                     </a>
@@ -151,11 +198,10 @@ const ShowApmaciba: React.FC = () => {
                                 <IconWarning />
                             </div>
 
-                            <h3 className="mb-2 text-xl font-bold text-white">Delete Training?</h3>
+                            <h3 className="mb-2 text-xl font-bold text-white">{copySet.deleteTitle}</h3>
 
                             <p className="mb-6 text-sm text-slate-400">
-                                Are you sure you want to permanently delete <strong>{t.title?.lv ?? t.title?.en}</strong>? This action cannot be
-                                undone.
+                                {copySet.deleteBody.replace('{title}', getTitle())}
                             </p>
 
                             <div className="flex gap-3">
@@ -164,14 +210,14 @@ const ShowApmaciba: React.FC = () => {
                                     onClick={() => setShowDeleteModal(false)}
                                     className="flex-1 rounded-xl border border-white/10 bg-transparent py-3 text-sm font-semibold text-white transition-colors hover:bg-white/5"
                                 >
-                                    Cancel
+                                    {copySet.cancel}
                                 </button>
                                 <button
                                     disabled={isDeleting}
                                     onClick={confirmDelete}
                                     className="flex-1 rounded-xl bg-rose-500 py-3 text-sm font-bold text-white shadow-lg shadow-rose-500/20 transition-all hover:scale-[1.02] hover:bg-rose-600"
                                 >
-                                    {isDeleting ? 'Deleting...' : 'Yes, Delete'}
+                                    {isDeleting ? copySet.deleting : copySet.confirmDelete}
                                 </button>
                             </div>
                         </div>
@@ -182,7 +228,13 @@ const ShowApmaciba: React.FC = () => {
     );
 };
 
+const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
+    const { locale } = useLang();
+    const t = copy[locale === 'en' ? 'en' : 'lv'];
+    return <AdminLayout title={t.layoutTitle}>{children}</AdminLayout>;
+};
+
 // Wrap in AdminLayout
-(ShowApmaciba as any).layout = (page: React.ReactNode) => <AdminLayout title="Training Details">{page}</AdminLayout>;
+(ShowApmaciba as any).layout = (page: React.ReactNode) => <LayoutWrapper>{page}</LayoutWrapper>;
 
 export default ShowApmaciba;
