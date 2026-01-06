@@ -2,149 +2,236 @@
 
 return [
     'index' => [
-        'page_title'      => 'Anketas',
-        'label'           => 'Anketas',
-        'heading'         => 'Visas anketas',
-        'subheading'      => 'Pārskats par visām publiskajām un privātajām formām.',
-        'create_button'   => '+ Izveidot jaunu anketu',
-        'list_label'      => 'Anketu saraksts',
-        'list_subheading' => 'Noklikšķiniet Skatīt, lai atvērtu formu, vai Rediģēt / Dzēst to.',
+        'page_title'      => 'Forms',
+        'label'           => 'Forms',
+        'heading'         => 'All forms',
+        'subheading'      => 'Overview of all public and private forms.',
+        'create_button'   => '+ Create new form',
+        'list_label'      => 'Forms list',
+        'list_subheading' => 'Click View to open a form, or Edit / Delete it.',
         'id_label'        => 'ID',
-        'code_label'      => 'Kods',
+        'code_label'      => 'Code',
 
-        'view'            => 'Skatīt',
-        'edit'            => 'Rediģēt',
-        'delete'          => 'Dzēst',
+        'view'            => 'View',
+        'edit'            => 'Edit',
+        'delete'          => 'Delete',
 
-        'empty'           => 'Vēl nav anketu.',
-        'confirm_delete'  => 'Vai tiešām dzēst anketu "{title}"?',
-        'deleted_success' => 'Anketa veiksmīgi izdzēsta.',
-        'deleted_error'   => 'Kļūda dzēšot anketu.',
+        'empty'           => 'No forms yet.',
+        'confirm_delete'  => 'Are you sure you want to delete the form "{title}"?',
+        'deleted_success' => 'Form deleted successfully.',
+        'deleted_error'   => 'Error deleting form.',
 
-        'search_placeholder' => 'Meklēt...',
+        'search_placeholder' => 'Search...',
         'na' => 'N/A',
 
         // Optional alias if any code uses delete_confirm
-        'delete_confirm' => 'Vai tiešām dzēst šo anketu?',
+        'delete_confirm' => 'Are you sure you want to delete this form?',
 
         'filters' => [
-            'title' => 'Filtri',
-            'type' => 'Tips',
-            'any_type' => 'Jebkurš tips',
-            'public' => 'Publiska',
-            'private' => 'Privāta',
-            'code' => 'Kods',
-            'from' => 'No',
-            'to' => 'Līdz',
+            'title' => 'Filters',
+            'type' => 'Type',
+            'any_type' => 'Any type',
+            'public' => 'Public',
+            'private' => 'Private',
+            'code' => 'Code',
+            'from' => 'From',
+            'to' => 'To',
         ],
 
         'actions' => [
-            'reset' => 'Atiestatīt',
-            'filters' => 'Filtri',
-            'clear_filters' => 'Notīrīt filtrus',
-            'clear' => 'Notīrīt',
-            'apply' => 'Pielietot',
-            'create_new_aria' => 'Izveidot jaunu',
+            'reset' => 'Reset',
+            'filters' => 'Filters',
+            'clear_filters' => 'Clear filters',
+            'clear' => 'Clear',
+            'apply' => 'Apply',
+            'create_new_aria' => 'Create new',
         ],
 
         'misc' => [
-            'untitled' => 'Nenosaukta anketa',
+            'untitled' => 'Untitled form',
         ],
     ],
 
-    // ✅ THIS is what you were missing (results must be here)
+    // ✅ Added: results translations (list + show pages)
     'results' => [
-        'page_title' => 'Anketu atbildes',
-        'layout_title' => 'Anketu atbildes',
+        'page_title' => 'Submissions',
+        'layout_title' => 'Submissions',
 
-        'label' => 'Anketu atbildes',
-        'heading' => 'Anketu atbildes',
-        'subheading' => 'Pārskats par iesniegtajām atbildēm un to saturu.',
+        'label' => 'Submissions',
+        'heading' => 'Submissions',
+        'subheading' => 'Overview of submitted answers and their content.',
 
-        'total_answers' => 'Kopā atbildes',
-        'search_placeholder' => 'Meklēt atbildēs...',
+        'total_answers' => 'Total answers',
+        'search_placeholder' => 'Search submissions...',
 
         'table' => [
-            'id_code' => 'ID / KODS',
-            'type' => 'TIPS',
-            'submitted' => 'IESNIEGTS',
-            'answers' => 'ATBILDES',
-            'action' => 'DARBĪBA',
+            'id_code' => 'ID / CODE',
+            'type' => 'TYPE',
+            'submitted' => 'SUBMITTED',
+            'answers' => 'ANSWERS',
+            'action' => 'ACTION',
         ],
 
-        'empty' => 'Nav atrastu atbilžu.',
-        'empty_hint' => 'Pamēģiniet mainīt filtrus vai meklēšanas frāzi.',
+        'empty' => 'No submissions found.',
+        'empty_hint' => 'Try adjusting your filters or search query.',
 
         'actions' => [
-            'filters' => 'Filtri',
-            'view' => 'Skatīt',
-            'reset' => 'Atiestatīt',
-            'clear' => 'Notīrīt',
-            'apply' => 'Pielietot',
+            'filters' => 'Filters',
+            'view' => 'View',
+            'reset' => 'Reset',
+            'clear' => 'Clear',
+            'apply' => 'Apply',
         ],
 
         // Filters inside results (used by ResultsIndex modal)
         'filters' => [
-            'type' => 'Tips',
-            'code' => 'Kods',
-            'code_placeholder' => 'Kods...',
-            'date_range' => 'Iesniegšanas datumu diapazons',
-            'from' => 'No',
-            'to' => 'Līdz',
-            'sort' => 'Kārtošana',
-            'newest' => 'Jaunākie vispirms',
-            'oldest' => 'Vecākie vispirms',
+            'type' => 'Type',
+            'code' => 'Code',
+            'code_placeholder' => 'Code...',
+            'date_range' => 'Submission date range',
+            'from' => 'From',
+            'to' => 'To',
+            'sort' => 'Sort order',
+            'newest' => 'Newest first',
+            'oldest' => 'Oldest first',
         ],
 
         // Show page strings (ResultsShow)
-        'view_title' => 'Iesniegums',
-        'view_layout_title' => 'Iesniegums',
-        'view_label' => 'Iesniegums',
-        'view_subheading' => 'Pilnas atbildes no viena iesnieguma.',
+        'view_title' => 'Submission',
+        'view_layout_title' => 'Submission',
+        'view_label' => 'Submission',
+        'view_subheading' => 'Full answers from one questionnaire submission.',
 
         'field_id' => 'ID',
-        'field_type' => 'Tips',
-        'field_code' => 'Kods',
-        'field_submitted' => 'Iesniegts',
+        'field_type' => 'Type',
+        'field_code' => 'Code',
+        'field_submitted' => 'Submitted',
 
-        'answers_heading' => 'Atbildes',
-        'answers_note' => 'Tikai administratoriem ir piekļuve šai informācijai.',
-        'answers_empty' => 'Nav saglabātu atbilžu.',
+        'answers_heading' => 'Answers',
+        'answers_note' => 'Only administrators can view this information.',
+        'answers_empty' => 'No answers stored.',
 
         'misc' => [
             'dash' => '—',
-            'standard' => 'Standarts',
+            'standard' => 'Standard',
         ],
     ],
 
     'update' => [
-        'back'                   => '← Atpakaļ uz sarakstu',
-        'title'                  => 'Rediģēt formu',
-        'form_title_placeholder' => 'Anketes nosaukums',
-        'visibility_public'      => 'Publiska — ikviens ar saiti var atbildēt',
-        'visibility_private'     => 'Privāta — ierobežota piekļuve',
-        'add_question'           => 'Pievienot jautājumu',
-        'options_label'          => 'Opcijas:',
-        'add_option'             => 'Pievienot opciju',
-        'save'                   => 'Saglabāt izmaiņas',
-        'saving'                 => 'Saglabā...',
-        'success'                => 'Forma atjaunināta!',
-        'error'                  => 'Kļūda saglabājot izmaiņas.',
-        'specialist'             => 'Speciālists',
-        'psoriasis'              => 'Psoriāze',
-        'chronic'                => 'Hronisks',
+        'back'                   => '← Back to list',
+        'title'                  => 'Edit form',
+        'form_title_placeholder' => 'Form title',
+        'visibility_public'      => 'Public — anyone with the link can respond',
+        'visibility_private'     => 'Private — restricted access',
+        'add_question'           => 'Add question',
+        'options_label'          => 'Options:',
+        'add_option'             => 'Add option',
+        'save'                   => 'Save changes',
+        'saving'                 => 'Saving...',
+        'success'                => 'Form updated!',
+        'error'                  => 'Error saving changes.',
+        'specialist'             => 'Specialist',
+        'psoriasis'              => 'Psoriasis',
+        'chronic'                => 'Chronic',
     ],
 
     'selector' => [
-        'page_title'     => 'Anketu selektors',
-        'heading'        => 'Piešķirt anketu tipus',
-        'subheading'     => 'Izvēlieties katrai formai tipu, lai kontrolētu, kur tiek novirzītas atbildes.',
-        'code'           => 'Anketas kods',
-        'select_type'    => 'Izvēlieties tipu…',
-        'save'           => 'Saglabāt',
-        'no_results'     => 'Nav atrastu anketu.',
-        'error_missing'  => 'Lūdzu, izvēlieties tipu pirms saglabāšanas.',
-        'success'        => 'Tips veiksmīgi saglabāts.',
-        'error'          => 'Neizdevās saglabāt. Lūdzu, mēģiniet vēlreiz.',
+        'page_title'     => 'Form selector',
+        'heading'        => 'Assign form types',
+        'subheading'     => 'Select a type for each form to control where submissions go.',
+        'code'           => 'Form code',
+        'select_type'    => 'Select type…',
+        'save'           => 'Save',
+        'no_results'     => 'No forms found.',
+        'error_missing'  => 'Please select a type before saving.',
+        'success'        => 'Type saved successfully.',
+        'error'          => 'Failed to save. Please try again.',
     ],
+    'create' => [
+    'page_title'   => 'Izveidot anketu',
+    'layout_title' => 'Izveidot anketu',
+
+    'label'      => 'Anketu studija',
+    'heading'    => 'Izveidot jaunu anketu',
+    'subheading' => 'Konfigurējiet nosaukumus, redzamību un pievienojiet jautājumus.',
+
+    'actions' => [
+        'cancel' => 'Atcelt',
+        'save'   => 'Saglabāt',
+    ],
+
+    'basic' => [
+        'heading' => 'Pamatinformācija',
+
+        'title_lv' => 'Nosaukums (LV)',
+        'title_en' => 'Nosaukums (EN)',
+
+        'title_lv_placeholder' => 'Piem., Klientu apmierinātība',
+        'title_en_placeholder' => 'e.g., Customer Satisfaction',
+    ],
+
+    'questions' => [
+        'heading' => 'Jautājumi',
+        'total_suffix' => 'kopā',
+        'empty' => 'Saraksts ir tukšs. Pievienojiet pirmo jautājumu.',
+        'add'   => 'Pievienot jautājumu',
+    ],
+
+    'field' => [
+        'type' => 'Tips',
+        'delete_title' => 'Dzēst jautājumu',
+
+        'types' => [
+            'radio'    => 'Radio izvēle',
+            'checkbox' => 'Atzīmējamie',
+            'dropdown' => 'Izvēlne',
+            'text'     => 'Teksta ievade',
+            'scale'    => 'Skala 1–10',
+        ],
+
+        'question_lv_placeholder' => 'Jautājums (LV)',
+        'question_en_placeholder' => 'Jautājums (EN)',
+    ],
+
+    'options' => [
+        'add' => 'Pievienot opciju',
+        'lv_placeholder' => 'Opcija (LV)',
+        'en_placeholder' => 'Option (EN)',
+    ],
+
+    'text' => [
+        'placeholder_lv' => 'Placeholder (LV)',
+        'placeholder_en' => 'Placeholder (EN)',
+    ],
+
+    'scale' => [
+        'min_value' => 'Min vērtība',
+        'max_value' => 'Max vērtība',
+        'preview'   => 'Priekšskatījums',
+        'min_fallback' => 'Min',
+        'max_fallback' => 'Max',
+    ],
+
+    'sidebar' => [
+        'settings' => 'Iestatījumi',
+        'visibility' => 'Redzamība',
+        'public'  => 'Publiska',
+        'private' => 'Privāta',
+        'questions' => 'Jautājumi',
+        'status' => 'Statuss',
+        'draft'  => 'Melnraksts',
+        'save'   => 'Saglabāt anketu',
+    ],
+
+    'validation' => [
+        'title'   => 'Validācijas kļūda',
+        'message' => 'Lūdzu izlabojiet kļūdas pirms saglabāšanas.',
+    ],
+
+    'modal' => [
+        'continue' => 'Turpināt',
+        'close'    => 'Aizvērt',
+    ],
+],
+
 ];
