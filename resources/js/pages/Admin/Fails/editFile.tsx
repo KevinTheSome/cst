@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Head, Link, usePage, router } from "@inertiajs/react";
-import AdminLayout from '../../../Layouts/AdminLayout';
+import AdminLayout from "../../../Layouts/AdminLayout";
 import { ArrowLeft, Loader2, Upload, Plus, X } from "lucide-react";
+import { useLang } from "@/hooks/useLang";
 
 type Tag = { lv: string; en: string };
 
 export default function EditFile() {
+  const { __ } = useLang();
+
   const { props } = usePage<any>();
   const file = props.file;
 
@@ -15,20 +18,20 @@ export default function EditFile() {
   const [processing, setProcessing] = useState(false);
   const [errors, setErrors] = useState<any>({});
 
-  const [tags, setTags] = useState<Tag[]>((file.tags && Array.isArray(file.tags)) ? file.tags : []);
-  const [tagInput, setTagInput] = useState<Tag>({ lv: '', en: '' });
+  const [tags, setTags] = useState<Tag[]>(Array.isArray(file.tags) ? file.tags : []);
+  const [tagInput, setTagInput] = useState<Tag>({ lv: "", en: "" });
 
   useEffect(() => {
-    if (file.tags && Array.isArray(file.tags)) setTags(file.tags);
+    if (Array.isArray(file.tags)) setTags(file.tags);
   }, [file.tags]);
 
   function addTag(e?: React.FormEvent) {
     e?.preventDefault();
-    const lv = (tagInput.lv || '').trim();
-    const en = (tagInput.en || '').trim();
+    const lv = (tagInput.lv || "").trim();
+    const en = (tagInput.en || "").trim();
     if (!lv && !en) return;
     setTags((t) => [...t, { lv, en }]);
-    setTagInput({ lv: '', en: '' });
+    setTagInput({ lv: "", en: "" });
   }
 
   function removeTag(idx: number) {
@@ -48,9 +51,7 @@ export default function EditFile() {
     formData.append("title_lv", titleLv);
     formData.append("title_en", titleEn);
 
-    if (selectedFile) {
-      formData.append("file", selectedFile);
-    }
+    if (selectedFile) formData.append("file", selectedFile);
 
     tags.forEach((t, i) => {
       formData.append(`tags[${i}][lv]`, t.lv);
@@ -59,7 +60,6 @@ export default function EditFile() {
 
     formData.append("_method", "PUT");
 
-    // POST to admin-prefixed update URL
     router.post(`/admin/files/update/${file.id}`, formData, {
       preserveScroll: true,
       onSuccess: () => setProcessing(false),
@@ -76,12 +76,16 @@ export default function EditFile() {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6">
-      <Head title="Edit File" />
+      <Head title={__("files.edit.page_title") ?? "Edit File"} />
 
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Edit File</h1>
-          <p className="text-sm text-gray-400 mt-1">Modify titles, replace file or update tags</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">
+            {__("files.edit.heading") ?? "Edit File"}
+          </h1>
+          <p className="text-sm text-gray-400 mt-1">
+            {__("files.edit.subheading") ?? "Modify titles, replace file or update tags"}
+          </p>
         </div>
 
         <Link
@@ -89,7 +93,7 @@ export default function EditFile() {
           className="group flex items-center gap-2 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-all shadow-sm"
         >
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-          Back
+          {__("files.actions.back") ?? "Back"}
         </Link>
       </div>
 
@@ -98,57 +102,98 @@ export default function EditFile() {
           <div className="p-8 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className={labelClass}>Title (LV)</label>
-                <input name="title_lv" value={titleLv} onChange={(e) => setTitleLv(e.target.value)} className={inputClass} placeholder="Title in Latvian" />
+                <label className={labelClass}>{__("files.fields.title_lv") ?? "Title (LV)"}</label>
+                <input
+                  name="title_lv"
+                  value={titleLv}
+                  onChange={(e) => setTitleLv(e.target.value)}
+                  className={inputClass}
+                  placeholder={__("files.placeholders.title_lv") ?? "Title in Latvian"}
+                />
+                {errors.title_lv && <p className="mt-1 text-sm text-red-400">{String(errors.title_lv)}</p>}
               </div>
 
               <div>
-                <label className={labelClass}>Title (EN)</label>
-                <input name="title_en" value={titleEn} onChange={(e) => setTitleEn(e.target.value)} className={inputClass} placeholder="Title in English" />
+                <label className={labelClass}>{__("files.fields.title_en") ?? "Title (EN)"}</label>
+                <input
+                  name="title_en"
+                  value={titleEn}
+                  onChange={(e) => setTitleEn(e.target.value)}
+                  className={inputClass}
+                  placeholder={__("files.placeholders.title_en") ?? "Title in English"}
+                />
+                {errors.title_en && <p className="mt-1 text-sm text-red-400">{String(errors.title_en)}</p>}
               </div>
             </div>
 
             <div>
-              <label className={labelClass}>Replace File (optional)</label>
-              <input name="file" type="file" accept=".csv,.txt,.pdf,.jpg,.jpeg,.png,.zip,.xlsx,.xls,.doc,.docx" onChange={onFileChange} className="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-100" />
+              <label className={labelClass}>{__("files.edit.replace_file") ?? "Replace File (optional)"}</label>
+              <input
+                name="file"
+                type="file"
+                accept=".csv,.txt,.pdf,.jpg,.jpeg,.png,.zip,.xlsx,.xls,.doc,.docx"
+                onChange={onFileChange}
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-100"
+              />
+              {errors.file && <p className="mt-1 text-sm text-red-400">{String(errors.file)}</p>}
             </div>
 
             <div>
-              <label className={labelClass}>Tags (LV / EN)</label>
+              <label className={labelClass}>{__("files.fields.tags") ?? "Tags (LV / EN)"}</label>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-                <input value={tagInput.lv} onChange={(e) => setTagInput((t) => ({ ...t, lv: e.target.value }))} placeholder="Tag (LV)" className={inputClass} />
-                <input value={tagInput.en} onChange={(e) => setTagInput((t) => ({ ...t, en: e.target.value }))} placeholder="Tag (EN)" className={inputClass} />
+                <input
+                  value={tagInput.lv}
+                  onChange={(e) => setTagInput((t) => ({ ...t, lv: e.target.value }))}
+                  placeholder={__("files.placeholders.tag_lv") ?? "Tag (LV)"}
+                  className={inputClass}
+                />
+                <input
+                  value={tagInput.en}
+                  onChange={(e) => setTagInput((t) => ({ ...t, en: e.target.value }))}
+                  placeholder={__("files.placeholders.tag_en") ?? "Tag (EN)"}
+                  className={inputClass}
+                />
               </div>
 
               <div className="flex items-center gap-3 mb-4">
                 <button onClick={addTag} type="button" className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded">
-                  <Plus className="w-4 h-4" /> Add Tag
+                  <Plus className="w-4 h-4" /> {__("files.actions.add_tag") ?? "Add Tag"}
                 </button>
-                <p className="text-sm text-gray-400">Add tag pairs — both LV and EN recommended.</p>
+                <p className="text-sm text-gray-400">{__("files.edit.tags_hint") ?? "Add tag pairs — both LV and EN recommended."}</p>
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {tags.length > 0 ? tags.map((t, i) => (
-                  <div key={i} className="flex items-center gap-2 bg-gray-700 px-3 py-1 rounded border border-gray-600">
-                    <div className="text-sm">
-                      <div className="font-medium text-gray-100">{t.lv || <span className="text-gray-400">—</span>}</div>
-                      <div className="text-xs text-gray-400">{t.en || <span className="text-gray-500">—</span>}</div>
+                {tags.length > 0 ? (
+                  tags.map((t, i) => (
+                    <div key={i} className="flex items-center gap-2 bg-gray-700 px-3 py-1 rounded border border-gray-600">
+                      <div className="text-sm">
+                        <div className="font-medium text-gray-100">{t.lv || <span className="text-gray-400">—</span>}</div>
+                        <div className="text-xs text-gray-400">{t.en || <span className="text-gray-500">—</span>}</div>
+                      </div>
+                      <button type="button" onClick={() => removeTag(i)} className="p-1 rounded hover:bg-gray-600" aria-label={__("files.actions.remove_tag") ?? "Remove tag"}>
+                        <X className="w-4 h-4 text-red-400" />
+                      </button>
                     </div>
-                    <button type="button" onClick={() => removeTag(i)} className="p-1 rounded hover:bg-gray-600">
-                      <X className="w-4 h-4 text-red-400" />
-                    </button>
-                  </div>
-                )) : <div className="text-sm text-gray-400">No tags yet.</div>}
+                  ))
+                ) : (
+                  <div className="text-sm text-gray-400">{__("files.edit.no_tags") ?? "No tags yet."}</div>
+                )}
               </div>
             </div>
           </div>
 
           <div className="bg-gray-800 px-8 py-5 border-t border-gray-700 flex items-center justify-end">
-            <Link href="/admin/files/show" className="mr-4 text-sm font-medium text-gray-400 hover:text-gray-200 transition-colors">Cancel</Link>
-            <button type="submit" disabled={processing} className="inline-flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-500/20 disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-sm">
+            <Link href="/admin/files/show" className="mr-4 text-sm font-medium text-gray-400 hover:text-gray-200 transition-colors">
+              {__("files.actions.cancel") ?? "Cancel"}
+            </Link>
+            <button
+              type="submit"
+              disabled={processing}
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-500/20 disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-sm"
+            >
               {processing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-              {processing ? "Updating..." : "Update File"}
+              {processing ? __("files.edit.updating") ?? "Updating..." : __("files.edit.submit") ?? "Update File"}
             </button>
           </div>
         </form>
@@ -157,6 +202,10 @@ export default function EditFile() {
   );
 }
 
-(EditFile as any).layout = (page: React.ReactNode) => (
-  <AdminLayout title="Edit File">{page}</AdminLayout>
-);
+(EditFile as any).layout = (page: any) => {
+  const t =
+    page?.props?.lang?.files?.edit?.layout_title ||
+    page?.props?.lang?.files?.edit?.page_title ||
+    "Edit File";
+  return <AdminLayout title={t}>{page}</AdminLayout>;
+};

@@ -1,8 +1,9 @@
 // resources/js/pages/Admin/Fails/showFiles.tsx
 import React from 'react';
-import { Link, usePage, router } from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
 import { Download, Edit, FileText, FolderOpen, Plus, Search, Trash } from 'lucide-react';
 import AdminLayout from '../../../Layouts/AdminLayout';
+import { useLang } from '@/hooks/useLang';
 
 type FileItem = {
   id: number | string;
@@ -43,6 +44,7 @@ function formatFileType(mime?: string | null) {
 }
 
 const AllFiles: React.FC = () => {
+  const { __, locale } = useLang(); // ✅ locale is 'lv' | 'en'
   const { props } = usePage<any>();
   const files: FileItem[] = props.files ?? [];
 
@@ -50,13 +52,18 @@ const AllFiles: React.FC = () => {
   const [searchFocused, setSearchFocused] = React.useState(false);
   const [deletingIds, setDeletingIds] = React.useState<Array<number | string>>([]);
 
+  const pickTitle = (file: FileItem) => {
+    if (locale === 'en') return file.title_en || file.title_lv || __('files.misc.untitled') || 'Untitled';
+    return file.title_lv || file.title_en || __('files.misc.untitled') || 'Untitled';
+  };
+
   const filteredFiles = React.useMemo(() => {
     const q = searchTerm.toLowerCase();
     return files.filter(
       (file) =>
         (file.title_lv ?? '').toLowerCase().includes(q) ||
         (file.title_en ?? '').toLowerCase().includes(q) ||
-        (file.id?.toString() ?? '').includes(q)
+        (file.id?.toString() ?? '').includes(q),
     );
   }, [files, searchTerm]);
 
@@ -65,42 +72,40 @@ const AllFiles: React.FC = () => {
   function startDeleting(id: number | string) {
     setDeletingIds((prev) => [...prev, id]);
   }
-
   function stopDeleting(id: number | string) {
     setDeletingIds((prev) => prev.filter((x) => x !== id));
   }
 
   function handleDelete(id: number | string) {
-    if (!confirm('Are you sure you want to delete this file? This action cannot be undone.')) return;
+    if (!confirm(__('files.confirm.delete') ?? 'Are you sure you want to delete this file?')) return;
 
     startDeleting(id);
 
-    // Use POST + _method=DELETE so Apache/skipped verbs won't block the request
-    router.post(`/admin/files/${id}`, { _method: 'DELETE' }, {
-      preserveScroll: true,
-      onSuccess: () => {
-        // nothing special — Laravel redirects back or returns updated props
+    router.post(
+      `/admin/files/${id}`,
+      { _method: 'DELETE' },
+      {
+        preserveScroll: true,
+        onFinish: () => stopDeleting(id),
       },
-      onError: () => {
-        // optionally show error toast (server-side flash will usually cover it)
-      },
-      onFinish: () => {
-        stopDeleting(id);
-      },
-    });
+    );
   }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
+      <Head title={__('files.index.page_title') ?? 'All Files'} />
+
       {/* Header */}
       <div className="mb-8">
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="flex items-center gap-3 text-3xl font-bold tracking-tight text-white">
               <FolderOpen className="h-8 w-8 text-emerald-400" />
-              File Management
+              {__('files.index.heading') ?? 'File Management'}
             </h1>
-            <p className="mt-2 text-gray-400">Upload, organize and manage your stored files</p>
+            <p className="mt-2 text-gray-400">
+              {__('files.index.subheading') ?? 'Upload, organize and manage your stored files'}
+            </p>
           </div>
 
           <Link
@@ -108,7 +113,7 @@ const AllFiles: React.FC = () => {
             className="group inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-emerald-600 to-green-600 px-5 py-2.5 font-medium text-white shadow-lg transition-all hover:from-emerald-700 hover:to-green-700 hover:shadow-emerald-500/25"
           >
             <Plus className="h-4 w-4 transition-transform group-hover:rotate-90" />
-            Create New File
+            {__('files.index.create') ?? 'Create New File'}
           </Link>
         </div>
 
@@ -121,17 +126,21 @@ const AllFiles: React.FC = () => {
           >
             <Search className="h-5 w-5" />
           </div>
+
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}
-            placeholder="Search files by title or ID..."
+            placeholder={__('files.index.search_placeholder') ?? 'Search files by title or ID...'}
             className={`w-full rounded-lg border bg-gray-800 py-2.5 pr-4 pl-10 text-gray-100 placeholder-gray-500 transition-all outline-none ${
-              searchFocused ? 'border-emerald-500/50 ring-2 ring-emerald-500/20' : 'border-gray-700 hover:border-gray-600'
+              searchFocused
+                ? 'border-emerald-500/50 ring-2 ring-emerald-500/20'
+                : 'border-gray-700 hover:border-gray-600'
             }`}
           />
+
           {searchTerm && (
             <button
               onClick={() => setSearchTerm('')}
@@ -150,21 +159,26 @@ const AllFiles: React.FC = () => {
             <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-gray-700 bg-gray-800/50">
               <FileText className="h-8 w-8 text-gray-500" />
             </div>
+
             <h3 className="mb-2 text-xl font-semibold text-white">
-              {searchTerm ? 'No files found' : 'No files uploaded yet'}
+              {searchTerm
+                ? __('files.empty.no_results') ?? 'No files found'
+                : __('files.empty.none') ?? 'No files uploaded yet'}
             </h3>
+
             <p className="mb-6 text-gray-400">
               {searchTerm
-                ? `No files match "${searchTerm}". Try a different search term.`
-                : 'Get started by uploading your first file.'}
+                ? (__('files.empty.no_results_hint') ?? `No files match "${searchTerm}". Try a different search term.`)
+                : __('files.empty.none_hint') ?? 'Get started by uploading your first file.'}
             </p>
+
             {!searchTerm && (
               <Link
                 href="/admin/files/upload"
                 className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-emerald-600 to-green-600 px-5 py-2.5 font-medium text-white shadow-lg transition-all hover:from-emerald-700 hover:to-green-700 hover:shadow-emerald-500/25"
               >
                 <Plus className="h-4 w-4" />
-                Upload Your First File
+                {__('files.empty.upload_first') ?? 'Upload Your First File'}
               </Link>
             )}
           </div>
@@ -172,7 +186,8 @@ const AllFiles: React.FC = () => {
           <div className="grid gap-4">
             {searchTerm && (
               <div className="px-1 text-sm text-gray-400">
-                Found {filteredFiles.length} {filteredFiles.length === 1 ? 'file' : 'files'} matching "{searchTerm}"
+                {__('files.index.found', { count: filteredFiles.length, q: searchTerm }) ??
+                  `Found ${filteredFiles.length} file(s) matching "${searchTerm}"`}
               </div>
             )}
 
@@ -187,10 +202,15 @@ const AllFiles: React.FC = () => {
                       <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10">
                         <FileText className="h-5 w-5 text-emerald-400" />
                       </div>
+
                       <div className="min-w-0 flex-1">
                         <div className="space-y-1">
-                          <p className="truncate text-lg font-semibold text-white">{file.title_lv || 'Untitled'}</p>
-                          {file.title_en && <p className="truncate text-sm text-gray-400">{file.title_en}</p>}
+                          <p className="truncate text-lg font-semibold text-white">{pickTitle(file)}</p>
+
+                          {/* Show secondary title in the other language */}
+                          {locale === 'lv'
+                            ? file.title_en && <p className="truncate text-sm text-gray-400">{file.title_en}</p>
+                            : file.title_lv && <p className="truncate text-sm text-gray-400">{file.title_lv}</p>}
 
                           {Array.isArray(file.tags) && file.tags.length > 0 && (
                             <div className="mt-2 flex flex-wrap gap-2">
@@ -199,9 +219,13 @@ const AllFiles: React.FC = () => {
                                   key={i}
                                   className="inline-flex items-center gap-2 rounded bg-gray-700 px-2 py-0.5 text-xs text-gray-200 border border-gray-600"
                                 >
-                                  <span className="font-medium">{t.lv ?? <span className="text-gray-400">—</span>}</span>
+                                  <span className="font-medium">
+                                    {(locale === 'en' ? t.en : t.lv) ?? <span className="text-gray-400">—</span>}
+                                  </span>
                                   <span className="text-gray-400">·</span>
-                                  <span className="text-gray-300">{t.en ?? <span className="text-gray-500">—</span>}</span>
+                                  <span className="text-gray-300">
+                                    {(locale === 'en' ? t.lv : t.en) ?? <span className="text-gray-500">—</span>}
+                                  </span>
                                 </span>
                               ))}
                             </div>
@@ -209,13 +233,13 @@ const AllFiles: React.FC = () => {
 
                           <div className="flex items-center gap-3 text-xs text-gray-500 mt-2">
                             <span className="rounded border border-gray-700/50 bg-gray-800/50 px-2 py-0.5 font-mono">
-                              ID: {file.id}
+                              {__('files.meta.id') ?? 'ID'}: {file.id}
                             </span>
                             <span className="rounded border border-gray-700/50 bg-gray-800/50 px-2 py-0.5 font-mono">
-                              Type: {formatFileType(file.mime_type)}
+                              {__('files.meta.type') ?? 'Type'}: {formatFileType(file.mime_type)}
                             </span>
                             <span className="rounded border border-gray-700/50 bg-gray-800/50 px-2 py-0.5 font-mono">
-                              Size: {formatBytes(file.size)}
+                              {__('files.meta.size') ?? 'Size'}: {formatBytes(file.size)}
                             </span>
                           </div>
                         </div>
@@ -230,7 +254,7 @@ const AllFiles: React.FC = () => {
                       className="flex items-center gap-2 rounded-lg border border-blue-500/20 bg-blue-500/10 px-3 py-2 text-sm font-medium text-blue-400 transition-all hover:bg-blue-500/20 hover:text-blue-300"
                     >
                       <Download className="h-4 w-4" />
-                      <span className="hidden sm:inline">Download</span>
+                      <span className="hidden sm:inline">{__('files.actions.download') ?? 'Download'}</span>
                     </a>
 
                     {/* Edit */}
@@ -239,10 +263,10 @@ const AllFiles: React.FC = () => {
                       className="flex items-center gap-2 rounded-lg border border-yellow-500/20 bg-yellow-500/10 px-3 py-2 text-sm font-medium text-yellow-400 transition-all hover:bg-yellow-500/20 hover:text-yellow-300"
                     >
                       <Edit className="h-4 w-4" />
-                      <span className="hidden sm:inline">Edit</span>
+                      <span className="hidden sm:inline">{__('files.actions.edit') ?? 'Edit'}</span>
                     </Link>
 
-                    {/* Delete (uses POST + _method=DELETE under the hood) */}
+                    {/* Delete */}
                     <button
                       type="button"
                       onClick={() => handleDelete(file.id)}
@@ -254,7 +278,11 @@ const AllFiles: React.FC = () => {
                       }`}
                     >
                       <Trash className="h-4 w-4" />
-                      <span className="hidden sm:inline">{isDeleting(file.id) ? 'Deleting...' : 'Delete'}</span>
+                      <span className="hidden sm:inline">
+                        {isDeleting(file.id)
+                          ? __('files.actions.deleting') ?? 'Deleting...'
+                          : __('files.actions.delete') ?? 'Delete'}
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -267,6 +295,12 @@ const AllFiles: React.FC = () => {
   );
 };
 
-(AllFiles as any).layout = (page: React.ReactNode) => <AdminLayout title="All Files">{page}</AdminLayout>;
+(AllFiles as any).layout = (page: any) => {
+  const t =
+    page?.props?.lang?.files?.index?.layout_title ||
+    page?.props?.lang?.files?.index?.page_title ||
+    'All Files';
+  return <AdminLayout title={t}>{page}</AdminLayout>;
+};
 
 export default AllFiles;
