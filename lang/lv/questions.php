@@ -16,7 +16,6 @@ return [
         'unlock' => 'Atbloķēt',
         'verifying' => 'Pārbauda...',
         'reset' => 'Notīrīt',
-
         'errors' => [
             'length' => 'Kods satur 12 simbolus.',
             'invalid' => 'Kods nav derīgs.',
@@ -26,17 +25,17 @@ return [
     ],
 
     'highlights' => [
-        'steps' => [
+        [
             'title' => 'Soli pa solim',
             'accent' => 'Dinamiski jautājumi',
             'description' => 'Jautājumi tiek ielādēti no anketas, kas piesaistīta jūsu kodam.',
         ],
-        'security' => [
+        [
             'title' => 'Datu drošība',
             'accent' => 'Šifrēta sūtīšana',
             'description' => 'Jūsu sensitīvie dati tiek apstrādāti droši un konfidenciāli.',
         ],
-        'support' => [
+        [
             'title' => 'Atbalsts',
             'accent' => 'Rūpes par pacientu',
             'description' => 'Mūsu komanda palīdz interpretēt atbildes un sniedz ieteikumus.',
@@ -45,8 +44,7 @@ return [
 
     'consent' => [
         'title' => 'Datu apstrādes piekrišana',
-        'description' =>
-            'Anketa apkopo sensitīvu veselības informāciju, lai sagatavotu personalizētu terapijas piedāvājumu.',
+        'description' => 'Anketa apkopo sensitīvu veselības informāciju, lai sagatavotu personalizētu terapijas piedāvājumu.',
         'accept' => 'Piekrītu',
         'decline' => 'Nepiekrītu',
     ],
