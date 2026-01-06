@@ -35,16 +35,16 @@ export default function LabLife() {
                     <div className="text-center mb-12">
                         <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-emerald-700 mb-6">
                             <Icons.Camera className="h-4 w-4" />
-                            Video Tūre
+                            {__('parmums.lablife_badge')}
                         </div>
                         <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl mb-6">
-                            Ieskats Laboratorijas <br className="hidden sm:block" />
+                            {__('parmums.lablife_title')} <br className="hidden sm:block" />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-sky-600">
-                                Ikdienas Darbā
+                                {__('parmums.lablife_title_highlight')}
                             </span>
                         </h1>
                         <p className="max-w-2xl mx-auto text-lg text-slate-600 leading-relaxed">
-                            Mūsu vide, tehnoloģijas un komanda darbībā. Skatieties, kā top nākotnes medicīna.
+                            {__('parmums.lablife_subtitle')}
                         </p>
                     </div>
 
@@ -71,7 +71,7 @@ export default function LabLife() {
                         <div className="mt-8 flex justify-center">
                             <div className="inline-flex items-center gap-2 rounded-full bg-white border border-slate-100 px-4 py-2 text-sm font-medium text-slate-500 shadow-sm">
                                 <Icons.Play className="h-4 w-4 text-emerald-500" />
-                                <span>Video materiāls no RTU Biočipu zinātniskās laboratorijas</span>
+                                <span>{__('parmums.lablife_caption')}</span>
                             </div>
                         </div>
                     </div>

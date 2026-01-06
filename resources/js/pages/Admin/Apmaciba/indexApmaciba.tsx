@@ -1,4 +1,5 @@
 import AdminLayout from '@/Layouts/AdminLayout';
+import { useLang } from '@/hooks/useLang';
 import { Link, router, usePage } from '@inertiajs/react';
 import { Book, CheckCircle, Edit, ExternalLink, Eye, Plus, Search as SearchIcon, Trash2, XCircle } from 'lucide-react';
 import React, { useState } from 'react';
@@ -59,10 +60,67 @@ const IconWarning = () => (
     </svg>
 );
 
+const copy = {
+    lv: {
+        pageTitle: 'Tiešsaistes apmācības',
+        pageSubtitle: 'Pārvaldiet apmācību programmas un kursus',
+        searchPlaceholder: 'Meklēt apmācības...',
+        searchButton: 'Meklēt',
+        createButton: 'Izveidot',
+        emptyTitle: 'Apmācības nav atrastas',
+        emptySubtitle: 'Mēģiniet pielāgot meklēšanu vai izveidojiet jaunu apmācību.',
+        noDescription: 'Apraksts nav norādīts',
+        statusLabel: 'Statuss',
+        statusActive: 'Aktīva',
+        statusInactive: 'Neaktīva',
+        ratingLabel: 'Vērtējums',
+        showDetail: 'Rādīt detaļas',
+        hideDetail: 'Paslēpt detaļas',
+        viewTitle: 'Skatīt',
+        editTitle: 'Rediģēt',
+        deleteButton: 'Dzēst',
+        deleteTitle: 'Dzēst apmācību?',
+        deleteBody:
+            'Vai tiešām vēlaties dzēst šo apmācību? Šī darbība ir neatgriezeniska un dzēsīs visus saistītos datus.',
+        cancel: 'Atcelt',
+        deleting: 'Dzēš...',
+        confirmDelete: 'Jā, dzēst',
+        layoutTitle: 'Tiešsaistes apmācības',
+    },
+    en: {
+        pageTitle: 'Online Trainings',
+        pageSubtitle: 'Manage your training programs and courses',
+        searchPlaceholder: 'Search trainings...',
+        searchButton: 'Search',
+        createButton: 'Create',
+        emptyTitle: 'No trainings found',
+        emptySubtitle: 'Try adjusting your search query or create a new event.',
+        noDescription: 'No description provided',
+        statusLabel: 'Status',
+        statusActive: 'Active',
+        statusInactive: 'Inactive',
+        ratingLabel: 'Rating',
+        showDetail: 'Show detail',
+        hideDetail: 'Hide detail',
+        viewTitle: 'View',
+        editTitle: 'Edit',
+        deleteButton: 'Delete',
+        deleteTitle: 'Delete Training?',
+        deleteBody:
+            'Are you sure you want to delete this training? This action cannot be undone and will remove all associated data.',
+        cancel: 'Cancel',
+        deleting: 'Deleting...',
+        confirmDelete: 'Yes, Delete',
+        layoutTitle: 'Online Trainings',
+    },
+} as const;
+
 const IndexApmaciba: React.FC = () => {
     const page = usePage<PageProps>();
     const trainings = page.props.trainings ?? [];
     const filters = page.props.filters ?? { q: '' };
+    const { locale } = useLang();
+    const t = copy[locale === 'en' ? 'en' : 'lv'];
 
     // Delete modal state
     const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -94,14 +152,20 @@ const IndexApmaciba: React.FC = () => {
         setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
     };
 
+    const getTitle = (title: Training['title']) => {
+        if (!title) return '-';
+        if (locale === 'en') return title.en || title.lv || '-';
+        return title.lv || title.en || '-';
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800">
             <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                     <div>
-                        <h1 className="text-3xl font-bold text-white">Online Trainings</h1>
-                        <p className="mt-2 text-gray-400">Manage your training programs and courses</p>
+                        <h1 className="text-3xl font-bold text-white">{t.pageTitle}</h1>
+                        <p className="mt-2 text-gray-400">{t.pageSubtitle}</p>
                     </div>
 
                     <div className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center md:w-auto">
@@ -113,7 +177,7 @@ const IndexApmaciba: React.FC = () => {
                                 <input
                                     name="q"
                                     defaultValue={filters.q ?? ''}
-                                    placeholder="Search trainings..."
+                                    placeholder={t.searchPlaceholder}
                                     className="w-full rounded-lg border border-gray-700 bg-gray-800 py-2.5 pr-3 pl-10 text-gray-100 placeholder-gray-500 shadow-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 focus:outline-none md:w-64"
                                 />
                             </div>
@@ -121,7 +185,7 @@ const IndexApmaciba: React.FC = () => {
                                 type="submit"
                                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm font-medium text-gray-200 shadow-sm transition-all hover:bg-gray-700 hover:text-white"
                             >
-                                Search
+                                {t.searchButton}
                             </button>
                         </form>
 
@@ -130,7 +194,7 @@ const IndexApmaciba: React.FC = () => {
                             className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-blue-900/20 transition-all hover:bg-blue-500"
                         >
                             <Plus className="h-4 w-4" />
-                            Create
+                            {t.createButton}
                         </Link>
                     </div>
                 </div>
@@ -142,8 +206,8 @@ const IndexApmaciba: React.FC = () => {
                             <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gray-800 text-gray-500">
                                 <SearchIcon className="h-6 w-6" />
                             </div>
-                            <h3 className="text-lg font-medium text-gray-300">No trainings found</h3>
-                            <p className="mt-1 text-sm text-gray-500">Try adjusting your search query or create a new event.</p>
+                            <h3 className="text-lg font-medium text-gray-300">{t.emptyTitle}</h3>
+                            <p className="mt-1 text-sm text-gray-500">{t.emptySubtitle}</p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -175,7 +239,7 @@ const IndexApmaciba: React.FC = () => {
                                                 </div>
                                                 <div>
                                                     <h3 className="line-clamp-2 text-lg leading-tight font-bold text-white transition-colors group-hover:text-blue-400">
-                                                        {t.title?.lv ?? t.title?.en ?? '-'}
+                                                        {getTitle(t.title)}
                                                     </h3>
                                                     <div className="mt-1 font-mono text-xs text-gray-500">ID #{t.id}</div>
                                                 </div>
@@ -184,21 +248,21 @@ const IndexApmaciba: React.FC = () => {
 
                                         {/* Description */}
                                         <p className="mb-6 line-clamp-2 h-10 text-sm text-gray-400">
-                                            {t.description ?? <span className="text-gray-600 italic">No description provided</span>}
+                                            {t.description ?? <span className="text-gray-600 italic">{t.noDescription}</span>}
                                         </p>
 
                                         {/* Details */}
                                         <div className="mb-6 flex-1 space-y-3">
                                             {/* Status */}
                                             <div className="flex items-center justify-between text-sm">
-                                                <span className="text-gray-500">Status</span>
+                                                <span className="text-gray-500">{t.statusLabel}</span>
                                                 {t.is_active ? (
                                                     <span className="inline-flex items-center gap-1.5 rounded-full border border-green-500/20 bg-green-500/10 px-2.5 py-1 text-xs font-medium text-green-400">
-                                                        <CheckCircle className="h-3.5 w-3.5" /> Active
+                                                        <CheckCircle className="h-3.5 w-3.5" /> {t.statusActive}
                                                     </span>
                                                 ) : (
                                                     <span className="inline-flex items-center gap-1.5 rounded-full border border-red-500/20 bg-red-500/10 px-2.5 py-1 text-xs font-medium text-red-400">
-                                                        <XCircle className="h-3.5 w-3.5" /> Inactive
+                                                        <XCircle className="h-3.5 w-3.5" /> {t.statusInactive}
                                                     </span>
                                                 )}
                                             </div>
@@ -206,13 +270,13 @@ const IndexApmaciba: React.FC = () => {
                                             {/* Rating (summary + toggle) */}
                                             <div className="mb-2 flex items-center justify-between">
                                                 <div className="flex items-center gap-3">
-                                                    <span className="text-sm text-gray-500">Rating</span>
+                                                    <span className="text-sm text-gray-500">{t.ratingLabel}</span>
                                                     <StarDisplay avg={avg ?? null} />
                                                     <span className="ml-2 text-xs text-gray-400">({total ?? 0})</span>
                                                 </div>
 
                                                 <button onClick={() => toggleExpand(t.id)} className="text-xs text-gray-400 hover:text-gray-200">
-                                                    {expanded[t.id] ? 'Hide detail' : 'Show detail'}
+                                                    {expanded[t.id] ? t.hideDetail : t.showDetail}
                                                 </button>
                                             </div>
 
@@ -262,22 +326,22 @@ const IndexApmaciba: React.FC = () => {
                                         {/* Footer actions */}
                                         <div className="flex items-center justify-between gap-3 border-t border-gray-700/50 pt-4">
                                             <div className="flex items-center gap-2">
-                                                <Link
-                                                    href={`/admin/trainings/show/${t.id}`}
-                                                    className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-600 bg-gray-800 text-gray-300 transition-colors hover:bg-gray-700 hover:text-white"
-                                                    title="View"
-                                                >
-                                                    <Eye className="h-4 w-4" />
-                                                </Link>
+                                                    <Link
+                                                        href={`/admin/trainings/show/${t.id}`}
+                                                        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-600 bg-gray-800 text-gray-300 transition-colors hover:bg-gray-700 hover:text-white"
+                                                        title={t.viewTitle}
+                                                    >
+                                                        <Eye className="h-4 w-4" />
+                                                    </Link>
 
-                                                <Link
-                                                    href={`/admin/trainings/edit/${t.id}`}
-                                                    className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-emerald-800 bg-emerald-900/20 text-emerald-400 transition-colors hover:bg-emerald-900/40 hover:text-emerald-300"
-                                                    title="Edit"
-                                                >
-                                                    <Edit className="h-4 w-4" />
-                                                </Link>
-                                            </div>
+                                                    <Link
+                                                        href={`/admin/trainings/edit/${t.id}`}
+                                                        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-emerald-800 bg-emerald-900/20 text-emerald-400 transition-colors hover:bg-emerald-900/40 hover:text-emerald-300"
+                                                        title={t.editTitle}
+                                                    >
+                                                        <Edit className="h-4 w-4" />
+                                                    </Link>
+                                                </div>
 
                                             <button
                                                 onClick={() => promptDelete(t.id)}
@@ -285,7 +349,7 @@ const IndexApmaciba: React.FC = () => {
                                                 className="inline-flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20 hover:text-red-300"
                                             >
                                                 <Trash2 className="h-3.5 w-3.5" />
-                                                Delete
+                                                {t.deleteButton}
                                             </button>
                                         </div>
                                     </article>
@@ -308,10 +372,10 @@ const IndexApmaciba: React.FC = () => {
                                     <IconWarning />
                                 </div>
 
-                                <h3 className="mb-2 text-xl font-bold text-white">Delete Training?</h3>
+                                <h3 className="mb-2 text-xl font-bold text-white">{t.deleteTitle}</h3>
 
                                 <p className="mb-6 text-sm text-slate-400">
-                                    Are you sure you want to delete this training? This action cannot be undone and will remove all associated data.
+                                    {t.deleteBody}
                                 </p>
 
                                 <div className="flex gap-3">
@@ -320,14 +384,14 @@ const IndexApmaciba: React.FC = () => {
                                         onClick={() => setDeleteId(null)}
                                         className="flex-1 rounded-xl border border-white/10 bg-transparent py-3 text-sm font-semibold text-white transition-colors hover:bg-white/5"
                                     >
-                                        Cancel
+                                        {t.cancel}
                                     </button>
                                     <button
                                         disabled={isDeleting}
                                         onClick={confirmDelete}
                                         className="flex-1 rounded-xl bg-rose-500 py-3 text-sm font-bold text-white shadow-lg shadow-rose-500/20 transition-all hover:scale-[1.02] hover:bg-rose-600"
                                     >
-                                        {isDeleting ? 'Deleting...' : 'Yes, Delete'}
+                                        {isDeleting ? t.deleting : t.confirmDelete}
                                     </button>
                                 </div>
                             </div>
@@ -339,7 +403,13 @@ const IndexApmaciba: React.FC = () => {
     );
 };
 
+const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
+    const { locale } = useLang();
+    const t = copy[locale === 'en' ? 'en' : 'lv'];
+    return <AdminLayout title={t.layoutTitle}>{children}</AdminLayout>;
+};
+
 // Wrap in AdminLayout
-(IndexApmaciba as any).layout = (page: React.ReactNode) => <AdminLayout title="Online Trainings">{page}</AdminLayout>;
+(IndexApmaciba as any).layout = (page: React.ReactNode) => <LayoutWrapper>{page}</LayoutWrapper>;
 
 export default IndexApmaciba;

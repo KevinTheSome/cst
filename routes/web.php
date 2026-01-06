@@ -18,6 +18,8 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\StoredFileController;
 use App\Models\FormResult;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\ClinicalTrialsController;
+use App\Http\Controllers\PostDockAnketaController;
 
 if (!function_exists('findPageComponent')) {
 
@@ -101,10 +103,13 @@ Route::get('ParMums/musu-grupa', fn() => Inertia::render('ParMums/musuGrupa'))->
 Route::get('ParMums/lablife', fn() => Inertia::render('ParMums/lablife'))->name('lablife');
 
 Route::get('/anketa', fn() => Inertia::render('anketa'))->name('anketa');
-Route::get('/postdock-anketa', fn() => Inertia::render('PostDockanketa'))->name('postdock-anketa');
+Route::get('/postdock-anketa', [PostDockAnketaController::class, 'index'])
+    ->name('postdock-anketa');
 
 // <<<<<<<<<<<< ANKETAS >>>>>>>>>>>>>
-Route::get('/clinical-trials', fn() => Inertia::render('clinicalTrials'))->name('clinicalTrials');
+Route::get('/clinical-trials', [\App\Http\Controllers\ClinicalTrialsController::class, 'index'])
+    ->name('clinicalTrials');
+
 Route::get(
     '/anketa-specialiste',
     fn() =>

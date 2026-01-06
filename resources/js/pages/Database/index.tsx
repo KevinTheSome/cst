@@ -39,45 +39,42 @@ function formatFileSize(bytes: number) {
 }
 
 export default function DatabaseIndex() {
-    const { __, locale } = useLang();
+    const { __, lang } = useLang();
     const { props } = usePage<PageProps>();
     const documents = props.documents || [];
 
-    // Helper function to get localized title
     const getLocalizedTitle = (doc: DocumentItem) => {
-        if (locale === 'en' && doc.title_en) return doc.title_en;
+        if (lang === 'en' && doc.title_en) return doc.title_en;
         return doc.title_lv || doc.title_en || '';
     };
 
-    // Helper function to get localized tag name
     const getLocalizedTagName = (tag: Tag) => {
-        if (locale === 'en' && tag.name_en) return tag.name_en;
+        if (lang === 'en' && tag.name_en) return tag.name_en;
         return tag.name_lv || tag.name_en || tag.name || '';
     };
 
     const [searchTitle, setSearchTitle] = useState('');
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-    // All unique tags for the filter bar
     const allTags = useMemo(() => {
         const map = new Map<string, Tag>();
         documents.forEach((doc) => {
             doc.tags?.forEach((tag) => {
                 const tagName = getLocalizedTagName(tag);
-                if (tagName && !map.has(tagName)) {
-                    map.set(tagName, tag);
-                }
+                if (tagName && !map.has(tagName)) map.set(tagName, tag);
             });
         });
         return Array.from(map.values()).sort((a, b) => {
             const nameA = getLocalizedTagName(a);
             const nameB = getLocalizedTagName(b);
-            return nameA.localeCompare(nameB, locale);
+            return nameA.localeCompare(nameB, lang);
         });
-    }, [documents, locale]);
+    }, [documents, lang]);
 
     const toggleTag = (tagName: string) => {
-        setSelectedTags((prev) => (prev.includes(tagName) ? prev.filter((t) => t !== tagName) : [...prev, tagName]));
+        setSelectedTags((prev) =>
+            prev.includes(tagName) ? prev.filter((t) => t !== tagName) : [...prev, tagName]
+        );
     };
 
     const filteredDocuments = useMemo(() => {
@@ -88,18 +85,21 @@ export default function DatabaseIndex() {
             const titleMatch = !search || title.includes(search);
 
             const tagMatch =
-                selectedTags.length === 0 || selectedTags.every((selectedTag) => doc.tags?.some((tag) => getLocalizedTagName(tag) === selectedTag));
+                selectedTags.length === 0 ||
+                selectedTags.every((selectedTag) =>
+                    doc.tags?.some((tag) => getLocalizedTagName(tag) === selectedTag)
+                );
 
             return titleMatch && tagMatch;
         });
-    }, [documents, searchTitle, selectedTags, locale]);
+    }, [documents, searchTitle, selectedTags, lang]);
 
     return (
         <>
-            <Head title={__('Dokumentu datubāze')} />
+            <Head title={__('database.index.page_title')} />
 
             <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
-                {/* Background like Welcome page */}
+                {/* Background decorations */}
                 <div className="pointer-events-none fixed inset-0 z-0">
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
                     <div className="absolute top-0 right-0 left-0 -z-10 m-auto h-[260px] w-[260px] rounded-full bg-emerald-400 opacity-20 blur-[100px]" />
@@ -109,9 +109,11 @@ export default function DatabaseIndex() {
                 <div className="relative z-10 mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
                     {/* Header */}
                     <header className="mb-8 lg:mb-10">
-                        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">{__('Dokumentu datubāze')}</h1>
+                        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
+                            {__('database.index.heading')}
+                        </h1>
                         <p className="mt-3 max-w-2xl text-sm text-slate-600 sm:text-base">
-                            {__('Pārlūkojiet dokumentus, filtrējiet pēc nosaukuma vai birkām un lejupielādējiet nepieciešamos failus.')}
+                            {__('database.index.subheading')}
                         </p>
                     </header>
 
@@ -120,8 +122,11 @@ export default function DatabaseIndex() {
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                             {/* Title search */}
                             <div className="flex-1">
-                                <label htmlFor="title-search" className="mb-1 block text-xs font-semibold tracking-wide text-slate-500 uppercase">
-                                    {__('Meklēt pēc nosaukuma (LV / EN)')}
+                                <label
+                                    htmlFor="title-search"
+                                    className="mb-1 block text-xs font-semibold tracking-wide text-slate-500 uppercase"
+                                >
+                                    {__('database.search.label')}
                                 </label>
                                 <div className="relative">
                                     <input
@@ -129,7 +134,7 @@ export default function DatabaseIndex() {
                                         type="text"
                                         value={searchTitle}
                                         onChange={(e) => setSearchTitle(e.target.value)}
-                                        placeholder={__('Piemēram, "ATMP", "Psoriāze"')}
+                                        placeholder={__('database.search.placeholder')}
                                         className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 pr-10 text-sm text-slate-900 shadow-sm transition outline-none focus:border-emerald-400 focus:ring focus:ring-emerald-100"
                                     />
                                     <svg
@@ -148,7 +153,7 @@ export default function DatabaseIndex() {
                             {/* Count + clear */}
                             <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
                                 <p className="text-xs text-slate-500">
-                                    {__('Atrasti dokumenti')}: <span className="font-semibold text-slate-800">{filteredDocuments.length}</span>
+                                    {__('database.index.count_label')}: <span className="font-semibold text-slate-800">{filteredDocuments.length}</span>
                                 </p>
                                 {(searchTitle || selectedTags.length > 0) && (
                                     <button
@@ -159,7 +164,7 @@ export default function DatabaseIndex() {
                                         }}
                                         className="inline-flex items-center rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-rose-300 hover:text-rose-600 hover:shadow"
                                     >
-                                        {__('Notīrīt filtrus')}
+                                        {__('database.filters.clear')}
                                     </button>
                                 )}
                             </div>
@@ -168,7 +173,9 @@ export default function DatabaseIndex() {
                         {/* Tag chips */}
                         {allTags.length > 0 && (
                             <div className="mt-4">
-                                <p className="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">{__('Filter by tags')}</p>
+                                <p className="mb-2 text-xs font-semibold tracking-wide text-slate-500 uppercase">
+                                    {__('database.filters.tags_label')}
+                                </p>
                                 <div className="flex flex-wrap gap-2">
                                     {allTags.map((tag) => {
                                         const tagName = getLocalizedTagName(tag);
@@ -197,39 +204,29 @@ export default function DatabaseIndex() {
                     <section className="rounded-2xl border border-slate-200 bg-white/80 shadow-sm backdrop-blur-sm">
                         {filteredDocuments.length === 0 ? (
                             <div className="px-6 py-10 text-center text-sm text-slate-500">
-                                {__('Nav neviena dokumenta, kas atbilst izvēlētajiem filtriem.')}
+                                {__('database.index.empty')}
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
                                     <thead className="bg-slate-50/80">
                                         <tr>
-                                            <th className="px-6 py-3 text-xs font-semibold tracking-wide text-slate-500 uppercase">
-                                                {__('Nosaukums')}
-                                            </th>
-                                            <th className="px-6 py-3 text-xs font-semibold tracking-wide text-slate-500 uppercase">{__('Tags')}</th>
-                                            <th className="px-6 py-3 text-xs font-semibold tracking-wide text-slate-500 uppercase">
-                                                {__('Faila tips / izmērs')}
-                                            </th>
-                                            <th className="px-6 py-3 text-xs font-semibold tracking-wide text-slate-500 uppercase">
-                                                {__('Pievienots')}
-                                            </th>
-                                            <th className="px-6 py-3 text-right text-xs font-semibold tracking-wide text-slate-500 uppercase">
-                                                {__('Lejupielāde')}
-                                            </th>
+                                            <th className="px-6 py-3 text-xs font-semibold tracking-wide text-slate-500 uppercase">{__('database.table.headers.title')}</th>
+                                            <th className="px-6 py-3 text-xs font-semibold tracking-wide text-slate-500 uppercase">{__('database.table.headers.tags')}</th>
+                                            <th className="px-6 py-3 text-xs font-semibold tracking-wide text-slate-500 uppercase">{__('database.table.headers.type_size')}</th>
+                                            <th className="px-6 py-3 text-xs font-semibold tracking-wide text-slate-500 uppercase">{__('database.table.headers.added')}</th>
+                                            <th className="px-6 py-3 text-right text-xs font-semibold tracking-wide text-slate-500 uppercase">{__('database.table.headers.download')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100">
                                         {filteredDocuments.map((doc) => (
                                             <tr key={doc.id} className="transition hover:bg-emerald-50/40">
-                                                {/* Titles */}
+                                                {/* Title */}
                                                 <td className="px-6 py-4 align-top">
                                                     <div className="flex flex-col gap-0.5">
                                                         <span className="text-sm font-semibold text-slate-900">{getLocalizedTitle(doc) || '—'}</span>
                                                         {doc.title_lv && doc.title_en && (
-                                                            <span className="text-xs text-slate-500">
-                                                                {locale === 'en' ? doc.title_lv : doc.title_en}
-                                                            </span>
+                                                            <span className="text-xs text-slate-500">{lang === 'en' ? doc.title_lv : doc.title_en}</span>
                                                         )}
                                                     </div>
                                                 </td>
@@ -239,15 +236,12 @@ export default function DatabaseIndex() {
                                                     <div className="flex flex-wrap gap-1.5">
                                                         {doc.tags?.length ? (
                                                             doc.tags.map((tag) => (
-                                                                <span
-                                                                    key={tag.id}
-                                                                    className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-medium text-slate-700"
-                                                                >
+                                                                <span key={tag.id} className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-medium text-slate-700">
                                                                     {getLocalizedTagName(tag)}
                                                                 </span>
                                                             ))
                                                         ) : (
-                                                            <span className="text-xs text-slate-400">{__('No tags')}</span>
+                                                            <span className="text-xs text-slate-400">{__('database.table.no_tags')}</span>
                                                         )}
                                                     </div>
                                                 </td>
@@ -272,7 +266,7 @@ export default function DatabaseIndex() {
                                                             href={`/admin/files/${doc.id}/download`}
                                                             className="inline-flex items-center rounded-xl bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-600 hover:shadow-md"
                                                         >
-                                                            {__('Lejupielādēt')}
+                                                            {__('database.table.download_btn')}
                                                             <svg
                                                                 className="ml-1.5 h-4 w-4"
                                                                 viewBox="0 0 24 24"
@@ -285,7 +279,7 @@ export default function DatabaseIndex() {
                                                             </svg>
                                                         </a>
                                                     ) : (
-                                                        <span className="text-xs text-slate-400">{__('Nav pieejama saite')}</span>
+                                                        <span className="text-xs text-slate-400">{__('database.table.no_link')}</span>
                                                     )}
                                                 </td>
                                             </tr>
