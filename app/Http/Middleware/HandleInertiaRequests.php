@@ -60,6 +60,7 @@ class HandleInertiaRequests extends Middleware
                 'lecture_codes' => Lang::get('lecture_codes'),  
                 'parmums' => Lang::get('parMums'),
                 'files' => Lang::get('files'),
+                'training' => Lang::get('training'),
             ],
 
             'name'  => config('app.name'),

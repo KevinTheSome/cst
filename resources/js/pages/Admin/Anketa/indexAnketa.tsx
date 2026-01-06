@@ -293,7 +293,7 @@ function FormsList() {
                                 <Filter className="h-5 w-5 text-emerald-400" />
                                 {__('anketa.index.filters.title')}
                             </h3>
-                            <button onClick={() => setIsFilterModalOpen(false)} className="p-1 text-slate-400" aria-label="Close">
+                            <button onClick={() => setIsFilterModalOpen(false)} className="p-1 text-slate-400" aria-label={__('anketa.index.actions.close')}>
                                 <X className="h-6 w-6" />
                             </button>
                         </div>
