@@ -394,6 +394,7 @@ class AnketaController extends Controller
 
     public function showCode()
     {
+        syncLangFiles('questions');
         return Inertia::render('Formas/questions', [
             'locale' => app()->getLocale(),
         ]);

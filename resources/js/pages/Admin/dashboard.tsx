@@ -1,5 +1,7 @@
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
+// @ts-ignore - Assuming useLang is available in your project hooks
+import { useLang } from '@/Hooks/useLang'; 
 import AdminLayout from '../../Layouts/AdminLayout';
 import { 
     Activity, 
@@ -12,16 +14,13 @@ import {
     Zap, 
     UserPlus, 
     Send, 
-    MoreHorizontal, 
     Server, 
     Wifi, 
     Layers, 
     X,
-    ArrowRight,
-    AlertCircle
 } from 'lucide-react';
 
-// --- Types & Data ---
+// --- Types ---
 
 type BadgeTone = 'emerald' | 'sky' | 'violet' | 'amber';
 
@@ -35,98 +34,117 @@ type StatHighlight = {
     icon: any;
 };
 
-const statHighlights: StatHighlight[] = [
-    {
-        id: 'users',
-        label: 'Active members',
-        value: '12,480',
-        trend: '+18%',
-        trendDescription: 'vs last 7 days',
-        accent: 'emerald',
-        icon: Users
-    },
-    {
-        id: 'requests',
-        label: 'New requests',
-        value: '43',
-        trend: '-6%',
-        trendDescription: 'response time',
-        accent: 'sky',
-        icon: FileText
-    },
-    {
-        id: 'delivery',
-        label: 'On-time delivery',
-        value: '97.4%',
-        trend: '+2.1%',
-        trendDescription: 'quality index',
-        accent: 'violet',
-        icon: CheckCircle2
-    },
-    {
-        id: 'budget',
-        label: 'Budget runway',
-        value: '84 days',
-        trend: '+12',
-        trendDescription: 'days saved',
-        accent: 'amber',
-        icon: Clock
-    },
-];
-
-
-
-const activityFeed = [
-    {
-        id: 1,
-        title: 'Adrians approved “Biochip spotlight”',
-        detail: 'Moved to live queue • Marketing',
-        time: '08:42',
-        accent: 'emerald',
-    },
-    {
-        id: 2,
-        title: 'New partnership request',
-        detail: 'Cēsis BioLabs • Needs response',
-        time: '07:55',
-        accent: 'amber',
-    },
-    {
-        id: 3,
-        title: 'Security report exported',
-        detail: 'Sent to leadership',
-        time: '06:12',
-        accent: 'sky',
-    },
-];
-
-const taskColumns = [
-    {
-        title: 'Today',
-        caption: 'High priority items',
-        items: [
-            { title: 'Approve 4 new research posts', owner: 'Content studio', eta: '14:00' },
-            { title: 'Sync with VTDT squad', owner: 'Operations', eta: '16:30' },
-        ],
-    },
-    {
-        title: 'Next',
-        caption: 'Up next in pipeline',
-        items: [
-            { title: 'QA new landing prototype', owner: 'Design lab', eta: 'Tomorrow' },
-            { title: 'Budget review draft', owner: 'Finance', eta: 'Friday' },
-        ],
-    },
-];
-
-const systemHealth = [
-    { label: 'API latency', value: '268ms', status: 'Good', icon: Wifi },
-    { label: 'Web uptime', value: '99.98%', status: 'Green', icon: Server },
-    { label: 'Queue depth', value: '42 items', status: 'Stable', icon: Layers },
-];
-
 export default function Dashboard() {
+    const { __ } = useLang();
     const [activeModal, setActiveModal] = useState<string | null>(null);
+
+    // --- Data Definitions (Moved inside to access translation hook) ---
+
+    const statHighlights: StatHighlight[] = [
+        {
+            id: 'users',
+            label: __('admin_dashboard.stats.users.label'),
+            value: '12,480',
+            trend: '+18%',
+            trendDescription: __('admin_dashboard.stats.users.trend'),
+            accent: 'emerald',
+            icon: Users
+        },
+        {
+            id: 'requests',
+            label: __('admin_dashboard.stats.requests.label'),
+            value: '43',
+            trend: '-6%',
+            trendDescription: __('admin_dashboard.stats.requests.trend'),
+            accent: 'sky',
+            icon: FileText
+        },
+        {
+            id: 'delivery',
+            label: __('admin_dashboard.stats.delivery.label'),
+            value: '97.4%',
+            trend: '+2.1%',
+            trendDescription: __('admin_dashboard.stats.delivery.trend'),
+            accent: 'violet',
+            icon: CheckCircle2
+        },
+        {
+            id: 'budget',
+            label: __('admin_dashboard.stats.budget.label'),
+            value: '84 days',
+            trend: '+12',
+            trendDescription: __('admin_dashboard.stats.budget.trend'),
+            accent: 'amber',
+            icon: Clock
+        },
+    ];
+
+    const activityFeed = [
+        {
+            id: 1,
+            title: __('admin_dashboard.activity.items.0.title'),
+            detail: __('admin_dashboard.activity.items.0.detail'),
+            time: '08:42',
+            accent: 'emerald',
+        },
+        {
+            id: 2,
+            title: __('admin_dashboard.activity.items.1.title'),
+            detail: __('admin_dashboard.activity.items.1.detail'),
+            time: '07:55',
+            accent: 'amber',
+        },
+        {
+            id: 3,
+            title: __('admin_dashboard.activity.items.2.title'),
+            detail: __('admin_dashboard.activity.items.2.detail'),
+            time: '06:12',
+            accent: 'sky',
+        },
+    ];
+
+    const taskColumns = [
+        {
+            title: __('admin_dashboard.tasks.today'),
+            caption: __('admin_dashboard.tasks.captions.today'),
+            items: [
+                { title: 'Approve 4 new research posts', owner: 'Content studio', eta: '14:00' },
+                { title: 'Sync with VTDT squad', owner: 'Operations', eta: '16:30' },
+            ],
+        },
+        {
+            title: __('admin_dashboard.tasks.next'),
+            caption: __('admin_dashboard.tasks.captions.next'),
+            items: [
+                { title: 'QA new landing prototype', owner: 'Design lab', eta: 'Tomorrow' },
+                { title: 'Budget review draft', owner: 'Finance', eta: 'Friday' },
+            ],
+        },
+    ];
+
+    const systemHealth = [
+        { 
+            label: __('admin_dashboard.system.api_latency'), 
+            value: '268ms', 
+            status: __('admin_dashboard.system.status.good'), 
+            statusKey: 'good', 
+            icon: Wifi 
+        },
+        { 
+            label: __('admin_dashboard.system.web_uptime'), 
+            value: '99.98%', 
+            status: __('admin_dashboard.system.status.green'), 
+            statusKey: 'green', 
+            icon: Server 
+        },
+        { 
+            label: __('admin_dashboard.system.queue_depth'), 
+            value: '42 items', 
+            status: __('admin_dashboard.system.status.stable'), 
+            statusKey: 'stable', 
+            icon: Layers 
+        },
+    ];
 
     // Helpers for styles
     const getAccentColors = (tone: BadgeTone) => {
@@ -141,7 +159,7 @@ export default function Dashboard() {
 
     return (
         <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
-            <Head title="Control room" />
+            <Head title={__('admin_dashboard.head.title')} />
             
             <div className="mx-auto max-w-7xl space-y-8">
                 
@@ -150,10 +168,14 @@ export default function Dashboard() {
                     <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none"></div>
                     <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div>
-                            <p className="text-xs font-bold uppercase tracking-[0.3em] text-indigo-400 mb-2">Welcome Back</p>
-                            <h1 className="text-3xl font-bold text-white tracking-tight">Command Dashboard</h1>
+                            <p className="text-xs font-bold uppercase tracking-[0.3em] text-indigo-400 mb-2">
+                                {__('admin_dashboard.header.welcome')}
+                            </p>
+                            <h1 className="text-3xl font-bold text-white tracking-tight">
+                                {__('admin_dashboard.header.title')}
+                            </h1>
                             <p className="mt-2 text-slate-400 max-w-lg">
-                                Live overview of missions, team requests, and system health status.
+                                {__('admin_dashboard.header.subtitle')}
                             </p>
                         </div>
                         <div className="flex gap-3">
@@ -162,7 +184,7 @@ export default function Dashboard() {
                                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                                 </span>
-                                Systems Stable
+                                {__('admin_dashboard.header.systems_stable')}
                             </div>
                             <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-300">
                                 <Wifi className="h-4 w-4" />
@@ -211,9 +233,11 @@ export default function Dashboard() {
                             <div className="flex items-center justify-between mb-6">
                                 <h3 className="font-bold text-white flex items-center gap-2">
                                     <Activity className="h-5 w-5 text-indigo-400" />
-                                    Realtime Activity
+                                    {__('admin_dashboard.activity.title')}
                                 </h3>
-                                <button className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors">View Log</button>
+                                <button className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
+                                    {__('admin_dashboard.activity.view_log')}
+                                </button>
                             </div>
                             
                             <div className="relative space-y-8 pl-2">
@@ -245,16 +269,21 @@ export default function Dashboard() {
                             <div className="flex items-center justify-between mb-6">
                                 <h3 className="font-bold text-white flex items-center gap-2">
                                     <Layers className="h-5 w-5 text-indigo-400" />
-                                    Execution Board
+                                    {__('admin_dashboard.tasks.title')}
                                 </h3>
-                                <button className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors">Open Board</button>
+                                <button className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
+                                    {__('admin_dashboard.tasks.open')}
+                                </button>
                             </div>
 
                             <div className="grid gap-6 md:grid-cols-2">
                                 {taskColumns.map((col) => (
                                     <div key={col.title} className="space-y-4">
                                         <div className="flex items-center justify-between px-1">
-                                            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{col.title}</span>
+                                            <div className="flex flex-col">
+                                                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{col.title}</span>
+                                                <span className="text-[10px] text-slate-500 mt-0.5">{col.caption}</span>
+                                            </div>
                                             <span className="text-[10px] text-slate-600 bg-slate-900 px-2 py-0.5 rounded border border-white/5">{col.items.length} items</span>
                                         </div>
                                         <div className="space-y-3">
@@ -283,7 +312,7 @@ export default function Dashboard() {
                         <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
                             <div className="flex items-center gap-2 mb-6">
                                 <Server className="h-5 w-5 text-indigo-400" />
-                                <h3 className="font-bold text-white">System Status</h3>
+                                <h3 className="font-bold text-white">{__('admin_dashboard.system.title')}</h3>
                             </div>
                             
                             <div className="space-y-4">
@@ -298,7 +327,7 @@ export default function Dashboard() {
                                             <div className="text-right">
                                                 <p className="text-sm font-bold text-white">{sys.value}</p>
                                                 <p className={`text-[10px] uppercase font-bold tracking-wider ${
-                                                    sys.status === 'Good' || sys.status === 'Green' || sys.status === 'Stable'
+                                                    ['good', 'green', 'stable'].includes(sys.statusKey || '') 
                                                     ? 'text-emerald-400' : 'text-amber-400'
                                                 }`}>{sys.status}</p>
                                             </div>
@@ -327,9 +356,9 @@ export default function Dashboard() {
                                 {activeModal === 'invite' && <UserPlus className="h-5 w-5 text-sky-400" />}
                                 {activeModal === 'update' && <Send className="h-5 w-5 text-violet-400" />}
                                 
-                                {activeModal === 'story' && 'Launch Story'}
-                                {activeModal === 'invite' && 'Invite Member'}
-                                {activeModal === 'update' && 'Share Update'}
+                                {activeModal === 'story' && __('admin_dashboard.modal.story.title')}
+                                {activeModal === 'invite' && __('admin_dashboard.modal.invite.title')}
+                                {activeModal === 'update' && __('admin_dashboard.modal.update.title')}
                             </h3>
                             <button 
                                 onClick={() => setActiveModal(null)}
@@ -341,15 +370,15 @@ export default function Dashboard() {
                         
                         <div className="p-6">
                             <p className="text-sm text-slate-400 mb-6">
-                                {activeModal === 'story' && 'Draft a new highlight story for the dashboard feed.'}
-                                {activeModal === 'invite' && 'Send an invitation link to a new team member.'}
-                                {activeModal === 'update' && 'Broadcast a quick status update to the entire team.'}
+                                {activeModal === 'story' && __('admin_dashboard.modal.story.description')}
+                                {activeModal === 'invite' && __('admin_dashboard.modal.invite.description')}
+                                {activeModal === 'update' && __('admin_dashboard.modal.update.description')}
                             </p>
 
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-                                        {activeModal === 'invite' ? 'Email Address' : 'Title'}
+                                        {activeModal === 'invite' ? __('admin_dashboard.modal.invite.email') : 'Title'}
                                     </label>
                                     <input 
                                         type="text" 
@@ -374,12 +403,12 @@ export default function Dashboard() {
                                         onClick={() => setActiveModal(null)}
                                         className="flex-1 rounded-xl border border-white/10 bg-white/5 py-3 text-sm font-bold text-white hover:bg-white/10 transition-colors"
                                     >
-                                        Cancel
+                                        {__('admin_dashboard.modal.cancel')}
                                     </button>
                                     <button 
                                         className="flex-1 rounded-xl bg-indigo-500 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-400 transition-colors"
                                     >
-                                        {activeModal === 'invite' ? 'Send Invite' : 'Create'}
+                                        {activeModal === 'invite' ? __('admin_dashboard.modal.send_invite') : __('admin_dashboard.modal.create')}
                                     </button>
                                 </div>
                             </div>
@@ -391,4 +420,7 @@ export default function Dashboard() {
     );
 }
 
-Dashboard.layout = (page: React.ReactNode) => <AdminLayout title="Control room">{page}</AdminLayout>;
+Dashboard.layout = (page: React.ReactNode) => {
+    
+    return <AdminLayout title="admin_dashboard.head.title">{page}</AdminLayout>;
+};
