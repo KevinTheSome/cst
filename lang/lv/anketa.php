@@ -2,236 +2,321 @@
 
 return [
     'index' => [
-        'page_title'      => 'Forms',
-        'label'           => 'Forms',
-        'heading'         => 'All forms',
-        'subheading'      => 'Overview of all public and private forms.',
-        'create_button'   => '+ Create new form',
-        'list_label'      => 'Forms list',
-        'list_subheading' => 'Click View to open a form, or Edit / Delete it.',
+        'page_title'      => 'Anketas',
+        'label'           => 'Anketas',
+        'heading'         => 'Visas anketas',
+        'subheading'      => 'Pārskats par publiskām un privātām anketām.',
+        'create_button'   => '+ Izveidot jaunu anketu',
+        'list_label'      => 'Anketu saraksts',
+        'list_subheading' => 'Spiediet Skatīt, lai atvērtu anketu, vai Rediģēt / Dzēst.',
         'id_label'        => 'ID',
-        'code_label'      => 'Code',
+        'code_label'      => 'Kods',
 
-        'view'            => 'View',
-        'edit'            => 'Edit',
-        'delete'          => 'Delete',
+        'view'            => 'Skatīt',
+        'edit'            => 'Rediģēt',
+        'delete'          => 'Dzēst',
 
-        'empty'           => 'No forms yet.',
-        'confirm_delete'  => 'Are you sure you want to delete the form "{title}"?',
-        'deleted_success' => 'Form deleted successfully.',
-        'deleted_error'   => 'Error deleting form.',
+        'empty'           => 'Vēl nav anketu.',
+        'confirm_delete'  => 'Vai tiešām vēlaties dzēst anketu "{title}"?',
+        'deleted_success' => 'Anketa veiksmīgi dzēsta.',
+        'deleted_error'   => 'Kļūda dzēšot anketu.',
 
-        'search_placeholder' => 'Search...',
+        'search_placeholder' => 'Meklēt...',
         'na' => 'N/A',
 
-        // Optional alias if any code uses delete_confirm
-        'delete_confirm' => 'Are you sure you want to delete this form?',
+        'delete_confirm' => 'Vai tiešām vēlaties dzēst šo anketu?',
 
         'filters' => [
-            'title' => 'Filters',
-            'type' => 'Type',
-            'any_type' => 'Any type',
-            'public' => 'Public',
-            'private' => 'Private',
-            'code' => 'Code',
-            'from' => 'From',
-            'to' => 'To',
+            'title' => 'Filtri',
+            'type' => 'Tips',
+            'any_type' => 'Jebkurš tips',
+            'public' => 'Publiska',
+            'private' => 'Privāta',
+            'code' => 'Kods',
+            'from' => 'No',
+            'to' => 'Līdz',
         ],
 
         'actions' => [
-            'reset' => 'Reset',
-            'filters' => 'Filters',
-            'clear_filters' => 'Clear filters',
-            'clear' => 'Clear',
-            'apply' => 'Apply',
-            'create_new_aria' => 'Create new',
+            'reset' => 'Atiestatīt',
+            'filters' => 'Filtri',
+            'clear_filters' => 'Notīrīt filtrus',
+            'clear' => 'Notīrīt',
+            'apply' => 'Pielietot',
+            'create_new_aria' => 'Izveidot jaunu',
         ],
 
         'misc' => [
-            'untitled' => 'Untitled form',
+            'untitled' => 'Nenosaukta anketa',
         ],
     ],
 
-    // ✅ Added: results translations (list + show pages)
     'results' => [
-        'page_title' => 'Submissions',
-        'layout_title' => 'Submissions',
+        'page_title' => 'Iesniegumi',
+        'layout_title' => 'Iesniegumi',
 
-        'label' => 'Submissions',
-        'heading' => 'Submissions',
-        'subheading' => 'Overview of submitted answers and their content.',
+        'label' => 'Iesniegumi',
+        'heading' => 'Iesniegumi',
+        'subheading' => 'Pārskats par iesniegtajām atbildēm un to saturu.',
 
-        'total_answers' => 'Total answers',
-        'search_placeholder' => 'Search submissions...',
+        'total_answers' => 'Kopā atbilžu',
+        'search_placeholder' => 'Meklēt iesniegumus...',
 
         'table' => [
-            'id_code' => 'ID / CODE',
-            'type' => 'TYPE',
-            'submitted' => 'SUBMITTED',
-            'answers' => 'ANSWERS',
-            'action' => 'ACTION',
+            'id_code' => 'ID / KODS',
+            'type' => 'TIPS',
+            'submitted' => 'IESNIEGTS',
+            'answers' => 'ATBILDES',
+            'action' => 'DARBĪBA',
         ],
 
-        'empty' => 'No submissions found.',
-        'empty_hint' => 'Try adjusting your filters or search query.',
+        'empty' => 'Nav atrasti iesniegumi.',
+        'empty_hint' => 'Pamēģiniet mainīt filtrus vai meklēšanas vaicājumu.',
 
         'actions' => [
-            'filters' => 'Filters',
-            'view' => 'View',
-            'reset' => 'Reset',
-            'clear' => 'Clear',
-            'apply' => 'Apply',
+            'filters' => 'Filtri',
+            'view' => 'Skatīt',
+            'reset' => 'Atiestatīt',
+            'clear' => 'Notīrīt',
+            'apply' => 'Pielietot',
         ],
 
-        // Filters inside results (used by ResultsIndex modal)
         'filters' => [
-            'type' => 'Type',
-            'code' => 'Code',
-            'code_placeholder' => 'Code...',
-            'date_range' => 'Submission date range',
-            'from' => 'From',
-            'to' => 'To',
-            'sort' => 'Sort order',
-            'newest' => 'Newest first',
-            'oldest' => 'Oldest first',
+            'type' => 'Tips',
+            'code' => 'Kods',
+            'code_placeholder' => 'Kods...',
+            'date_range' => 'Iesniegšanas datumu diapazons',
+            'from' => 'No',
+            'to' => 'Līdz',
+            'sort' => 'Kārtošana',
+            'newest' => 'Jaunākie vispirms',
+            'oldest' => 'Vecākie vispirms',
         ],
 
-        // Show page strings (ResultsShow)
-        'view_title' => 'Submission',
-        'view_layout_title' => 'Submission',
-        'view_label' => 'Submission',
-        'view_subheading' => 'Full answers from one questionnaire submission.',
+        'view_title' => 'Iesniegums',
+        'view_layout_title' => 'Iesniegums',
+        'view_label' => 'Iesniegums',
+        'view_subheading' => 'Pilnas atbildes no viena anketas iesnieguma.',
 
         'field_id' => 'ID',
-        'field_type' => 'Type',
-        'field_code' => 'Code',
-        'field_submitted' => 'Submitted',
+        'field_type' => 'Tips',
+        'field_code' => 'Kods',
+        'field_submitted' => 'Iesniegts',
 
-        'answers_heading' => 'Answers',
-        'answers_note' => 'Only administrators can view this information.',
-        'answers_empty' => 'No answers stored.',
+        'answers_heading' => 'Atbildes',
+        'answers_note' => 'Šo informāciju var skatīt tikai administratori.',
+        'answers_empty' => 'Nav saglabātu atbilžu.',
 
         'misc' => [
             'dash' => '—',
-            'standard' => 'Standard',
+            'standard' => 'Standarta',
         ],
     ],
 
+    // ✅ UPDATED for language switching support
     'update' => [
-        'back'                   => '← Back to list',
-        'title'                  => 'Edit form',
-        'form_title_placeholder' => 'Form title',
-        'visibility_public'      => 'Public — anyone with the link can respond',
-        'visibility_private'     => 'Private — restricted access',
-        'add_question'           => 'Add question',
-        'options_label'          => 'Options:',
-        'add_option'             => 'Add option',
-        'save'                   => 'Save changes',
-        'saving'                 => 'Saving...',
-        'success'                => 'Form updated!',
-        'error'                  => 'Error saving changes.',
-        'specialist'             => 'Specialist',
-        'psoriasis'              => 'Psoriasis',
-        'chronic'                => 'Chronic',
+        'page_title' => 'Rediģēt anketu',
+        'layout_title' => 'Rediģēt anketu',
+
+        'back' => '← Atpakaļ uz sarakstu',
+        'title' => 'Rediģēt anketu',
+        'subtitle' => 'Atjauniniet jautājumus, nosaukumus un redzamības iestatījumus.',
+
+        'language' => [
+            'label' => 'Valoda',
+            'lv' => 'Latviešu',
+            'en' => 'Angļu',
+            'lv_short' => 'LV',
+            'en_short' => 'EN',
+        ],
+
+        'basic' => [
+            'heading' => 'Pamatinformācija',
+
+            'title_lv' => 'Nosaukums (LV)',
+            'title_en' => 'Nosaukums (EN)',
+
+            'title_lv_placeholder' => 'Piem., Klientu apmierinātība',
+            'title_en_placeholder' => 'e.g., Customer Satisfaction',
+        ],
+
+        'visibility' => [
+            'label' => 'Redzamība',
+            'public' => 'Publiska',
+            'private' => 'Privāta',
+            'public_hint' => 'Publiska — ikviens ar saiti var atbildēt',
+            'private_hint' => 'Privāta — ierobežota piekļuve',
+        ],
+
+        'questions' => [
+            'heading' => 'Jautājumi',
+            'total_suffix' => 'kopā',
+            'empty' => 'Saraksts ir tukšs. Pievienojiet pirmo jautājumu.',
+            'add_question' => 'Pievienot jautājumu',
+        ],
+
+        'field' => [
+            'type' => 'Tips',
+            'delete_title' => 'Dzēst jautājumu',
+
+            'types' => [
+                'radio'    => 'Radio izvēle',
+                'checkbox' => 'Atzīmējamie (checkbox)',
+                'dropdown' => 'Izvēlne (dropdown)',
+                'text'     => 'Teksta ievade',
+                'scale'    => 'Skala',
+            ],
+
+            'question_lv_placeholder' => 'Jautājums (LV)',
+            'question_en_placeholder' => 'Question (EN)',
+        ],
+
+        'options' => [
+            'label' => 'Opcijas',
+            'add' => 'Pievienot opciju',
+            'lv_placeholder' => 'Opcija (LV)',
+            'en_placeholder' => 'Option (EN)',
+        ],
+
+        'text' => [
+            'placeholder_lv' => 'Viettura teksts (LV)',
+            'placeholder_en' => 'Placeholder (EN)',
+        ],
+
+        'scale' => [
+            'min_value' => 'Min vērtība',
+            'max_value' => 'Max vērtība',
+
+            // ✅ new
+            'min_label' => 'Min etiķete',
+            'max_label' => 'Max etiķete',
+
+            'preview'   => 'Priekšskatījums',
+            'min_fallback' => 'Min',
+            'max_fallback' => 'Max',
+        ],
+
+        'actions' => [
+            'save' => 'Saglabāt izmaiņas',
+            'saving' => 'Saglabā...',
+        ],
+
+        'toast' => [
+            'success' => 'Anketa atjaunināta!',
+            'error' => 'Kļūda saglabājot izmaiņas.',
+        ],
+
+        'specialist' => 'Speciālists',
+        'psoriasis'  => 'Psoriāze',
+        'chronic'    => 'Hronisks',
     ],
 
     'selector' => [
-        'page_title'     => 'Form selector',
-        'heading'        => 'Assign form types',
-        'subheading'     => 'Select a type for each form to control where submissions go.',
-        'code'           => 'Form code',
-        'select_type'    => 'Select type…',
-        'save'           => 'Save',
-        'no_results'     => 'No forms found.',
-        'error_missing'  => 'Please select a type before saving.',
-        'success'        => 'Type saved successfully.',
-        'error'          => 'Failed to save. Please try again.',
+        'page_title'     => 'Anketu selektors',
+        'heading'        => 'Piešķirt anketu tipus',
+        'subheading'     => 'Izvēlieties tipu katrai anketei, lai noteiktu, kur nonāk iesniegumi.',
+        'code'           => 'Anketas kods',
+        'select_type'    => 'Izvēlēties tipu…',
+        'save'           => 'Saglabāt',
+        'no_results'     => 'Nav atrasta neviena anketa.',
+        'error_missing'  => 'Lūdzu, izvēlieties tipu pirms saglabāšanas.',
+        'success'        => 'Tips veiksmīgi saglabāts.',
+        'error'          => 'Neizdevās saglabāt. Lūdzu, mēģiniet vēlreiz.',
     ],
+
     'create' => [
-    'page_title'   => 'Izveidot anketu',
-    'layout_title' => 'Izveidot anketu',
+        'page_title'   => 'Izveidot anketu',
+        'layout_title' => 'Izveidot anketu',
 
-    'label'      => 'Anketu studija',
-    'heading'    => 'Izveidot jaunu anketu',
-    'subheading' => 'Konfigurējiet nosaukumus, redzamību un pievienojiet jautājumus.',
+        'label'      => 'Anketu studija',
+        'heading'    => 'Izveidot jaunu anketu',
+        'subheading' => 'Iestatiet nosaukumus, redzamību un pievienojiet jautājumus.',
 
-    'actions' => [
-        'cancel' => 'Atcelt',
-        'save'   => 'Saglabāt',
-    ],
-
-    'basic' => [
-        'heading' => 'Pamatinformācija',
-
-        'title_lv' => 'Nosaukums (LV)',
-        'title_en' => 'Nosaukums (EN)',
-
-        'title_lv_placeholder' => 'Piem., Klientu apmierinātība',
-        'title_en_placeholder' => 'e.g., Customer Satisfaction',
-    ],
-
-    'questions' => [
-        'heading' => 'Jautājumi',
-        'total_suffix' => 'kopā',
-        'empty' => 'Saraksts ir tukšs. Pievienojiet pirmo jautājumu.',
-        'add'   => 'Pievienot jautājumu',
-    ],
-
-    'field' => [
-        'type' => 'Tips',
-        'delete_title' => 'Dzēst jautājumu',
-
-        'types' => [
-            'radio'    => 'Radio izvēle',
-            'checkbox' => 'Atzīmējamie',
-            'dropdown' => 'Izvēlne',
-            'text'     => 'Teksta ievade',
-            'scale'    => 'Skala 1–10',
+        // ✅ optional: if Create also switches language
+        'language' => [
+            'label' => 'Valoda',
+            'lv' => 'Latviešu',
+            'en' => 'Angļu',
+            'lv_short' => 'LV',
+            'en_short' => 'EN',
         ],
 
-        'question_lv_placeholder' => 'Jautājums (LV)',
-        'question_en_placeholder' => 'Jautājums (EN)',
-    ],
+        'actions' => [
+            'cancel' => 'Atcelt',
+            'save'   => 'Saglabāt',
+        ],
 
-    'options' => [
-        'add' => 'Pievienot opciju',
-        'lv_placeholder' => 'Opcija (LV)',
-        'en_placeholder' => 'Option (EN)',
-    ],
+        'basic' => [
+            'heading' => 'Pamatinformācija',
 
-    'text' => [
-        'placeholder_lv' => 'Placeholder (LV)',
-        'placeholder_en' => 'Placeholder (EN)',
-    ],
+            'title_lv' => 'Nosaukums (LV)',
+            'title_en' => 'Nosaukums (EN)',
 
-    'scale' => [
-        'min_value' => 'Min vērtība',
-        'max_value' => 'Max vērtība',
-        'preview'   => 'Priekšskatījums',
-        'min_fallback' => 'Min',
-        'max_fallback' => 'Max',
-    ],
+            'title_lv_placeholder' => 'Piem., Klientu apmierinātība',
+            'title_en_placeholder' => 'e.g., Customer Satisfaction',
+        ],
 
-    'sidebar' => [
-        'settings' => 'Iestatījumi',
-        'visibility' => 'Redzamība',
-        'public'  => 'Publiska',
-        'private' => 'Privāta',
-        'questions' => 'Jautājumi',
-        'status' => 'Statuss',
-        'draft'  => 'Melnraksts',
-        'save'   => 'Saglabāt anketu',
-    ],
+        'questions' => [
+            'heading' => 'Jautājumi',
+            'total_suffix' => 'kopā',
+            'empty' => 'Saraksts ir tukšs. Pievienojiet pirmo jautājumu.',
+            'add'   => 'Pievienot jautājumu',
+        ],
 
-    'validation' => [
-        'title'   => 'Validācijas kļūda',
-        'message' => 'Lūdzu izlabojiet kļūdas pirms saglabāšanas.',
-    ],
+        'field' => [
+            'type' => 'Tips',
+            'delete_title' => 'Dzēst jautājumu',
 
-    'modal' => [
-        'continue' => 'Turpināt',
-        'close'    => 'Aizvērt',
-    ],
-],
+            'types' => [
+                'radio'    => 'Radio izvēle',
+                'checkbox' => 'Atzīmējamie (checkbox)',
+                'dropdown' => 'Izvēlne (dropdown)',
+                'text'     => 'Teksta ievade',
+                'scale'    => 'Skala 1–10',
+            ],
 
+            'question_lv_placeholder' => 'Jautājums (LV)',
+            'question_en_placeholder' => 'Question (EN)',
+        ],
+
+        'options' => [
+            'add' => 'Pievienot opciju',
+            'lv_placeholder' => 'Opcija (LV)',
+            'en_placeholder' => 'Option (EN)',
+        ],
+
+        'text' => [
+            'placeholder_lv' => 'Viettura teksts (LV)',
+            'placeholder_en' => 'Placeholder (EN)',
+        ],
+
+        'scale' => [
+            'min_value' => 'Min vērtība',
+            'max_value' => 'Max vērtība',
+            'preview'   => 'Priekšskatījums',
+            'min_fallback' => 'Min',
+            'max_fallback' => 'Max',
+        ],
+
+        'sidebar' => [
+            'settings' => 'Iestatījumi',
+            'visibility' => 'Redzamība',
+            'public'  => 'Publiska',
+            'private' => 'Privāta',
+            'questions' => 'Jautājumi',
+            'status' => 'Statuss',
+            'draft'  => 'Melnraksts',
+            'save'   => 'Saglabāt anketu',
+        ],
+
+        'validation' => [
+            'title'   => 'Validācijas kļūda',
+            'message' => 'Lūdzu, izlabojiet kļūdas pirms saglabāšanas.',
+        ],
+
+        'modal' => [
+            'continue' => 'Turpināt',
+            'close'    => 'Aizvērt',
+        ],
+    ],
 ];
