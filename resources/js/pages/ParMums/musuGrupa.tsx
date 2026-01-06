@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLang } from '@/hooks/useLang';
 
 // --- ICONS ---
 const Icons = {
@@ -17,6 +18,7 @@ const Icons = {
 };
 
 export default function MusuGrupa() {
+    const { __ } = useLang();
     // Independent states for each dropdown
     const [showVtdtStudents, setShowVtdtStudents] = useState(false);
     const [showRvtStudents, setShowRvtStudents] = useState(false);
@@ -129,13 +131,13 @@ export default function MusuGrupa() {
                 <div className="text-center mb-16 lg:mb-24">
                     <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-emerald-700 mb-6">
                         <Icons.Users className="h-4 w-4" />
-                        Komanda & Sadarbība
+                        {__('parmums.team_badge')}
                     </div>
                     <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-                        Mūsu Grupa
+                        {__('parmums.team_title')}
                     </h1>
                     <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
-                        Cilvēki, kas veido Biočipu laboratoriju un digitālo vidi.
+                        {__('parmums.team_subtitle')}
                     </p>
                 </div>
 
@@ -154,12 +156,12 @@ export default function MusuGrupa() {
                             </div>
                             <div className="text-center md:text-left">
                                 <div className="inline-block rounded-lg bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-slate-500 mb-4">
-                                    Laboratorijas Vadītājs
+                                    {__('parmums.team_leader_badge')}
                                 </div>
-                                <h2 className="text-3xl font-bold text-slate-900 mb-2">Uldis Bērziņš</h2>
-                                <p className="text-emerald-700 font-medium mb-6">Dr. biol., Vadošais pētnieks</p>
+                                <h2 className="text-3xl font-bold text-slate-900 mb-2">{__('parmums.team_leader_name')}</h2>
+                                <p className="text-emerald-700 font-medium mb-6">{__('parmums.team_leader_title')}</p>
                                 <p className="text-slate-600 text-lg leading-relaxed mb-8 max-w-2xl">
-                                    Pēta novecošanos un ādas šūnu kultūras biočipu tehnoloģijas. Viņa vadībā laboratorija attīsta inovatīvas metodes reģeneratīvajā medicīnā.
+                                    {__('parmums.team_leader_bio')}
                                 </p>
                                 
                                 <div className="flex justify-center md:justify-start">
@@ -170,7 +172,7 @@ export default function MusuGrupa() {
                                         className="flex items-center gap-2 rounded-xl bg-[#1877F2] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-500/20 transition-transform hover:-translate-y-0.5 hover:shadow-lg"
                                     >
                                         <Icons.Facebook className="h-5 w-5" />
-                                        Sazināties Facebook
+                                        {__('parmums.team_leader_contact')}
                                     </a>
                                 </div>
                             </div>
@@ -190,17 +192,17 @@ export default function MusuGrupa() {
                                     />
                                 </div>
                                 <div className="flex-1 text-center lg:text-left">
-                                    <h2 className="text-2xl font-bold text-slate-900 mb-2">VTDT Izstrādes Grupa</h2>
-                                    <h3 className="text-emerald-700 font-medium mb-4">Digitālā Attīstība</h3>
+                                    <h2 className="text-2xl font-bold text-slate-900 mb-2">{__('parmums.team_vtdt_title')}</h2>
+                                    <h3 className="text-emerald-700 font-medium mb-4">{__('parmums.team_vtdt_subtitle')}</h3>
                                     <p className="text-slate-600 leading-relaxed mb-8">
-                                        Vidzemes Tehnoloģiju un dizaina tehnikuma studenti izstrādāja un uztur šo tīmekļa vietni, integrējot moderno dizainu ar zinātnisko funkcionalitāti.
+                                        {__('parmums.team_vtdt_bio')}
                                     </p>
                                     
                                     <button
                                         onClick={() => setShowVtdtStudents((prev) => !prev)}
                                         className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition-all hover:bg-emerald-600 hover:shadow-emerald-500/30"
                                     >
-                                        {showVtdtStudents ? 'Aizvērt komandu' : 'Skatīt VTDT komandu'}
+                                        {showVtdtStudents ? __('parmums.team_vtdt_hide') : __('parmums.team_vtdt_show')}
                                         <Icons.ChevronDown className={`h-4 w-4 transition-transform duration-300 ${showVtdtStudents ? 'rotate-180' : ''}`} />
                                     </button>
                                 </div>
@@ -252,17 +254,17 @@ export default function MusuGrupa() {
                                     </div>
                                 </div>
                                 <div className="flex-1 text-center lg:text-left">
-                                    <h2 className="text-2xl font-bold text-slate-900 mb-2">RVT Rīgas Valsts Tehnikums</h2>
-                                    <h3 className="text-rose-700 font-medium mb-4">Tehniskais Atbalsts & Programmēšana</h3>
+                                    <h2 className="text-2xl font-bold text-slate-900 mb-2">{__('parmums.team_rvt_title')}</h2>
+                                    <h3 className="text-rose-700 font-medium mb-4">{__('parmums.team_rvt_subtitle')}</h3>
                                     <p className="text-slate-600 leading-relaxed mb-8">
-                                        Rīgas Valsts tehnikuma audzēkņi nodrošina papildu programmēšanas resursus un sistēmu arhitektūras izstrādi.
+                                        {__('parmums.team_rvt_bio')}
                                     </p>
                                     
                                     <button
                                         onClick={() => setShowRvtStudents((prev) => !prev)}
                                         className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition-all hover:bg-rose-700 hover:shadow-rose-500/30"
                                     >
-                                        {showRvtStudents ? 'Aizvērt komandu' : 'Skatīt RVT komandu'}
+                                        {showRvtStudents ? __('parmums.team_rvt_hide') : __('parmums.team_rvt_show')}
                                         <Icons.ChevronDown className={`h-4 w-4 transition-transform duration-300 ${showRvtStudents ? 'rotate-180' : ''}`} />
                                     </button>
                                 </div>
@@ -313,9 +315,9 @@ export default function MusuGrupa() {
                                     alt="Erasmus Plus"
                                     className="h-48 w-full rounded-2xl object-cover mb-6 shadow-sm"
                                 />
-                                <h3 className="text-xl font-bold text-slate-900 mb-2">Erasmus+</h3>
+                                <h3 className="text-xl font-bold text-slate-900 mb-2">{__('parmums.team_erasmus_title')}</h3>
                                 <p className="text-sm text-slate-600">
-                                    Starptautiskā sadarbība un pieredzes apmaiņa. Erasmus Plus studenti no Rumānijas piedalās laboratorijas ikdienas darbā.
+                                    {__('parmums.team_erasmus_bio')}
                                 </p>
                             </div>
                         </div>
@@ -328,10 +330,10 @@ export default function MusuGrupa() {
                                     alt="Ralfs Žagars"
                                     className="h-48 w-full rounded-2xl object-cover mb-6 shadow-sm"
                                 />
-                                <h3 className="text-xl font-bold text-slate-900 mb-1">Ralfs Žagars</h3>
-                                <p className="text-xs font-bold uppercase text-emerald-600 mb-3">Dizaina Koncepts</p>
+                                <h3 className="text-xl font-bold text-slate-900 mb-1">{__('parmums.team_ralfs_name')}</h3>
+                                <p className="text-xs font-bold uppercase text-emerald-600 mb-3">{__('parmums.team_ralfs_title')}</p>
                                 <p className="text-sm text-slate-600">
-                                    Rīgas mākslas un mediju tehnikuma audzēknis. Izstrādāja sākotnējo vizuālo identitāti un dizaina konceptu.
+                                    {__('parmums.team_ralfs_bio')}
                                 </p>
                             </div>
                         </div>
