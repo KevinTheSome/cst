@@ -14,6 +14,8 @@ class DocumentController extends Controller
      */
     public function index()
     {
+        syncLangFiles('database');
+        
         $storedFiles = \App\Models\StoredFile::all();
 
         $documents = $storedFiles->map(function ($file) {

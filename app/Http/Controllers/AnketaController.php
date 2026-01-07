@@ -17,6 +17,7 @@ class AnketaController extends Controller
      */
     public function index(Request $request)
     {
+        
         // Savācam filtrus no query string
         $filters = $request->only([
             'type',      // filtrs pēc veida (piem., public/private vai kas tev tur ir)
@@ -363,6 +364,7 @@ class AnketaController extends Controller
      */
     public function loadByCode(string $code)
     {
+        
         $formType = FormType::where('type', $code)->first();
 
         if (!$formType) {
@@ -392,12 +394,15 @@ class AnketaController extends Controller
         ]);
     }
 
-    public function showCode()
-    {
-        return Inertia::render('Formas/questions', [
-            'locale' => app()->getLocale(),
-        ]);
-    }
+   public function showCode()
+{
+    syncLangFiles('questions');
+
+    return Inertia::render('Formas/questions', [
+        'locale' => app()->getLocale(),
+    ]);
+}
+
 
     public function storeAnswers(Request $request)
     {

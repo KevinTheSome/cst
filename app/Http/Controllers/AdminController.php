@@ -10,9 +10,13 @@ use Illuminate\Support\Facades\Hash;
 class AdminController extends Controller
 {
     public function dashboard()
-    {
-        return Inertia::render('Admin/dashboard');
-    }
+{
+    syncLangFiles('admin_dashboard');
+
+    return Inertia::render('Admin/dashboard', [
+        'locale' => app()->getLocale(),
+    ]);
+}
 
     public function adminLogin()
     {
