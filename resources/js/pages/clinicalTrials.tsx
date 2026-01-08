@@ -3,6 +3,11 @@ import { Head } from '@inertiajs/react';
 import { useLang } from '@/hooks/useLang';
 
 const Icons = {
+    ArrowRight: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+    ),
     Activity: ({ className }: { className?: string }) => (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
@@ -28,34 +33,61 @@ const Icons = {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
         </svg>
-    )
+    ),
 };
 
 export default function ClinicalTrials() {
-    const { lang } = useLang(); // ✅ only lang, no locale
+    const { lang, locale } = useLang();
+
+    const trialsData = lang.clinical_trials.conditions as {
+        psoriasis: { name: string; summary: string; points: string[] };
+        crohns: { name: string; summary: string; points: string[] };
+    };
 
     const trials = [
         {
             icon: Icons.Activity,
             iconColor: 'text-rose-500 bg-rose-50',
-            condition: lang.clinical_trials.conditions.psoriasis.name,
-            summary: lang.clinical_trials.conditions.psoriasis.summary,
-            dataPoints: lang.clinical_trials.conditions.psoriasis.points,
+            condition: trialsData.psoriasis.name,
+            summary: trialsData.psoriasis.summary,
+            dataPoints: trialsData.psoriasis.points,
         },
         {
             icon: Icons.Beaker,
             iconColor: 'text-sky-600 bg-sky-50',
-            condition: lang.clinical_trials.conditions.crohns.name,
-            summary: lang.clinical_trials.conditions.crohns.summary,
-            dataPoints: lang.clinical_trials.conditions.crohns.points,
+            condition: trialsData.crohns.name,
+            summary: trialsData.crohns.summary,
+            dataPoints: trialsData.crohns.points,
         },
     ];
 
-    const challenges = {
-        condition: lang.clinical_trials.challenges.title,
-        summary: lang.clinical_trials.challenges.summary,
-        dataPoints: lang.clinical_trials.challenges.points,
+    const challenges = lang.clinical_trials.challenges as {
+        title: string;
+        summary: string;
+        points: string[];
     };
+
+    const challengeData = {
+        condition: challenges.title,
+        summary: challenges.summary,
+        dataPoints: challenges.points,
+    };
+
+    const featured = locale === 'en'
+        ? {
+              badge: 'Featured Publication',
+              title: 'Frontiers in Bioengineering and Biotechnology',
+              description:
+                  'Read the latest article on advanced bioengineering approaches and regenerative medicine outcomes.',
+              action: 'Open article',
+          }
+        : {
+              badge: 'Izcelta publikācija',
+              title: 'Frontiers in Bioengineering and Biotechnology',
+              description:
+                  'Iepazīstieties ar jaunāko rakstu par bioinženierijas pieejām un reģeneratīvās medicīnas rezultātiem.',
+              action: 'Atvērt rakstu',
+          };
 
     return (
         <>
@@ -88,6 +120,44 @@ export default function ClinicalTrials() {
                             {lang.clinical_trials.hero.description}
                         </p>
                     </main>
+
+                    {/* FEATURED LINK */}
+                    <section className="pb-12">
+                        <a
+                            href="https://www.frontiersin.org/articles/10.3389/fbioe.2025.1687461"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="group relative isolate flex flex-col gap-6 overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-900/5 md:flex-row md:items-center md:p-8"
+                        >
+                            {/* Decorative Blur Background inside card */}
+                            <div className="absolute -right-20 -top-20 -z-10 h-64 w-64 rounded-full bg-emerald-50/50 blur-3xl transition-colors duration-500 group-hover:bg-emerald-100/60" />
+                            
+                            {/* Content Section */}
+                            <div className="flex-1">
+                                <div className="mb-2 inline-flex items-center gap-2 rounded-md border border-emerald-100 bg-emerald-50/80 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+                                    <span className="relative flex h-2 w-2 mr-1">
+                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                    </span>
+                                    {featured.badge}
+                                </div>
+                                <h3 className="text-xl font-bold leading-tight text-slate-900 md:text-2xl">
+                                    {featured.title}
+                                </h3>
+                                <p className="mt-2 text-sm leading-relaxed text-slate-600 max-w-3xl">
+                                    {featured.description}
+                                </p>
+                            </div>
+
+                            {/* Button Section */}
+                            <div className="shrink-0">
+                                <div className="flex items-center gap-2 rounded-xl bg-slate-50 border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-900 transition-all duration-300 group-hover:border-emerald-500 group-hover:bg-emerald-600 group-hover:text-white group-hover:shadow-md">
+                                    {featured.action}
+                                    <Icons.ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                </div>
+                            </div>
+                        </a>
+                    </section>
 
                     {/* TRIAL CARDS */}
                     <section className="pb-20 grid gap-6 md:grid-cols-2">
@@ -123,15 +193,15 @@ export default function ClinicalTrials() {
                                     <div className="h-10 w-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-lg shadow-slate-900/20">
                                         <Icons.TrendingUp className="w-5 h-5" />
                                     </div>
-                                    <h2 className="text-xl font-bold text-slate-900">{challenges.condition}</h2>
+                                    <h2 className="text-xl font-bold text-slate-900">{challengeData.condition}</h2>
                                 </div>
 
                                 <div className="grid md:grid-cols-2 gap-8">
                                     <div>
-                                        <p className="text-slate-600 leading-relaxed">{challenges.summary}</p>
+                                        <p className="text-slate-600 leading-relaxed">{challengeData.summary}</p>
                                     </div>
                                     <ul className="space-y-3">
-                                        {challenges.dataPoints.map((dp) => (
+                                        {challengeData.dataPoints.map((dp: string) => (
                                             <li key={dp} className="flex items-start gap-3 text-sm text-slate-600">
                                                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
                                                 {dp}
