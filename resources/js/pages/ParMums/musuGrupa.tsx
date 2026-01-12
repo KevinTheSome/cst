@@ -22,6 +22,8 @@ export default function MusuGrupa() {
     // Independent states for each dropdown
     const [showVtdtStudents, setShowVtdtStudents] = useState(false);
     const [showRvtStudents, setShowRvtStudents] = useState(false);
+    const [showRtkStudents, setShowRtkStudents] = useState(false);
+    const [rtkLogoOk, setRtkLogoOk] = useState(true);
 
     const vtdtStudents = [
         {
@@ -113,7 +115,53 @@ export default function MusuGrupa() {
             image: '/rvt-student-7.jpg',
         },
     ];
+    // New Data for RTK
+    const rtkStudents = [
+        {
+            name: 'RVT Students 1',
+            title: 'Team Lead',
+            description: 'Koordinē RVT komandas darbu un komunikāciju ar pasūtītāju.',
+            image: '/rvt-student-1.jpg', // Replace with real images
+        },
+        {
+            name: 'RVT Students 2',
+            title: 'Backend Programmētājs',
+            description: 'Atbild par servera puses loģiku un datu bāzes arhitektūru.',
+            image: '/rvt-student-2.jpg',
+        },
+        {
+            name: 'RVT Students 3',
+            title: 'Frontend Programmētājs',
+            description: 'Pārvērš dizaina maketus funkcionālā kodā.',
+            image: '/rvt-student-3.jpg',
+        },
+        {
+            name: 'RVT Students 4',
+            title: 'UI Dizainers',
+            description: 'Izstrādā lietotāja saskarnes vizuālo tēlu.',
+            image: '/rvt-student-4.jpg',
+        },
+        {
+            name: 'RVT Students 5',
+            title: 'QA Speciālists',
+            description: 'Veic sistēmas testēšanu un kļūdu meklēšanu.',
+            image: '/rvt-student-5.jpg',
+        },
+        {
+            name: 'RVT Students 6',
+            title: 'Datu Analītiķis',
+            description: 'Apstrādā un analizē laboratorijas iegūtos datus.',
+            image: '/rvt-student-6.jpg',
+        },
+        {
+            name: 'RVT Students 7',
+            title: 'DevOps',
+            description: 'Rūpējas par izstrādes vidi un automatizāciju.',
+            image: '/rvt-student-7.jpg',
+        },
+    ];
 
+    const rtkLogoSrc = '/rtk.png';
     
     return (
         <main className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
@@ -294,6 +342,78 @@ export default function MusuGrupa() {
                                                 <div className="p-6">
                                                     <h4 className="text-lg font-bold text-slate-900">{student.name}</h4>
                                                     <p className="text-xs font-bold uppercase tracking-wider text-rose-600 mt-1 mb-3">{student.title}</p>
+                                                    <p className="text-sm text-slate-500 leading-relaxed">{student.description}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* --- RTK TEAM SECTION (NEW) --- */}
+                    <div className="relative">
+                        <div className="rounded-3xl border border-slate-200 bg-white/60 backdrop-blur p-8 lg:p-10">
+                            <div className="flex flex-col lg:flex-row items-center gap-10">
+                                <div className="shrink-0 relative">
+                                    <div className="absolute -inset-2 bg-gradient-to-r from-indigo-400 to-sky-400 rounded-2xl opacity-20 blur-lg"></div>
+                                    <div className="relative flex h-auto w-64 items-center justify-center rounded-2xl bg-white p-4 shadow-sm">
+                                        {rtkLogoOk ? (
+                                            <img
+                                                src={rtkLogoSrc}
+                                                alt="RTK Logo"
+                                                onError={() => setRtkLogoOk(false)}
+                                                className="h-auto w-full object-contain"
+                                            />
+                                        ) : (
+                                            <div className="flex flex-col items-center gap-2 py-6 text-slate-500">
+                                                <Icons.School className="h-10 w-10" />
+                                                <span className="text-xs font-semibold tracking-wider">RTK</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="flex-1 text-center lg:text-left">
+                                    <h2 className="text-2xl font-bold text-slate-900 mb-2">{__('parmums.team_rtk_title')}</h2>
+                                    <h3 className="text-sky-700 font-medium mb-4">{__('parmums.team_rtk_subtitle')}</h3>
+                                    <p className="text-slate-600 leading-relaxed mb-8">
+                                        {__('parmums.team_rtk_bio')}
+                                    </p>
+                                    
+                                    <button
+                                        onClick={() => setShowRtkStudents((prev) => !prev)}
+                                        className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition-all hover:bg-sky-700 hover:shadow-sky-500/30"
+                                    >
+                                        {showRtkStudents ? __('parmums.team_rtk_hide') : __('parmums.team_rtk_show')}
+                                        <Icons.ChevronDown className={`h-4 w-4 transition-transform duration-300 ${showRtkStudents ? 'rotate-180' : ''}`} />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* DROPDOWN GRID - RTK */}
+                            <div className={`grid transition-[grid-template-rows,opacity,margin] duration-500 ease-in-out ${showRtkStudents ? 'grid-rows-[1fr] opacity-100 mt-12' : 'grid-rows-[0fr] opacity-0 mt-0'}`}>
+                                <div className="overflow-hidden">
+                                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                                        {rtkStudents.map((student, index) => (
+                                            <div
+                                                key={index}
+                                                className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all hover:-translate-y-1 hover:shadow-xl hover:border-sky-200"
+                                            >
+                                                <div className="aspect-[4/3] overflow-hidden bg-slate-100 flex items-center justify-center">
+                                                    {student.image.includes('placeholder') ? (
+                                                         <Icons.School className="h-12 w-12 text-slate-300" />
+                                                    ) : (
+                                                        <img 
+                                                            src={student.image} 
+                                                            alt={student.name} 
+                                                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                                                        />
+                                                    )}
+                                                </div>
+                                                <div className="p-6">
+                                                    <h4 className="text-lg font-bold text-slate-900">{student.name}</h4>
+                                                    <p className="text-xs font-bold uppercase tracking-wider text-sky-600 mt-1 mb-3">{student.title}</p>
                                                     <p className="text-sm text-slate-500 leading-relaxed">{student.description}</p>
                                                 </div>
                                             </div>

@@ -322,4 +322,25 @@ return [
             'close'    => 'Close',
         ],
     ],
+    'show' => [
+        'page_title'   => 'Form preview',
+        'preview'      => 'Preview',
+        'no_questions' => 'This form has no questions.',
+        'public'       => 'Public',
+        'private'      => 'Private',
+    ],
+
+    'field' => [
+        'radio'    => 'Single choice',
+        'checkbox' => 'Multiple choice',
+        'dropdown' => 'Dropdown',
+        'text'     => 'Text input',
+        'scale'    => 'Scale',
+        'no_options' => 'No options defined.',
+    ],
+
+    'misc' => [
+        'untitled_form'     => 'Untitled form',
+        'untitled_question' => 'Untitled',
+    ],
 ];

@@ -319,4 +319,24 @@ return [
             'close'    => 'Aizvērt',
         ],
     ],
+    'show' => [
+        'page_title'   => 'Anketas priekšskatījums',
+        'preview'      => 'Priekšskatījums',
+        'no_questions' => 'Šai anketai nav pievienoti jautājumi.',
+        'public'       => 'Publiska',
+        'private'      => 'Privāta',
+    ],
+        'field' => [
+        'radio'    => 'Izvēle (viens variants)',
+        'checkbox' => 'Izvēle (vairāki varianti)',
+        'dropdown' => 'Izkrītošais saraksts',
+        'text'     => 'Teksta ievade',
+        'scale'    => 'Skala',
+        'no_options' => 'Nav definēti atbilžu varianti.',
+    ],
+
+    'misc' => [
+        'untitled_form'     => 'Nenosaukta anketa',
+        'untitled_question' => 'Bez nosaukuma',
+    ],
 ];

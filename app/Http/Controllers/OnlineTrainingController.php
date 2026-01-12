@@ -162,7 +162,7 @@ class OnlineTrainingController extends Controller
 
         OnlineTraining::create($payload);
 
-        return redirect()->route('admin.trainings')->with('success', 'Online training created.');
+        return redirect()->route('admin.trainings')->with('success', 'Online training created.')->with('created', true);
     }
 
     // GET /admin/trainings/show/{id}
@@ -221,7 +221,7 @@ class OnlineTrainingController extends Controller
 
         $training->update($payload);
 
-        return redirect()->route('admin.trainings')->with('success', 'Online training updated.');
+        return redirect()->route('admin.trainings')->with('success', 'Online training updated.')->with('created', true);
     }
 
     // DELETE /admin/trainings/destroy/{id}

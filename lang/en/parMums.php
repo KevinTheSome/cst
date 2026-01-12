@@ -45,6 +45,12 @@ return [
     'team_rvt_bio' => 'Riga State Technical School students provide additional programming resources and system architecture development.',
     'team_rvt_show' => 'View RVT team',
     'team_rvt_hide' => 'Close team',
+
+    'team_rtk_title' => 'RTK Riga Technical College',
+    'team_rtk_subtitle' => 'Technical Support & Development',
+    'team_rtk_bio' => 'Riga Technical College students contribute to digital solution development and team support.',
+    'team_rtk_show' => 'View RTK team',
+    'team_rtk_hide' => 'Close team',
     
     'team_erasmus_title' => 'Erasmus+',
     'team_erasmus_bio' => 'International collaboration and exchange of experience. Erasmus Plus students from Romania participate in laboratory daily work.',

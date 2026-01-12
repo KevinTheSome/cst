@@ -45,6 +45,12 @@ return [
     'team_rvt_bio' => 'Rīgas Valsts tehnikuma audzēkņi nodrošina papildu programmēšanas resursus un sistēmu arhitektūras izstrādi.',
     'team_rvt_show' => 'Skatīt RVT komandu',
     'team_rvt_hide' => 'Aizvērt komandu',
+
+    'team_rtk_title' => 'RTK Rīgas Tehniskā koledža',
+    'team_rtk_subtitle' => 'Tehniskais atbalsts & izstrāde',
+    'team_rtk_bio' => 'Rīgas Tehniskās koledžas studenti iesaistās digitālo risinājumu izstrādē un komandas atbalstā.',
+    'team_rtk_show' => 'Skatīt RTK komandu',
+    'team_rtk_hide' => 'Aizvērt komandu',
     
     'team_erasmus_title' => 'Erasmus+',
     'team_erasmus_bio' => 'Starptautiskā sadarbība un pieredzes apmaiņa. Erasmus Plus studenti no Rumānijas piedalās laboratorijas ikdienas darbā.',
