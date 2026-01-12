@@ -2,7 +2,7 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import { useLang } from '@/hooks/useLang';
 import { Link, router, usePage } from '@inertiajs/react';
 import { Book, CheckCircle, Edit, ExternalLink, Eye, Plus, Search as SearchIcon, Trash2, XCircle } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 type Training = {
     id: number;
@@ -116,11 +116,16 @@ const copy = {
 } as const;
 
 const IndexApmaciba: React.FC = () => {
-    const page = usePage<PageProps>();
-    const trainings = page.props.trainings ?? [];
-    const filters = page.props.filters ?? { q: '' };
+    const page = usePage<PageProps & { flash?: any }>();
+    const { trainings = [], filters = { q: '' }, flash } = page.props;
     const { locale } = useLang();
     const t = copy[locale === 'en' ? 'en' : 'lv'];
+    useEffect(() => {
+    if (flash?.created) {
+        router.reload({ only: ['trainings'] });
+    }
+    }, [flash?.created]);
+    
 
     // Delete modal state
     const [deleteId, setDeleteId] = useState<number | null>(null);
