@@ -15,6 +15,8 @@ import {
     AlertCircle,
     Loader2,
 } from 'lucide-react';
+import { router, usePage } from '@inertiajs/react';
+import axios from 'axios';
 
 type LoginProps = {
     onSuccess?: (data: unknown) => void;
@@ -32,6 +34,8 @@ export default function LoginPage({ onSuccess, apiEndpoint = '/admin/login' }: L
     const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
     const [showPassword, setShowPassword] = useState(false);
     const [isHelpOpen, setIsHelpOpen] = useState(false);
+    const { props } = usePage<any>();
+    const currentLocale = props?.locale || 'lv';
 
     function validate() {
         const errors: { email?: string; password?: string } = {};
@@ -47,6 +51,17 @@ export default function LoginPage({ onSuccess, apiEndpoint = '/admin/login' }: L
         setFieldErrors(errors);
         return Object.keys(errors).length === 0;
     }
+
+    const switchLanguage = async (locale: string) => {
+        if (currentLocale === locale) return;
+
+        try {
+            await axios.post('/locale', { locale });
+            router.reload({ only: ['lang', 'locale'] });
+        } catch (error) {
+            console.error('Language switch failed:', error);
+        }
+    };
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -92,6 +107,33 @@ export default function LoginPage({ onSuccess, apiEndpoint = '/admin/login' }: L
 
     return (
         <>
+
+            <div className="fixed top-6 right-6 z-50">
+                <div className="flex items-center rounded-full border border-white/10 bg-slate-900/70 p-1 backdrop-blur-xl shadow-lg">
+                    <button
+                        onClick={() => switchLanguage('lv')}
+                        className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-all ${
+                            currentLocale === 'lv'
+                                ? 'bg-indigo-600 text-white shadow'
+                                : 'text-slate-400 hover:text-white'
+                        }`}
+                    >
+                        LV
+                    </button>
+
+                    <button
+                        onClick={() => switchLanguage('en')}
+                        className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-all ${
+                            currentLocale === 'en'
+                                ? 'bg-indigo-600 text-white shadow'
+                                : 'text-slate-400 hover:text-white'
+                        }`}
+                    >
+                        EN
+                    </button>
+                </div>
+            </div>
+
             <Head title={trans('admin_login.title')} />
 
             <div className="fixed inset-0 -z-10 bg-slate-950" />
