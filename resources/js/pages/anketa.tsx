@@ -40,7 +40,7 @@ type Questionnaire = {
     therapy: string;
 };
 
-const genderOptions = ['Vīrietis', 'Sieviete', 'Citi / Nevēlos norādīt'];
+const genderOptions = ['Vīrietis', 'Sieviete'];
 const ageGroups = ['0–18', '19–35', '36–50', '51+'];
 const countries = ['Latvija', 'Lietuva', 'Igaunija', 'Somija', 'Zviedrija', 'Norvēģija', 'Vācija', 'Polija', 'Cita'];
 const diseaseOptions = [

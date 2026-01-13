@@ -38,8 +38,8 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => '1.2. Dzimums', 'en' => '1.2. Gender'],
                             'type' => 'radio',
                             'options' => [
-                                'lv' => ['Sieviete', 'Vīrietis', 'Citi / nevēlos norādīt'],
-                                'en' => ['Female', 'Male', 'Other / prefer not to say'],
+                                'lv' => ['Sieviete', 'Vīrietis'],
+                                'en' => ['Female', 'Male'],
                             ],
                         ],
 
@@ -397,8 +397,8 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => '1.2. Dzimums', 'en' => '1.2. Gender'],
                             'type' => 'radio',
                             'options' => [
-                                'lv' => ['Sieviete', 'Vīrietis', 'Citi / nevēlos norādīt'],
-                                'en' => ['Female', 'Male', 'Other / prefer not to say'],
+                                'lv' => ['Sieviete', 'Vīrietis'],
+                                'en' => ['Female', 'Male'],
                             ],
                         ],
 
