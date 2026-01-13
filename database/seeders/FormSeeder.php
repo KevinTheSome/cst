@@ -932,8 +932,8 @@ class FormSeeder extends Seeder
                         [
                             'id' => (string) Str::uuid(),
                             'label' => [
-                                'lv' => "3.3. Vai Jūs vēlētos strukturētu, koncentrētu pārskatu (lekciju/mācību moduļa veidā) par:\n- ES un Latvijas ATMP regulējumu?",
-                                'en' => "3.3. Would you like a structured, concise overview (lecture/training module) on:\n- EU and Latvian ATMP regulation?",
+                                'lv' => "3.3. Vai Jūs vēlētos strukturētu, koncentrētu pārskatu (lekciju/mācību moduļa veidā) par ES un Latvijas ATMP regulējumu?",
+                                'en' => "3.3. Would you like a structured, concise overview (lecture/training module) on EU and Latvian ATMP regulation?",
                             ],
                             'type' => 'radio',
                             'options' => [
