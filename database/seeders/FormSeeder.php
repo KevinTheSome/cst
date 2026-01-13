@@ -919,8 +919,8 @@ class FormSeeder extends Seeder
                             'id' => (string) Str::uuid(),
                             'type' => 'scale',
                             'label' => [
-                                'lv' => '3.2. Cik labi Jūs jūtaties informēts/-a par to, kā ATMP HE plānots / varētu tikt realizēts Latvijā? (1–10)',
-                                'en' => '3.2. How well informed do you feel about how ATMP HE is planned / could be implemented in Latvia? (1–10)',
+                                'lv' => '3.2. Cik labi Jūs jūtaties informēts/-a par to, kā ATMP HE plānots / varētu tikt realizēts Latvijā? (1–10)?',
+                                'en' => '3.2. How well informed do you feel about how ATMP HE is planned / could be implemented in Latvia? (1–10)?',
                             ],
                             'scale' => [
                                 'min' => 1,
