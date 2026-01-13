@@ -116,69 +116,74 @@ class LectureController extends Controller
     /**
      * Verify a lecture code for public access
      */
-    public function verifyCode(Request $request)
-    {
-        $request->validate([
-            'code' => 'required|string',
-        ]);
+public function verifyCode(Request $request)
+{
+    $request->validate([
+        'code' => 'required|string',
+    ]);
 
-        $code = OnlineCode::where('code', strtoupper(trim($request->code)))->first();
+    $input = trim((string) $request->code);
 
-        if (!$code) {
-            return response()->json([
-                'valid' => false,
-                'message' => 'Invalid code',
-            ], 404);
-        }
+    // ✅ case-insensitive lookup (works on MySQL + Postgres)
+    $code = OnlineCode::whereRaw('LOWER(code) = ?', [mb_strtolower($input)])->first();
 
-        if (!$code->isValidNow()) {
-            return response()->json([
-                'valid' => false,
-                'message' => 'Code is expired or inactive',
-            ], 403);
-        }
-
-        // Update usage tracking
-        $code->used_count += 1;
-        $code->last_used_at = now();
-        $code->last_used_by = $request->ip(); // or user ID if authenticated
-        $code->save();
-
-        $lectures = [];
-
-        if (!empty($code->online_training_ids)) {
-            // Only return trainings assigned to this code
-            $trainings = OnlineTraining::whereIn('id', $code->online_training_ids)
-                ->where('is_active', true)
-                ->get();
-
-            $lectures = $trainings->map(fn($t) => [
-                'id' => $t->id,
-                'title' => $t->title,
-                'description' => $t->description,
-                'url' => $t->url,
-                'starts_at' => $t->starts_at,
-                'ends_at' => $t->ends_at,
-            ])->toArray();
-        } else {
-            // Fallback: all active trainings (for backwards compatibility)
-            $trainings = OnlineTraining::where('is_active', true)->get();
-            $lectures = $trainings->map(fn($t) => [
-                'id' => $t->id,
-                'title' => $t->title,
-                'description' => $t->description,
-                'url' => $t->url,
-                'starts_at' => $t->starts_at,
-                'ends_at' => $t->ends_at,
-            ])->toArray();
-        }
-
+    // ✅ Return 200 (no console "failed to load resource")
+    if (!$code) {
         return response()->json([
-            'valid' => true,
-            'code' => $code,
-            'lectures' => $lectures,
-        ]);
+            'valid' => false,
+            'message' => 'Invalid code',
+        ], 200);
     }
+
+    if (!$code->isValidNow()) {
+        return response()->json([
+            'valid' => false,
+            'message' => 'Code is expired or inactive',
+        ], 200);
+    }
+
+    // Update usage tracking
+    $code->used_count += 1;
+    $code->last_used_at = now();
+    $code->last_used_by = $request->ip();
+    $code->save();
+
+    // Trainings unlocked by this code
+    if (!empty($code->online_training_ids)) {
+        $trainings = OnlineTraining::whereIn('id', $code->online_training_ids)
+            ->where('is_active', true)
+            ->get();
+    } else {
+        $trainings = OnlineTraining::where('is_active', true)->get();
+    }
+
+    $lectures = $trainings->map(fn($t) => [
+        'id' => $t->id,
+        'title' => $t->title,
+        'description' => $t->description,
+        'url' => $t->url,
+        'starts_at' => $t->starts_at,
+        'ends_at' => $t->ends_at,
+    ])->toArray();
+
+    // ✅ Persist unlocked IDs in session (so refresh stays unlocked)
+    $existing = session('unlocked_lectures', []);
+    $existing = is_array($existing) ? $existing : [];
+
+    $idsToUnlock = array_map(fn($l) => (int)($l['id'] ?? 0), $lectures);
+    $merged = array_values(array_unique(array_filter(array_merge($existing, $idsToUnlock))));
+
+    session(['unlocked_lectures' => $merged]);
+
+    return response()->json([
+        'valid' => true,
+        'code' => $code,
+        'lectures' => $lectures,
+        'unlocked_lectures' => $merged,
+    ], 200);
+}
+
+
 
     /**
      * Regenerate code string (new unique code)

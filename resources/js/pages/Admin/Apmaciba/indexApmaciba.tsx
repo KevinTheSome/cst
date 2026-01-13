@@ -1,420 +1,285 @@
-import AdminLayout from '@/Layouts/AdminLayout';
 import { useLang } from '@/hooks/useLang';
-import { Link, router, usePage } from '@inertiajs/react';
-import { Book, CheckCircle, Edit, ExternalLink, Eye, Plus, Search as SearchIcon, Trash2, XCircle } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { Head } from '@inertiajs/react';
+import axios from 'axios';
+import React, { useEffect, useMemo, useState } from 'react';
 
-type Training = {
-    id: number;
-    title: { lv?: string | null; en?: string | null };
-    description?: string | null;
-    url?: string | null;
-    is_active?: boolean;
-    // rating fields added by controller
-    ratings_count?: number;
-    ratings_avg?: number | null;
-    ratings_breakdown?: Record<number, number>;
+// --- TYPES ---
+type MultilingualTitle = { lv?: string; en?: string; [key: string]: string | undefined };
+
+type Lecture = {
+  id: number; // ✅ make this number (matches Laravel default)
+  title: string | MultilingualTitle;
+  description?: string;
+  duration?: string;
+  url?: string;
+  starts_at?: string;
+  ends_at?: string;
+  rating_avg?: number;
+  ratings_count?: number;
 };
 
-type PageProps = {
-    trainings: Training[];
-    filters: { q?: string };
-};
-
-// small icons
-const BookIcon = () => <Book className="h-6 w-6" />;
-
-// format bytes if needed (not used here, but kept for parity)
-function formatBytes(bytes: number | null | undefined) {
-    if (!bytes || bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-
-const StarDisplay = ({ avg, max = 5 }: { avg: number | null | undefined; max?: number }) => {
-    const filled = avg ? Math.round(avg) : 0;
-    return (
-        <div className="flex items-center gap-2">
-            <div className="flex items-center gap-0.5">
-                {[...Array(max)].map((_, i) => (
-                    <svg key={i} className={`h-4 w-4 ${i < filled ? 'text-yellow-400' : 'text-gray-600'}`} viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                ))}
-            </div>
-            <div className="text-xs text-gray-300">{avg ? avg.toFixed(1) : '—'}</div>
-        </div>
-    );
-};
-
-const IconWarning = () => (
-    <svg className="h-12 w-12 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-        />
+// --- ICONS ---
+const Icons = {
+  Lock: ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+      />
     </svg>
+  ),
+  Play: ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z"
+      />
+    </svg>
+  ),
+};
+
+// --- STAR RATING ---
+const StarRating = ({ value, onChange }: { value: number; onChange: (v: number) => void }) => (
+  <div className="flex gap-1 mt-2">
+    {[1, 2, 3, 4, 5].map((star) => (
+      <svg
+        key={star}
+        onClick={() => onChange(star)}
+        className={`h-6 w-6 cursor-pointer ${star <= value ? 'fill-amber-400 text-amber-400' : 'fill-none text-slate-400'}`}
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+      </svg>
+    ))}
+  </div>
 );
 
-const copy = {
-    lv: {
-        pageTitle: 'Tiešsaistes apmācības',
-        pageSubtitle: 'Pārvaldiet apmācību programmas un kursus',
-        searchPlaceholder: 'Meklēt apmācības...',
-        searchButton: 'Meklēt',
-        createButton: 'Izveidot',
-        emptyTitle: 'Apmācības nav atrastas',
-        emptySubtitle: 'Mēģiniet pielāgot meklēšanu vai izveidojiet jaunu apmācību.',
-        noDescription: 'Apraksts nav norādīts',
-        statusLabel: 'Statuss',
-        statusActive: 'Aktīva',
-        statusInactive: 'Neaktīva',
-        ratingLabel: 'Vērtējums',
-        showDetail: 'Rādīt detaļas',
-        hideDetail: 'Paslēpt detaļas',
-        viewTitle: 'Skatīt',
-        editTitle: 'Rediģēt',
-        deleteButton: 'Dzēst',
-        deleteTitle: 'Dzēst apmācību?',
-        deleteBody:
-            'Vai tiešām vēlaties dzēst šo apmācību? Šī darbība ir neatgriezeniska un dzēsīs visus saistītos datus.',
-        cancel: 'Atcelt',
-        deleting: 'Dzēš...',
-        confirmDelete: 'Jā, dzēst',
-        layoutTitle: 'Tiešsaistes apmācības',
-    },
-    en: {
-        pageTitle: 'Online Trainings',
-        pageSubtitle: 'Manage your training programs and courses',
-        searchPlaceholder: 'Search trainings...',
-        searchButton: 'Search',
-        createButton: 'Create',
-        emptyTitle: 'No trainings found',
-        emptySubtitle: 'Try adjusting your search query or create a new event.',
-        noDescription: 'No description provided',
-        statusLabel: 'Status',
-        statusActive: 'Active',
-        statusInactive: 'Inactive',
-        ratingLabel: 'Rating',
-        showDetail: 'Show detail',
-        hideDetail: 'Hide detail',
-        viewTitle: 'View',
-        editTitle: 'Edit',
-        deleteButton: 'Delete',
-        deleteTitle: 'Delete Training?',
-        deleteBody:
-            'Are you sure you want to delete this training? This action cannot be undone and will remove all associated data.',
-        cancel: 'Cancel',
-        deleting: 'Deleting...',
-        confirmDelete: 'Yes, Delete',
-        layoutTitle: 'Online Trainings',
-    },
-} as const;
+type VerifyResponse =
+  | { valid: true; lectureId?: number; message?: string }
+  | { valid: false; lectureId?: number; message?: string };
 
-const IndexApmaciba: React.FC = () => {
-    const page = usePage<PageProps & { flash?: any }>();
-    const { trainings = [], filters = { q: '' }, flash } = page.props;
-    const { locale } = useLang();
-    const t = copy[locale === 'en' ? 'en' : 'lv'];
-    useEffect(() => {
-    if (flash?.created) {
-        router.reload({ only: ['trainings'] });
-    }
-    }, [flash?.created]);
-    
+export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
+  const { __, locale } = useLang();
 
-    // Delete modal state
-    const [deleteId, setDeleteId] = useState<number | null>(null);
-    const [isDeleting, setIsDeleting] = useState(false);
+  // ✅ Ensure axios CSRF header exists (helps if your page is outside the inertia axios bootstrap)
+  useEffect(() => {
+    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    if (token) axios.defaults.headers.common['X-CSRF-TOKEN'] = token;
+    axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+  }, []);
 
-    // Expanded detail state for ratings
-    const [expanded, setExpanded] = useState<Record<number, boolean>>({});
+  const [selectedLectureId, setSelectedLectureId] = useState<number | null>(null);
+  const [unlockedLectureIds, setUnlockedLectureIds] = useState<number[]>([]);
+  const unlockedSet = useMemo(() => new Set(unlockedLectureIds), [unlockedLectureIds]);
 
-    function promptDelete(id: number) {
-        setDeleteId(id);
+  const [code, setCode] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const [userRatings, setUserRatings] = useState<{ [key: number]: number }>({});
+  const [showRating, setShowRating] = useState<{ [key: number]: boolean }>({});
+
+  const renderTitle = (title: string | MultilingualTitle) =>
+    typeof title === 'string' ? title : title[locale] || title['lv'] || title['en'] || Object.values(title)[0] || '';
+
+  const validateCode = (c: string) => (c ?? '').trim().length >= 3;
+
+  const handleSubmitCode = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (selectedLectureId == null) return;
+
+    setError(null);
+
+    const cleaned = (code ?? '').trim();
+    if (!validateCode(cleaned)) {
+      setError(__('specialistiem.apmaciba.form.error_invalid'));
+      return;
     }
 
-    function confirmDelete() {
-        if (deleteId === null) return;
-        setIsDeleting(true);
-        router.post(
-            `/admin/trainings/destroy/${deleteId}`,
-            {},
-            {
-                onFinish: () => {
-                    setIsDeleting(false);
-                    setDeleteId(null);
-                },
-            },
-        );
+    setSubmitting(true);
+    try {
+      // ✅ Send lectureId too (very commonly required)
+      const { data } = await axios.post<VerifyResponse>('/lecture-codes/verify', {
+        code: cleaned, // (optionally: cleaned.toUpperCase())
+        lectureId: selectedLectureId,
+      });
+
+      if (data?.valid) {
+        const unlockId = typeof data.lectureId === 'number' ? data.lectureId : selectedLectureId;
+
+        setUnlockedLectureIds((prev) => (prev.includes(unlockId) ? prev : [...prev, unlockId]));
+        setSelectedLectureId(null);
+        setError(null);
+      } else {
+        setError(data?.message || __('specialistiem.apmaciba.form.error_invalid'));
+      }
+    } catch (err: any) {
+      const status = err?.response?.status;
+
+      if (status === 419) {
+        setError(__('specialistiem.apmaciba.form.error_invalid') + ' (CSRF 419)');
+      } else if (status === 401 || status === 403) {
+        setError(__('specialistiem.apmaciba.form.error_invalid') + ' (AUTH)');
+      } else {
+        setError(err?.response?.data?.message || __('specialistiem.apmaciba.form.error_invalid'));
+      }
+    } finally {
+      setSubmitting(false);
+      setCode('');
     }
+  };
 
-    const toggleExpand = (id: number) => {
-        setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
-    };
+  const handleSubmitRating = async (lectureId: number) => {
+    const lecture = initialLectures.find((l) => l.id === lectureId);
+    const rating = userRatings[lectureId];
+    if (!lecture || !rating) return;
 
-    const getTitle = (title: Training['title']) => {
-        if (!title) return '-';
-        if (locale === 'en') return title.en || title.lv || '-';
-        return title.lv || title.en || '-';
-    };
+    try {
+      await axios.post('/ratings', { lectureId: lecture.id, rating });
+      alert(__('specialistiem.apmaciba.rating.submit') + ' ' + __('specialistiem.apmaciba.form.submit') + '!');
+    } catch {
+      alert(__('specialistiem.apmaciba.rating.submit') + ' ' + 'Kļūda');
+    }
+  };
+
+  const LectureCard = ({ lecture }: { lecture: Lecture }) => {
+    const isSelected = selectedLectureId === lecture.id;
+    const unlocked = unlockedSet.has(lecture.id);
+    const showLectureRating = showRating[lecture.id] || false;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800">
-            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                {/* Header */}
-                <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-                    <div>
-                        <h1 className="text-3xl font-bold text-white">{t.pageTitle}</h1>
-                        <p className="mt-2 text-gray-400">{t.pageSubtitle}</p>
-                    </div>
+      <div
+        className={`group relative rounded-2xl border p-5 transition-all ${
+          isSelected ? 'border-emerald-500 bg-emerald-50 ring-1 ring-emerald-500' : 'border-slate-200 bg-white hover:border-emerald-300 hover:shadow-lg'
+        }`}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h3 className={`mb-1 text-base font-bold ${isSelected ? 'text-emerald-900' : 'text-slate-900'}`}>
+              {renderTitle(lecture.title)}
+            </h3>
+            <p className="line-clamp-2 text-xs text-slate-500">{lecture.description}</p>
 
-                    <div className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center md:w-auto">
-                        <form method="GET" action="/admin/trainings" className="flex w-full items-center gap-2 md:w-auto">
-                            <div className="relative flex-1 md:flex-none">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                    <SearchIcon className="h-4 w-4 text-gray-400" />
-                                </div>
-                                <input
-                                    name="q"
-                                    defaultValue={filters.q ?? ''}
-                                    placeholder={t.searchPlaceholder}
-                                    className="w-full rounded-lg border border-gray-700 bg-gray-800 py-2.5 pr-3 pl-10 text-gray-100 placeholder-gray-500 shadow-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 focus:outline-none md:w-64"
-                                />
-                            </div>
-                            <button
-                                type="submit"
-                                className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm font-medium text-gray-200 shadow-sm transition-all hover:bg-gray-700 hover:text-white"
-                            >
-                                {t.searchButton}
-                            </button>
-                        </form>
+            {lecture.rating_avg !== undefined && (
+              <div className="mt-2 flex items-center gap-2 text-xs text-amber-600">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <svg
+                    key={i}
+                    className={`h-3 w-3 ${i <= Math.round(lecture.rating_avg!) ? 'fill-amber-400' : 'fill-transparent stroke-amber-400'}`}
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                ))}
+                <span className="ml-1">
+                  ({lecture.rating_avg?.toFixed(1)} / {lecture.ratings_count})
+                </span>
+              </div>
+            )}
+          </div>
 
-                        <Link
-                            href="/admin/trainings/create"
-                            className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-blue-900/20 transition-all hover:bg-blue-500"
-                        >
-                            <Plus className="h-4 w-4" />
-                            {t.createButton}
-                        </Link>
-                    </div>
-                </div>
-
-                {/* Content */}
-                <div className="w-full">
-                    {trainings.length === 0 ? (
-                        <div className="rounded-xl border border-dashed border-gray-700 bg-gray-800/50 p-12 text-center">
-                            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gray-800 text-gray-500">
-                                <SearchIcon className="h-6 w-6" />
-                            </div>
-                            <h3 className="text-lg font-medium text-gray-300">{t.emptyTitle}</h3>
-                            <p className="mt-1 text-sm text-gray-500">{t.emptySubtitle}</p>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                            {trainings.map((t: Training) => {
-                                const breakdown = t.ratings_breakdown ?? { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-                                const total = t.ratings_count ?? Object.values(breakdown).reduce((a, b) => a + b, 0);
-                                const avg =
-                                    typeof t.ratings_avg === 'number'
-                                        ? t.ratings_avg
-                                        : total
-                                          ? (5 * (breakdown[5] || 0) +
-                                                4 * (breakdown[4] || 0) +
-                                                3 * (breakdown[3] || 0) +
-                                                2 * (breakdown[2] || 0) +
-                                                1 * (breakdown[1] || 0)) /
-                                            total
-                                          : null;
-
-                                return (
-                                    <article
-                                        key={t.id}
-                                        className="group relative flex h-full flex-col rounded-2xl border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-6 shadow-lg transition-all duration-300 hover:border-gray-600 hover:shadow-2xl hover:shadow-black/40"
-                                    >
-                                        {/* Top */}
-                                        <div className="mb-4 flex items-start justify-between gap-4">
-                                            <div className="flex items-center gap-4">
-                                                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl border border-blue-500/30 bg-blue-500/20 text-blue-400 shadow-inner">
-                                                    <BookIcon />
-                                                </div>
-                                                <div>
-                                                    <h3 className="line-clamp-2 text-lg leading-tight font-bold text-white transition-colors group-hover:text-blue-400">
-                                                        {getTitle(t.title)}
-                                                    </h3>
-                                                    <div className="mt-1 font-mono text-xs text-gray-500">ID #{t.id}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Description */}
-                                        <p className="mb-6 line-clamp-2 h-10 text-sm text-gray-400">
-                                            {t.description ?? <span className="text-gray-600 italic">{t.noDescription}</span>}
-                                        </p>
-
-                                        {/* Details */}
-                                        <div className="mb-6 flex-1 space-y-3">
-                                            {/* Status */}
-                                            <div className="flex items-center justify-between text-sm">
-                                                <span className="text-gray-500">{t.statusLabel}</span>
-                                                {t.is_active ? (
-                                                    <span className="inline-flex items-center gap-1.5 rounded-full border border-green-500/20 bg-green-500/10 px-2.5 py-1 text-xs font-medium text-green-400">
-                                                        <CheckCircle className="h-3.5 w-3.5" /> {t.statusActive}
-                                                    </span>
-                                                ) : (
-                                                    <span className="inline-flex items-center gap-1.5 rounded-full border border-red-500/20 bg-red-500/10 px-2.5 py-1 text-xs font-medium text-red-400">
-                                                        <XCircle className="h-3.5 w-3.5" /> {t.statusInactive}
-                                                    </span>
-                                                )}
-                                            </div>
-
-                                            {/* Rating (summary + toggle) */}
-                                            <div className="mb-2 flex items-center justify-between">
-                                                <div className="flex items-center gap-3">
-                                                    <span className="text-sm text-gray-500">{t.ratingLabel}</span>
-                                                    <StarDisplay avg={avg ?? null} />
-                                                    <span className="ml-2 text-xs text-gray-400">({total ?? 0})</span>
-                                                </div>
-
-                                                <button onClick={() => toggleExpand(t.id)} className="text-xs text-gray-400 hover:text-gray-200">
-                                                    {expanded[t.id] ? t.hideDetail : t.showDetail}
-                                                </button>
-                                            </div>
-
-                                            {/* URL */}
-                                            {t.url && (
-                                                <div className="pt-2">
-                                                    <a
-                                                        href={t.url}
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                        className="inline-flex items-center gap-2 text-xs font-medium text-blue-400 transition-colors hover:text-blue-300 hover:underline"
-                                                    >
-                                                        <ExternalLink className="h-3.5 w-3.5" />
-                                                        {t.url.replace(/^https?:\/\//, '').substring(0, 25)}
-                                                        {t.url.length > 25 ? '...' : ''}
-                                                    </a>
-                                                </div>
-                                            )}
-
-                                            {/* Expanded breakdown */}
-                                            {expanded[t.id] && (
-                                                <div className="mt-3 space-y-2">
-                                                    {[5, 4, 3, 2, 1].map((star) => {
-                                                        const cnt = breakdown[star] ?? 0;
-                                                        const pct = total ? Math.round((cnt / total) * 100) : 0;
-                                                        return (
-                                                            <div key={star} className="flex items-center gap-3 text-xs">
-                                                                <div className="w-6 text-right font-mono text-gray-300">{star}★</div>
-                                                                <div className="flex-1">
-                                                                    <div className="relative h-3 w-full overflow-hidden rounded bg-gray-700">
-                                                                        <div
-                                                                            className="absolute top-0 left-0 h-full bg-yellow-400 transition-all"
-                                                                            style={{ width: `${pct}%` }}
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                                <div className="w-14 text-right text-gray-300">
-                                                                    {cnt} ({pct}%)
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {/* Footer actions */}
-                                        <div className="flex items-center justify-between gap-3 border-t border-gray-700/50 pt-4">
-                                            <div className="flex items-center gap-2">
-                                                    <Link
-                                                        href={`/admin/trainings/show/${t.id}`}
-                                                        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-600 bg-gray-800 text-gray-300 transition-colors hover:bg-gray-700 hover:text-white"
-                                                        title={t.viewTitle}
-                                                    >
-                                                        <Eye className="h-4 w-4" />
-                                                    </Link>
-
-                                                    <Link
-                                                        href={`/admin/trainings/edit/${t.id}`}
-                                                        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-emerald-800 bg-emerald-900/20 text-emerald-400 transition-colors hover:bg-emerald-900/40 hover:text-emerald-300"
-                                                        title={t.editTitle}
-                                                    >
-                                                        <Edit className="h-4 w-4" />
-                                                    </Link>
-                                                </div>
-
-                                            <button
-                                                onClick={() => promptDelete(t.id)}
-                                                type="button"
-                                                className="inline-flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20 hover:text-red-300"
-                                            >
-                                                <Trash2 className="h-3.5 w-3.5" />
-                                                {t.deleteButton}
-                                            </button>
-                                        </div>
-                                    </article>
-                                );
-                            })}
-                        </div>
-                    )}
-                </div>
-
-                {/* Delete modal */}
-                {deleteId !== null && (
-                    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-                        <div
-                            className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
-                            onClick={() => !isDeleting && setDeleteId(null)}
-                        />
-                        <div className="animate-in fade-in zoom-in relative w-full max-w-sm overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl duration-200">
-                            <div className="p-6 text-center">
-                                <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-slate-800/50">
-                                    <IconWarning />
-                                </div>
-
-                                <h3 className="mb-2 text-xl font-bold text-white">{t.deleteTitle}</h3>
-
-                                <p className="mb-6 text-sm text-slate-400">
-                                    {t.deleteBody}
-                                </p>
-
-                                <div className="flex gap-3">
-                                    <button
-                                        disabled={isDeleting}
-                                        onClick={() => setDeleteId(null)}
-                                        className="flex-1 rounded-xl border border-white/10 bg-transparent py-3 text-sm font-semibold text-white transition-colors hover:bg-white/5"
-                                    >
-                                        {t.cancel}
-                                    </button>
-                                    <button
-                                        disabled={isDeleting}
-                                        onClick={confirmDelete}
-                                        className="flex-1 rounded-xl bg-rose-500 py-3 text-sm font-bold text-white shadow-lg shadow-rose-500/20 transition-all hover:scale-[1.02] hover:bg-rose-600"
-                                    >
-                                        {isDeleting ? t.deleting : t.confirmDelete}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
+          <div className="flex flex-col items-center gap-2">
+            {unlocked && lecture.url ? (
+              <a
+                href={lecture.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setShowRating((prev) => ({ ...prev, [lecture.id]: true }))}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition hover:scale-105"
+              >
+                <Icons.Play className="ml-0.5 h-5 w-5" />
+              </a>
+            ) : (
+              <button
+                type="button"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-400 group-hover:bg-emerald-500 group-hover:text-white"
+                onClick={() => {
+                  setError(null);
+                  setCode('');
+                  setSelectedLectureId(lecture.id);
+                }}
+              >
+                <Icons.Lock className="h-5 w-5" />
+              </button>
+            )}
+          </div>
         </div>
+
+        {isSelected && !unlocked && (
+          <form className="mt-4" onSubmit={handleSubmitCode}>
+            <div className="flex gap-2">
+              <input
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder={__('specialistiem.apmaciba.form.placeholder')}
+                className="w-full rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+              />
+              <button
+                type="submit"
+                disabled={submitting}
+                className={`rounded-2xl px-6 py-3 text-sm font-semibold text-white shadow-lg transition ${
+                  submitting ? 'cursor-wait bg-slate-400' : 'bg-slate-900 hover:bg-emerald-600'
+                }`}
+              >
+                {submitting ? '...' : __('specialistiem.apmaciba.form.submit')}
+              </button>
+            </div>
+
+            {error && <div className="mt-2 text-sm text-rose-600">{error}</div>}
+          </form>
+        )}
+
+        {showLectureRating && unlocked && (
+          <div className="mt-4">
+            <StarRating value={userRatings[lecture.id] || 0} onChange={(v) => setUserRatings((prev) => ({ ...prev, [lecture.id]: v }))} />
+            <button
+              type="button"
+              onClick={() => handleSubmitRating(lecture.id)}
+              className="mt-2 rounded-2xl bg-slate-900 px-6 py-3 text-white hover:bg-emerald-600"
+            >
+              {__('specialistiem.apmaciba.rating.submit')}
+            </button>
+          </div>
+        )}
+      </div>
     );
-};
+  };
 
-const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
-    const { locale } = useLang();
-    const t = copy[locale === 'en' ? 'en' : 'lv'];
-    return <AdminLayout title={t.layoutTitle}>{children}</AdminLayout>;
-};
+  return (
+    <>
+      <Head title={__('specialistiem.apmaciba.meta.title')} />
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-[#eaf3ff] via-white to-[#e7f7f1]">
+        <section className="relative z-10 mx-auto min-h-screen max-w-5xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          <div className="mx-auto mb-8 max-w-2xl text-center">
+            <h1 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+              {__('specialistiem.apmaciba.hero.title')}
+            </h1>
+            <p className="mt-3 text-sm text-slate-600 sm:text-base">{__('specialistiem.apmaciba.hero.text')}</p>
+          </div>
 
-// Wrap in AdminLayout
-(IndexApmaciba as any).layout = (page: React.ReactNode) => <LayoutWrapper>{page}</LayoutWrapper>;
-
-export default IndexApmaciba;
+          {initialLectures.length === 0 ? (
+            <div className="mt-16 text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                <Icons.Lock className="h-8 w-8" />
+              </div>
+              <h2 className="mt-4 text-lg font-semibold text-slate-900">{__('specialistiem.apmaciba.lock.title')}</h2>
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {initialLectures.map((lec) => (
+                <LectureCard key={lec.id} lecture={lec} />
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
+    </>
+  );
+}
