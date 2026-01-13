@@ -1102,8 +1102,8 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => '7.1. Cik psoriāzes pacientiem Jūsu praksē nākotnē varētu būt pamatojums izskatīt ATMP HE / MSC terapiju?', 'en' => '7.1. For how many psoriasis patients could there be a rationale to consider ATMP HE / MSC therapy in the future?'],
                             'type' => 'radio',
                             'options' => [
-                                'lv' => ['0–5 pacienti gadā', '6–20 pacienti gadā', '21–50 pacienti gadā', '> 50 pacienti gadā'],
-                                'en' => ['0–5 patients/year', '6–20 patients/year', '21–50 patients/year', '> 50 patients/year'],
+                                'lv' => ['Neviens pacients gadā','1–5 pacienti gadā', '6–20 pacienti gadā', '21–50 pacienti gadā', '> 50 pacienti gadā'],
+                                'en' => ['No patients/year','1–5 patients/year', '6–20 patients/year', '21–50 patients/year', '> 50 patients/year'],
                             ],
                         ],
                         [
@@ -1111,8 +1111,8 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => '7.2. Cik Krona slimības pacientiem Jūsu praksē varētu būt pamatojums izskatīt šādu terapiju?', 'en' => '7.2. For how many Crohn’s disease patients could there be a rationale to consider such therapy?'],
                             'type' => 'radio',
                             'options' => [
-                                'lv' => ['0', '1–5 pacienti gadā', '6–15 pacienti gadā', '> 15 pacienti gadā'],
-                                'en' => ['0', '1–5 patients/year', '6–15 patients/year', '> 15 patients/year'],
+                                'lv' => ['Nevienam pacientam', '1–5 pacienti gadā', '6–15 pacienti gadā', '> 15 pacienti gadā'],
+                                'en' => ['No patients', '1–5 patients/year', '6–15 patients/year', '> 15 patients/year'],
                             ],
                         ],
                         [
@@ -1120,8 +1120,8 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => '7.3. Cik citiem pacientiem ar hroniskām iekaisuma/autoimūnām slimībām Jūs teorētiski varētu apsvērt ATMP HE / MSC terapiju?', 'en' => '7.3. For how many other chronic inflammatory/autoimmune patients could you theoretically consider ATMP HE / MSC therapy?'],
                             'type' => 'radio',
                             'options' => [
-                                'lv' => ['0–5 pacienti gadā', '6–20 pacienti gadā', '21–50 pacienti gadā', '> 50 pacienti gadā'],
-                                'en' => ['0–5 patients/year', '6–20 patients/year', '21–50 patients/year', '> 50 patients/year'],
+                                'lv' => ['Neviens pacients gadā','1–5 pacienti gadā', '6–20 pacienti gadā', '21–50 pacienti gadā', '> 50 pacienti gadā'],
+                                'en' => ['No patients','1–5 patients/year', '6–20 patients/year', '21–50 patients/year', '> 50 patients/year'],
                             ],
                         ],
 
