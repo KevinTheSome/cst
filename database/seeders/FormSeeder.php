@@ -905,7 +905,7 @@ class FormSeeder extends Seeder
                             'id' => (string) Str::uuid(),
                             'type' => 'scale',
                             'label' => [
-                                'lv' => '3.1. Cik labi Jūs jūtaties informēts/-a par ATMP regulējumu ES kopumā? (1–10)',
+                                'lv' => '3.1. Cik labi Jūs esat informēts/-a par ATMP regulējumu ES kopumā? (1–10)',
                                 'en' => '3.1. How well informed do you feel about ATMP regulation in the EU overall? (1–10)',
                             ],
                             'scale' => [
@@ -932,8 +932,8 @@ class FormSeeder extends Seeder
                         [
                             'id' => (string) Str::uuid(),
                             'label' => [
-                                'lv' => "3.3. Vai Jūs vēlētos strukturētu, koncentrētu pārskatu (lekciju/mācību moduļa veidā) par:\n- ES un Latvijas ATMP regulējumu;\n- ATMP HE iespējamo praktisko ieviešanu Latvijā (ceļš no idejas līdz pacientam)?",
-                                'en' => "3.3. Would you like a structured, concise overview (lecture/training module) on:\n- EU and Latvian ATMP regulation;\n- Practical implementation of ATMP HE in Latvia (from idea to patient)?",
+                                'lv' => "3.3. Vai Jūs vēlētos strukturētu, koncentrētu pārskatu (lekciju/mācību moduļa veidā) par ES un Latvijas ATMP regulējumu?",
+                                'en' => "3.3. Would you like a structured, concise overview (lecture/training module) on EU and Latvian ATMP regulation?",
                             ],
                             'type' => 'radio',
                             'options' => [

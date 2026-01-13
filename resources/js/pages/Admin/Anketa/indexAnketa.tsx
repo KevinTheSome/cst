@@ -234,23 +234,23 @@ function FormsList() {
                                             <Edit className="h-5 w-5" />
                                         </a>
 
-                                        <Link
-                                            as="button"
-                                            method="post"
-                                            href={`/admin/anketa/${form.id}/delete`}
-                                            onClick={(e) => {
+                                        <button
+                                            type="button"
+                                            onClick={() => {
                                                 const tmpl = __('anketa.index.confirm_delete') || 'Are you sure you want to delete "{title}"?';
                                                 const msg = String(tmpl).replace('{title}', title);
 
-                                                if (!window.confirm(msg)) {
-                                                    e.preventDefault();
-                                                }
+                                                if (!window.confirm(msg)) return;
+
+                                                router.delete(`/admin/anketa/${form.id}`, {
+                                                    preserveScroll: true,
+                                                });
                                             }}
                                             className="flex items-center justify-center py-3 text-rose-400 transition-colors hover:text-rose-300 active:bg-rose-500/10"
                                             title={__('anketa.index.delete')}
                                         >
                                             <Trash2 className="h-5 w-5" />
-                                        </Link>
+                                        </button>
                                     </div>
                                 </div>
                             );

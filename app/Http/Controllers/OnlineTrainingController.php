@@ -96,31 +96,36 @@ class OnlineTrainingController extends Controller
             'filters' => ['q' => $q ?? ''],
         ]);
     }
-    public function lectures()
-    {
-        $trainings = OnlineTraining::query()
-            ->withCount('ratings')          // number of ratings per lecture
-            ->withAvg('ratings', 'score')   // average rating per lecture
-            ->orderBy('starts_at', 'desc')
-            ->get()
-            ->map(function ($training) {
-                return [
-                    'id' => $training->id,
-                    'title' => $training->title,
-                    'description' => $training->description,
-                    'url' => $training->url,
-                    'starts_at' => $training->starts_at,
-                    'ends_at' => $training->ends_at,
-                    'ratings_count' => $training->ratings_count ?? 0,
-                    'rating_avg' => $training->ratings_avg_score !== null ? round($training->ratings_avg_score, 1) : 0,
-                ];
-            });
+public function lectures()
+{
+    $trainings = OnlineTraining::query()
+        ->withCount('ratings')
+        ->withAvg('ratings', 'score')
+        ->orderBy('starts_at', 'desc')
+        ->get()
+        ->map(function ($training) {
+            return [
+                'id' => $training->id,
+                'title' => $training->title,
+                'description' => $training->description,
+                'url' => $training->url,
+                'starts_at' => $training->starts_at,
+                'ends_at' => $training->ends_at,
+                'ratings_count' => $training->ratings_count ?? 0,
+                'rating_avg' => $training->ratings_avg_score !== null ? round($training->ratings_avg_score, 1) : 0,
+            ];
+        });
 
-        return Inertia::render('Specialistiem/apmaciba', [
-            'initialLectures' => $trainings,
-            'unlockedLectures' => session('unlocked_lectures', []),
-        ]);
-    }
+    $unlocked = session('unlocked_lectures', []);
+    if (!is_array($unlocked)) $unlocked = [];
+    $unlocked = array_values(array_unique(array_map('intval', $unlocked)));
+
+    return Inertia::render('Specialistiem/apmaciba', [
+        'initialLectures' => $trainings,
+        'unlockedLectures' => $unlocked,
+    ]);
+}
+
     // GET /admin/trainings/create
     public function create()
     {
@@ -162,7 +167,7 @@ class OnlineTrainingController extends Controller
 
         OnlineTraining::create($payload);
 
-        return redirect()->route('admin.trainings')->with('success', 'Online training created.');
+        return redirect()->route('admin.trainings')->with('success', 'Online training created.')->with('created', true);
     }
 
     // GET /admin/trainings/show/{id}
@@ -221,7 +226,7 @@ class OnlineTrainingController extends Controller
 
         $training->update($payload);
 
-        return redirect()->route('admin.trainings')->with('success', 'Online training updated.');
+        return redirect()->route('admin.trainings')->with('success', 'Online training updated.')->with('created', true);
     }
 
     // DELETE /admin/trainings/destroy/{id}
