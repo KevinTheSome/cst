@@ -607,10 +607,10 @@ class FormSeeder extends Seeder
                         // 5. Finansiālais atbalsts un izmaksas
                         [
                             'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '5.1. Vai līdz šim Jūsu Krona slimības ārstēšanas izdevumus ir segusi valsts?', 'en' => '5.1. Have treatment costs been covered by the state?'],
+                            'label' => ['lv' => '5.1. Vai līdz šim valsts ir segusi lielāko daļu Jūsu Krona slimības ārstēšanas izdevumus', 'en' => '5.1. Have treatment costs been covered by the state?'],
                             'type' => 'radio',
                             'options' => [
-                                'lv' => ['Jā, lielākā daļa izdevumu', 'Jā, daļa izdevumu', 'Nē, pārsvarā maksāju pats/pati', 'Nezinu / neesmu pārliecināts(a)'],
+                                'lv' => ['Jā, lielāko daļu izdevumu', 'Jā, daļu izdevumu', 'Nē, pārsvarā maksāju pats/pati', 'Nezinu / neesmu pārliecināts(a)'],
                                 'en' => ['Yes, most costs', 'Yes, part of costs', 'No, I mostly pay myself', 'Don\'t know / not sure'],
                             ],
                         ],
