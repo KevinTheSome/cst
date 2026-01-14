@@ -529,8 +529,8 @@ class FormSeeder extends Seeder
                                     'Bioloģiskā terapija (piem., anti-TNF, anti-IL, anti-integrīni u.c.)',
                                     'Citi medikamenti (lūdzu, norādiet)',
                                     'Uztura terapija (speciālas diētas, enterālā/parenterālā barošana)',
-                                    'Ķirurģiska ārstēšana (zarna rezekcija, stoma u.c.)',
-                                    'Neesmu saņēmis/la specifisku ārstēšanu',
+                                    'Ķirurģiska ārstēšana (zarnu rezekcija, stoma u.c.)',
+                                    'Neesmu saņēmis/usi specifisku ārstēšanu',
                                 ],
                                 'en' => [
                                     '5-ASA preparations (mesalazine etc.)',
@@ -556,7 +556,7 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => '4.2. Vai kopumā iepriekšējās terapijas Jums palīdzēja?', 'en' => '4.2. Did previous therapies help overall?'],
                             'type' => 'radio',
                             'options' => [
-                                'lv' => ['Ļoti palīdzēja – simptomi būtiski mazinājās', 'Vidēji palīdzēja – kļuva labāk, bet slimība paliek aktīva', 'Maz palīdzēja – neliels vai īslaicīgs efekts', 'Nepalīdzēja vispār', 'Nezinu / grūti pateikt'],
+                                'lv' => ['Ļoti palīdzēja – simptomi būtiski mazinājās', 'Deva jūtamu uzlabojumu –  kļuva labāk, bet slimība joprojām aktīva', 'Maz palīdzēja – neliels vai īslaicīgs efekts', 'Nepalīdzēja vispār', 'Nezinu / grūti pateikt'],
                                 'en' => ['Very helpful – symptoms greatly reduced', 'Moderately helpful – improved but disease active', 'Little help – small or short effect', 'Did not help at all', 'Don\'t know / hard to say'],
                             ],
                         ],
@@ -582,7 +582,7 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => '4.4. Vai Jums ir veikta operācija Krona slimības dēļ?', 'en' => '4.4. Have you had surgery for Crohn\'s disease?'],
                             'type' => 'radio',
                             'options' => [
-                                'lv' => ['Jā, viena reize', 'Jā, vairākas reizes', 'Nē'],
+                                'lv' => ['Jā, vienu reizi', 'Jā, vairākas reizes', 'Nē'],
                                 'en' => ['Yes, once', 'Yes, several times', 'No'],
                             ],
                         ],
@@ -599,7 +599,7 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => '4.5. Pašlaik Jūs:', 'en' => '4.5. Currently you:'],
                             'type' => 'radio',
                             'options' => [
-                                'lv' => ['Turpinu regulāru Krona slimības ārstēšanu', 'Terapiju pārtraucu blakņu dēļ', 'Terapiju pārtraucu, jo nelikās efektīva', 'Šobrīd neārstos citu iemeslu dēļ (piem., laika, naudas trūkums u.c.)'],
+                                'lv' => ['Turpinu regulāru Krona slimības ārstēšanu', 'Terapiju pārtraucu blakņu dēļ', 'Terapiju pārtraucu, jo nelikās efektīva', 'Šobrīd neārstējos citu iemeslu dēļ (piem., laika, naudas trūkums u.c.)'],
                                 'en' => ['Continue regular Crohn\'s treatment', 'Stopped due to side effects', 'Stopped because not effective', 'Not treating currently for other reasons (time/cost etc.)'],
                             ],
                         ],
@@ -607,10 +607,10 @@ class FormSeeder extends Seeder
                         // 5. Finansiālais atbalsts un izmaksas
                         [
                             'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '5.1. Vai līdz šim Jūsu Krona slimības ārstēšanas izdevumus ir sedzusi valsts?', 'en' => '5.1. Have treatment costs been covered by the state?'],
+                            'label' => ['lv' => '5.1. Vai līdz šim valsts ir segusi lielāko daļu Jūsu Krona slimības ārstēšanas izdevumus', 'en' => '5.1. Have treatment costs been covered by the state?'],
                             'type' => 'radio',
                             'options' => [
-                                'lv' => ['Jā, lielākā daļa izdevumu', 'Jā, daļa izdevumu', 'Nē, pārsvarā maksāju pats/pati', 'Nezinu / neesmu pārliecināts(a)'],
+                                'lv' => ['Jā, lielāko daļu izdevumu', 'Jā, daļu izdevumu', 'Nē, pārsvarā maksāju pats/pati', 'Nezinu / neesmu pārliecināts(a)'],
                                 'en' => ['Yes, most costs', 'Yes, part of costs', 'No, I mostly pay myself', 'Don\'t know / not sure'],
                             ],
                         ],
@@ -690,7 +690,7 @@ class FormSeeder extends Seeder
                             'id' => (string) Str::uuid(),
                             'type' => 'scale',
                             'label' => [
-                                'lv' => '9.1. Cik lielā mērā Jūs interesētu iespēja nākotnē apsvērt ATMP (MSC šūnu) terapiju savai Krona slimībai? (1–10)',
+                                'lv' => '9.1. Cik lielā mērā Jūs interesētu iespēja nākotnē apsvērt ATMP (MSC šūnu) terapiju Krona slimībai? (1–10)',
                                 'en' => '9.1. How interested would you be to consider ATMP therapy in future? (1–10)',
                             ],
                             'options' => [],
@@ -747,7 +747,7 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => '9.3. Vai vēlaties būt vieni no pirmajiem, kas saņem strukturētu informāciju un uzaicinājumus?', 'en' => '9.3. Would you like to be among the first to receive structured info and invitations?'],
                             'type' => 'radio',
                             'options' => [
-                                'lv' => ['Jā, noteikti – es gribētu būt informēts(a) pirmais(a)', 'Varbūt – ja informācija būs skaidra un saprotama', 'Nē – pašlaik mani tas neinteresē'],
+                                'lv' => ['Jā, noteikti – es gribētu būt informēts(a) pirmais(ā)', 'Varbūt – ja informācija būs skaidra un saprotama', 'Nē – pašlaik mani tas neinteresē'],
                                 'en' => ['Yes, definitely – I want to be informed first', 'Maybe – if information is clear and understandable', 'No – not interested currently'],
                             ],
                         ],
