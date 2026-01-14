@@ -49,7 +49,7 @@ const copy = {
                 title: 'Speciālistiem',
                 items: [
                     { label: 'ES regula un likumi', href: '/specialistiem/likumi' },
-                    { label: 'ATMP ražotnes Eiropā', href: '/speciālistiem/atmp' },
+                    { label: 'ATMP ražotnes Eiropā', href: '/specialistiem/atmp' },
                     { label: 'Apmācības', href: '/specialistiem/apmaciba' },
                     { label: 'Aptauja', href: '/postdock-anketa?role=specialists' },
                 ],
@@ -57,17 +57,19 @@ const copy = {
             {
                 title: 'Pētniecība',
                 items: [
+                    { label: 'Klīniskie pētījumi', href: '/clinical-trials' },
                     { label: 'PostDock anketa', href: '/postdock-anketa?role=patients' },
                     { label: 'Koda anketa', href: '/anketa-kods' },
-                    { label: 'Publikācijas', href: '/datubaze' },
+                    { label: 'Dokumentu datubāze', href: '/datubaze' },
                 ],
             },
             {
                 title: 'Par mums',
                 items: [
                     { label: 'Mūsu grupa', href: '/ParMums/musu-grupa' },
-                    { label: 'Saziņa', href: '/ParMums/contacts' },
-                    { label: 'Karjera', href: '/ParMums/pievienojies-mums' },
+                    { label: 'Kontekti', href: '/ParMums/contacts' },
+                    { label: 'Sazinies', href: '/ParMums/pievienojies-mums' },
+                    { label: 'Labretorija', href: '/ParMums/lablife' },
                 ],
             },
         ],
@@ -100,7 +102,7 @@ const copy = {
                 title: 'For Specialists',
                 items: [
                     { label: 'EU regulations and laws', href: '/specialistiem/likumi' },
-                    { label: 'ATMP facilities in Europe', href: '/speciālistiem/atmp' },
+                    { label: 'ATMP facilities in Europe', href: '/specialistiem/atmp' },
                     { label: 'Training', href: '/specialistiem/apmaciba' },
                     { label: 'Survey', href: '/postdock-anketa?role=specialists' },
                 ],
@@ -110,6 +112,7 @@ const copy = {
                 items: [
                     { label: 'PostDock survey', href: '/postdock-anketa?role=patients' },
                     { label: 'Code survey', href: '/anketa-kods' },
+                    { label: 'Clinical trials', href: '/clinical-trials' },
                     { label: 'Publications', href: '/datubaze' },
                 ],
             },
@@ -117,6 +120,7 @@ const copy = {
                 title: 'About Us',
                 items: [
                     { label: 'Our team', href: '/ParMums/musu-grupa' },
+                    { label: 'Lablife', href: '/ParMums/lablife' },
                     { label: 'Contact', href: '/ParMums/contacts' },
                     { label: 'Careers', href: '/ParMums/pievienojies-mums' },
                 ],
