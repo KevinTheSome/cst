@@ -582,7 +582,7 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => '4.4. Vai Jums ir veikta operācija Krona slimības dēļ?', 'en' => '4.4. Have you had surgery for Crohn\'s disease?'],
                             'type' => 'radio',
                             'options' => [
-                                'lv' => ['Jā, vienu reize', 'Jā, vairākas reizes', 'Nē'],
+                                'lv' => ['Jā, vienu reizi', 'Jā, vairākas reizes', 'Nē'],
                                 'en' => ['Yes, once', 'Yes, several times', 'No'],
                             ],
                         ],
