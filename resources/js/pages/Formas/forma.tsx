@@ -111,7 +111,7 @@ export default function Anketa({ form }: { form: FormData | null }) {
 
                     {/* Header */}
                     <div className="rounded-[32px] border border-white/70 bg-white/90 p-8 text-center shadow-2xl shadow-slate-200/80">
-                        <p className="text-xs tracking-[0.4em] text-emerald-500 uppercase">PostDock anketa</p>
+                        <p className="text-xs tracking-[0.4em] text-emerald-500 uppercase">PostDoc anketa</p>
                         <h1 className="mt-4 text-3xl font-semibold text-slate-900">{tr(form.title)}</h1>
                         <p className="mt-3 text-sm text-slate-600">Aizpildiet soļus — jautājumiem nav pareizo vai nepareizo atbilžu.</p>
                     </div>

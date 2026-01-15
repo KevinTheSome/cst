@@ -18,8 +18,8 @@ class FormSeeder extends Seeder
             [
                 'code' => 'public',
                 'title' => [
-                    'lv' => 'Anketa par psoriāzi un attieksmi pret ATMP/MSC terapijām',
-                    'en' => 'Questionnaire about psoriasis and attitude to ATMP/MSC therapies',
+                    'lv' => 'Anketa par psoriāzi un attieksmi pret Advanced Therapy Medicinal Products (ATMP) un Mesenchymal Stem Cell (MSC) terapijām',
+                    'en' => 'Questionnaire on psoriasis and attitudes toward Advanced Therapy Medicinal Products (ATMP) and Mesenchymal Stem Cell (MSC) therapies',
                 ],
                 'data' => [
                     'fields' => [
