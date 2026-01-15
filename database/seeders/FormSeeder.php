@@ -76,8 +76,8 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => '2.4. Kuras ķermeņa zonas visvairāk skar psoriāze? (var atzīmēt vairākas)', 'en' => '2.4. Which body areas are most affected? (multiple)'],
                             'type' => 'checkbox',
                             'options' => [
-                                'lv' => ['Galvas matainā daļa', 'Elkoņi, ceļgali', 'Mugura / rumpis', 'Plaukstas / pēdas', 'Nāgas', 'Citi (lūdzu, norādiet)'],
-                                'en' => ['Scalp', 'Elbows, knees', 'Back / trunk', 'Palms / soles', 'Nails', 'Other (please specify)'],
+                                'lv' => ['Galvas matainā daļa', 'Elkoņi, ceļgali', 'Mugura / rumpis', 'Plaukstas / pēdas', 'Nagus','Kājas', 'Citi (lūdzu, norādiet)'],
+                                'en' => ['Scalp', 'Elbows, knees', 'Back / trunk', 'Palms / soles', 'Nails', 'Legs','Other (please specify)'],
                             ],
                         ],
                         [
