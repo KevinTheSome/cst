@@ -4,7 +4,6 @@ import { useLang } from '@/hooks/useLang';
 import { useState, type ReactNode } from 'react';
 import {
     ArrowLeft,
-    Calendar,
     Hash,
     Globe,
     List,
@@ -44,11 +43,14 @@ interface FormData {
     created_at?: string;
 }
 
+type RenderType = 'radio' | 'checkbox' | 'dropdown' | 'text' | 'textarea' | 'scale';
+
 /* ---------------- Icons ---------------- */
 
-const getFieldIcon = (type: string) => {
+const getFieldIcon = (type: RenderType) => {
     switch (type) {
         case 'text':
+        case 'textarea':
             return <AlignLeft className="h-4 w-4 text-blue-400" />;
         case 'scale':
             return <BarChartHorizontal className="h-4 w-4 text-purple-400" />;
@@ -56,6 +58,7 @@ const getFieldIcon = (type: string) => {
             return <ChevronDown className="h-4 w-4 text-amber-400" />;
         case 'checkbox':
             return <CheckSquare className="h-4 w-4 text-emerald-400" />;
+        case 'radio':
         default:
             return <CircleDot className="h-4 w-4 text-rose-400" />;
     }
@@ -89,8 +92,8 @@ function ShowAnketa({ formResult }: { formResult: FormData }) {
     const fields: Field[] = Array.isArray(parsedData?.fields)
         ? parsedData.fields
         : Array.isArray(formResult.fields)
-        ? formResult.fields
-        : [];
+          ? formResult.fields
+          : [];
 
     /* -------- Translation helpers -------- */
 
@@ -118,34 +121,36 @@ function ShowAnketa({ formResult }: { formResult: FormData }) {
         const t1 = parsedData?.title;
         const t2 = formResult.title;
 
-        return (
-            tr(t1) ||
-            tr(t2) ||
-            __('anketa.misc.untitled_form')
-        );
+        return tr(t1) || tr(t2) || __('anketa.misc.untitled_form');
     };
 
-    const inferType = (f: Field): 'radio' | 'checkbox' | 'dropdown' | 'text' | 'scale' => {
-        if (!f?.type) {
-            if (f.scale) return 'scale';
-            if (f.placeholder || f.rows) return 'text';
-            return 'radio';
-        }
+    const inferType = (f: Field): RenderType => {
+        const raw = (f?.type || '').toLowerCase().trim();
 
-        const t = f.type.toLowerCase();
-        if (t === 'checkbox') return 'checkbox';
-        if (t === 'dropdown' || t === 'select') return 'dropdown';
-        if (t === 'text' || t === 'textarea') return 'text';
-        if (t === 'scale' || t === 'rating') return 'scale';
+        // Explicit mapping first
+        if (raw === 'checkbox') return 'checkbox';
+        if (raw === 'dropdown' || raw === 'select') return 'dropdown';
+        if (raw === 'textarea') return 'textarea';
+        if (raw === 'text') return 'text';
+        if (raw === 'scale' || raw === 'rating') return 'scale';
+        if (raw === 'radio') return 'radio';
+
+        // Heuristics if type missing/unknown
+        if (f.scale) return 'scale';
+        if (f.rows && f.rows > 1) return 'textarea';
+        if (f.placeholder) return 'text';
+
+        // Default
         return 'radio';
     };
+
+    const isOptionBased = (t: RenderType) => t === 'radio' || t === 'checkbox' || t === 'dropdown';
 
     /* ---------------- JSX ---------------- */
 
     return (
         <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-7xl space-y-8">
-
                 {/* Header */}
                 <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-900/50 p-8 shadow-2xl backdrop-blur-xl">
                     <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
@@ -157,9 +162,7 @@ function ShowAnketa({ formResult }: { formResult: FormData }) {
                                 </span>
                             </div>
 
-                            <h1 className="max-w-2xl text-3xl font-bold text-white">
-                                {resolveTitle()}
-                            </h1>
+                            <h1 className="max-w-2xl text-3xl font-bold text-white">{resolveTitle()}</h1>
 
                             <div className="mt-3 flex items-center gap-4 text-sm text-slate-400">
                                 <span className="flex items-center gap-1.5 rounded-lg border border-white/5 bg-slate-800/50 px-2 py-1">
@@ -169,11 +172,7 @@ function ShowAnketa({ formResult }: { formResult: FormData }) {
 
                                 <span className="flex items-center gap-1.5">
                                     <Globe className="h-3.5 w-3.5" />
-                                    {__(
-                                        formResult.code === 'private'
-                                            ? 'anketa.show.private'
-                                            : 'anketa.show.public'
-                                    )}
+                                    {__(formResult.code === 'private' ? 'anketa.show.private' : 'anketa.show.public')}
                                 </span>
                             </div>
                         </div>
@@ -185,9 +184,7 @@ function ShowAnketa({ formResult }: { formResult: FormData }) {
                                         key={l}
                                         onClick={() => setLocalLang(l)}
                                         className={`px-4 py-1.5 text-xs font-bold rounded-lg ${
-                                            localLang === l
-                                                ? 'bg-blue-500 text-white'
-                                                : 'text-slate-400 hover:text-white'
+                                            localLang === l ? 'bg-blue-500 text-white' : 'text-slate-400 hover:text-white'
                                         }`}
                                     >
                                         {l.toUpperCase()}
@@ -212,16 +209,20 @@ function ShowAnketa({ formResult }: { formResult: FormData }) {
                         {fields.length === 0 && (
                             <div className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-12 text-center">
                                 <List className="mx-auto mb-3 h-12 w-12 text-slate-600" />
-                                <p className="text-slate-400">
-                                    {__('anketa.show.no_questions')}
-                                </p>
+                                <p className="text-slate-400">{__('anketa.show.no_questions')}</p>
                             </div>
                         )}
 
                         {fields.map((f, i) => {
                             const label = tr(f.label);
+                            const placeholder = tr(f.placeholder);
                             const opts = trOptions(f.options);
                             const type = inferType(f);
+
+                            const scaleMin = f.scale?.min ?? 1;
+                            const scaleMax = f.scale?.max ?? 10;
+                            const scaleMinLabel = tr((f.scale as any)?.minLabel);
+                            const scaleMaxLabel = tr((f.scale as any)?.maxLabel);
 
                             return (
                                 <div key={f.id ?? i} className="rounded-2xl border border-white/10 bg-slate-900/40 p-6">
@@ -233,9 +234,7 @@ function ShowAnketa({ formResult }: { formResult: FormData }) {
                                         <div>
                                             <h3 className="text-lg font-medium text-white">
                                                 {label || (
-                                                    <span className="italic text-slate-600">
-                                                        {__('anketa.misc.untitled_question')}
-                                                    </span>
+                                                    <span className="italic text-slate-600">{__('anketa.misc.untitled_question')}</span>
                                                 )}
                                             </h3>
 
@@ -248,15 +247,98 @@ function ShowAnketa({ formResult }: { formResult: FormData }) {
                                         </div>
                                     </div>
 
-                                    {opts.length === 0 && (
-                                        <p className="text-xs italic text-slate-500">
-                                            {__('anketa.field.no_options')}
-                                        </p>
-                                    )}
+                                    {/* Preview renderer */}
+                                    <div className="mt-4">
+                                        {type === 'text' && (
+                                            <input
+                                                disabled
+                                                value=""
+                                                placeholder={placeholder || __('anketa.field.placeholder')}
+                                                className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white placeholder-slate-600"
+                                            />
+                                        )}
+
+                                        {type === 'textarea' && (
+                                            <textarea
+                                                disabled
+                                                value=""
+                                                rows={f.rows ?? 5}
+                                                placeholder={placeholder || __('anketa.field.placeholder')}
+                                                className="w-full resize-none rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white placeholder-slate-600"
+                                            />
+                                        )}
+
+                                        {type === 'dropdown' && (
+                                            <select
+                                                disabled
+                                                className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white"
+                                            >
+                                                <option value="" className="bg-slate-900">
+                                                    {__('anketa.field.select')}
+                                                </option>
+                                                {opts.map((o, idx) => (
+                                                    <option key={idx} value={o} className="bg-slate-900">
+                                                        {o}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        )}
+
+                                        {type === 'radio' && (
+                                            <ul className="space-y-2">
+                                                {opts.map((o, idx) => (
+                                                    <li key={idx} className="flex items-center gap-2 text-sm text-slate-200">
+                                                        <span className="h-4 w-4 rounded-full border border-white/20 bg-white/5" />
+                                                        <span>{o}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+
+                                        {type === 'checkbox' && (
+                                            <ul className="space-y-2">
+                                                {opts.map((o, idx) => (
+                                                    <li key={idx} className="flex items-center gap-2 text-sm text-slate-200">
+                                                        <span className="h-4 w-4 rounded border border-white/20 bg-white/5" />
+                                                        <span>{o}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+
+                                        {type === 'scale' && (
+                                            <div className="space-y-2">
+                                                <div className="flex items-center justify-between text-xs text-slate-400">
+                                                    <span>
+                                                        {scaleMinLabel ? `${scaleMin} — ${scaleMinLabel}` : `${scaleMin}`}
+                                                    </span>
+                                                    <span>
+                                                        {scaleMaxLabel ? `${scaleMax} — ${scaleMaxLabel}` : `${scaleMax}`}
+                                                    </span>
+                                                </div>
+                                                <input
+                                                    type="range"
+                                                    disabled
+                                                    min={scaleMin}
+                                                    max={scaleMax}
+                                                    value={Math.round((scaleMin + scaleMax) / 2)}
+                                                    className="w-full"
+                                                />
+                                            </div>
+                                        )}
+
+                                        {/* No options message only for option-based types */}
+                                        {isOptionBased(type) && opts.length === 0 && (
+                                            <p className="text-xs italic text-slate-500">{__('anketa.field.no_options')}</p>
+                                        )}
+                                    </div>
                                 </div>
                             );
                         })}
                     </div>
+
+                    {/* Right column reserved */}
+                    <div className="hidden lg:block" />
                 </div>
             </div>
         </div>

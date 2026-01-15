@@ -10,9 +10,11 @@ interface LocalizedString {
 interface Field {
     id: string;
     label: LocalizedString;
-    type: 'radio' | 'checkbox' | 'dropdown' | 'text' | 'scale';
+    // ✅ textarea added
+    type: 'radio' | 'checkbox' | 'dropdown' | 'text' | 'textarea' | 'scale';
     options?: { lv: string[]; en: string[] };
     placeholder?: LocalizedString;
+    rows?: number;
     scale?: { min: number; max: number; minLabel?: LocalizedString; maxLabel?: LocalizedString };
 }
 
@@ -37,11 +39,11 @@ export default function Anketa({ form }: { form: FormData | null }) {
     const [currentSlide, setCurrentSlide] = useState(0);
     const batchSize = 3;
 
-    // Progress based on fields, not slides
     const visibleFields = Math.min((currentSlide + 1) * batchSize, fields.length);
     const progressPercent = fields.length === 0 ? 0 : Math.round((visibleFields / fields.length) * 100);
 
-    const tr = (value: string | LocalizedString | undefined) => (typeof value === 'string' ? value : (value?.[lang] ?? value?.lv ?? value?.en ?? ''));
+    const tr = (value: string | LocalizedString | undefined) =>
+        typeof value === 'string' ? value : value?.[lang] ?? value?.lv ?? value?.en ?? '';
 
     const getOptions = (options?: { lv: string[]; en: string[] }) => (options ? options[lang] || options.lv || [] : []);
 
@@ -51,12 +53,14 @@ export default function Anketa({ form }: { form: FormData | null }) {
 
     const handleCheckboxChange = (id: string, option: string) => {
         const current: string[] = Array.isArray(answers[id]) ? answers[id] : [];
-        if (current.includes(option))
+        if (current.includes(option)) {
             handleChange(
                 id,
                 current.filter((o) => o !== option),
             );
-        else handleChange(id, [...current, option]);
+        } else {
+            handleChange(id, [...current, option]);
+        }
     };
 
     const handleSubmit = async () => {
@@ -207,21 +211,28 @@ export default function Anketa({ form }: { form: FormData | null }) {
                                                 />
                                             )}
 
-                                            {/* SCALE (REITINGS AR POGĀM) */}
+                                            {/* ✅ TEXTAREA */}
+                                            {field.type === 'textarea' && (
+                                                <textarea
+                                                    placeholder={tr(field.placeholder) || 'Ierakstiet komentāru'}
+                                                    value={answers[field.id] ?? ''}
+                                                    onChange={(e) => handleChange(field.id, e.target.value)}
+                                                    rows={field.rows ?? 6}
+                                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                                                />
+                                            )}
+
+                                            {/* SCALE */}
                                             {field.type === 'scale' && field.scale && (
                                                 <div className="mt-4">
-                                                    {/* Etiķetes (Mazāk - Vairāk) */}
                                                     <div className="mb-3 flex justify-between text-xs font-bold tracking-widest text-slate-400 uppercase">
                                                         <span>{tr(field.scale.minLabel) ?? 'Mazāk'}</span>
                                                         <span>{tr(field.scale.maxLabel) ?? 'Vairāk'}</span>
                                                     </div>
 
-                                                    {/* Pogas */}
                                                     <div className="flex flex-wrap gap-2 sm:justify-between">
                                                         {Array.from(
-                                                            {
-                                                                length: (field.scale?.max ?? 10) - (field.scale?.min ?? 1) + 1,
-                                                            },
+                                                            { length: (field.scale?.max ?? 10) - (field.scale?.min ?? 1) + 1 },
                                                             (_, i) => (field.scale?.min ?? 1) + i,
                                                         ).map((val) => {
                                                             const isSelected = answers[field.id] === val;
