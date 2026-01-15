@@ -1,3 +1,4 @@
+import AdminLayout from '@/Layouts/AdminLayout';
 import { useLang } from '@/hooks/useLang';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
@@ -16,6 +17,17 @@ type Lecture = {
   ends_at?: string;
   rating_avg?: number;
   ratings_count?: number;
+};
+
+type Training = {
+  id: number;
+  title: string | MultilingualTitle;
+  description?: string | null;
+  url?: string | null;
+  starts_at?: string | null;
+  ends_at?: string | null;
+  ratings_avg?: number | null;
+  ratings_count?: number | null;
 };
 
 // --- ICONS ---
@@ -63,8 +75,30 @@ type VerifyResponse =
   | { valid: true; lectureId?: number; message?: string }
   | { valid: false; lectureId?: number; message?: string };
 
-export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
+export default function OnlineTraining({
+  initialLectures = [] as Lecture[],
+  trainings = [] as Training[],
+}: {
+  initialLectures?: Lecture[];
+  trainings?: Training[];
+}) {
   const { __, locale } = useLang();
+  const normalizedLectures = useMemo<Lecture[]>(
+    () =>
+      initialLectures.length
+        ? initialLectures
+        : trainings.map((t) => ({
+            id: t.id,
+            title: t.title,
+            description: t.description ?? undefined,
+            url: t.url ?? undefined,
+            starts_at: t.starts_at ?? undefined,
+            ends_at: t.ends_at ?? undefined,
+            rating_avg: typeof t.ratings_avg === 'number' ? t.ratings_avg : undefined,
+            ratings_count: typeof t.ratings_count === 'number' ? t.ratings_count : undefined,
+          })),
+    [initialLectures, trainings]
+  );
 
   // ✅ Ensure axios CSRF header exists (helps if your page is outside the inertia axios bootstrap)
   useEffect(() => {
@@ -135,7 +169,7 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
   };
 
   const handleSubmitRating = async (lectureId: number) => {
-    const lecture = initialLectures.find((l) => l.id === lectureId);
+    const lecture = normalizedLectures.find((l) => l.id === lectureId);
     const rating = userRatings[lectureId];
     if (!lecture || !rating) return;
 
@@ -155,18 +189,20 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
     return (
       <div
         className={`group relative rounded-2xl border p-5 transition-all ${
-          isSelected ? 'border-emerald-500 bg-emerald-50 ring-1 ring-emerald-500' : 'border-slate-200 bg-white hover:border-emerald-300 hover:shadow-lg'
+          isSelected
+            ? 'border-emerald-400/60 bg-emerald-500/10 ring-1 ring-emerald-500/30'
+            : 'border-white/10 bg-slate-900/60 hover:border-emerald-500/40 hover:shadow-xl hover:shadow-emerald-500/10'
         }`}
       >
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h3 className={`mb-1 text-base font-bold ${isSelected ? 'text-emerald-900' : 'text-slate-900'}`}>
+            <h3 className={`mb-1 text-base font-bold ${isSelected ? 'text-emerald-300' : 'text-white'}`}>
               {renderTitle(lecture.title)}
             </h3>
-            <p className="line-clamp-2 text-xs text-slate-500">{lecture.description}</p>
+            <p className="line-clamp-2 text-xs text-slate-400">{lecture.description}</p>
 
             {lecture.rating_avg !== undefined && (
-              <div className="mt-2 flex items-center gap-2 text-xs text-amber-600">
+              <div className="mt-2 flex items-center gap-2 text-xs text-amber-400">
                 {[1, 2, 3, 4, 5].map((i) => (
                   <svg
                     key={i}
@@ -199,7 +235,7 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
             ) : (
               <button
                 type="button"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-400 group-hover:bg-emerald-500 group-hover:text-white"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-slate-400 group-hover:bg-emerald-500 group-hover:text-white"
                 onClick={() => {
                   setError(null);
                   setCode('');
@@ -219,20 +255,20 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder={__('specialistiem.apmaciba.form.placeholder')}
-                className="w-full rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-white shadow-sm outline-none placeholder:text-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30"
               />
               <button
                 type="submit"
                 disabled={submitting}
                 className={`rounded-2xl px-6 py-3 text-sm font-semibold text-white shadow-lg transition ${
-                  submitting ? 'cursor-wait bg-slate-400' : 'bg-slate-900 hover:bg-emerald-600'
+                  submitting ? 'cursor-wait bg-slate-700' : 'bg-emerald-500 hover:bg-emerald-400'
                 }`}
               >
                 {submitting ? '...' : __('specialistiem.apmaciba.form.submit')}
               </button>
             </div>
 
-            {error && <div className="mt-2 text-sm text-rose-600">{error}</div>}
+            {error && <div className="mt-2 text-sm text-rose-400">{error}</div>}
           </form>
         )}
 
@@ -242,7 +278,7 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
             <button
               type="button"
               onClick={() => handleSubmitRating(lecture.id)}
-              className="mt-2 rounded-2xl bg-slate-900 px-6 py-3 text-white hover:bg-emerald-600"
+              className="mt-2 rounded-2xl bg-slate-800 px-6 py-3 text-white hover:bg-emerald-500"
             >
               {__('specialistiem.apmaciba.rating.submit')}
             </button>
@@ -252,34 +288,47 @@ export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
     );
   };
 
-  return (
-    <>
-      <Head title={__('specialistiem.apmaciba.meta.title')} />
-      <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-[#eaf3ff] via-white to-[#e7f7f1]">
-        <section className="relative z-10 mx-auto min-h-screen max-w-5xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-          <div className="mx-auto mb-8 max-w-2xl text-center">
-            <h1 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              {__('specialistiem.apmaciba.hero.title')}
-            </h1>
-            <p className="mt-3 text-sm text-slate-600 sm:text-base">{__('specialistiem.apmaciba.hero.text')}</p>
-          </div>
+    return (
+        <>
+            <Head title={__('admin.nav.trainings.label')} />
+            <div className="min-h-screen pb-24 sm:px-6 lg:px-8">
+                <section className="mx-auto max-w-6xl space-y-6 sm:space-y-8">
+                    <div className="relative overflow-hidden border-b border-white/10 bg-slate-900 px-4 py-6 sm:rounded-3xl sm:border sm:p-8 sm:shadow-2xl">
+                        <div className="relative z-10">
+                            <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                                {__('specialistiem.apmaciba.hero.title')}
+                            </h1>
+                            <p className="mt-2 text-sm text-slate-400 sm:text-base">
+                                {__('specialistiem.apmaciba.hero.text')}
+                            </p>
+                        </div>
+                    </div>
 
-          {initialLectures.length === 0 ? (
-            <div className="mt-16 text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-                <Icons.Lock className="h-8 w-8" />
-              </div>
-              <h2 className="mt-4 text-lg font-semibold text-slate-900">{__('specialistiem.apmaciba.lock.title')}</h2>
+                    {normalizedLectures.length === 0 ? (
+                        <div className="rounded-3xl border border-white/10 bg-slate-900/60 p-10 text-center shadow-xl">
+                            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/5 text-slate-400">
+                                <Icons.Lock className="h-8 w-8" />
+                            </div>
+                            <h2 className="mt-4 text-lg font-semibold text-white">
+                                {__('specialistiem.apmaciba.lock.title')}
+                            </h2>
+                        </div>
+                    ) : (
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            {normalizedLectures.map((lec) => (
+                                <LectureCard key={lec.id} lecture={lec} />
+                            ))}
+                        </div>
+                    )}
+                </section>
             </div>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {initialLectures.map((lec) => (
-                <LectureCard key={lec.id} lecture={lec} />
-              ))}
-            </div>
-          )}
-        </section>
-      </div>
     </>
   );
 }
+
+const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
+  const { __ } = useLang();
+  return <AdminLayout title={__('admin.nav.trainings.label')}>{children}</AdminLayout>;
+};
+
+(OnlineTraining as any).layout = (page: React.ReactNode) => <LayoutWrapper>{page}</LayoutWrapper>;

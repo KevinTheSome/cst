@@ -1,8 +1,8 @@
 import '../css/app.css';
 
 import { createInertiaApp } from '@inertiajs/react';
-import { createRoot } from 'react-dom/client';
 import type { ComponentType, ReactElement, ReactNode } from 'react';
+import { createRoot } from 'react-dom/client';
 
 import AppLayout from './Layouts/AppLayout';
 
@@ -37,23 +37,22 @@ function resolveInertiaPage(name: string) {
 }
 
 createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
+    title: (title) => (title ? `${title}` : appName),
 
     resolve: async (name) => {
         const importer = resolveInertiaPage(name);
         const page = await importer();
 
-        const PageComponent =
-            (page as {
+        const PageComponent = (
+            page as {
                 default: ComponentType & {
                     layout?: (page: ReactNode) => ReactElement;
                 };
-            }).default;
+            }
+        ).default;
 
         if (!PageComponent.layout) {
-            PageComponent.layout = (pageContent: ReactNode) => (
-                <AppLayout>{pageContent}</AppLayout>
-            );
+            PageComponent.layout = (pageContent: ReactNode) => <AppLayout>{pageContent}</AppLayout>;
         }
 
         return page;

@@ -28,126 +28,127 @@ const Icons = {
 
 const copy = {
     lv: {
-        metaTitle: 'ATMP Terapija',
+        metaTitle: 'ATMP terapija',
         hero: {
-            title: 'ATMP šūnu terapija &',
+            title: 'ATMP terapija &',
             highlight: 'Diagnostika vienā platformā',
             description:
-                'RTU Biočipu laboratorija apvieno mikrofluidiku un šūnu inženieriju, lai ATMP (Advanced Therapy Medicinal Products) kļūtu precīzāki un drošāki.',
+                'RTU Biočipu laboratorija apvieno mikrofluidiku un šūnu inženieriju, lai atbalstītu ATMP (Advanced Therapy Medicinal Products) izstrādi ar precīzāku kvalitātes kontroli un augstāku drošuma līmeni.',
         },
         ctas: {
             patients: {
                 title: 'Pacientiem',
-                description: 'Pieteikšanās personalizētai ATMP konsultācijai un terapijai.',
+                description: 'Pieteikšanās konsultācijai par personalizētām ATMP iespējām, piemērotību un turpmākajiem soļiem.',
                 action: 'Atvērt anketu',
             },
             specialists: {
                 title: 'Speciālistiem',
-                description: 'ATMP protokoli, validācija, pētniecība un sadarbība.',
+                description: 'ATMP protokoli, kvalitātes kontrole, validācija, pētniecība un sadarbība.',
                 action: 'Sākt sadarbību',
             },
         },
         stats: [
             { value: '10k+', label: 'Šūnu profili' },
             { value: '1k+', label: 'Parametri' },
-            { value: 'ISO', label: 'Validētas telpas' },
+            { value: 'ISO', label: 'Kontrolēta vide' },
         ],
         technology: {
-            title: 'Tehnoloģija & Fokus',
-            subtitle: 'ATMP saderīgi risinājumi reģeneratīvajā medicīnā.',
+            title: 'Tehnoloģija un fokuss',
+            subtitle: 'ATMP izstrādi atbalstoši risinājumi reģeneratīvajā medicīnā.',
             badge: 'Mikrofluidika',
             precisionTitle: 'Biočipu precizitāte',
             precisionText:
-                'Mikrofluidika ļauj analizēt un kondicionēt šūnas ar striktiem regulatīviem parametriem. Tas nodrošina ATMP prasībām atbilstošu kvalitāti.',
+                'Mikrofluidika ļauj standartizēti analizēt un apstrādāt šūnu paraugus, vienlaikus fiksējot kritiskos kvalitātes rādītājus, kas ir būtiski ATMP izstrādē un validācijā.',
             precisionList: [
-                'MSC un hematopoētiskās šūnas',
-                'Regulatīvie parametri vienā skrējienā',
-                'ISO klases drošas telpas',
+                'MSC un hematopoētisko šūnu analīze',
+                'Kvalitātes rādītāji vienā mērījumu ciklā',
+                'Darbs kontrolētā (ISO klases) vidē',
             ],
-            processTitle: 'ATMP Process',
+            processTitle: 'ATMP darba plūsma',
             steps: [
-                { title: '1. Analīze', text: 'Biočips sagatavo ATMP saderīgu profilu.' },
-                { title: '2. Kondicionēšana', text: 'Šūnas tiek aktivizētas un trenētas.' },
-                { title: '3. Terapija', text: 'Validēts protokols nodots ārstam.' },
+                { title: '1. Analīze', text: 'Biočips izveido šūnu profilu un kvalitātes rādītājus.' },
+                { title: '2. Kondicionēšana', text: 'Šūnas tiek kondicionētas/kultivētas atbilstoši protokolam.' },
+                { title: '3. Terapija', text: 'Sagatavots protokols un dokumentācija ārstniecības komandai.' },
             ],
-            processFooter: 'ISO Validēti Procesa Soļi',
+            processFooter: 'Standartizēti procesa soļi',
             cards: [
                 {
                     title: 'Regenerācija',
-                    text: 'ATMP pieeja audu atjaunošanai pēc traumas vai hroniskas pārslodzes.',
+                    text: 'ATMP pieeja audu atjaunošanās atbalstam pēc traumas vai ilgstošas pārslodzes.',
                 },
                 {
                     title: 'Imūnmodulācija',
-                    text: 'Šūnu terapijas, kas regulē imūnsistēmu autoimūnos procesos.',
+                    text: 'Šūnu terapiju pieejas, kas var palīdzēt modulēt imūnreakcijas autoimūnos un iekaisuma procesos.',
                 },
             ],
         },
         finalCta: {
-            title: 'Vēlaties uzzināt vairāk par ATMP?',
+            title: 'Vēlaties uzzināt vairāk par ATMP risinājumiem?',
             action: 'Pieteikties konsultācijai',
         },
     },
     en: {
-        metaTitle: 'ATMP Therapy',
+        metaTitle: 'ATMP therapy',
         hero: {
-            title: 'ATMP cell therapy &',
+            title: 'ATMP therapies &',
             highlight: 'Diagnostics on one platform',
             description:
-                'The RTU Biochip laboratory combines microfluidics and cell engineering to make ATMP (Advanced Therapy Medicinal Products) more precise and safer.',
+                'The RTU Biochip laboratory combines microfluidics and cell engineering to support ATMP (Advanced Therapy Medicinal Products) development with more precise quality control and improved safety.',
         },
         ctas: {
             patients: {
                 title: 'For Patients',
-                description: 'Apply for a personalized ATMP consultation and therapy.',
+                description: 'Apply for a consultation on personalized ATMP options, suitability, and next steps.',
                 action: 'Open the form',
             },
             specialists: {
                 title: 'For Specialists',
-                description: 'ATMP protocols, validation, research, and collaboration.',
+                description: 'ATMP protocols, quality control, validation, research, and collaboration.',
                 action: 'Start collaboration',
             },
         },
         stats: [
             { value: '10k+', label: 'Cell profiles' },
             { value: '1k+', label: 'Parameters' },
-            { value: 'ISO', label: 'Validated facilities' },
+            { value: 'ISO', label: 'Controlled environment' },
         ],
         technology: {
             title: 'Technology & Focus',
-            subtitle: 'ATMP-ready solutions in regenerative medicine.',
+            subtitle: 'Solutions supporting ATMP development in regenerative medicine.',
             badge: 'Microfluidics',
             precisionTitle: 'Biochip precision',
             precisionText:
-                'Microfluidics lets us analyze and condition cells with strict regulatory parameters. This ensures ATMP-compliant quality.',
+                'Microfluidics enables standardized analysis and processing of cell samples while capturing critical quality attributes that are important for ATMP development and validation.',
             precisionList: [
-                'MSC and hematopoietic cells',
-                'Regulatory parameters in a single run',
-                'ISO-class safe facilities',
+                'MSC and hematopoietic cell analysis',
+                'Quality attributes in a single run',
+                'Work in a controlled (ISO-class) environment',
             ],
-            processTitle: 'ATMP Process',
+            processTitle: 'ATMP workflow',
             steps: [
-                { title: '1. Analysis', text: 'The biochip prepares an ATMP-compatible profile.' },
-                { title: '2. Conditioning', text: 'Cells are activated and trained.' },
-                { title: '3. Therapy', text: 'A validated protocol is delivered to the physician.' },
+                { title: '1. Analysis', text: 'The biochip generates a cell profile and quality readouts.' },
+                { title: '2. Conditioning', text: 'Cells are conditioned/expanded according to the protocol.' },
+                { title: '3. Therapy', text: 'A protocol package and documentation are provided to the clinical team.' },
             ],
-            processFooter: 'ISO-validated process steps',
+            processFooter: 'Standardized process steps',
             cards: [
                 {
                     title: 'Regeneration',
-                    text: 'ATMP approach to tissue recovery after injury or chronic overload.',
+                    text: 'ATMP approach to supporting tissue recovery after injury or chronic overload.',
                 },
                 {
                     title: 'Immunomodulation',
-                    text: 'Cell therapies that regulate the immune system in autoimmune processes.',
+                    text: 'Cell-therapy approaches that may help modulate immune responses in autoimmune and inflammatory processes.',
                 },
             ],
         },
         finalCta: {
-            title: 'Want to learn more about ATMP?',
+            title: 'Want to learn more about ATMP solutions?',
             action: 'Book a consultation',
         },
     },
 } as const;
+
 
 export default function Welcome() {
     const { locale } = useLang();
