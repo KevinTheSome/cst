@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import axios from 'axios';
 import { useState } from 'react';
+import { useLang } from '../../hooks/useLang';
 
 interface LocalizedString {
     lv?: string;
@@ -30,7 +31,7 @@ interface FormData {
 }
 
 export default function Anketa({ form }: { form: FormData | null }) {
-    const lang = form?.lang ?? 'lv';
+    const { __, locale } = useLang();
     const fields = form?.data?.fields ?? [];
 
     const [answers, setAnswers] = useState<Record<string, any>>({});
@@ -42,10 +43,12 @@ export default function Anketa({ form }: { form: FormData | null }) {
     const visibleFields = Math.min((currentSlide + 1) * batchSize, fields.length);
     const progressPercent = fields.length === 0 ? 0 : Math.round((visibleFields / fields.length) * 100);
 
-    const tr = (value: string | LocalizedString | undefined) =>
-        typeof value === 'string' ? value : value?.[lang] ?? value?.lv ?? value?.en ?? '';
+    const uiLocale: 'lv' | 'en' = locale === 'en' ? 'en' : 'lv';
 
-    const getOptions = (options?: { lv: string[]; en: string[] }) => (options ? options[lang] || options.lv || [] : []);
+    const tr = (value: string | LocalizedString | undefined) =>
+        typeof value === 'string' ? value : (value?.[uiLocale] ?? value?.lv ?? value?.en ?? '');
+
+    const getOptions = (options?: { lv: string[]; en: string[] }) => (options ? options[uiLocale] || options.lv || [] : []);
 
     const handleChange = (id: string, value: any) => {
         setAnswers((prev) => ({ ...prev, [id]: value }));
@@ -75,9 +78,9 @@ export default function Anketa({ form }: { form: FormData | null }) {
             });
 
             if (response.status === 200) setSubmitted(true);
-            else setError('Neizdevās nosūtīt anketu.');
+            else setError(__('forma.errors.submit_failed'));
         } catch (err: any) {
-            const message = err.response?.data?.message || err.response?.data?.error || 'Neizdevās nosūtīt anketu.';
+            const message = err.response?.data?.message || err.response?.data?.error || __('forma.errors.submit_failed');
             setError(message);
         }
     };
@@ -86,8 +89,8 @@ export default function Anketa({ form }: { form: FormData | null }) {
         return (
             <div className="mx-auto h-screen max-w-3xl py-10">
                 <div className="rounded-2xl border border-yellow-400 bg-yellow-600/20 p-6 text-yellow-200">
-                    <h2 className="text-xl font-semibold">Pašlaik anketa nav pieejama.</h2>
-                    <p className="mt-2 text-yellow-300">Lūdzu, mēģiniet vēlāk.</p>
+                    <h2 className="text-xl font-semibold">{__('forma.errors.not_available')}</h2>
+                    <p className="mt-2 text-yellow-300">{__('forma.errors.try_later')}</p>
                 </div>
             </div>
         );
@@ -105,27 +108,27 @@ export default function Anketa({ form }: { form: FormData | null }) {
                             className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-emerald-200 hover:text-emerald-600"
                         >
                             <span aria-hidden="true">←</span>
-                            Uz sākumlapu
+                            {__('forma.back_to_home')}
                         </Link>
                     </div>
 
                     {/* Header */}
                     <div className="rounded-[32px] border border-white/70 bg-white/90 p-8 text-center shadow-2xl shadow-slate-200/80">
-                        <p className="text-xs tracking-[0.4em] text-emerald-500 uppercase">PostDoc anketa</p>
+                        <p className="text-xs tracking-[0.4em] text-emerald-500 uppercase">{__('forma.subtitle')}</p>
                         <h1 className="mt-4 text-3xl font-semibold text-slate-900">{tr(form.title)}</h1>
-                        <p className="mt-3 text-sm text-slate-600">Aizpildiet soļus — jautājumiem nav pareizo vai nepareizo atbilžu.</p>
+                        <p className="mt-3 text-sm text-slate-600">{__('forma.description')}</p>
                     </div>
 
                     {submitted ? (
                         <div className="rounded-2xl border border-emerald-400 bg-emerald-600/20 p-6">
-                            <h2 className="text-xl font-semibold text-emerald-300">Paldies! Jūsu anketa ir saglabāta.</h2>
+                            <h2 className="text-xl font-semibold text-emerald-300">{__('forma.success.saved')}</h2>
                         </div>
                     ) : (
                         <>
                             {/* Progress */}
                             <div className="rounded-2xl border border-white/60 bg-white/80 p-5 shadow-lg shadow-slate-200/70 backdrop-blur">
                                 <div className="flex items-center justify-between text-xs tracking-[0.3em] text-slate-500 uppercase">
-                                    <span>Progress</span>
+                                    <span>{__('forma.progress')}</span>
                                     <span>{progressPercent}%</span>
                                 </div>
                                 <div className="mt-3 h-2 rounded-full bg-slate-200">
@@ -191,7 +194,7 @@ export default function Anketa({ form }: { form: FormData | null }) {
                                                     value={answers[field.id] ?? ''}
                                                     onChange={(e) => handleChange(field.id, e.target.value)}
                                                 >
-                                                    <option value="">Izvēlies…</option>
+                                                    <option value="">{__('forma.select_option')}</option>
                                                     {options.map((opt) => (
                                                         <option key={opt} value={opt}>
                                                             {opt}
@@ -204,7 +207,7 @@ export default function Anketa({ form }: { form: FormData | null }) {
                                             {field.type === 'text' && (
                                                 <input
                                                     type="text"
-                                                    placeholder={tr(field.placeholder) || 'Ierakstiet atbildi'}
+                                                    placeholder={tr(field.placeholder) || __('forma.placeholder.answer')}
                                                     value={answers[field.id] ?? ''}
                                                     onChange={(e) => handleChange(field.id, e.target.value)}
                                                     className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
@@ -214,7 +217,7 @@ export default function Anketa({ form }: { form: FormData | null }) {
                                             {/* ✅ TEXTAREA */}
                                             {field.type === 'textarea' && (
                                                 <textarea
-                                                    placeholder={tr(field.placeholder) || 'Ierakstiet komentāru'}
+                                                    placeholder={tr(field.placeholder) || __('forma.placeholder.comment')}
                                                     value={answers[field.id] ?? ''}
                                                     onChange={(e) => handleChange(field.id, e.target.value)}
                                                     rows={field.rows ?? 6}
@@ -226,8 +229,8 @@ export default function Anketa({ form }: { form: FormData | null }) {
                                             {field.type === 'scale' && field.scale && (
                                                 <div className="mt-4">
                                                     <div className="mb-3 flex justify-between text-xs font-bold tracking-widest text-slate-400 uppercase">
-                                                        <span>{tr(field.scale.minLabel) ?? 'Mazāk'}</span>
-                                                        <span>{tr(field.scale.maxLabel) ?? 'Vairāk'}</span>
+                                                        <span>{tr(field.scale.minLabel) ?? __('forma.scale.min')}</span>
+                                                        <span>{tr(field.scale.maxLabel) ?? __('forma.scale.max')}</span>
                                                     </div>
 
                                                     <div className="flex flex-wrap gap-2 sm:justify-between">
@@ -264,7 +267,9 @@ export default function Anketa({ form }: { form: FormData | null }) {
                             {/* Navigation */}
                             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                 <div className="text-sm text-slate-500">
-                                    {fields.length > 0 ? `Solis ${currentSlide + 1} no ${Math.ceil(fields.length / batchSize)}` : null}
+                                    {fields.length > 0
+                                        ? `${__('forma.step')} ${currentSlide + 1} ${__('forma.of')} ${Math.ceil(fields.length / batchSize)}`
+                                        : null}
                                 </div>
                                 <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
                                     {currentSlide > 0 && (
@@ -273,7 +278,7 @@ export default function Anketa({ form }: { form: FormData | null }) {
                                             onClick={() => setCurrentSlide((prev) => Math.max(prev - 1, 0))}
                                             className="inline-flex items-center justify-center rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900"
                                         >
-                                            ← Atpakaļ
+                                            {__('forma.back')}
                                         </button>
                                     )}
                                     {currentSlide < Math.ceil(fields.length / batchSize) - 1 ? (
@@ -282,14 +287,14 @@ export default function Anketa({ form }: { form: FormData | null }) {
                                             onClick={() => setCurrentSlide((prev) => Math.min(prev + 1, Math.ceil(fields.length / batchSize) - 1))}
                                             className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-emerald-600 to-sky-500 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/40 transition hover:-translate-y-0.5"
                                         >
-                                            Turpināt →
+                                            {__('forma.continue')} →
                                         </button>
                                     ) : (
                                         <button
                                             onClick={handleSubmit}
                                             className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-emerald-600 to-sky-500 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/40 transition hover:-translate-y-0.5"
                                         >
-                                            Nosūtīt anketu
+                                            {__('forma.submit')}
                                         </button>
                                     )}
                                 </div>
