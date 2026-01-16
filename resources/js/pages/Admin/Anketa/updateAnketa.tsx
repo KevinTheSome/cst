@@ -1,23 +1,22 @@
-import { Link, usePage } from '@inertiajs/react';
-import { router } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
+import {
+    AlertTriangle,
+    AlignLeft,
+    ArrowLeft,
+    BarChartHorizontal,
+    CheckCircle,
+    ChevronDown,
+    Eye,
+    Globe,
+    List,
+    Plus,
+    Save,
+    Settings,
+    Trash2,
+    X,
+} from 'lucide-react';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import AdminLayout from '../../../Layouts/AdminLayout';
-import {
-  Plus,
-  Trash2,
-  Save,
-  Settings,
-  List,
-  AlignLeft,
-  BarChartHorizontal,
-  CheckCircle,
-  AlertTriangle,
-  X,
-  ChevronDown,
-  Globe,
-  Eye,
-  ArrowLeft,
-} from 'lucide-react';
 
 // --- Types ---
 type FieldType = 'radio' | 'checkbox' | 'dropdown' | 'text' | 'scale';
@@ -25,958 +24,967 @@ type Visibility = 'public' | 'private';
 type Lang = 'lv' | 'en';
 
 type FieldBase = {
-  id: string;
-  label: { lv: string; en: string };
+    id: string;
+    label: { lv: string; en: string };
 };
 
 type OptionField = FieldBase & {
-  type: 'radio' | 'checkbox' | 'dropdown';
-  options: { lv: string[]; en: string[] };
+    type: 'radio' | 'checkbox' | 'dropdown';
+    options: { lv: string[]; en: string[] };
 };
 
 type TextField = FieldBase & {
-  type: 'text';
-  placeholder: { lv: string; en: string };
+    type: 'text';
+    placeholder: { lv: string; en: string };
 };
 
 type ScaleField = FieldBase & {
-  type: 'scale';
-  scale: {
-    min: number;
-    max: number;
-    minLabel?: { lv?: string; en?: string };
-    maxLabel?: { lv?: string; en?: string };
-  };
+    type: 'scale';
+    scale: {
+        min: number;
+        max: number;
+        minLabel?: { lv?: string; en?: string };
+        maxLabel?: { lv?: string; en?: string };
+    };
 };
 
 type Field = OptionField | TextField | ScaleField;
 
 type FieldErrors = {
-  labelLv?: string;
-  labelEn?: string;
-  type?: string;
-  optionsLv?: string;
-  optionsEn?: string;
-  placeholderLv?: string;
-  placeholderEn?: string;
-  scale?: string;
+    labelLv?: string;
+    labelEn?: string;
+    type?: string;
+    optionsLv?: string;
+    optionsEn?: string;
+    placeholderLv?: string;
+    placeholderEn?: string;
+    scale?: string;
 };
 
 type ValidationErrors = {
-  titleLv?: string;
-  titleEn?: string;
-  visibility?: string;
-  fields?: string;
-  fieldErrors: Record<string, FieldErrors>;
+    titleLv?: string;
+    titleEn?: string;
+    visibility?: string;
+    fields?: string;
+    fieldErrors: Record<string, FieldErrors>;
 };
 
 // UUID fallback
 const uuid = () => {
-  try {
-    // @ts-ignore
-    if (typeof crypto !== 'undefined' && (crypto as any).randomUUID) return (crypto as any).randomUUID();
-  } catch {}
-  return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+    try {
+        // @ts-ignore
+        if (typeof crypto !== 'undefined' && (crypto as any).randomUUID) return (crypto as any).randomUUID();
+    } catch {}
+    return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 };
 
 const trimStr = (s?: string) => (s ?? '').trim();
 const findDuplicates = (arr: string[]) => {
-  const counts: Record<string, number> = {};
-  arr.forEach((a) => {
-    counts[a] = (counts[a] || 0) + 1;
-  });
-  return Object.keys(counts).filter((k) => counts[k] > 1);
+    const counts: Record<string, number> = {};
+    arr.forEach((a) => {
+        counts[a] = (counts[a] || 0) + 1;
+    });
+    return Object.keys(counts).filter((k) => counts[k] > 1);
 };
 
 const normalizeOptionArrays = (lv: string[], en: string[]) => {
-  const max = Math.max(lv.length, en.length);
-  const nl = [...lv];
-  const ne = [...en];
-  while (nl.length < max) nl.push('');
-  while (ne.length < max) ne.push('');
-  return { lv: nl, en: ne };
+    const max = Math.max(lv.length, en.length);
+    const nl = [...lv];
+    const ne = [...en];
+    while (nl.length < max) nl.push('');
+    while (ne.length < max) ne.push('');
+    return { lv: nl, en: ne };
 };
 
 // --- Helper Icons ---
 const FieldIcon = ({ type }: { type: FieldType }) => {
-  switch (type) {
-    case 'text':
-      return <AlignLeft className="h-4 w-4 text-blue-400" />;
-    case 'scale':
-      return <BarChartHorizontal className="h-4 w-4 text-purple-400" />;
-    case 'dropdown':
-      return <ChevronDown className="h-4 w-4 text-amber-400" />;
-    default:
-      return <List className="h-4 w-4 text-emerald-400" />;
-  }
+    switch (type) {
+        case 'text':
+            return <AlignLeft className="h-4 w-4 text-blue-400" />;
+        case 'scale':
+            return <BarChartHorizontal className="h-4 w-4 text-purple-400" />;
+        case 'dropdown':
+            return <ChevronDown className="h-4 w-4 text-amber-400" />;
+        default:
+            return <List className="h-4 w-4 text-emerald-400" />;
+    }
 };
 
 export default function UpdateAnketa() {
-  const { props } = usePage();
+    const { props } = usePage();
 
-  /**
-   * ✅ IMPORTANT:
-   * We ONLY use the app language (Admin navbar LV/EN) to translate UI labels.
-   * We DO NOT change/hide the editable LV/EN fields (questions/options) based on locale.
-   */
-  const locale = useMemo(() => {
-    const p: any = props as any;
-    return (p?.locale ?? p?.lang ?? p?.currentLocale ?? p?.app?.locale ?? 'lv') as string;
-  }, [props]);
-  const isLv = locale !== 'en';
+    /**
+     * ✅ IMPORTANT:
+     * We ONLY use the app language (Admin navbar LV/EN) to translate UI labels.
+     * We DO NOT change/hide the editable LV/EN fields (questions/options) based on locale.
+     */
+    const locale = useMemo(() => {
+        const p: any = props as any;
+        return (p?.locale ?? p?.lang ?? p?.currentLocale ?? p?.app?.locale ?? 'lv') as string;
+    }, [props]);
+    const isLv = locale !== 'en';
 
-  // props.form may be undefined during SSR/hydration; provide safe defaults
-  const rawForm = (props as any)?.form ?? null;
+    // props.form may be undefined during SSR/hydration; provide safe defaults
+    const rawForm = (props as any)?.form ?? null;
 
-  const initialForm = useMemo(() => {
-    if (!rawForm) {
-      return {
-        id: -1,
-        code: 'public',
-        title: { lv: '', en: '' },
-        data: { title: { lv: '', en: '' }, fields: [] as Field[] },
-      };
-    }
-
-    // normalize title: prefer top-level title, fallback to data.title
-    const titleSource =
-      typeof rawForm.title === 'object' && rawForm.title !== null
-        ? rawForm.title
-        : rawForm.title && typeof rawForm.title === 'string'
-        ? { lv: rawForm.title, en: rawForm.title }
-        : rawForm.data?.title ?? { lv: '', en: '' };
-
-    const normalizedTitle = {
-      lv: titleSource.lv ?? '',
-      en: titleSource.en ?? '',
-    };
-
-    const schema = Array.isArray(rawForm.data?.fields)
-      ? rawForm.data.fields
-      : Array.isArray(rawForm.fields)
-      ? rawForm.fields
-      : [];
-
-    const normalizedFields: Field[] = schema.map((f: any) => {
-      const base: FieldBase = {
-        id: f.id ?? uuid(),
-        label: {
-          lv: f.label?.lv ?? f.label ?? '',
-          en: f.label?.en ?? f.label ?? '',
-        },
-      };
-
-      if (f.type === 'text') {
-        return {
-          ...base,
-          type: 'text',
-          placeholder: { lv: f.placeholder?.lv ?? '', en: f.placeholder?.en ?? '' },
-        } as TextField;
-      }
-
-      if (f.type === 'scale') {
-        return {
-          ...base,
-          type: 'scale',
-          scale: {
-            min: typeof f.scale?.min === 'number' ? f.scale.min : 1,
-            max: typeof f.scale?.max === 'number' ? f.scale.max : 10,
-            minLabel: f.scale?.minLabel ?? { lv: '', en: '' },
-            maxLabel: f.scale?.maxLabel ?? { lv: '', en: '' },
-          },
-        } as ScaleField;
-      }
-
-      // option types (pad arrays to same length)
-      const rawLv = Array.isArray(f.options?.lv) ? f.options.lv : Array.isArray(f.options) ? (f.options as any) : [];
-      const rawEn = Array.isArray(f.options?.en) ? f.options.en : Array.isArray(f.options) ? (f.options as any) : [];
-      const norm = normalizeOptionArrays(rawLv, rawEn);
-
-      return {
-        ...base,
-        type: (f.type as FieldType) ?? 'radio',
-        options: { lv: norm.lv, en: norm.en },
-      } as OptionField;
-    });
-
-    return {
-      id: rawForm.id ?? -1,
-      code: rawForm.code ?? 'public',
-      title: normalizedTitle,
-      data: {
-        title: normalizedTitle,
-        fields: normalizedFields,
-      },
-    };
-  }, [rawForm]);
-
-  const [title, setTitle] = useState<{ lv: string; en: string }>({
-    lv: initialForm.title.lv ?? '',
-    en: initialForm.title.en ?? '',
-  });
-  const [visibility, setVisibility] = useState<Visibility>((initialForm.code as Visibility) ?? 'public');
-  const [fields, setFields] = useState<Field[]>(Array.isArray(initialForm.data?.fields) ? initialForm.data.fields : []);
-  const [errors, setErrors] = useState<ValidationErrors>({ fieldErrors: {} });
-  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
-
-  // Modal State
-  const [modalState, setModalState] = useState<{
-    isOpen: boolean;
-    type: 'success' | 'error';
-    title: string;
-    message: string;
-    onClose?: () => void;
-  }>({ isOpen: false, type: 'success', title: '', message: '' });
-
-  // keep state in sync if server props update (e.g., navigation/hydration)
-  useEffect(() => {
-    setTitle({ lv: initialForm.title.lv ?? '', en: initialForm.title.en ?? '' });
-    setVisibility((initialForm.code as Visibility) ?? 'public');
-    setFields(Array.isArray(initialForm.data?.fields) ? initialForm.data.fields : []);
-  }, [initialForm]);
-
-  const addField = () => {
-    const newField: OptionField = {
-      id: uuid(),
-      label: { lv: '', en: '' },
-      type: 'radio',
-      options: { lv: ['Opcija 1'], en: ['Option 1'] },
-    };
-    setFields((prev) => [...prev, newField]);
-  };
-
-  const removeField = (id: string) => {
-    setFields((prev) => prev.filter((f) => f.id !== id));
-    setErrors((prev) => {
-      const next = { ...prev, fieldErrors: { ...prev.fieldErrors } };
-      delete next.fieldErrors[id];
-      return next;
-    });
-  };
-
-  const changeFieldType = (id: string, newType: FieldType) => {
-    setFields((prev) =>
-      prev.map((f) => {
-        if (f.id !== id) return f;
-        const base = { id: f.id, label: f.label };
-
-        switch (newType) {
-          case 'radio':
-          case 'checkbox':
-          case 'dropdown': {
-            const existing = (f as any).options ?? { lv: ['Opcija 1'], en: ['Option 1'] };
-            const norm = normalizeOptionArrays(existing.lv ?? [], existing.en ?? []);
-            return { ...base, type: newType, options: { lv: norm.lv, en: norm.en } } as OptionField;
-          }
-          case 'text':
-            return { ...base, type: 'text', placeholder: (f as any).placeholder ?? { lv: '', en: '' } } as TextField;
-          case 'scale':
+    const initialForm = useMemo(() => {
+        if (!rawForm) {
             return {
-              ...base,
-              type: 'scale',
-              scale: (f as any).scale ?? {
-                min: 1,
-                max: 10,
-                minLabel: { lv: 'Mazāk', en: 'Less' },
-                maxLabel: { lv: 'Vairāk', en: 'More' },
-              },
-            } as ScaleField;
-          default:
-            return f;
+                id: -1,
+                code: 'public',
+                title: { lv: '', en: '' },
+                data: { title: { lv: '', en: '' }, fields: [] as Field[] },
+            };
         }
-      })
-    );
-  };
 
-  const updateLabel = (fieldId: string, lang: Lang, value: string) => {
-    setFields((prev) => prev.map((f) => (f.id === fieldId ? { ...f, label: { ...f.label, [lang]: value } } : f)));
-    setErrors((prev) => {
-      const fe = { ...prev.fieldErrors };
-      if (fe[fieldId]) {
-        delete fe[fieldId].labelLv;
-        delete fe[fieldId].labelEn;
-      }
-      return { ...prev, fieldErrors: fe };
-    });
-  };
+        // normalize title: prefer top-level title, fallback to data.title
+        const titleSource =
+            typeof rawForm.title === 'object' && rawForm.title !== null
+                ? rawForm.title
+                : rawForm.title && typeof rawForm.title === 'string'
+                  ? { lv: rawForm.title, en: rawForm.title }
+                  : (rawForm.data?.title ?? { lv: '', en: '' });
 
-  const updateOption = (fieldId: string, lang: Lang, index: number, value: string) => {
-    setFields((prev) =>
-      prev.map((f) => {
-        if (f.id !== fieldId) return f;
-        if (f.type === 'radio' || f.type === 'checkbox' || f.type === 'dropdown') {
-          const current = (f as OptionField).options ?? { lv: [], en: [] };
-          const norm = normalizeOptionArrays(current.lv ?? [], current.en ?? []);
-          const next = { ...norm };
-
-          next[lang][index] = value;
-          return { ...f, options: { lv: next.lv, en: next.en } } as OptionField;
-        }
-        return f;
-      })
-    );
-  };
-
-  const addOption = (fieldId: string) => {
-    setFields((prev) =>
-      prev.map((f) => {
-        if (f.id !== fieldId) return f;
-        if (f.type === 'radio' || f.type === 'checkbox' || f.type === 'dropdown') {
-          const current = (f as OptionField).options ?? { lv: [], en: [] };
-          const norm = normalizeOptionArrays(current.lv ?? [], current.en ?? []);
-          const nextIndex = Math.max(norm.lv.length, norm.en.length) + 1;
-
-          return {
-            ...f,
-            options: {
-              lv: [...norm.lv, `Opcija ${nextIndex}`],
-              en: [...norm.en, `Option ${nextIndex}`],
-            },
-          } as OptionField;
-        }
-        return f;
-      })
-    );
-  };
-
-  const removeOption = (fieldId: string, index: number) => {
-    setFields((prev) =>
-      prev.map((f) => {
-        if (f.id !== fieldId) return f;
-        if (f.type === 'radio' || f.type === 'checkbox' || f.type === 'dropdown') {
-          const current = (f as OptionField).options ?? { lv: [], en: [] };
-          const norm = normalizeOptionArrays(current.lv ?? [], current.en ?? []);
-
-          const nv = {
-            lv: norm.lv.filter((_, i) => i !== index),
-            en: norm.en.filter((_, i) => i !== index),
-          };
-
-          return {
-            ...f,
-            options: {
-              lv: nv.lv.length ? nv.lv : ['Opcija 1'],
-              en: nv.en.length ? nv.en : ['Option 1'],
-            },
-          } as OptionField;
-        }
-        return f;
-      })
-    );
-  };
-
-  const updatePlaceholder = (fieldId: string, lang: Lang, value: string) => {
-    setFields((prev) =>
-      prev.map((f) => {
-        if (f.id !== fieldId) return f;
-        if (f.type === 'text') {
-          const currentPlaceholder = (f as TextField).placeholder || { lv: '', en: '' };
-          return { ...f, placeholder: { ...currentPlaceholder, [lang]: value } } as TextField;
-        }
-        return f;
-      })
-    );
-  };
-
-  const updateScaleValue = (fieldId: string, key: 'min' | 'max' | 'minLabel' | 'maxLabel', value: any, lang?: Lang) => {
-    setFields((prev) =>
-      prev.map((f) => {
-        if (f.id !== fieldId) return f;
-        if (f.type === 'scale') {
-          const currentScale =
-            (f as ScaleField).scale || { min: 1, max: 10, minLabel: { lv: '', en: '' }, maxLabel: { lv: '', en: '' } };
-          const s = { ...currentScale };
-
-          if (key === 'min' || key === 'max') {
-            let num = Number(value);
-            if (!Number.isFinite(num)) num = key === 'min' ? 1 : 10;
-            num = Math.round(num);
-            num = Math.max(1, Math.min(100, num));
-            s[key] = num;
-
-            if (s.min >= s.max) {
-              if (key === 'min') s.max = Math.min(100, s.min + 1);
-              else s.min = Math.max(1, s.max - 1);
-            }
-          } else if (key === 'minLabel') {
-            s.minLabel = { ...(s.minLabel || { lv: '', en: '' }), [lang as Lang]: value };
-          } else if (key === 'maxLabel') {
-            s.maxLabel = { ...(s.maxLabel || { lv: '', en: '' }), [lang as Lang]: value };
-          }
-
-          return { ...f, scale: s } as ScaleField;
-        }
-        return f;
-      })
-    );
-  };
-
-  const validateField = (f: Field): FieldErrors => {
-    const fe: FieldErrors = {};
-    const labelLv = trimStr(f.label.lv);
-    const labelEn = trimStr(f.label.en);
-
-    if (!labelLv) fe.labelLv = 'Jautājums (LV) ir obligāts.';
-    if (!labelEn) fe.labelEn = 'Question (EN) is required.';
-
-    if ('options' in f) {
-      const optsLv = (f as OptionField).options.lv.map((o) => (o ?? '').trim()).filter(Boolean);
-      const optsEn = (f as OptionField).options.en.map((o) => (o ?? '').trim()).filter(Boolean);
-
-      if (!optsLv.length) fe.optionsLv = 'Jābūt vismaz vienai opcijai (LV).';
-      if (!optsEn.length) fe.optionsEn = 'Jābūt vismaz vienai opcijai (EN).';
-
-      const dupLv = findDuplicates(optsLv);
-      if (dupLv.length) fe.optionsLv = `Duplikātas opcijas LV: ${dupLv.join(', ')}.`;
-      const dupEn = findDuplicates(optsEn);
-      if (dupEn.length) fe.optionsEn = `Duplicate options EN: ${dupEn.join(', ')}.`;
-    }
-
-    if (f.type === 'scale') {
-      const s = (f as ScaleField).scale;
-      const min = Number(s.min ?? 1);
-      const max = Number(s.max ?? 5);
-      if (!Number.isInteger(min) || !Number.isInteger(max)) fe.scale = 'Min/max must be integers.';
-      else if (min >= max) fe.scale = 'Min must be less than max.';
-      else if (max - min > 50) fe.scale = 'Range too large (max 50 steps).';
-    }
-
-    return fe;
-  };
-
-  const validateAll = (): ValidationErrors => {
-    const ve: ValidationErrors = { fieldErrors: {} };
-    const titleLv = trimStr(title.lv);
-    const titleEn = trimStr(title.en);
-
-    if (!titleLv) ve.titleLv = 'Nosaukums (LV) ir obligāts.';
-    if (!titleEn) ve.titleEn = 'Title (EN) is required.';
-    if (titleLv.length > 255) ve.titleLv = 'Nosaukums pārāk garš.';
-    if (titleEn.length > 255) ve.titleEn = 'Title too long.';
-    if (!['public', 'private'].includes(visibility)) ve.visibility = 'Nederīga redzamība.';
-    if (!Array.isArray(fields) || fields.length === 0) ve.fields = 'Pievienojiet vismaz vienu jautājumu.';
-
-    for (const f of fields) {
-      const fe = validateField(f);
-      if (Object.keys(fe).length > 0) ve.fieldErrors[f.id] = fe;
-    }
-
-    return ve;
-  };
-
-  useEffect(() => {
-    if (attemptedSubmit) setErrors(validateAll());
-  }, [title, visibility, fields, attemptedSubmit]);
-
-  const buildPayload = () => ({
-    title: {
-      lv: title.lv.trim(),
-      en: title.en.trim(),
-    },
-    code: visibility,
-    data: {
-      _method: 'PUT',
-      fields: fields.map((f) => {
-        const base: any = {
-          id: f.id,
-          type: f.type,
-          label: {
-            lv: f.label.lv.trim(),
-            en: f.label.en.trim(),
-          },
+        const normalizedTitle = {
+            lv: titleSource.lv ?? '',
+            en: titleSource.en ?? '',
         };
 
-        if (f.type === 'text') {
-          base.placeholder = {
-            lv: (f as TextField).placeholder.lv.trim(),
-            en: (f as TextField).placeholder.en.trim(),
-          };
-        } else if (f.type === 'scale') {
-          base.scale = { ...(f as ScaleField).scale };
-        } else {
-          base.options = {
-            lv: (f as OptionField).options.lv.map((o) => (o ?? '').trim()).filter(Boolean),
-            en: (f as OptionField).options.en.map((o) => (o ?? '').trim()).filter(Boolean),
-          };
+        const schema = Array.isArray(rawForm.data?.fields) ? rawForm.data.fields : Array.isArray(rawForm.fields) ? rawForm.fields : [];
+
+        const normalizedFields: Field[] = schema.map((f: any) => {
+            const base: FieldBase = {
+                id: f.id ?? uuid(),
+                label: {
+                    lv: f.label?.lv ?? f.label ?? '',
+                    en: f.label?.en ?? f.label ?? '',
+                },
+            };
+
+            if (f.type === 'text') {
+                return {
+                    ...base,
+                    type: 'text',
+                    placeholder: { lv: f.placeholder?.lv ?? '', en: f.placeholder?.en ?? '' },
+                } as TextField;
+            }
+
+            if (f.type === 'scale') {
+                return {
+                    ...base,
+                    type: 'scale',
+                    scale: {
+                        min: typeof f.scale?.min === 'number' ? f.scale.min : 1,
+                        max: typeof f.scale?.max === 'number' ? f.scale.max : 10,
+                        minLabel: f.scale?.minLabel ?? { lv: '', en: '' },
+                        maxLabel: f.scale?.maxLabel ?? { lv: '', en: '' },
+                    },
+                } as ScaleField;
+            }
+
+            // option types (pad arrays to same length)
+            const rawLv = Array.isArray(f.options?.lv) ? f.options.lv : Array.isArray(f.options) ? (f.options as any) : [];
+            const rawEn = Array.isArray(f.options?.en) ? f.options.en : Array.isArray(f.options) ? (f.options as any) : [];
+            const norm = normalizeOptionArrays(rawLv, rawEn);
+
+            return {
+                ...base,
+                type: (f.type as FieldType) ?? 'radio',
+                options: { lv: norm.lv, en: norm.en },
+            } as OptionField;
+        });
+
+        return {
+            id: rawForm.id ?? -1,
+            code: rawForm.code ?? 'public',
+            title: normalizedTitle,
+            data: {
+                title: normalizedTitle,
+                fields: normalizedFields,
+            },
+        };
+    }, [rawForm]);
+
+    const [title, setTitle] = useState<{ lv: string; en: string }>({
+        lv: initialForm.title.lv ?? '',
+        en: initialForm.title.en ?? '',
+    });
+    const [visibility, setVisibility] = useState<Visibility>((initialForm.code as Visibility) ?? 'public');
+    const [fields, setFields] = useState<Field[]>(Array.isArray(initialForm.data?.fields) ? initialForm.data.fields : []);
+    const [errors, setErrors] = useState<ValidationErrors>({ fieldErrors: {} });
+    const [attemptedSubmit, setAttemptedSubmit] = useState(false);
+
+    // Modal State
+    const [modalState, setModalState] = useState<{
+        isOpen: boolean;
+        type: 'success' | 'error';
+        title: string;
+        message: string;
+        onClose?: () => void;
+    }>({ isOpen: false, type: 'success', title: '', message: '' });
+
+    // keep state in sync if server props update (e.g., navigation/hydration)
+    useEffect(() => {
+        setTitle({ lv: initialForm.title.lv ?? '', en: initialForm.title.en ?? '' });
+        setVisibility((initialForm.code as Visibility) ?? 'public');
+        setFields(Array.isArray(initialForm.data?.fields) ? initialForm.data.fields : []);
+    }, [initialForm]);
+
+    const addField = () => {
+        const newField: OptionField = {
+            id: uuid(),
+            label: { lv: '', en: '' },
+            type: 'radio',
+            options: { lv: ['Opcija 1'], en: ['Option 1'] },
+        };
+        setFields((prev) => [...prev, newField]);
+    };
+
+    const removeField = (id: string) => {
+        setFields((prev) => prev.filter((f) => f.id !== id));
+        setErrors((prev) => {
+            const next = { ...prev, fieldErrors: { ...prev.fieldErrors } };
+            delete next.fieldErrors[id];
+            return next;
+        });
+    };
+
+    const changeFieldType = (id: string, newType: FieldType) => {
+        setFields((prev) =>
+            prev.map((f) => {
+                if (f.id !== id) return f;
+                const base = { id: f.id, label: f.label };
+
+                switch (newType) {
+                    case 'radio':
+                    case 'checkbox':
+                    case 'dropdown': {
+                        const existing = (f as any).options ?? { lv: ['Opcija 1'], en: ['Option 1'] };
+                        const norm = normalizeOptionArrays(existing.lv ?? [], existing.en ?? []);
+                        return { ...base, type: newType, options: { lv: norm.lv, en: norm.en } } as OptionField;
+                    }
+                    case 'text':
+                        return { ...base, type: 'text', placeholder: (f as any).placeholder ?? { lv: '', en: '' } } as TextField;
+                    case 'scale':
+                        return {
+                            ...base,
+                            type: 'scale',
+                            scale: (f as any).scale ?? {
+                                min: 1,
+                                max: 10,
+                                minLabel: { lv: 'Mazāk', en: 'Less' },
+                                maxLabel: { lv: 'Vairāk', en: 'More' },
+                            },
+                        } as ScaleField;
+                    default:
+                        return f;
+                }
+            }),
+        );
+    };
+
+    const updateLabel = (fieldId: string, lang: Lang, value: string) => {
+        setFields((prev) => prev.map((f) => (f.id === fieldId ? { ...f, label: { ...f.label, [lang]: value } } : f)));
+        setErrors((prev) => {
+            const fe = { ...prev.fieldErrors };
+            if (fe[fieldId]) {
+                delete fe[fieldId].labelLv;
+                delete fe[fieldId].labelEn;
+            }
+            return { ...prev, fieldErrors: fe };
+        });
+    };
+
+    const updateOption = (fieldId: string, lang: Lang, index: number, value: string) => {
+        setFields((prev) =>
+            prev.map((f) => {
+                if (f.id !== fieldId) return f;
+                if (f.type === 'radio' || f.type === 'checkbox' || f.type === 'dropdown') {
+                    const current = (f as OptionField).options ?? { lv: [], en: [] };
+                    const norm = normalizeOptionArrays(current.lv ?? [], current.en ?? []);
+                    const next = { ...norm };
+
+                    next[lang][index] = value;
+                    return { ...f, options: { lv: next.lv, en: next.en } } as OptionField;
+                }
+                return f;
+            }),
+        );
+    };
+
+    const addOption = (fieldId: string) => {
+        setFields((prev) =>
+            prev.map((f) => {
+                if (f.id !== fieldId) return f;
+                if (f.type === 'radio' || f.type === 'checkbox' || f.type === 'dropdown') {
+                    const current = (f as OptionField).options ?? { lv: [], en: [] };
+                    const norm = normalizeOptionArrays(current.lv ?? [], current.en ?? []);
+                    const nextIndex = Math.max(norm.lv.length, norm.en.length) + 1;
+
+                    return {
+                        ...f,
+                        options: {
+                            lv: [...norm.lv, `Opcija ${nextIndex}`],
+                            en: [...norm.en, `Option ${nextIndex}`],
+                        },
+                    } as OptionField;
+                }
+                return f;
+            }),
+        );
+    };
+
+    const removeOption = (fieldId: string, index: number) => {
+        setFields((prev) =>
+            prev.map((f) => {
+                if (f.id !== fieldId) return f;
+                if (f.type === 'radio' || f.type === 'checkbox' || f.type === 'dropdown') {
+                    const current = (f as OptionField).options ?? { lv: [], en: [] };
+                    const norm = normalizeOptionArrays(current.lv ?? [], current.en ?? []);
+
+                    const nv = {
+                        lv: norm.lv.filter((_, i) => i !== index),
+                        en: norm.en.filter((_, i) => i !== index),
+                    };
+
+                    return {
+                        ...f,
+                        options: {
+                            lv: nv.lv.length ? nv.lv : ['Opcija 1'],
+                            en: nv.en.length ? nv.en : ['Option 1'],
+                        },
+                    } as OptionField;
+                }
+                return f;
+            }),
+        );
+    };
+
+    const updatePlaceholder = (fieldId: string, lang: Lang, value: string) => {
+        setFields((prev) =>
+            prev.map((f) => {
+                if (f.id !== fieldId) return f;
+                if (f.type === 'text') {
+                    const currentPlaceholder = (f as TextField).placeholder || { lv: '', en: '' };
+                    return { ...f, placeholder: { ...currentPlaceholder, [lang]: value } } as TextField;
+                }
+                return f;
+            }),
+        );
+    };
+
+    const updateScaleValue = (fieldId: string, key: 'min' | 'max' | 'minLabel' | 'maxLabel', value: any, lang?: Lang) => {
+        setFields((prev) =>
+            prev.map((f) => {
+                if (f.id !== fieldId) return f;
+                if (f.type === 'scale') {
+                    const currentScale = (f as ScaleField).scale || { min: 1, max: 10, minLabel: { lv: '', en: '' }, maxLabel: { lv: '', en: '' } };
+                    const s = { ...currentScale };
+
+                    if (key === 'min' || key === 'max') {
+                        let num = Number(value);
+                        if (!Number.isFinite(num)) num = key === 'min' ? 1 : 10;
+                        num = Math.round(num);
+                        num = Math.max(1, Math.min(100, num));
+                        s[key] = num;
+
+                        if (s.min >= s.max) {
+                            if (key === 'min') s.max = Math.min(100, s.min + 1);
+                            else s.min = Math.max(1, s.max - 1);
+                        }
+                    } else if (key === 'minLabel') {
+                        s.minLabel = { ...(s.minLabel || { lv: '', en: '' }), [lang as Lang]: value };
+                    } else if (key === 'maxLabel') {
+                        s.maxLabel = { ...(s.maxLabel || { lv: '', en: '' }), [lang as Lang]: value };
+                    }
+
+                    return { ...f, scale: s } as ScaleField;
+                }
+                return f;
+            }),
+        );
+    };
+
+    const validateField = (f: Field): FieldErrors => {
+        const fe: FieldErrors = {};
+        const labelLv = trimStr(f.label.lv);
+        const labelEn = trimStr(f.label.en);
+
+        if (!labelLv) fe.labelLv = 'Jautājums (LV) ir obligāts.';
+        if (!labelEn) fe.labelEn = 'Question (EN) is required.';
+
+        if ('options' in f) {
+            const optsLv = (f as OptionField).options.lv.map((o) => (o ?? '').trim()).filter(Boolean);
+            const optsEn = (f as OptionField).options.en.map((o) => (o ?? '').trim()).filter(Boolean);
+
+            if (!optsLv.length) fe.optionsLv = 'Jābūt vismaz vienai opcijai (LV).';
+            if (!optsEn.length) fe.optionsEn = 'Jābūt vismaz vienai opcijai (EN).';
+
+            const dupLv = findDuplicates(optsLv);
+            if (dupLv.length) fe.optionsLv = `Duplikātas opcijas LV: ${dupLv.join(', ')}.`;
+            const dupEn = findDuplicates(optsEn);
+            if (dupEn.length) fe.optionsEn = `Duplicate options EN: ${dupEn.join(', ')}.`;
         }
 
-        return base;
-      }),
-    },
-  });
+        if (f.type === 'scale') {
+            const s = (f as ScaleField).scale;
+            const min = Number(s.min ?? 1);
+            const max = Number(s.max ?? 5);
+            if (!Number.isInteger(min) || !Number.isInteger(max)) fe.scale = 'Min/max must be integers.';
+            else if (min >= max) fe.scale = 'Min must be less than max.';
+            else if (max - min > 50) fe.scale = 'Range too large (max 50 steps).';
+        }
 
-  const handleSubmit = () => {
-    setAttemptedSubmit(true);
+        return fe;
+    };
 
-    const ve = validateAll();
-    setErrors(ve);
+    const validateAll = (): ValidationErrors => {
+        const ve: ValidationErrors = { fieldErrors: {} };
+        const titleLv = trimStr(title.lv);
+        const titleEn = trimStr(title.en);
 
-    const hasErr =
-      !!ve.titleLv || !!ve.titleEn || !!ve.visibility || !!ve.fields || Object.keys(ve.fieldErrors || {}).length > 0;
+        if (!titleLv) ve.titleLv = 'Nosaukums (LV) ir obligāts.';
+        if (!titleEn) ve.titleEn = 'Title (EN) is required.';
+        if (titleLv.length > 255) ve.titleLv = 'Nosaukums pārāk garš.';
+        if (titleEn.length > 255) ve.titleEn = 'Title too long.';
+        if (!['public', 'private'].includes(visibility)) ve.visibility = 'Nederīga redzamība.';
+        if (!Array.isArray(fields) || fields.length === 0) ve.fields = 'Pievienojiet vismaz vienu jautājumu.';
 
-    if (hasErr) {
-      setModalState({
-        isOpen: true,
-        type: 'error',
-        title: isLv ? 'Validācijas kļūda' : 'Validation error',
-        message: isLv ? 'Lūdzu, izlabojiet kļūdas pirms saglabāšanas.' : 'Please fix errors before saving.',
-      });
-      return;
-    }
+        for (const f of fields) {
+            const fe = validateField(f);
+            if (Object.keys(fe).length > 0) ve.fieldErrors[f.id] = fe;
+        }
 
-    router.post(`/admin/anketa/update/${initialForm.id}`, buildPayload(), {
-      preserveScroll: true,
-      onSuccess: () =>
-        setModalState({
-          isOpen: true,
-          type: 'success',
-          title: isLv ? 'Saglabāts' : 'Saved',
-          message: isLv ? 'Anketa veiksmīgi atjaunināta.' : 'Form updated successfully.',
-        }),
-      onError: () =>
-        setModalState({
-          isOpen: true,
-          type: 'error',
-          title: isLv ? 'Kļūda' : 'Error',
-          message: isLv ? 'Neizdevās saglabāt izmaiņas.' : 'Error saving changes.',
-        }),
+        return ve;
+    };
+
+    useEffect(() => {
+        if (attemptedSubmit) setErrors(validateAll());
+    }, [title, visibility, fields, attemptedSubmit]);
+
+    const buildPayload = () => ({
+        title: {
+            lv: title.lv.trim(),
+            en: title.en.trim(),
+        },
+        code: visibility,
+        data: {
+            _method: 'PUT',
+            fields: fields.map((f) => {
+                const base: any = {
+                    id: f.id,
+                    type: f.type,
+                    label: {
+                        lv: f.label.lv.trim(),
+                        en: f.label.en.trim(),
+                    },
+                };
+
+                if (f.type === 'text') {
+                    base.placeholder = {
+                        lv: trimStr((f as TextField).placeholder.lv),
+                        en: trimStr((f as TextField).placeholder.en),
+                    };
+                } else if (f.type === 'scale') {
+                    base.scale = { ...(f as ScaleField).scale };
+                } else {
+                    base.options = {
+                        lv: (f as OptionField).options.lv.map((o) => (o ?? '').trim()).filter(Boolean),
+                        en: (f as OptionField).options.en.map((o) => (o ?? '').trim()).filter(Boolean),
+                    };
+                }
+
+                return base;
+            }),
+        },
     });
-  };
 
-  return (
-    <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl space-y-8">
-        {/* --- Header --- */}
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-900/50 p-8 shadow-2xl backdrop-blur-xl">
-          <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
-          <div className="relative z-10 flex flex-wrap items-center justify-between gap-6">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Settings className="h-5 w-5 text-emerald-400" />
-                <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">Anketu Studija</span>
-              </div>
-              <h1 className="text-3xl font-bold text-white tracking-tight">{isLv ? 'Rediģēt anketu' : 'Edit form'}</h1>
-              <p className="mt-2 text-slate-400 max-w-lg">
-                {isLv
-                  ? 'Atjauniniet jautājumus, nosaukumus un redzamības iestatījumus.'
-                  : 'Update questions, titles, and visibility settings.'}
-              </p>
-            </div>
+    const handleSubmit = () => {
+        setAttemptedSubmit(true);
 
-            <div className="flex items-center gap-3">
-              <Link
-                href="/admin/anketa"
-                className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                {isLv ? 'Atpakaļ' : 'Back'}
-              </Link>
+        const ve = validateAll();
+        setErrors(ve);
 
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="flex items-center gap-2 rounded-xl bg-emerald-500 px-6 py-2 text-sm font-bold text-slate-900 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400 hover:scale-105"
-              >
-                <Save className="h-4 w-4" />
-                {isLv ? 'Saglabāt' : 'Save'}
-              </button>
-            </div>
-          </div>
-        </div>
+        const hasErr = !!ve.titleLv || !!ve.titleEn || !!ve.visibility || !!ve.fields || Object.keys(ve.fieldErrors || {}).length > 0;
 
-        <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
-          {/* --- LEFT COLUMN --- */}
-          <div className="space-y-8">
-            {/* General Info Card */}
-            <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
-              <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
-                <Globe className="h-5 w-5 text-blue-400" />
-                <h2 className="text-lg font-bold text-white">{isLv ? 'Pamatinformācija' : 'Basic information'}</h2>
-              </div>
+        if (hasErr) {
+            setModalState({
+                isOpen: true,
+                type: 'error',
+                title: isLv ? 'Validācijas kļūda' : 'Validation error',
+                message: isLv ? 'Lūdzu, izlabojiet kļūdas pirms saglabāšanas.' : 'Please fix errors before saving.',
+            });
+            return;
+        }
 
-              <div className="grid gap-5">
-                {/* ✅ ALWAYS show both LV/EN editable fields */}
-                <div className="grid gap-5 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Nosaukums (LV)</label>
-                    <input
-                      type="text"
-                      placeholder="Piem., Klientu apmierinātība"
-                      value={title.lv}
-                      onChange={(e) => setTitle((t) => ({ ...t, lv: e.target.value }))}
-                      className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:outline-none focus:ring-1 ${
-                        errors.titleLv ? 'border-rose-500 focus:border-rose-500' : 'border-white/10 focus:border-emerald-500'
-                      }`}
-                    />
-                    {errors.titleLv && <p className="text-xs text-rose-400">{errors.titleLv}</p>}
-                  </div>
+        router.post(`/admin/anketa/update/${initialForm.id}`, buildPayload(), {
+            preserveScroll: true,
+            onSuccess: () =>
+                setModalState({
+                    isOpen: true,
+                    type: 'success',
+                    title: isLv ? 'Saglabāts' : 'Saved',
+                    message: isLv ? 'Anketa veiksmīgi atjaunināta.' : 'Form updated successfully.',
+                }),
+            onError: () =>
+                setModalState({
+                    isOpen: true,
+                    type: 'error',
+                    title: isLv ? 'Kļūda' : 'Error',
+                    message: isLv ? 'Neizdevās saglabāt izmaiņas.' : 'Error saving changes.',
+                }),
+        });
+    };
 
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Title (EN)</label>
-                    <input
-                      type="text"
-                      placeholder="e.g., Customer Satisfaction"
-                      value={title.en}
-                      onChange={(e) => setTitle((t) => ({ ...t, en: e.target.value }))}
-                      className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:outline-none focus:ring-1 ${
-                        errors.titleEn ? 'border-rose-500 focus:border-rose-500' : 'border-white/10 focus:border-emerald-500'
-                      }`}
-                    />
-                    {errors.titleEn && <p className="text-xs text-rose-400">{errors.titleEn}</p>}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Questions Builder */}
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-white">{isLv ? 'Jautājumi' : 'Questions'}</h2>
-                <span className="text-xs font-mono text-slate-500 bg-slate-900 px-2 py-1 rounded border border-white/5">
-                  {fields.length} {isLv ? 'kopā' : 'total'}
-                </span>
-              </div>
-
-              {errors.fields && attemptedSubmit && (
-                <div className="rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 text-sm text-rose-300 flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4" /> {errors.fields}
-                </div>
-              )}
-
-              {fields.length === 0 && (
-                <div className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-12 text-center">
-                  <List className="mx-auto h-12 w-12 text-slate-600 mb-3" />
-                  <p className="text-slate-400">{isLv ? 'Saraksts ir tukšs. Pievienojiet pirmo jautājumu.' : 'The list is empty. Add your first question.'}</p>
-                </div>
-              )}
-
-              <div className="space-y-4">
-                {fields.map((field, idx) => {
-                  const ferr = errors.fieldErrors?.[field.id] ?? {};
-                  const hasErr = Object.keys(ferr).length > 0;
-
-                  const typeLabel = (t: FieldType) => {
-                    if (isLv) {
-                      if (t === 'radio') return 'Radio izvēle';
-                      if (t === 'checkbox') return 'Checkbox';
-                      if (t === 'dropdown') return 'Dropdown';
-                      if (t === 'text') return 'Teksta ievade';
-                      if (t === 'scale') return 'Skala';
-                      return 'Radio izvēle';
-                    }
-                    if (t === 'radio') return 'Radio Choice';
-                    if (t === 'checkbox') return 'Checkbox';
-                    if (t === 'dropdown') return 'Dropdown';
-                    if (t === 'text') return 'Text Input';
-                    if (t === 'scale') return 'Scale';
-                    return 'Radio Choice';
-                  };
-
-                  return (
-                    <div
-                      key={field.id}
-                      data-field-id={field.id}
-                      className={`group relative rounded-2xl border bg-slate-900/40 p-6 transition-all ${
-                        hasErr ? 'border-rose-500/50 shadow-rose-500/10' : 'border-white/10 hover:border-white/20'
-                      }`}
-                    >
-                      <div className="mb-6 flex items-start justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-800 text-slate-400 font-mono text-sm border border-white/5">
-                            {idx + 1}
-                          </div>
-
-                          <div className="flex flex-col">
-                            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                              {isLv ? 'Tips' : 'Type'}
-                            </span>
-
-                            <div className="flex items-center gap-2 text-sm font-medium text-white">
-                              <FieldIcon type={field.type} />
-                              <select
-                                value={field.type}
-                                onChange={(e) => changeFieldType(field.id, e.target.value as FieldType)}
-                                className="bg-transparent outline-none cursor-pointer hover:text-emerald-400 transition-colors"
-                              >
-                                <option value="radio" className="bg-slate-900">
-                                  {typeLabel('radio')}
-                                </option>
-                                <option value="checkbox" className="bg-slate-900">
-                                  {typeLabel('checkbox')}
-                                </option>
-                                <option value="dropdown" className="bg-slate-900">
-                                  {typeLabel('dropdown')}
-                                </option>
-                                <option value="text" className="bg-slate-900">
-                                  {typeLabel('text')}
-                                </option>
-                                <option value="scale" className="bg-slate-900">
-                                  {isLv ? 'Skala 1-10' : 'Scale 1-10'}
-                                </option>
-                              </select>
+    return (
+        <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl space-y-8">
+                {/* --- Header --- */}
+                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-900/50 p-8 shadow-2xl backdrop-blur-xl">
+                    <div className="pointer-events-none absolute top-0 right-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl" />
+                    <div className="relative z-10 flex flex-wrap items-center justify-between gap-6">
+                        <div>
+                            <div className="mb-2 flex items-center gap-2">
+                                <Settings className="h-5 w-5 text-emerald-400" />
+                                <span className="text-xs font-bold tracking-widest text-emerald-400 uppercase">Anketu Studija</span>
                             </div>
-                          </div>
+                            <h1 className="text-3xl font-bold tracking-tight text-white">{isLv ? 'Rediģēt anketu' : 'Edit form'}</h1>
+                            <p className="mt-2 max-w-lg text-slate-400">
+                                {isLv
+                                    ? 'Atjauniniet jautājumus, nosaukumus un redzamības iestatījumus.'
+                                    : 'Update questions, titles, and visibility settings.'}
+                            </p>
                         </div>
 
-                        <button
-                          type="button"
-                          onClick={() => removeField(field.id)}
-                          className="rounded-lg p-2 text-slate-500 hover:bg-rose-500/10 hover:text-rose-400 transition-colors"
-                          title={isLv ? 'Dzēst jautājumu' : 'Delete question'}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
+                        <div className="flex items-center gap-3">
+                            <Link
+                                href="/admin/anketa"
+                                className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+                            >
+                                <ArrowLeft className="h-4 w-4" />
+                                {isLv ? 'Atpakaļ' : 'Back'}
+                            </Link>
 
-                      <div className="grid gap-6">
-                        {/* ✅ ALWAYS show both LV/EN question inputs */}
-                        <div className="grid gap-4 md:grid-cols-2">
-                          <div className="space-y-1.5">
-                            <input
-                              type="text"
-                              placeholder="Jautājums (LV)"
-                              value={field.label.lv}
-                              onChange={(e) => updateLabel(field.id, 'lv', e.target.value)}
-                              className={`w-full rounded-xl border bg-black/20 px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:ring-1 ${
-                                ferr.labelLv ? 'border-rose-500' : 'border-white/10 focus:border-emerald-500'
-                              }`}
-                            />
-                            {ferr.labelLv && <p className="text-xs text-rose-400">{ferr.labelLv}</p>}
-                          </div>
+                            <button
+                                type="button"
+                                onClick={handleSubmit}
+                                className="flex items-center gap-2 rounded-xl bg-emerald-500 px-6 py-2 text-sm font-bold text-slate-900 shadow-lg shadow-emerald-500/20 transition hover:scale-105 hover:bg-emerald-400"
+                            >
+                                <Save className="h-4 w-4" />
+                                {isLv ? 'Saglabāt' : 'Save'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-                          <div className="space-y-1.5">
-                            <input
-                              type="text"
-                              placeholder="Question (EN)"
-                              value={field.label.en}
-                              onChange={(e) => updateLabel(field.id, 'en', e.target.value)}
-                              className={`w-full rounded-xl border bg-black/20 px-4 py-2.5 text-white placeholder-slate-600 focus:outline-none focus:ring-1 ${
-                                ferr.labelEn ? 'border-rose-500' : 'border-white/10 focus:border-emerald-500'
-                              }`}
-                            />
-                            {ferr.labelEn && <p className="text-xs text-rose-400">{ferr.labelEn}</p>}
-                          </div>
+                <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
+                    {/* --- LEFT COLUMN --- */}
+                    <div className="space-y-8">
+                        {/* General Info Card */}
+                        <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
+                            <div className="mb-6 flex items-center gap-3 border-b border-white/5 pb-4">
+                                <Globe className="h-5 w-5 text-blue-400" />
+                                <h2 className="text-lg font-bold text-white">{isLv ? 'Pamatinformācija' : 'Basic information'}</h2>
+                            </div>
+
+                            <div className="grid gap-5">
+                                {/* ✅ ALWAYS show both LV/EN editable fields */}
+                                <div className="grid gap-5 md:grid-cols-2">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold tracking-wider text-slate-400 uppercase">Nosaukums (LV)</label>
+                                        <input
+                                            type="text"
+                                            placeholder="Piem., Klientu apmierinātība"
+                                            value={title.lv}
+                                            onChange={(e) => setTitle((t) => ({ ...t, lv: e.target.value }))}
+                                            className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:ring-1 focus:outline-none ${
+                                                errors.titleLv ? 'border-rose-500 focus:border-rose-500' : 'border-white/10 focus:border-emerald-500'
+                                            }`}
+                                        />
+                                        {errors.titleLv && <p className="text-xs text-rose-400">{errors.titleLv}</p>}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold tracking-wider text-slate-400 uppercase">Title (EN)</label>
+                                        <input
+                                            type="text"
+                                            placeholder="e.g., Customer Satisfaction"
+                                            value={title.en}
+                                            onChange={(e) => setTitle((t) => ({ ...t, en: e.target.value }))}
+                                            className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:ring-1 focus:outline-none ${
+                                                errors.titleEn ? 'border-rose-500 focus:border-rose-500' : 'border-white/10 focus:border-emerald-500'
+                                            }`}
+                                        />
+                                        {errors.titleEn && <p className="text-xs text-rose-400">{errors.titleEn}</p>}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="rounded-xl bg-black/20 p-4 border border-white/5">
-                          {/* ✅ OPTIONS EDITOR: ALWAYS show LV + EN columns */}
-                          {'options' in field && (
-                            <div className="space-y-3">
-                              {(() => {
-                                const norm = normalizeOptionArrays(field.options.lv ?? [], field.options.en ?? []);
-                                return norm.lv.map((_, optIdx) => (
-                                  <div key={optIdx} className="flex gap-2 items-center group/opt">
-                                    <div className="h-2 w-2 rounded-full bg-slate-600 shrink-0" />
+                        {/* Questions Builder */}
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-xl font-bold text-white">{isLv ? 'Jautājumi' : 'Questions'}</h2>
+                                <span className="rounded border border-white/5 bg-slate-900 px-2 py-1 font-mono text-xs text-slate-500">
+                                    {fields.length} {isLv ? 'kopā' : 'total'}
+                                </span>
+                            </div>
 
-                                    <input
-                                      value={norm.lv[optIdx] ?? ''}
-                                      onChange={(e) => updateOption(field.id, 'lv', optIdx, e.target.value)}
-                                      className="flex-1 bg-transparent border-b border-white/10 px-2 py-1 text-sm text-white focus:border-emerald-500 focus:outline-none"
-                                      placeholder="Opcija (LV)"
-                                    />
+                            {errors.fields && attemptedSubmit && (
+                                <div className="flex items-center gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 text-sm text-rose-300">
+                                    <AlertTriangle className="h-4 w-4" /> {errors.fields}
+                                </div>
+                            )}
 
-                                    <input
-                                      value={norm.en[optIdx] ?? ''}
-                                      onChange={(e) => updateOption(field.id, 'en', optIdx, e.target.value)}
-                                      className="flex-1 bg-transparent border-b border-white/10 px-2 py-1 text-sm text-white focus:border-emerald-500 focus:outline-none"
-                                      placeholder="Option (EN)"
-                                    />
+                            {fields.length === 0 && (
+                                <div className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-12 text-center">
+                                    <List className="mx-auto mb-3 h-12 w-12 text-slate-600" />
+                                    <p className="text-slate-400">
+                                        {isLv ? 'Saraksts ir tukšs. Pievienojiet pirmo jautājumu.' : 'The list is empty. Add your first question.'}
+                                    </p>
+                                </div>
+                            )}
+
+                            <div className="space-y-4">
+                                {fields.map((field, idx) => {
+                                    const ferr = errors.fieldErrors?.[field.id] ?? {};
+                                    const hasErr = Object.keys(ferr).length > 0;
+
+                                    const typeLabel = (t: FieldType) => {
+                                        if (isLv) {
+                                            if (t === 'radio') return 'Radio izvēle';
+                                            if (t === 'checkbox') return 'Checkbox';
+                                            if (t === 'dropdown') return 'Dropdown';
+                                            if (t === 'text') return 'Teksta ievade';
+                                            if (t === 'scale') return 'Skala';
+                                            return 'Radio izvēle';
+                                        }
+                                        if (t === 'radio') return 'Radio Choice';
+                                        if (t === 'checkbox') return 'Checkbox';
+                                        if (t === 'dropdown') return 'Dropdown';
+                                        if (t === 'text') return 'Text Input';
+                                        if (t === 'scale') return 'Scale';
+                                        return 'Radio Choice';
+                                    };
+
+                                    return (
+                                        <div
+                                            key={field.id}
+                                            data-field-id={field.id}
+                                            className={`group relative rounded-2xl border bg-slate-900/40 p-6 transition-all ${
+                                                hasErr ? 'border-rose-500/50 shadow-rose-500/10' : 'border-white/10 hover:border-white/20'
+                                            }`}
+                                        >
+                                            <div className="mb-6 flex items-start justify-between gap-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/5 bg-slate-800 font-mono text-sm text-slate-400">
+                                                        {idx + 1}
+                                                    </div>
+
+                                                    <div className="flex flex-col">
+                                                        <span className="text-xs font-bold tracking-wider text-slate-500 uppercase">
+                                                            {isLv ? 'Tips' : 'Type'}
+                                                        </span>
+
+                                                        <div className="flex items-center gap-2 text-sm font-medium text-white">
+                                                            <FieldIcon type={field.type} />
+                                                            <select
+                                                                value={field.type}
+                                                                onChange={(e) => changeFieldType(field.id, e.target.value as FieldType)}
+                                                                className="cursor-pointer bg-transparent transition-colors outline-none hover:text-emerald-400"
+                                                            >
+                                                                <option value="radio" className="bg-slate-900">
+                                                                    {typeLabel('radio')}
+                                                                </option>
+                                                                <option value="checkbox" className="bg-slate-900">
+                                                                    {typeLabel('checkbox')}
+                                                                </option>
+                                                                <option value="dropdown" className="bg-slate-900">
+                                                                    {typeLabel('dropdown')}
+                                                                </option>
+                                                                <option value="text" className="bg-slate-900">
+                                                                    {typeLabel('text')}
+                                                                </option>
+                                                                <option value="scale" className="bg-slate-900">
+                                                                    {isLv ? 'Skala 1-10' : 'Scale 1-10'}
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeField(field.id)}
+                                                    className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-rose-500/10 hover:text-rose-400"
+                                                    title={isLv ? 'Dzēst jautājumu' : 'Delete question'}
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </button>
+                                            </div>
+
+                                            <div className="grid gap-6">
+                                                {/* ✅ ALWAYS show both LV/EN question inputs */}
+                                                <div className="grid gap-4 md:grid-cols-2">
+                                                    <div className="space-y-1.5">
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Jautājums (LV)"
+                                                            value={field.label.lv}
+                                                            onChange={(e) => updateLabel(field.id, 'lv', e.target.value)}
+                                                            className={`w-full rounded-xl border bg-black/20 px-4 py-2.5 text-white placeholder-slate-600 focus:ring-1 focus:outline-none ${
+                                                                ferr.labelLv ? 'border-rose-500' : 'border-white/10 focus:border-emerald-500'
+                                                            }`}
+                                                        />
+                                                        {ferr.labelLv && <p className="text-xs text-rose-400">{ferr.labelLv}</p>}
+                                                    </div>
+
+                                                    <div className="space-y-1.5">
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Question (EN)"
+                                                            value={field.label.en}
+                                                            onChange={(e) => updateLabel(field.id, 'en', e.target.value)}
+                                                            className={`w-full rounded-xl border bg-black/20 px-4 py-2.5 text-white placeholder-slate-600 focus:ring-1 focus:outline-none ${
+                                                                ferr.labelEn ? 'border-rose-500' : 'border-white/10 focus:border-emerald-500'
+                                                            }`}
+                                                        />
+                                                        {ferr.labelEn && <p className="text-xs text-rose-400">{ferr.labelEn}</p>}
+                                                    </div>
+                                                </div>
+
+                                                <div className="rounded-xl border border-white/5 bg-black/20 p-4">
+                                                    {/* ✅ OPTIONS EDITOR: ALWAYS show LV + EN columns */}
+                                                    {'options' in field && (
+                                                        <div className="space-y-3">
+                                                            {(() => {
+                                                                const norm = normalizeOptionArrays(field.options.lv ?? [], field.options.en ?? []);
+                                                                return norm.lv.map((_, optIdx) => (
+                                                                    <div key={optIdx} className="group/opt flex items-center gap-2">
+                                                                        <div className="h-2 w-2 shrink-0 rounded-full bg-slate-600" />
+
+                                                                        <input
+                                                                            value={norm.lv[optIdx] ?? ''}
+                                                                            onChange={(e) => updateOption(field.id, 'lv', optIdx, e.target.value)}
+                                                                            className="flex-1 border-b border-white/10 bg-transparent px-2 py-1 text-sm text-white focus:border-emerald-500 focus:outline-none"
+                                                                            placeholder="Opcija (LV)"
+                                                                        />
+
+                                                                        <input
+                                                                            value={norm.en[optIdx] ?? ''}
+                                                                            onChange={(e) => updateOption(field.id, 'en', optIdx, e.target.value)}
+                                                                            className="flex-1 border-b border-white/10 bg-transparent px-2 py-1 text-sm text-white focus:border-emerald-500 focus:outline-none"
+                                                                            placeholder="Option (EN)"
+                                                                        />
+
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => removeOption(field.id, optIdx)}
+                                                                            className="p-1 text-slate-500 opacity-0 transition-opacity group-hover/opt:opacity-100 hover:text-rose-400"
+                                                                            title={isLv ? 'Noņemt opciju' : 'Remove option'}
+                                                                        >
+                                                                            <X className="h-3.5 w-3.5" />
+                                                                        </button>
+                                                                    </div>
+                                                                ));
+                                                            })()}
+
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => addOption(field.id)}
+                                                                className="mt-2 flex items-center gap-1 text-xs font-bold text-emerald-400 hover:text-emerald-300"
+                                                            >
+                                                                <Plus className="h-3 w-3" /> {isLv ? 'Pievienot opciju' : 'Add option'}
+                                                            </button>
+
+                                                            {(ferr.optionsLv || ferr.optionsEn) && (
+                                                                <p className="pt-1 text-xs text-rose-400">{ferr.optionsLv || ferr.optionsEn}</p>
+                                                            )}
+                                                        </div>
+                                                    )}
+
+                                                    {/* ✅ TEXT PLACEHOLDER: ALWAYS show LV + EN */}
+                                                    {field.type === 'text' && (
+                                                        <div className="grid gap-4 md:grid-cols-2">
+                                                            <input
+                                                                value={(field as TextField).placeholder.lv}
+                                                                onChange={(e) => updatePlaceholder(field.id, 'lv', e.target.value)}
+                                                                placeholder="Placeholder (LV)"
+                                                                className="w-full rounded-lg border border-white/10 bg-slate-900/50 px-3 py-2 text-sm text-white focus:border-emerald-500 focus:outline-none"
+                                                            />
+                                                            <input
+                                                                value={(field as TextField).placeholder.en}
+                                                                onChange={(e) => updatePlaceholder(field.id, 'en', e.target.value)}
+                                                                placeholder="Placeholder (EN)"
+                                                                className="w-full rounded-lg border border-white/10 bg-slate-900/50 px-3 py-2 text-sm text-white focus:border-emerald-500 focus:outline-none"
+                                                            />
+                                                        </div>
+                                                    )}
+
+                                                    {/* SCALE CONFIG (min/max shared; labels preview uses LV labels like your old code) */}
+                                                    {field.type === 'scale' && (
+                                                        <div className="space-y-4">
+                                                            <div className="flex gap-4">
+                                                                <div className="flex-1">
+                                                                    <label className="mb-1 block text-xs text-slate-500">
+                                                                        {isLv ? 'Min vērtība' : 'Min Value'}
+                                                                    </label>
+                                                                    <input
+                                                                        type="number"
+                                                                        value={(field as ScaleField).scale.min}
+                                                                        onChange={(e) => updateScaleValue(field.id, 'min', e.target.value)}
+                                                                        className="w-full rounded-lg border border-white/10 bg-slate-900/50 px-3 py-2 text-sm text-white outline-none focus:border-purple-500"
+                                                                    />
+                                                                </div>
+                                                                <div className="flex-1">
+                                                                    <label className="mb-1 block text-xs text-slate-500">
+                                                                        {isLv ? 'Max vērtība' : 'Max Value'}
+                                                                    </label>
+                                                                    <input
+                                                                        type="number"
+                                                                        value={(field as ScaleField).scale.max}
+                                                                        onChange={(e) => updateScaleValue(field.id, 'max', e.target.value)}
+                                                                        className="w-full rounded-lg border border-white/10 bg-slate-900/50 px-3 py-2 text-sm text-white outline-none focus:border-purple-500"
+                                                                    />
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="rounded-lg border border-white/5 bg-slate-900/50 p-3">
+                                                                <p className="mb-2 text-xs font-bold tracking-wider text-slate-500 uppercase">
+                                                                    {isLv ? 'Priekšskatījums' : 'Preview'}
+                                                                </p>
+                                                                <div className="flex items-center justify-between gap-2">
+                                                                    <span className="text-xs text-slate-400">
+                                                                        {(field as ScaleField).scale.minLabel?.lv || 'Min'}
+                                                                    </span>
+                                                                    <div className="flex flex-wrap justify-center gap-1">
+                                                                        {Array.from({
+                                                                            length: Math.min(
+                                                                                10,
+                                                                                (field as ScaleField).scale.max - (field as ScaleField).scale.min + 1,
+                                                                            ),
+                                                                        }).map((_, i) => (
+                                                                            <div
+                                                                                key={i}
+                                                                                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/5 bg-white/10 text-xs font-medium text-white"
+                                                                            >
+                                                                                {(field as ScaleField).scale.min + i}
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                    <span className="text-xs text-slate-400">
+                                                                        {(field as ScaleField).scale.maxLabel?.lv || 'Max'}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={addField}
+                                className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-emerald-500/20 bg-emerald-500/5 p-4 text-sm font-bold text-emerald-400 transition-all hover:border-emerald-500/40 hover:bg-emerald-500/10"
+                            >
+                                <Plus className="h-5 w-5" /> {isLv ? 'Pievienot Jautājumu' : 'Add question'}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* --- RIGHT COLUMN: STICKY SETTINGS --- */}
+                    <div className="space-y-6">
+                        <div className="sticky top-6 space-y-6">
+                            <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
+                                <h3 className="mb-4 text-sm font-bold tracking-wider text-slate-400 uppercase">
+                                    {isLv ? 'Iestatījumi' : 'Settings'}
+                                </h3>
+
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="mb-2 block text-xs font-semibold text-white/70">{isLv ? 'Redzamība' : 'Visibility'}</label>
+                                        <div className="relative">
+                                            <Eye className="absolute top-3 left-3 h-4 w-4 text-slate-500" />
+                                            <select
+                                                value={visibility}
+                                                onChange={(e) => setVisibility(e.target.value as Visibility)}
+                                                className="w-full cursor-pointer appearance-none rounded-xl border border-white/10 bg-black/20 py-2.5 pr-4 pl-10 text-sm text-white focus:border-emerald-500 focus:outline-none"
+                                            >
+                                                <option value="public" className="bg-slate-900">
+                                                    {isLv ? 'Publiska' : 'Public'}
+                                                </option>
+                                                <option value="private" className="bg-slate-900">
+                                                    {isLv ? 'Privāta' : 'Private'}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div className="border-t border-white/5 pt-4">
+                                        <div className="mb-2 flex justify-between text-sm">
+                                            <span className="text-slate-400">{isLv ? 'Jautājumi' : 'Questions'}</span>
+                                            <span className="font-medium text-white">{fields.length}</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-slate-400">{isLv ? 'Statuss' : 'Status'}</span>
+                                            <span className="font-medium text-emerald-400">{isLv ? 'Aktīvs' : 'Active'}</span>
+                                        </div>
+                                    </div>
 
                                     <button
-                                      type="button"
-                                      onClick={() => removeOption(field.id, optIdx)}
-                                      className="opacity-0 group-hover/opt:opacity-100 p-1 text-slate-500 hover:text-rose-400 transition-opacity"
-                                      title={isLv ? 'Noņemt opciju' : 'Remove option'}
+                                        type="button"
+                                        onClick={handleSubmit}
+                                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-2 text-sm font-bold text-slate-900 shadow-lg shadow-emerald-500/20 transition hover:scale-105 hover:bg-emerald-400"
                                     >
-                                      <X className="h-3.5 w-3.5" />
+                                        <Save className="h-4 w-4" />
+                                        {isLv ? 'Saglabāt' : 'Save'}
                                     </button>
-                                  </div>
-                                ));
-                              })()}
-
-                              <button
-                                type="button"
-                                onClick={() => addOption(field.id)}
-                                className="mt-2 text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
-                              >
-                                <Plus className="h-3 w-3" /> {isLv ? 'Pievienot opciju' : 'Add option'}
-                              </button>
-
-                              {(ferr.optionsLv || ferr.optionsEn) && (
-                                <p className="text-xs text-rose-400 pt-1">{ferr.optionsLv || ferr.optionsEn}</p>
-                              )}
-                            </div>
-                          )}
-
-                          {/* ✅ TEXT PLACEHOLDER: ALWAYS show LV + EN */}
-                          {field.type === 'text' && (
-                            <div className="grid gap-4 md:grid-cols-2">
-                              <input
-                                value={(field as TextField).placeholder.lv}
-                                onChange={(e) => updatePlaceholder(field.id, 'lv', e.target.value)}
-                                placeholder="Placeholder (LV)"
-                                className="w-full bg-slate-900/50 rounded-lg border border-white/10 px-3 py-2 text-sm text-white focus:border-emerald-500 focus:outline-none"
-                              />
-                              <input
-                                value={(field as TextField).placeholder.en}
-                                onChange={(e) => updatePlaceholder(field.id, 'en', e.target.value)}
-                                placeholder="Placeholder (EN)"
-                                className="w-full bg-slate-900/50 rounded-lg border border-white/10 px-3 py-2 text-sm text-white focus:border-emerald-500 focus:outline-none"
-                              />
-                            </div>
-                          )}
-
-                          {/* SCALE CONFIG (min/max shared; labels preview uses LV labels like your old code) */}
-                          {field.type === 'scale' && (
-                            <div className="space-y-4">
-                              <div className="flex gap-4">
-                                <div className="flex-1">
-                                  <label className="text-xs text-slate-500 block mb-1">{isLv ? 'Min vērtība' : 'Min Value'}</label>
-                                  <input
-                                    type="number"
-                                    value={(field as ScaleField).scale.min}
-                                    onChange={(e) => updateScaleValue(field.id, 'min', e.target.value)}
-                                    className="w-full bg-slate-900/50 rounded-lg border border-white/10 px-3 py-2 text-sm text-white focus:border-purple-500 outline-none"
-                                  />
                                 </div>
-                                <div className="flex-1">
-                                  <label className="text-xs text-slate-500 block mb-1">{isLv ? 'Max vērtība' : 'Max Value'}</label>
-                                  <input
-                                    type="number"
-                                    value={(field as ScaleField).scale.max}
-                                    onChange={(e) => updateScaleValue(field.id, 'max', e.target.value)}
-                                    className="w-full bg-slate-900/50 rounded-lg border border-white/10 px-3 py-2 text-sm text-white focus:border-purple-500 outline-none"
-                                  />
-                                </div>
-                              </div>
-
-                              <div className="p-3 bg-slate-900/50 rounded-lg border border-white/5">
-                                <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-                                  {isLv ? 'Priekšskatījums' : 'Preview'}
-                                </p>
-                                <div className="flex items-center justify-between gap-2">
-                                  <span className="text-xs text-slate-400">{(field as ScaleField).scale.minLabel?.lv || 'Min'}</span>
-                                  <div className="flex gap-1 flex-wrap justify-center">
-                                    {Array.from({
-                                      length: Math.min(10, (field as ScaleField).scale.max - (field as ScaleField).scale.min + 1),
-                                    }).map((_, i) => (
-                                      <div
-                                        key={i}
-                                        className="h-8 w-8 flex items-center justify-center rounded-full bg-white/10 text-xs font-medium text-white border border-white/5"
-                                      >
-                                        {(field as ScaleField).scale.min + i}
-                                      </div>
-                                    ))}
-                                  </div>
-                                  <span className="text-xs text-slate-400">{(field as ScaleField).scale.maxLabel?.lv || 'Max'}</span>
-                                </div>
-                              </div>
                             </div>
-                          )}
                         </div>
-                      </div>
                     </div>
-                  );
-                })}
-              </div>
-
-              <button
-                type="button"
-                onClick={addField}
-                className="w-full rounded-2xl border-2 border-dashed border-emerald-500/20 bg-emerald-500/5 p-4 text-sm font-bold text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/40 transition-all flex items-center justify-center gap-2"
-              >
-                <Plus className="h-5 w-5" /> {isLv ? 'Pievienot Jautājumu' : 'Add question'}
-              </button>
-            </div>
-          </div>
-
-          {/* --- RIGHT COLUMN: STICKY SETTINGS --- */}
-          <div className="space-y-6">
-            <div className="sticky top-6 space-y-6">
-              <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">{isLv ? 'Iestatījumi' : 'Settings'}</h3>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-xs font-semibold text-white/70 block mb-2">{isLv ? 'Redzamība' : 'Visibility'}</label>
-                    <div className="relative">
-                      <Eye className="absolute left-3 top-3 h-4 w-4 text-slate-500" />
-                      <select
-                        value={visibility}
-                        onChange={(e) => setVisibility(e.target.value as Visibility)}
-                        className="w-full appearance-none rounded-xl border border-white/10 bg-black/20 pl-10 pr-4 py-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none cursor-pointer"
-                      >
-                        <option value="public" className="bg-slate-900">
-                          {isLv ? 'Publiska' : 'Public'}
-                        </option>
-                        <option value="private" className="bg-slate-900">
-                          {isLv ? 'Privāta' : 'Private'}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-white/5">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-slate-400">{isLv ? 'Jautājumi' : 'Questions'}</span>
-                      <span className="text-white font-medium">{fields.length}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-400">{isLv ? 'Statuss' : 'Status'}</span>
-                      <span className="text-emerald-400 font-medium">{isLv ? 'Aktīvs' : 'Active'}</span>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-2 text-sm font-bold text-slate-900 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400 hover:scale-105"
-                  >
-                    <Save className="h-4 w-4" />
-                    {isLv ? 'Saglabāt' : 'Save'}
-                  </button>
                 </div>
-              </div>
             </div>
-          </div>
+
+            {/* --- CUSTOM MODAL --- */}
+            {modalState.isOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div
+                        className="animate-in fade-in absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+                        onClick={() => (modalState.onClose ? modalState.onClose() : setModalState((p) => ({ ...p, isOpen: false })))}
+                    />
+                    <div className="animate-in zoom-in-95 relative w-full max-w-sm overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl duration-200">
+                        <div className="p-6 text-center">
+                            <div
+                                className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border ${
+                                    modalState.type === 'success'
+                                        ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-500'
+                                        : 'border-rose-500/20 bg-rose-500/10 text-rose-500'
+                                }`}
+                            >
+                                {modalState.type === 'success' ? <CheckCircle className="h-8 w-8" /> : <AlertTriangle className="h-8 w-8" />}
+                            </div>
+
+                            <h3 className="mb-2 text-xl font-bold text-white">{modalState.title}</h3>
+                            <p className="mb-6 text-sm leading-relaxed text-slate-400">{modalState.message}</p>
+
+                            <button
+                                type="button"
+                                onClick={() => (modalState.onClose ? modalState.onClose() : setModalState((p) => ({ ...p, isOpen: false })))}
+                                className="w-full rounded-xl bg-slate-800 py-3 text-sm font-bold text-white transition-colors hover:bg-slate-700"
+                            >
+                                {modalState.type === 'success' ? (isLv ? 'Turpināt' : 'Continue') : isLv ? 'Aizvērt' : 'Close'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
-      </div>
-
-      {/* --- CUSTOM MODAL --- */}
-      {modalState.isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-in fade-in"
-            onClick={() => (modalState.onClose ? modalState.onClose() : setModalState((p) => ({ ...p, isOpen: false })))}
-          />
-          <div className="relative w-full max-w-sm overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="p-6 text-center">
-              <div
-                className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border ${
-                  modalState.type === 'success'
-                    ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-500'
-                    : 'border-rose-500/20 bg-rose-500/10 text-rose-500'
-                }`}
-              >
-                {modalState.type === 'success' ? <CheckCircle className="h-8 w-8" /> : <AlertTriangle className="h-8 w-8" />}
-              </div>
-
-              <h3 className="mb-2 text-xl font-bold text-white">{modalState.title}</h3>
-              <p className="mb-6 text-sm text-slate-400 leading-relaxed">{modalState.message}</p>
-
-              <button
-                type="button"
-                onClick={() => (modalState.onClose ? modalState.onClose() : setModalState((p) => ({ ...p, isOpen: false })))}
-                className="w-full rounded-xl bg-slate-800 py-3 text-sm font-bold text-white transition-colors hover:bg-slate-700"
-              >
-                {modalState.type === 'success' ? (isLv ? 'Turpināt' : 'Continue') : (isLv ? 'Aizvērt' : 'Close')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+    );
 }
 
 UpdateAnketa.layout = (page: ReactNode) => <AdminLayout title="Atjaunināt anketu">{page}</AdminLayout>;
