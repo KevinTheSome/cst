@@ -19,7 +19,7 @@ return [
 
     'nav_research' => 'PĒTNIECĪBA',
     'nav_research_clinical_trials' => 'Klīniskie pētījumi',
-    'nav_research_postdoc' => 'PostDock anketa',
+    'nav_research_postdoc' => 'PostDoc anketa',
     'nav_research_code' => 'Koda anketa',
     'nav_research_documents' => 'Dokumentu datubāze',
 

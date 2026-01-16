@@ -2,7 +2,7 @@
 
 return [
     'meta' => [
-        'page_title' => 'PostDock anketa',
+        'page_title' => 'PostDoc anketa',
     ],
 
     'intro' => [

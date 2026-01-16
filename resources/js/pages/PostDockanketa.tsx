@@ -77,7 +77,7 @@ export default function PostDockanketa() {
 
     return (
         <>
-            <Head title={meta?.page_title ?? 'PostDock anketa'} />
+            <Head title={meta?.page_title ?? 'PostDoc anketa'} />
 
             <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
                 <div className="pointer-events-none fixed inset-0 z-0">
