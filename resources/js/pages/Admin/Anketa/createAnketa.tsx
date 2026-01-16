@@ -321,7 +321,7 @@ export default function CreateAnketa() {
   const validateAll = (): ValidationErrors => {
     const ve: ValidationErrors = { fieldErrors: {} };
     if (!trimStr(title.lv)) ve.titleLv = locale === 'lv' ? 'Nosaukums (LV) ir obligāts.' : 'Title (LV) is required.';
-    if (trimStr(title.lv).length > 255) ve.titleLv = locale === 'lv' ? 'Pārāk garš nosaukums.' : 'Title too long.';
+    if (trimStr(title.lv).length > 255) ve.titleLv = 'Nosaukums pārāk garš.';
     if (trimStr(title.en).length > 255) ve.titleEn = 'Title too long.';
 
     if (!fields.length) ve.fields = locale === 'lv' ? 'Pievienojiet vismaz vienu jautājumu.' : 'Add at least one question.';
@@ -435,48 +435,64 @@ export default function CreateAnketa() {
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
-          {/* LEFT */}
-          <div className="space-y-8">
-            {/* Basic */}
-            <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
-              <div className="mb-6 flex items-center gap-3 border-b border-white/5 pb-4">
-                <Globe className="h-5 w-5 text-blue-400" />
-                <h2 className="text-lg font-bold text-white">{__('anketa.create.basic.heading') ?? 'Basic information'}</h2>
-              </div>
+  {/* LEFT */}
+  <div className="space-y-8">
+    {/* Basic */}
+    <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
+      <div className="mb-6 flex items-center gap-3 border-b border-white/5 pb-4">
+        <Globe className="h-5 w-5 text-blue-400" />
+        <h2 className="text-lg font-bold text-white">
+          {__('anketa.create.basic.heading') ?? 'Basic information'}
+        </h2>
+      </div>
 
-              <div className="grid gap-5 md:grid-cols-2">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    {__('anketa.create.basic.title_lv') ?? 'Title (LV)'}
-                  </label>
-                  <input
-                    type="text"
-                    placeholder={__('anketa.create.basic.title_lv_placeholder') ?? '...'}
-                    value={title.lv}
-                    onChange={(e) => setTitle((t) => ({ ...t, lv: e.target.value }))}
-                    className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:outline-none focus:ring-1 ${
-                      errors.titleLv ? 'border-rose-500 focus:border-rose-500' : 'border-white/10 focus:border-emerald-500'
-                    }`}
-                  />
-                  {errors.titleLv && <p className="text-xs text-rose-400">{errors.titleLv}</p>}
-                </div>
+      <div className="grid gap-5 md:grid-cols-2">
+        {/* Title LV */}
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            {__('anketa.create.basic.title_lv') ?? 'Title (LV)'}
+          </label>
+          <input
+            type="text"
+            placeholder={__('anketa.create.basic.title_lv_placeholder') ?? '...'}
+            value={title.lv}
+            onChange={(e) => setTitle((t) => ({ ...t, lv: e.target.value }))}
+            className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white transition-all focus:outline-none focus:ring-1 ${
+              errors.titleLv ? 'border-rose-500 focus:ring-rose-500/50' : 'border-white/10 focus:border-emerald-500 focus:ring-emerald-500/50'
+            }`}
+          />
+          {/* LV Error Message */}
+          {errors.titleLv && (
+            <p className="mt-1 text-xs font-medium text-rose-400 animate-in fade-in slide-in-from-top-1">
+              {errors.titleLv}
+            </p>
+          )}
+        </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    {__('anketa.create.basic.title_en') ?? 'Title (EN)'}
-                  </label>
-                  <input
-                    type="text"
-                    placeholder={__('anketa.create.basic.title_en_placeholder') ?? '...'}
-                    value={title.en}
-                    onChange={(e) => setTitle((t) => ({ ...t, en: e.target.value }))}
-                    className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:outline-none focus:ring-1 ${
-                      errors.titleEn ? 'border-rose-500 focus:border-rose-500' : 'border-white/10 focus:border-emerald-500'
-                    }`}
-                  />
-                </div>
-              </div>
-            </div>
+        {/* Title EN */}
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            {__('anketa.create.basic.title_en') ?? 'Title (EN)'}
+          </label>
+          <input
+            type="text"
+            placeholder={__('anketa.create.basic.title_en_placeholder') ?? '...'}
+            value={title.en}
+            onChange={(e) => setTitle((t) => ({ ...t, en: e.target.value }))}
+            className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white transition-all focus:outline-none focus:ring-1 ${
+              errors.titleEn ? 'border-rose-500 focus:ring-rose-500/50' : 'border-white/10 focus:border-emerald-500 focus:ring-emerald-500/50'
+            }`}
+          />
+          {/* EN Error Message */}
+          {errors.titleEn && (
+            <p className="mt-1 text-xs font-medium text-rose-400 animate-in fade-in slide-in-from-top-1">
+              {errors.titleEn}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  
 
             {/* Questions */}
             <div className="space-y-6">
