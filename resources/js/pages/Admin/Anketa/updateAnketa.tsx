@@ -150,24 +150,21 @@ export default function UpdateAnketa() {
             en: titleSource.en ?? '',
         };
 
-        const schema = Array.isArray(rawForm.data?.fields) ? rawForm.data.fields : Array.isArray(rawForm.fields) ? rawForm.fields : [];
+    
+    const schema = Array.isArray(rawForm.data?.fields)
+      ? rawForm.data.fields
+      : Array.isArray(rawForm.fields)
+      ? rawForm.fields
+      : [];
 
-        const normalizedFields: Field[] = schema.map((f: any) => {
-            const base: FieldBase = {
-                id: f.id ?? uuid(),
-                label: {
-                    lv: f.label?.lv ?? f.label ?? '',
-                    en: f.label?.en ?? f.label ?? '',
-                },
-            };
-
-            if (f.type === 'text') {
-                return {
-                    ...base,
-                    type: 'text',
-                    placeholder: { lv: f.placeholder?.lv ?? '', en: f.placeholder?.en ?? '' },
-                } as TextField;
-            }
+    const normalizedFields: Field[] = schema.map((f: any) => {
+      const base: FieldBase = {
+        id: f.id ?? uuid(),
+        label: {
+          lv: f.label?.lv ?? f.label ?? '',
+          en: f.label?.en ?? f.label ?? '',
+        },
+      };
 
             if (f.type === 'scale') {
                 return {
@@ -502,8 +499,96 @@ export default function UpdateAnketa() {
     const handleSubmit = () => {
         setAttemptedSubmit(true);
 
-        const ve = validateAll();
-        setErrors(ve);
+        <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
+          {/* --- LEFT COLUMN --- */}
+          <div className="space-y-8">
+            {/* General Info Card */}
+            <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
+              <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
+                <Globe className="h-5 w-5 text-blue-400" />
+                <h2 className="text-lg font-bold text-white">{isLv ? 'Pamatinformācija' : 'Basic information'}</h2>
+              </div>
+
+              <div className="grid gap-5">
+  {/* ✅ ALWAYS show both LV/EN editable fields */}
+  <div className="grid gap-5 md:grid-cols-2">
+    {/* -------- LV -------- */}
+    <div className="space-y-2">
+      <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
+        Nosaukums (LV)
+      </label>
+
+      <input
+        type="text"
+        placeholder="Piem., Klientu apmierinātība"
+        value={title.lv}
+        onChange={(e) => {
+          const value = e.target.value;
+
+          // update value
+          setTitle((t) => ({ ...t, lv: value }));
+
+          // frontend validation
+          setErrors((prev) => ({
+            ...prev,
+            titleLv:
+              value.trim().length > 255
+                ? 'Nosaukums pārsniedz 255 rakstzīmes.'
+                : undefined,
+          }));
+        }}
+        className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:outline-none focus:ring-1 ${
+          errors.titleLv
+            ? 'border-rose-500 focus:border-rose-500'
+            : 'border-white/10 focus:border-emerald-500'
+        }`}
+      />
+
+      {errors.titleLv && (
+        <p className="text-xs text-rose-400">{errors.titleLv}</p>
+      )}
+    </div>
+
+    {/* -------- EN -------- */}
+    <div className="space-y-2">
+      <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
+        Title (EN)
+      </label>
+
+      <input
+        type="text"
+        placeholder="e.g., Customer Satisfaction"
+        value={title.en}
+        onChange={(e) => {
+          const value = e.target.value;
+
+          // update value
+          setTitle((t) => ({ ...t, en: value }));
+
+          // frontend validation
+          setErrors((prev) => ({
+            ...prev,
+            titleEn:
+              value.trim().length > 255
+                ? 'Title exceeds 255 characters.'
+                : undefined,
+          }));
+        }}
+        className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:outline-none focus:ring-1 ${
+          errors.titleEn
+            ? 'border-rose-500 focus:border-rose-500'
+            : 'border-white/10 focus:border-emerald-500'
+        }`}
+      />
+
+      {errors.titleEn && (
+        <p className="text-xs text-rose-400">{errors.titleEn}</p>
+      )}
+    </div>
+  </div>
+</div>
+</div>
+
 
         const hasErr = !!ve.titleLv || !!ve.titleEn || !!ve.visibility || !!ve.fields || Object.keys(ve.fieldErrors || {}).length > 0;
 
