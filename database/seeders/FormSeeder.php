@@ -286,7 +286,7 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => '7.3.1. Vai Jūs būtu gatavs/gatava saņemt vairāk informācijas par ATMP / MSC iespējām psoriāzes ārstēšanā?', 'en' => '7.3.1. Would you be willing to receive more info about ATMP/MSC options?'],
                             'type' => 'radio',
                             'options' => [
-                                'lv' => ['Jā, noteikti – es gribētu būt informēts(a) pirmais(a)', 'Varbūt – ja informācija būs skaidra un saprotama', 'Nē – pašlaik mani tas neinteresē'],
+                                'lv' => ['Jā, noteikti – es gribētu būt informēts(a) pirmais(ā)', 'Varbūt – ja informācija būs skaidra un saprotama', 'Nē – pašlaik mani tas neinteresē'],
                                 'en' => ['Yes, definitely – I want to be informed first', 'Maybe – if information is clear and understandable', 'No – not interested currently'],
                             ],
                         ],
