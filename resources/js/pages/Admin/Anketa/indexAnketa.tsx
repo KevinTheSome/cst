@@ -1,21 +1,9 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { useLang } from '@/hooks/useLang';
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Calendar, Edit, Eye, FileText, Filter, Hash, Plus, RotateCcw, Search, Trash2, X } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import {
-    Search,
-    Filter,
-    Plus,
-    FileText,
-    Calendar,
-    Trash2,
-    Edit,
-    Eye,
-    Hash,
-    X,
-    RotateCcw,
-} from 'lucide-react';
 
 interface FormResultType {
     id: number;
@@ -70,18 +58,14 @@ function FormsList() {
         localFilters.code ||
         localFilters.from ||
         localFilters.to ||
-        (localFilters.orderBy !== 'created_at') ||
-        (localFilters.orderDir !== 'desc');
+        localFilters.orderBy !== 'created_at' ||
+        localFilters.orderDir !== 'desc';
 
     const applyFilters = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         setIsFilterModalOpen(false);
 
-        router.get(
-            '/admin/anketa',
-            { ...localFilters } as any,
-            { preserveState: true, replace: true },
-        );
+        router.get('/admin/anketa', { ...localFilters } as any, { preserveState: true, replace: true });
     };
 
     const handleSearch = (e: React.FormEvent) => {
@@ -123,13 +107,9 @@ function FormsList() {
                         <div>
                             <div className="mb-1 flex items-center gap-2">
                                 <FileText className="h-4 w-4 text-emerald-400" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
-                                    {__('anketa.index.label')}
-                                </span>
+                                <span className="text-[10px] font-bold tracking-widest text-emerald-400 uppercase">{__('anketa.index.label')}</span>
                             </div>
-                            <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-                                {__('anketa.index.heading')}
-                            </h1>
+                            <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">{__('anketa.index.heading')}</h1>
                         </div>
                     </div>
                 </div>
@@ -145,11 +125,9 @@ function FormsList() {
                             <input
                                 type="text"
                                 value={localFilters.search ?? ''}
-                                onChange={(e) =>
-                                    setLocalFilters((prev) => ({ ...prev, search: e.target.value }))
-                                }
+                                onChange={(e) => setLocalFilters((prev) => ({ ...prev, search: e.target.value }))}
                                 placeholder={__('anketa.index.search_placeholder') ?? 'Search...'}
-                                className="block w-full rounded-xl border border-white/10 bg-slate-900/50 py-3 pl-10 pr-4 text-base text-white shadow-sm transition-all placeholder-slate-500 focus:bg-slate-900 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 sm:text-sm"
+                                className="block w-full rounded-xl border border-white/10 bg-slate-900/50 py-3 pr-4 pl-10 text-base text-white placeholder-slate-500 shadow-sm transition-all focus:border-emerald-500 focus:bg-slate-900 focus:ring-1 focus:ring-emerald-500 sm:text-sm"
                             />
                         </form>
 
@@ -174,9 +152,7 @@ function FormsList() {
                             >
                                 <Filter className="h-4 w-4" />
                                 Filters
-                                {hasActiveFilters && (
-                                    <span className="ml-1 flex h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-                                )}
+                                {hasActiveFilters && <span className="ml-1 flex h-2 w-2 animate-pulse rounded-full bg-emerald-400" />}
                             </button>
                         </div>
                     </div>
@@ -195,20 +171,14 @@ function FormsList() {
                                     <div className="mb-3 flex items-start justify-between">
                                         <div className="flex items-center gap-2 text-xs text-slate-400">
                                             <Calendar className="h-3.5 w-3.5 text-slate-500" />
-                                            <span>
-                                                {form.created_at
-                                                    ? new Date(form.created_at).toLocaleDateString()
-                                                    : 'N/A'}
-                                            </span>
+                                            <span>{form.created_at ? new Date(form.created_at).toLocaleDateString() : 'N/A'}</span>
                                         </div>
                                         <span className="rounded border border-white/5 bg-black/20 px-2 py-0.5 font-mono text-[10px] text-slate-500">
                                             #{form.id}
                                         </span>
                                     </div>
 
-                                    <h2 className="mb-1 line-clamp-2 text-lg font-bold leading-snug text-white">
-                                        {getFormTitle(form)}
-                                    </h2>
+                                    <h2 className="mb-1 line-clamp-2 text-lg leading-snug font-bold text-white">{getFormTitle(form)}</h2>
 
                                     <div className="mt-3 flex items-center gap-2">
                                         <div className="flex items-center gap-1.5 rounded-md border border-emerald-500/20 bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-400">
@@ -238,15 +208,10 @@ function FormsList() {
                                     {/* DELETE via POST (Option A style) */}
                                     <Link
                                         as="button"
-                                        method="post"
+                                        method="delete"
                                         href={`/admin/anketa/${form.id}/delete`}
                                         onClick={(e) => {
-                                            if (
-                                                !window.confirm(
-                                                    __('anketa.index.delete_confirm') ??
-                                                        'Vai tiešām dzēst šo anketu?',
-                                                )
-                                            ) {
+                                            if (!window.confirm(__('anketa.index.delete_confirm') ?? 'Vai tiešām dzēst šo anketu?')) {
                                                 e.preventDefault();
                                             }
                                         }}
@@ -261,13 +226,10 @@ function FormsList() {
                     </div>
 
                     {forms.length === 0 && (
-                        <div className="p-12 text-center text-slate-400 rounded-2xl border border-dashed border-white/10 bg-slate-900/30">
+                        <div className="rounded-2xl border border-dashed border-white/10 bg-slate-900/30 p-12 text-center text-slate-400">
                             <FileText className="mx-auto mb-3 h-12 w-12 opacity-20" />
                             <p>{__('anketa.index.empty')}</p>
-                            <button
-                                onClick={resetFilters}
-                                className="mt-2 text-emerald-400 hover:underline"
-                            >
+                            <button onClick={resetFilters} className="mt-2 text-emerald-400 hover:underline">
                                 Clear filters
                             </button>
                         </div>
@@ -278,7 +240,7 @@ function FormsList() {
             {/* Floating "Create" FAB */}
             <Link
                 href="/admin/anketa/create"
-                className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 text-slate-900 shadow-xl shadow-emerald-500/30 transition-transform hover:scale-105 hover:bg-emerald-400 active:scale-90"
+                className="fixed right-6 bottom-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 text-slate-900 shadow-xl shadow-emerald-500/30 transition-transform hover:scale-105 hover:bg-emerald-400 active:scale-90"
                 aria-label="Create New"
             >
                 <Plus className="h-7 w-7" />
@@ -287,31 +249,23 @@ function FormsList() {
             {/* Filter Modal */}
             {isFilterModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center sm:p-4">
-                    <div
-                        className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
-                        onClick={() => setIsFilterModalOpen(false)}
-                    />
-                    <div className="relative w-full animate-in slide-in-from-bottom duration-300 sm:duration-200 sm:zoom-in-95 sm:max-w-lg rounded-t-3xl sm:rounded-3xl border-t sm:border border-white/10 bg-slate-900 shadow-2xl">
+                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onClick={() => setIsFilterModalOpen(false)} />
+                    <div className="animate-in slide-in-from-bottom sm:zoom-in-95 relative w-full rounded-t-3xl border-t border-white/10 bg-slate-900 shadow-2xl duration-300 sm:max-w-lg sm:rounded-3xl sm:border sm:duration-200">
                         <div className="mx-auto mt-3 h-1.5 w-12 rounded-full bg-white/20 sm:hidden" />
                         <div className="flex items-center justify-between border-b border-white/10 px-6 py-5">
                             <h3 className="flex items-center gap-2 text-lg font-bold text-white">
                                 <Filter className="h-5 w-5 text-emerald-400" />
                                 Filters
                             </h3>
-                            <button
-                                onClick={() => setIsFilterModalOpen(false)}
-                                className="p-1 text-slate-400"
-                            >
+                            <button onClick={() => setIsFilterModalOpen(false)} className="p-1 text-slate-400">
                                 <X className="h-6 w-6" />
                             </button>
                         </div>
 
-                        <form onSubmit={applyFilters} className="space-y-5 p-6 pb-safe">
+                        <form onSubmit={applyFilters} className="pb-safe space-y-5 p-6">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="col-span-2 sm:col-span-1">
-                                    <label className="mb-2 block text-xs font-bold uppercase text-slate-400">
-                                        Type
-                                    </label>
+                                    <label className="mb-2 block text-xs font-bold text-slate-400 uppercase">Type</label>
                                     <select
                                         value={localFilters.type ?? ''}
                                         onChange={(e) =>
@@ -334,9 +288,7 @@ function FormsList() {
                                     </select>
                                 </div>
                                 <div className="col-span-2 sm:col-span-1">
-                                    <label className="mb-2 block text-xs font-bold uppercase text-slate-400">
-                                        Code
-                                    </label>
+                                    <label className="mb-2 block text-xs font-bold text-slate-400 uppercase">Code</label>
                                     <input
                                         type="text"
                                         value={localFilters.code ?? ''}
@@ -353,9 +305,7 @@ function FormsList() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="mb-2 block text-xs font-bold uppercase text-slate-400">
-                                        From
-                                    </label>
+                                    <label className="mb-2 block text-xs font-bold text-slate-400 uppercase">From</label>
                                     <input
                                         type="date"
                                         value={localFilters.from ?? ''}
@@ -369,9 +319,7 @@ function FormsList() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="mb-2 block text-xs font-bold uppercase text-slate-400">
-                                        To
-                                    </label>
+                                    <label className="mb-2 block text-xs font-bold text-slate-400 uppercase">To</label>
                                     <input
                                         type="date"
                                         value={localFilters.to ?? ''}
@@ -409,8 +357,6 @@ function FormsList() {
     );
 }
 
-(FormsList as any).layout = (page: React.ReactNode) => (
-    <AdminLayout title="Anketas">{page}</AdminLayout>
-);
+(FormsList as any).layout = (page: React.ReactNode) => <AdminLayout title="Anketas">{page}</AdminLayout>;
 
 export default FormsList;
