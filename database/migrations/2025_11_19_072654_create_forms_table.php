@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->timestamps();
             $table->string('code');
-            $table->string('title');
+            $table->json('title');
             $table->json('data');
         });
     }
