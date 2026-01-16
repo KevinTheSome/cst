@@ -242,7 +242,7 @@ function FormsList() {
 
                                                 if (!window.confirm(msg)) return;
 
-                                                router.post(`/admin/anketa/delete/${form.id}`, {
+                                                router.post(`anketa/delete/${form.id}`, {
                                                     preserveScroll: true,
                                                 });
                                             }}
