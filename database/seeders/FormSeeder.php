@@ -99,7 +99,7 @@ class FormSeeder extends Seeder
                         // 3. Līdzšinējā ārstēšana
                         [
                             'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '3.1. Kādas ārstēšanas metodes Jūs esat lietojis/la psoriāzes dēļ? (atzīmējiet visu, kas attiecas)', 'en' => '3.1. Which treatments have you used? (select all that apply)'],
+                            'label' => ['lv' => '3.1. Kādas ārstēšanas metodes Jūs esat saņēmis/usi psoriāzes dēļ? (atzīmējiet visu, kas attiecas)', 'en' => '3.1. Which treatments have you used? (select all that apply)'],
                             'type' => 'checkbox',
                             'options' => [
                                 'lv' => [
@@ -157,7 +157,7 @@ class FormSeeder extends Seeder
                         // 4. Finansiālais atbalsts un izmaksas
                         [
                             'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '4.1. Vai līdz šim Jūsu psoriāzes ārstēšanas izdevumus ir sedzusi valsts?', 'en' => '4.1. Have treatment costs been covered by the state?'],
+                            'label' => ['lv' => '4.1. Vai līdz šim Jūsu psoriāzes ārstēšanas izdevumus ir segusi valsts?', 'en' => '4.1. Have treatment costs been covered by the state?'],
                             'type' => 'radio',
                             'options' => [
                                 'lv' => ['Jā, lielākā daļa izdevumu', 'Jā, daļa izdevumu', 'Nē, pārsvarā maksāju pats/pati', 'Nezinu / neesmu pārliecināts(a)'],
@@ -232,7 +232,7 @@ class FormSeeder extends Seeder
                             'id' => (string) Str::uuid(),
                             'type' => 'scale',
                             'label' => [
-                                'lv' => '7.1.1. Cik lielā mērā Jūs interesētu iespēja nākotnē apsvērt ATMP (MSC šūnu) terapiju savai psoriāzei? (1–10)',
+                                'lv' => '7.1.1. Cik lielā mērā Jūs interesētu iespēja nākotnē apsvērt ATMP (MSC šūnu) terapiju? (1–10)',
                                 'en' => '7.1.1. How interested would you be to consider ATMP therapy in future? (1–10)',
                             ],
                             'options' => [],
