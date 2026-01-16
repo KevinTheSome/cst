@@ -151,6 +151,7 @@ export default function UpdateAnketa() {
       en: titleSource.en ?? '',
     };
 
+    
     const schema = Array.isArray(rawForm.data?.fields)
       ? rawForm.data.fields
       : Array.isArray(rawForm.fields)
@@ -595,38 +596,85 @@ export default function UpdateAnketa() {
               </div>
 
               <div className="grid gap-5">
-                {/* ✅ ALWAYS show both LV/EN editable fields */}
-                <div className="grid gap-5 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Nosaukums (LV)</label>
-                    <input
-                      type="text"
-                      placeholder="Piem., Klientu apmierinātība"
-                      value={title.lv}
-                      onChange={(e) => setTitle((t) => ({ ...t, lv: e.target.value }))}
-                      className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:outline-none focus:ring-1 ${
-                        errors.titleLv ? 'border-rose-500 focus:border-rose-500' : 'border-white/10 focus:border-emerald-500'
-                      }`}
-                    />
-                    {errors.titleLv && <p className="text-xs text-rose-400">{errors.titleLv}</p>}
-                  </div>
+  {/* ✅ ALWAYS show both LV/EN editable fields */}
+  <div className="grid gap-5 md:grid-cols-2">
+    {/* -------- LV -------- */}
+    <div className="space-y-2">
+      <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
+        Nosaukums (LV)
+      </label>
 
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Title (EN)</label>
-                    <input
-                      type="text"
-                      placeholder="e.g., Customer Satisfaction"
-                      value={title.en}
-                      onChange={(e) => setTitle((t) => ({ ...t, en: e.target.value }))}
-                      className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:outline-none focus:ring-1 ${
-                        errors.titleEn ? 'border-rose-500 focus:border-rose-500' : 'border-white/10 focus:border-emerald-500'
-                      }`}
-                    />
-                    {errors.titleEn && <p className="text-xs text-rose-400">{errors.titleEn}</p>}
-                  </div>
-                </div>
-              </div>
-            </div>
+      <input
+        type="text"
+        placeholder="Piem., Klientu apmierinātība"
+        value={title.lv}
+        onChange={(e) => {
+          const value = e.target.value;
+
+          // update value
+          setTitle((t) => ({ ...t, lv: value }));
+
+          // frontend validation
+          setErrors((prev) => ({
+            ...prev,
+            titleLv:
+              value.trim().length > 255
+                ? 'Nosaukums pārsniedz 255 rakstzīmes.'
+                : undefined,
+          }));
+        }}
+        className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:outline-none focus:ring-1 ${
+          errors.titleLv
+            ? 'border-rose-500 focus:border-rose-500'
+            : 'border-white/10 focus:border-emerald-500'
+        }`}
+      />
+
+      {errors.titleLv && (
+        <p className="text-xs text-rose-400">{errors.titleLv}</p>
+      )}
+    </div>
+
+    {/* -------- EN -------- */}
+    <div className="space-y-2">
+      <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
+        Title (EN)
+      </label>
+
+      <input
+        type="text"
+        placeholder="e.g., Customer Satisfaction"
+        value={title.en}
+        onChange={(e) => {
+          const value = e.target.value;
+
+          // update value
+          setTitle((t) => ({ ...t, en: value }));
+
+          // frontend validation
+          setErrors((prev) => ({
+            ...prev,
+            titleEn:
+              value.trim().length > 255
+                ? 'Title exceeds 255 characters.'
+                : undefined,
+          }));
+        }}
+        className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:outline-none focus:ring-1 ${
+          errors.titleEn
+            ? 'border-rose-500 focus:border-rose-500'
+            : 'border-white/10 focus:border-emerald-500'
+        }`}
+      />
+
+      {errors.titleEn && (
+        <p className="text-xs text-rose-400">{errors.titleEn}</p>
+      )}
+    </div>
+  </div>
+</div>
+</div>
+
 
             {/* Questions Builder */}
             <div className="space-y-6">
