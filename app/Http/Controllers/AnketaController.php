@@ -17,35 +17,27 @@ class AnketaController extends Controller
      */
     public function index(Request $request)
     {
-        
         // Savācam filtrus no query string
         $filters = $request->only([
-            'type',      // filtrs pēc veida (piem., public/private vai kas tev tur ir)
-            'code',      // filtrs pēc koda
-            'from',      // no kura datuma (YYYY-MM-DD)
-            'to',        // līdz kuram datumam (YYYY-MM-DD)
-            'search',    // brīvteksta meklēšana
-            'orderBy',   // kolonna, pēc kā kārtot
-            'orderDir',  // asc / desc
+            'type',
+            'code',
+            'from',
+            'to',
+            'search',
+            'orderBy',
+            'orderDir',
         ]);
 
         $query = Form::query();
 
-        /*
-         * TYPE filtrs
-         * Šeit pieņemu, ka "type" loģiski atbilst Form kolonnai "code" vai kādam tavam laukam.
-         * Ja tev Form tabulā ir atsevišķa kolonna "type", nomaini where('code'...) uz where('type'...).
-         */
         if (!empty($filters['type'])) {
             $query->where('code', $filters['type']);
         }
 
-        // FILTRS pēc konkrēta koda (piemēram, daļēja atbilstība)
         if (!empty($filters['code'])) {
             $query->where('code', 'like', '%' . $filters['code'] . '%');
         }
 
-        // DATUMA FILTRI (time_when_completed -> šeit izmantojam created_at kā izpildes laiku)
         if (!empty($filters['from'])) {
             $query->whereDate('created_at', '>=', $filters['from']);
         }
@@ -54,7 +46,6 @@ class AnketaController extends Controller
             $query->whereDate('created_at', '<=', $filters['to']);
         }
 
-        // BRĪVTEKSTA SEARCH (meklējam kodā un title LV/EN)
         if (!empty($filters['search'])) {
             $search = $filters['search'];
 
@@ -65,7 +56,6 @@ class AnketaController extends Controller
             });
         }
 
-        // ORDER BY
         $allowedOrderBy = ['id', 'code', 'created_at'];
         $orderBy = in_array($filters['orderBy'] ?? '', $allowedOrderBy, true)
             ? $filters['orderBy']
@@ -79,12 +69,12 @@ class AnketaController extends Controller
 
         $formData = $forms->map(function ($form) {
             return [
-                'id'        => $form->id,
-                'code'      => $form->code,
-                'title'     => $form->title,
-                'created_at'=> $form->created_at?->toDateTimeString(),
-                'data'      => [
-                    'title'  => $form->title,
+                'id' => $form->id,
+                'code' => $form->code,
+                'title' => $form->title,
+                'created_at' => $form->created_at?->toDateTimeString(),
+                'data' => [
+                    'title' => $form->title,
                     'fields' => $form->data['fields'] ?? [],
                 ],
             ];
@@ -92,13 +82,13 @@ class AnketaController extends Controller
 
         return Inertia::render('Admin/Anketa/indexAnketa', [
             'formData' => $formData,
-            'filters'  => [
-                'type'     => $filters['type'] ?? '',
-                'code'     => $filters['code'] ?? '',
-                'from'     => $filters['from'] ?? '',
-                'to'       => $filters['to'] ?? '',
-                'search'   => $filters['search'] ?? '',
-                'orderBy'  => $orderBy,
+            'filters' => [
+                'type' => $filters['type'] ?? '',
+                'code' => $filters['code'] ?? '',
+                'from' => $filters['from'] ?? '',
+                'to' => $filters['to'] ?? '',
+                'search' => $filters['search'] ?? '',
+                'orderBy' => $orderBy,
                 'orderDir' => $orderDir,
             ],
         ]);
@@ -126,6 +116,7 @@ class AnketaController extends Controller
                         'en' => $f['options']['en'] ?? $f['options'] ?? [],
                     ],
                     'placeholder' => $f['placeholder'] ?? null,
+                    'rows' => $f['rows'] ?? null,
                     'scale' => $f['scale'] ?? null,
                 ];
             })
@@ -133,11 +124,11 @@ class AnketaController extends Controller
 
         return Inertia::render('Admin/Anketa/showAnketa', [
             'formResult' => [
-                'id'   => $form->id,
+                'id' => $form->id,
                 'code' => $form->code,
-                'title'=> $form->title,
+                'title' => $form->title,
                 'data' => [
-                    'title'  => $data['title'] ?? $form->title,
+                    'title' => $data['title'] ?? $form->title,
                     'fields' => $normalizedFields,
                 ],
             ],
@@ -166,7 +157,8 @@ class AnketaController extends Controller
             'schema.fields' => 'array|nullable',
 
             'schema.fields.*.id' => 'required|string',
-            'schema.fields.*.type' => 'required|string|in:radio,checkbox,dropdown,text,scale',
+            // ✅ textarea added
+            'schema.fields.*.type' => 'required|string|in:radio,checkbox,dropdown,text,textarea,scale',
             'schema.fields.*.label.lv' => 'required|string|max:255',
             'schema.fields.*.label.en' => 'required|string|max:255',
 
@@ -175,6 +167,9 @@ class AnketaController extends Controller
 
             'schema.fields.*.placeholder.lv' => 'sometimes|required|string|max:255',
             'schema.fields.*.placeholder.en' => 'sometimes|required|string|max:255',
+
+            // optional rows for textarea
+            'schema.fields.*.rows' => 'sometimes|integer|nullable|min:1|max:20',
 
             'schema.fields.*.scale.min' => 'sometimes|required|integer|min:1|max:100',
             'schema.fields.*.scale.max' => 'sometimes|required|integer|min:1|max:100',
@@ -185,17 +180,18 @@ class AnketaController extends Controller
         ]);
 
         $form = Form::create([
-            'code' => $data['visibility'],  // using visibility as simple code
+            'code' => $data['visibility'],
             'title' => $data['title'],
             'data' => [
                 'fields' => collect($data['schema']['fields'] ?? [])->map(function ($f) {
                     return [
-                        'id'          => $f['id'],
-                        'type'        => $f['type'],
-                        'label'       => $f['label'] ?? [],
-                        'options'     => $f['options'] ?? [],
+                        'id' => $f['id'],
+                        'type' => $f['type'],
+                        'label' => $f['label'] ?? [],
+                        'options' => $f['options'] ?? [],
                         'placeholder' => $f['placeholder'] ?? null,
-                        'scale'       => $f['scale'] ?? null,
+                        'rows' => $f['rows'] ?? null,
+                        'scale' => $f['scale'] ?? null,
                     ];
                 })->toArray(),
             ],
@@ -212,7 +208,6 @@ class AnketaController extends Controller
         $form = Form::findOrFail($id);
         $data = $form->data ?? [];
 
-        // Normalize fields to ensure proper structure
         $normalizedFields = collect($data['fields'] ?? [])
             ->map(function ($f) {
                 $normalized = [
@@ -224,18 +219,18 @@ class AnketaController extends Controller
                     ],
                 ];
 
-                // Add type-specific fields
-                if (in_array($f['type'] ?? '', ['radio', 'checkbox', 'dropdown'])) {
+                if (in_array($f['type'] ?? '', ['radio', 'checkbox', 'dropdown'], true)) {
                     $normalized['options'] = [
                         'lv' => $f['options']['lv'] ?? $f['options'] ?? [],
                         'en' => $f['options']['en'] ?? $f['options'] ?? [],
                     ];
-                } elseif ($f['type'] === 'text') {
+                } elseif (in_array(($f['type'] ?? ''), ['text', 'textarea'], true)) {
                     $normalized['placeholder'] = [
                         'lv' => $f['placeholder']['lv'] ?? $f['placeholder'] ?? '',
                         'en' => $f['placeholder']['en'] ?? $f['placeholder'] ?? '',
                     ];
-                } elseif ($f['type'] === 'scale') {
+                    $normalized['rows'] = $f['rows'] ?? null;
+                } elseif (($f['type'] ?? '') === 'scale') {
                     $normalized['scale'] = [
                         'min' => $f['scale']['min'] ?? 1,
                         'max' => $f['scale']['max'] ?? 10,
@@ -275,36 +270,35 @@ class AnketaController extends Controller
         $form = Form::findOrFail($id);
 
         $validated = $request->validate([
-            // Top-level title (single source of truth)
             'title' => 'required|array',
             'title.lv' => 'required|string|max:255',
             'title.en' => 'required|string|max:255',
 
-            // visibility / code
             'code' => 'required|string|in:public,private',
 
-            // data.fields (optional but if present must follow shape)
             'data' => 'nullable|array',
             'data.fields' => 'nullable|array',
             'data.fields.*.id' => 'required_with:data.fields|string',
-            'data.fields.*.type' => 'required_with:data.fields|string|in:text,radio,checkbox,dropdown,scale',
+            // ✅ textarea added
+            'data.fields.*.type' => 'required_with:data.fields|string|in:text,textarea,radio,checkbox,dropdown,scale',
+
             'data.fields.*.label' => 'required_with:data.fields|array',
             'data.fields.*.label.lv' => 'required_with:data.fields|string|max:255',
             'data.fields.*.label.en' => 'required_with:data.fields|string|max:255',
 
-            // options
             'data.fields.*.options' => 'nullable|array',
             'data.fields.*.options.lv' => 'nullable|array',
             'data.fields.*.options.lv.*' => 'sometimes|required|string|max:255',
             'data.fields.*.options.en' => 'nullable|array',
             'data.fields.*.options.en.*' => 'sometimes|required|string|max:255',
 
-            // placeholder
             'data.fields.*.placeholder' => 'nullable|array',
             'data.fields.*.placeholder.lv' => 'sometimes|string|nullable|max:255',
             'data.fields.*.placeholder.en' => 'sometimes|string|nullable|max:255',
 
-            // scale
+            // optional rows for textarea
+            'data.fields.*.rows' => 'sometimes|integer|nullable|min:1|max:20',
+
             'data.fields.*.scale' => 'nullable|array',
             'data.fields.*.scale.min' => 'sometimes|required|integer|min:1|max:100',
             'data.fields.*.scale.max' => 'sometimes|required|integer|min:1|max:100',
@@ -316,16 +310,16 @@ class AnketaController extends Controller
             'data.fields.*.scale.maxLabel.en' => 'sometimes|string|nullable|max:255',
         ]);
 
-        // Build data payload — keep only fields under data (do not duplicate title inside data)
         $dataPayload = [
             'fields' => collect($validated['data']['fields'] ?? [])->map(function ($f) {
                 return [
-                    'id'          => $f['id'],
-                    'type'        => $f['type'],
-                    'label'       => $f['label'] ?? [],
-                    'options'     => $f['options'] ?? [],
+                    'id' => $f['id'],
+                    'type' => $f['type'],
+                    'label' => $f['label'] ?? [],
+                    'options' => $f['options'] ?? [],
                     'placeholder' => $f['placeholder'] ?? null,
-                    'scale'       => $f['scale'] ?? null,
+                    'rows' => $f['rows'] ?? null,
+                    'scale' => $f['scale'] ?? null,
                 ];
             })->toArray(),
         ];
@@ -364,7 +358,6 @@ class AnketaController extends Controller
      */
     public function loadByCode(string $code)
     {
-        
         $formType = FormType::where('type', $code)->first();
 
         if (!$formType) {
@@ -373,12 +366,10 @@ class AnketaController extends Controller
 
         $form = $formType->form;
 
-        // normalize title (title may be json or string)
         $title = is_array($form->title)
             ? $form->title
             : (json_decode((string) $form->title, true) ?? ['lv' => (string) $form->title, 'en' => (string) $form->title]);
 
-        // normalize fields from data
         $schema = is_array($form->data) ? $form->data : json_decode($form->data ?? '{}', true);
         $fields = $schema['fields'] ?? [];
 
@@ -394,15 +385,14 @@ class AnketaController extends Controller
         ]);
     }
 
-   public function showCode()
-{
-    syncLangFiles('questions');
+    public function showCode()
+    {
+        syncLangFiles('questions');
 
-    return Inertia::render('Formas/questions', [
-        'locale' => app()->getLocale(),
-    ]);
-}
-
+        return Inertia::render('Formas/questions', [
+            'locale' => app()->getLocale(),
+        ]);
+    }
 
     public function storeAnswers(Request $request)
     {
@@ -525,9 +515,7 @@ class AnketaController extends Controller
 
             $answers = $res['answers'] ?? [];
             $answersCount = is_array($answers)
-                ? (is_array(reset($answers)) || is_object(reset($answers))
-                    ? count($answers)
-                    : count($answers))
+                ? count($answers)
                 : 0;
 
             return [

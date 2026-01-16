@@ -18,8 +18,8 @@ class FormSeeder extends Seeder
             [
                 'code' => 'public',
                 'title' => [
-                    'lv' => 'Anketa par psoriāzi un attieksmi pret ATMP/MSC terapijām',
-                    'en' => 'Questionnaire about psoriasis and attitude to ATMP/MSC therapies',
+                    'lv' => 'Anketa par psoriāzi un attieksmi pret Advanced Therapy Medicinal Products (ATMP) un Mesenchymal Stem Cell (MSC) terapijām',
+                    'en' => 'Questionnaire on psoriasis and attitudes toward Advanced Therapy Medicinal Products (ATMP) and Mesenchymal Stem Cell (MSC) therapies',
                 ],
                 'data' => [
                     'fields' => [
@@ -76,8 +76,8 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => '2.4. Kuras ķermeņa zonas visvairāk skar psoriāze? (var atzīmēt vairākas)', 'en' => '2.4. Which body areas are most affected? (multiple)'],
                             'type' => 'checkbox',
                             'options' => [
-                                'lv' => ['Galvas matainā daļa', 'Elkoņi, ceļgali', 'Mugura / rumpis', 'Plaukstas / pēdas', 'Nāgas', 'Citi (lūdzu, norādiet)'],
-                                'en' => ['Scalp', 'Elbows, knees', 'Back / trunk', 'Palms / soles', 'Nails', 'Other (please specify)'],
+                                'lv' => ['Galvas matainā daļa', 'Elkoņi, ceļgali', 'Mugura / rumpis', 'Plaukstas / pēdas', 'Nagus','Kājas', 'Citi (lūdzu, norādiet)'],
+                                'en' => ['Scalp', 'Elbows, knees', 'Back / trunk', 'Palms / soles', 'Nails', 'Legs','Other (please specify)'],
                             ],
                         ],
                         [
@@ -95,18 +95,11 @@ class FormSeeder extends Seeder
                                 'en' => ['Yes', 'No'],
                             ],
                         ],
-                        /*[
-                            'id' => (string) Str::uuid(),
-                            'label' => ['lv' => 'Ja Jā, lūdzu, kādas?', 'en' => 'If yes, please specify'],
-                            'type' => 'textarea',
-                            'placeholder' => ['lv' => 'Piem., psoriātiskais artrīts, depresija, vielmaiņas traucējumi', 'en' => 'E.g., psoriatic arthritis, depression, metabolic disorders'],
-                            'rows' => 4,
-                        ],*/
 
                         // 3. Līdzšinējā ārstēšana
                         [
                             'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '3.1. Kādas ārstēšanas metodes Jūs esat lietojis/la psoriāzes dēļ? (atzīmējiet visu, kas attiecas)', 'en' => '3.1. Which treatments have you used? (select all that apply)'],
+                            'label' => ['lv' => '3.1. Kādas ārstēšanas metodes Jūs esat saņēmis/usi psoriāzes dēļ? (atzīmējiet visu, kas attiecas)', 'en' => '3.1. Which treatments have you used? (select all that apply)'],
                             'type' => 'checkbox',
                             'options' => [
                                 'lv' => [
@@ -151,13 +144,6 @@ class FormSeeder extends Seeder
                                 'en' => ['Yes', 'No'],
                             ],
                         ],
-                        /*[
-                            'id' => (string) Str::uuid(),
-                            'label' => ['lv' => 'Ja Jā, lūdzu, īsi aprakstiet', 'en' => 'If yes, briefly describe'],
-                            'type' => 'textarea',
-                            'rows' => 3,
-                            'placeholder' => ['lv' => 'Aprakstiet blaknes', 'en' => 'Describe side effects briefly'],
-                        ],*/
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '3.4. Pašlaik Jūs:', 'en' => '3.4. Currently you:'],
@@ -171,7 +157,7 @@ class FormSeeder extends Seeder
                         // 4. Finansiālais atbalsts un izmaksas
                         [
                             'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '4.1. Vai līdz šim Jūsu psoriāzes ārstēšanas izdevumus ir sedzusi valsts?', 'en' => '4.1. Have treatment costs been covered by the state?'],
+                            'label' => ['lv' => '4.1. Vai līdz šim Jūsu psoriāzes ārstēšanas izdevumus ir segusi valsts?', 'en' => '4.1. Have treatment costs been covered by the state?'],
                             'type' => 'radio',
                             'options' => [
                                 'lv' => ['Jā, lielākā daļa izdevumu', 'Jā, daļa izdevumu', 'Nē, pārsvarā maksāju pats/pati', 'Nezinu / neesmu pārliecināts(a)'],
@@ -240,20 +226,13 @@ class FormSeeder extends Seeder
                                 'en' => ['Yes, enough', 'I have read/heard something', 'No, I know nothing about it'],
                             ],
                         ],
-                        /*[
-                            'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '6.2.2. Ja Jums ir kāds priekšstats par MSC terapiju, lūdzu, īsi uzrakstiet, ko par to zināt vai domājat', 'en' => '6.2.2. If you have any idea about MSC therapy, briefly describe it'],
-                            'type' => 'textarea',
-                            'rows' => 4,
-                            'placeholder' => ['lv' => 'Rakstiet īsu priekšstatu', 'en' => 'Write your brief understanding or thoughts'],
-                        ],*/
 
                         // 7. Interese un gatavība apsvērt ATMP / MSC terapiju
                         [
                             'id' => (string) Str::uuid(),
                             'type' => 'scale',
                             'label' => [
-                                'lv' => '7.1.1. Cik lielā mērā Jūs interesētu iespēja nākotnē apsvērt ATMP (MSC šūnu) terapiju savai psoriāzei? (1–10)',
+                                'lv' => '7.1.1. Cik lielā mērā Jūs interesētu iespēja nākotnē apsvērt ATMP (MSC šūnu) terapiju? (1–10)',
                                 'en' => '7.1.1. How interested would you be to consider ATMP therapy in future? (1–10)',
                             ],
                             'options' => [],
@@ -364,13 +343,6 @@ class FormSeeder extends Seeder
                             'type' => 'text',
                             'placeholder' => ['lv' => 'Norādiet citu saziņas veidu', 'en' => 'Specify other contact method'],
                         ],
-                        /*[
-                            'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '8.3. Brīvais komentārs', 'en' => '8.3. Free comment'],
-                            'type' => 'textarea',
-                            'rows' => 5,
-                            'placeholder' => ['lv' => 'Pastāstiet par savu pieredzi vai citiem komentāriem', 'en' => 'Tell us about your experience or other comments'],
-                        ],*/
                     ],
                 ],
             ],
@@ -449,10 +421,20 @@ class FormSeeder extends Seeder
                                 'en' => ['Yes', 'No'],
                             ],
                         ],
-                        // NOTE: free-text to describe if yes
-                        // NOTE: type = text
                         [
-                            // NOTE: text field — front-end may need to handle this as open input
+                            'id' => (string) Str::uuid(),
+                            'type' => 'info',
+                            'label' => [
+                                'lv' => 'Īss skaidrojums (ATMP / MSC / ATMP HE / IZS)',
+                                'en' => 'Short explanation (ATMP / MSC / ATMP HE / IBD)',
+                            ],
+                            'text' => [
+                                'lv' => "ATMP (uzlabotās terapijas zāles) – terapijas, kas balstās uz gēnu terapiju, somatisko šūnu terapiju vai audu inženieriju.\n\nMSC (mezenhimālās stromālās šūnas) – šūnu veids, ko pēta kā iespējamu iekaisuma un imūnreakcijas modulēšanas pieeju.\n\nATMP HE (Hospital Exemption) – īpašs regulējums, kas noteiktos gadījumos ļauj slimnīcā sagatavotu, ne-rutīnas ATMP piemērot individuālam pacientam ārsta atbildībā, nacionālās iestādes uzraudzībā.\n\nIZS – iekaisuma zarnu slimības (piem., Krona slimība un čūlainais kolīts).",
+                                'en' => "ATMP (advanced therapy medicinal products) – therapies based on gene therapy, somatic cell therapy, or tissue engineering.\n\nMSC (mesenchymal stromal cells) – a cell type studied for potential immunomodulatory/anti-inflammatory effects.\n\nATMP HE (Hospital Exemption) – a specific framework that may allow a non-routine, hospital-prepared ATMP to be used for an individual patient under a medical practitioner’s responsibility and national oversight.\n\nIBD – inflammatory bowel disease (e.g., Crohn’s disease and ulcerative colitis).",
+                            ],
+                            'format' => 'markdown',
+                        ],
+                        [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => 'Ja Jā, lūdzu, īsi norādiet', 'en' => 'If yes, please briefly specify'],
                             'type' => 'text',
@@ -487,7 +469,7 @@ class FormSeeder extends Seeder
                                 'en' => ['Rarely or almost never', 'Sometimes, but manageable', 'Often, affects daily life', 'Almost constantly, severely affects life'],
                             ],
                         ],
-                        // 3.4. Ietekme uz ikdienu — trīs apakšjautājumi (each as radio)
+                        // 3.4. Ietekme uz ikdienu — trīs apakšjautājumi
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '3.4.1. Ikdienas aktivitātes (darbs, mācības, mājas darbi)', 'en' => '3.4.1. Daily activities (work, studies, household)'],
@@ -544,7 +526,6 @@ class FormSeeder extends Seeder
                                 ],
                             ],
                         ],
-
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '4.1.1 Ja "Citi medikamenti", lūdzu norādiet', 'en' => '4.1.1 If "Other medications", please specify'],
@@ -569,14 +550,6 @@ class FormSeeder extends Seeder
                                 'en' => ['Yes', 'No'],
                             ],
                         ],
-
-                        /*[
-                            'id' => (string) Str::uuid(),
-                            'label' => ['lv' => 'Ja Jā, lūdzu, īsi aprakstiet', 'en' => 'If yes, please briefly describe'],
-                            'type' => 'textarea',
-                            'rows' => 4,
-                            'placeholder' => ['lv' => 'Aprakstiet blaknes', 'en' => 'Describe side effects'],
-                        ],*/
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '4.4. Vai Jums ir veikta operācija Krona slimības dēļ?', 'en' => '4.4. Have you had surgery for Crohn\'s disease?'],
@@ -586,14 +559,6 @@ class FormSeeder extends Seeder
                                 'en' => ['Yes, once', 'Yes, several times', 'No'],
                             ],
                         ],
-
-                        /*[
-                            'id' => (string) Str::uuid(),
-                            'label' => ['lv' => 'Ja Jā – lūdzu, īsi norādiet gadu(-us) un būtiskāko', 'en' => 'If yes – please indicate year(s) and main details'],
-                            'type' => 'textarea',
-                            'rows' => 3,
-                            'placeholder' => ['lv' => 'Piem., 2018 – zarnas rezekcija', 'en' => 'E.g., 2018 – bowel resection'],
-                        ],*/
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '4.5. Pašlaik Jūs:', 'en' => '4.5. Currently you:'],
@@ -655,9 +620,6 @@ class FormSeeder extends Seeder
                             ],
                         ],
 
-                        // 7. Īss ievads par ATMP un MSC (Krona kontekstā) — (informācija parakstīta lietotājam)
-                        // (no fields needed — informational text)
-
                         // 8. Zināšanas par ATMP un MSC
                         [
                             'id' => (string) Str::uuid(),
@@ -677,15 +639,6 @@ class FormSeeder extends Seeder
                                 'en' => ['Yes, enough', 'I have read/heard something', 'No, I know nothing about it'],
                             ],
                         ],
-
-                        /*[
-                            'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '8.3. Ja Jums ir kāds priekšstats par MSC terapiju Krona slimībai, lūdzu, īsi uzrakstiet, ko par to zināt vai domājat', 'en' => '8.3. If you have any idea about MSC therapy for Crohn\'s, briefly describe it'],
-                            'type' => 'textarea',
-                            'rows' => 4,
-                            'placeholder' => ['lv' => 'Rakstiet īsu priekšstatu', 'en' => 'Write your brief understanding or thoughts'],
-                        ],*/
-
                         [
                             'id' => (string) Str::uuid(),
                             'type' => 'scale',
@@ -735,7 +688,6 @@ class FormSeeder extends Seeder
                                 ],
                             ],
                         ],
-
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => 'Ja "Citi faktori", lūdzu norādiet', 'en' => 'If "Other factors", please specify'],
@@ -751,7 +703,6 @@ class FormSeeder extends Seeder
                                 'en' => ['Yes, definitely – I want to be informed first', 'Maybe – if information is clear and understandable', 'No – not interested currently'],
                             ],
                         ],
-
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '10.1. Vai piekrītat, ka Jūsu atbildes var tikt izmantotas promocijas darba izstrādei (anonimizēti)?', 'en' => '10.1. Do you consent to anonymized use of your answers for a thesis?'],
@@ -770,7 +721,6 @@ class FormSeeder extends Seeder
                                 'en' => ['Yes, I agree', 'No, I do not agree'],
                             ],
                         ],
-
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => 'Vārds (var būt tikai vārds)', 'en' => 'Name (first name only)'],
@@ -798,21 +748,12 @@ class FormSeeder extends Seeder
                                 'en' => ['Email', 'Phone call', 'SMS / WhatsApp (if available)', 'Other (please specify)'],
                             ],
                         ],
-
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => 'Ja "Citi", lūdzu norādiet', 'en' => 'If "Other", please specify'],
                             'type' => 'text',
                             'placeholder' => ['lv' => 'Norādiet citu saziņas veidu', 'en' => 'Specify other contact method'],
                         ],
-
-                        /*[
-                            'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '11. Brīvais komentārs', 'en' => '11. Free comment'],
-                            'type' => 'textarea',
-                            'rows' => 6,
-                            'placeholder' => ['lv' => 'Pastāstiet par savu pieredzi vai citiem komentāriem', 'en' => 'Tell us about your experience or other comments'],
-                        ],*/
                     ],
                 ],
             ],
@@ -874,7 +815,10 @@ class FormSeeder extends Seeder
                         // 2. Pacientu profils
                         [
                             'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '2.1. Aptuvens psoriāzes pacientu skaits Jūsu aktīvajā aprūpē (vismaz 1 vizīte pēdējā gada laikā):', 'en' => '2.1. Approximate number of psoriasis patients under your active care (≥1 visit in the last year):'],
+                            'label' => [
+                                'lv' => '2.1. Aptuvens psoriāzes pacientu skaits Jūsu aktīvajā aprūpē (vismaz 1 vizīte pēdējā gada laikā):',
+                                'en' => '2.1. Approximate number of psoriasis patients under your active care (≥1 visit in the last year):'
+                            ],
                             'type' => 'radio',
                             'options' => [
                                 'lv' => ['< 20', '20–50', '51–100', '> 100'],
@@ -883,7 +827,10 @@ class FormSeeder extends Seeder
                         ],
                         [
                             'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '2.2. Aptuvens Krona slimības pacientu skaits Jūsu aktīvajā aprūpē:', 'en' => '2.2. Approximate number of Crohn’s disease patients under your active care:'],
+                            'label' => [
+                                'lv' => '2.2. Aptuvens Krona slimības pacientu skaits Jūsu aktīvajā aprūpē (vismaz 1 vizīte pēdējā gada laikā):',
+                                'en' => '2.2. Approximate number of Crohn’s disease patients under your active care (≥1 visit in the last year):'
+                            ],
                             'type' => 'radio',
                             'options' => [
                                 'lv' => ['0', '1–10', '11–30', '> 30'],
@@ -892,7 +839,10 @@ class FormSeeder extends Seeder
                         ],
                         [
                             'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '2.3. Aptuveni cik pacientiem Jūsu praksē ir citas hroniskas iekaisuma/autoimūnas slimības, kur teorētiski nākotnē varētu izskatīt šūnu/ATMP terapijas?', 'en' => '2.3. Approx. how many patients have other chronic inflammatory/autoimmune diseases where cell/ATMP therapies could be considered in the future?'],
+                            'label' => [
+                                'lv' => '2.3. Aptuveni cik pacientiem Jūsu aktīvajā aprūpē ir citas hroniskas iekaisuma/autoimūnas slimības, kur teorētiski nākotnē varētu izskatīt šūnu/ATMP terapijas? (vismaz 1 vizīte pēdējā gada laikā):',
+                                'en' => '2.3. Approx. how many patients under your active care have other chronic inflammatory/autoimmune diseases where cell/ATMP therapies could be considered in the future? (≥1 visit in the last year):'
+                            ],
                             'type' => 'radio',
                             'options' => [
                                 'lv' => ['< 20', '20–50', '51–100', '> 100'],
@@ -905,8 +855,8 @@ class FormSeeder extends Seeder
                             'id' => (string) Str::uuid(),
                             'type' => 'scale',
                             'label' => [
-                                'lv' => '3.1. Cik labi Jūs esat informēts/-a par ATMP regulējumu ES kopumā? (1–10)',
-                                'en' => '3.1. How well informed do you feel about ATMP regulation in the EU overall? (1–10)',
+                                'lv' => '3.1. Cik labi Jūs esat informēts/-a par ATMP (uzlabotās terapijas zālēm) regulējumu ES kopumā? (1–10)',
+                                'en' => '3.1. How well informed do you feel about ATMP (advanced therapy medicinal products) regulation in the EU overall? (1–10)',
                             ],
                             'scale' => [
                                 'min' => 1,
@@ -919,8 +869,8 @@ class FormSeeder extends Seeder
                             'id' => (string) Str::uuid(),
                             'type' => 'scale',
                             'label' => [
-                                'lv' => '3.2. Cik labi Jūs jūtaties informēts/-a par to, kā ATMP HE plānots / varētu tikt realizēts Latvijā? (1–10)',
-                                'en' => '3.2. How well informed do you feel about how ATMP HE is planned / could be implemented in Latvia? (1–10)',
+                                'lv' => '3.2. Cik labi Jūs esat informēts/-a par to, kā ATMP HE (Hospital Exemption) plānots / varētu tikt realizēts Latvijā? (1–10)',
+                                'en' => '3.2. How well informed do you feel about how ATMP HE (Hospital Exemption) is planned / could be implemented in Latvia? (1–10)',
                             ],
                             'scale' => [
                                 'min' => 1,
@@ -932,8 +882,8 @@ class FormSeeder extends Seeder
                         [
                             'id' => (string) Str::uuid(),
                             'label' => [
-                                'lv' => "3.3. Vai Jūs vēlētos strukturētu, koncentrētu pārskatu (lekciju/mācību moduļa veidā) par ES un Latvijas ATMP regulējumu?",
-                                'en' => "3.3. Would you like a structured, concise overview (lecture/training module) on EU and Latvian ATMP regulation?",
+                                'lv' => "3.3. Vai Jūs vēlētos strukturētu, koncentrētu pārskatu (lekciju/mācību moduļa veidā) par ES un Latvijas ATMP regulējumu (t.sk. ATMP HE)?",
+                                'en' => "3.3. Would you like a structured, concise overview (lecture/training module) on EU and Latvian ATMP regulation (incl. ATMP HE)?",
                             ],
                             'type' => 'radio',
                             'options' => [
@@ -947,28 +897,28 @@ class FormSeeder extends Seeder
                             'id' => (string) Str::uuid(),
                             'type' => 'scale',
                             'label' => [
-                                'lv' => '4.1. Cik lielā mērā Jūs pārzītat publicētos klīniskos pētījumus ar MSC terapiju psoriāzes ārstēšanā? (1–10)',
-                                'en' => '4.1. How familiar are you with published clinical studies on MSC therapy in psoriasis? (1–10)',
+                                'lv' => '4.1. Cik lielā mērā Jūs esat iepazinies/-usies ar publicētajiem klīniskajiem pētījumiem par MSC (mezenhimālo stromālo šūnu) terapiju psoriāzes ārstēšanā? (1–10)',
+                                'en' => '4.1. How familiar are you with published clinical studies on MSC (mesenchymal stromal cell) therapy in psoriasis? (1–10)',
                             ],
                             'scale' => [
                                 'min' => 1,
                                 'max' => 10,
-                                'minLabel' => ['lv' => 'Vispār nepārzinu', 'en' => 'Not familiar at all'],
-                                'maxLabel' => ['lv' => 'Pārzinu vairākus pētījumus un rezultātus', 'en' => 'Familiar with multiple studies and outcomes'],
+                                'minLabel' => ['lv' => 'Vispār neesmu iepazinies/-usies', 'en' => 'Not familiar at all'],
+                                'maxLabel' => ['lv' => 'Esmu iepazinies/-usies ar vairākiem pētījumiem un rezultātiem', 'en' => 'Familiar with multiple studies and outcomes'],
                             ],
                         ],
                         [
                             'id' => (string) Str::uuid(),
                             'type' => 'scale',
                             'label' => [
-                                'lv' => '4.2. Cik lielā mērā Jūs pārzītat MSC terapijas klīniskos pētījumus Krona slimībai (un IZS kopumā)? (1–10)',
-                                'en' => '4.2. How familiar are you with clinical studies on MSC therapy for Crohn’s disease (and IBD overall)? (1–10)',
+                                'lv' => '4.2. Cik lielā mērā Jūs esat iepazinies/-usies ar MSC (mezenhimālo stromālo šūnu) terapijas klīniskajiem pētījumiem Krona slimības un iekaisuma zarnu slimību (IZS) ārstēšanā? (1–10)',
+                                'en' => '4.2. How familiar are you with clinical studies on MSC (mesenchymal stromal cell) therapy for Crohn’s disease and IBD treatment overall? (1–10)',
                             ],
                             'scale' => [
                                 'min' => 1,
                                 'max' => 10,
-                                'minLabel' => ['lv' => 'Vispār nepārzinu', 'en' => 'Not familiar at all'],
-                                'maxLabel' => ['lv' => 'Pārzinu vairākus pētījumus un rezultātus', 'en' => 'Familiar with multiple studies and outcomes'],
+                                'minLabel' => ['lv' => 'Vispār neesmu iepazinies/-usies', 'en' => 'Not familiar at all'],
+                                'maxLabel' => ['lv' => 'Esmu iepazinies/-usies ar vairākiem pētījumiem un rezultātiem', 'en' => 'Familiar with multiple studies and outcomes'],
                             ],
                         ],
                         [
@@ -984,8 +934,8 @@ class FormSeeder extends Seeder
                             'id' => (string) Str::uuid(),
                             'type' => 'scale',
                             'label' => [
-                                'lv' => '4.4. Kā Jūs kopumā vērtējat MSC terapiju potenciālu psoriāzes un Krona slimības ārstēšanā, balstoties uz līdz šim zināmo? (1–10)',
-                                'en' => '4.4. Overall, how do you assess MSC therapy potential for psoriasis and Crohn’s disease based on current evidence? (1–10)',
+                                'lv' => '4.4. Kā Jūs kopumā vērtējat MSC (mezenhimālo stromālo šūnu) terapijas potenciālu psoriāzes un Krona slimības ārstēšanā, balstoties uz līdz šim zināmo? (1–10)',
+                                'en' => '4.4. Overall, how do you assess the potential of MSC (mesenchymal stromal cell) therapy for psoriasis and Crohn’s disease based on current evidence? (1–10)',
                             ],
                             'scale' => [
                                 'min' => 1,
@@ -1183,7 +1133,7 @@ class FormSeeder extends Seeder
                             ],
                         ],
 
-                        // 8.5 in your text is “checkbox list” + optional email.
+                        // 8.5
                         [
                             'id' => (string) Str::uuid(),
                             'label' => ['lv' => '8.5. Par ko Jūs vēlētos saņemt piedāvājumus/paziņojumus? (atzīmējiet visu, kas attiecas)', 'en' => '8.5. What would you like to receive offers/notifications about? (select all that apply)'],
@@ -1214,7 +1164,6 @@ class FormSeeder extends Seeder
                     ],
                 ],
             ],
-
         ];
 
         foreach ($forms as $formData) {
