@@ -28,4 +28,6 @@ return [
     'nav_about_contacts' => 'Contacts',
     'nav_about_join' => 'Get in touch',
     'nav_about_lab' => 'Laboratory',
+
+    'early_access' => 'Website in early access',
 ];
