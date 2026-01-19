@@ -2,12 +2,12 @@
 
 return [
     'meta' => [
-        'page_title' => 'Klīniskie pētījumi',
+        'page_title' => 'Pētījumi',
     ],
 
     'hero' => [
         'badge' => 'Uz pierādījumiem balstīta medicīna',
-        'title_line_1' => 'Klīniskie pētījumi un',
+        'title_line_1' => 'Pētījumi un',
         'title_line_2' => 'Datu analīze',
         'description' => 'Strukturēta informācija par MSC terapiju psoriāzes un Krona slimības ārstēšanā: mehānismi, klīniskie rezultāti un drošība.',
     ],
@@ -17,7 +17,7 @@ return [
             'name' => 'Psoriāze',
             'summary' => 'MSC terapijas pētījumos novērots iekaisuma mazinājums, T-šūnu aktivitātes normalizācija un ādas bojājumu samazināšanās.',
             'points' => [
-                'Klīniskie pētījumi: 9+ starptautiski',
+                'Pētījumi: 9+ starptautiski',
                 'PASI samazinājums: līdz 87% 4 nedēļās',
                 'Mehānisms: IL-10, TGF-β, PGE2 sekrēcija',
                 'Drošība: nav būtisku blakņu (meta-analīze, 42 RCT)',
@@ -28,7 +28,7 @@ return [
             'name' => 'Krona slimība',
             'summary' => 'MSC terapijas pacientiem ar iekaisīgām zarnu slimībām demonstrē spēju mazināt audu bojājumu un normalizēt imūnreakciju.',
             'points' => [
-                'Klīniskie pētījumi: 12+ Eiropā un ASV',
+                'Pētījumi: 12+ Eiropā un ASV',
                 'Fistulu dzīšanas rādītāji: līdz 50%',
                 'Stabilas remisijas ilgums: līdz 12 mēnešiem',
                 'Mehānisms: audu reģenerācija + imūnmodulācija',

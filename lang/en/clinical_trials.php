@@ -2,12 +2,12 @@
 
 return [
     'meta' => [
-        'page_title' => 'Clinical Trials',
+        'page_title' => 'Studies',
     ],
 
     'hero' => [
         'badge' => 'Evidence-Based Medicine',
-        'title_line_1' => 'Clinical Trials and',
+        'title_line_1' => 'Studies and',
         'title_line_2' => 'Data Analysis',
         'description' => 'Structured information on MSC therapy in the treatment of psoriasis and Crohn’s disease: mechanisms, clinical outcomes, and safety.',
     ],
@@ -17,7 +17,7 @@ return [
             'name' => 'Psoriasis',
             'summary' => 'Studies on MSC therapy have shown reduced inflammation, normalization of T-cell activity, and a decrease in skin lesions.',
             'points' => [
-                'Clinical trials: 9+ international',
+                'Studies: 9+ international',
                 'PASI reduction: up to 87% in 4 weeks',
                 'Mechanism: IL-10, TGF-β, PGE2 secretion',
                 'Safety: no significant adverse effects (meta-analysis, 42 RCTs)',
@@ -28,7 +28,7 @@ return [
             'name' => 'Crohn’s disease',
             'summary' => 'MSC therapy in patients with inflammatory bowel disease demonstrates the ability to reduce tissue damage and normalize immune responses.',
             'points' => [
-                'Clinical trials: 12+ in Europe and the USA',
+                'Studies: 12+ in Europe and the USA',
                 'Fistula healing rates: up to 50%',
                 'Stable remission duration: up to 12 months',
                 'Mechanism: tissue regeneration + immunomodulation',
