@@ -18,7 +18,7 @@ return [
     'nav_specialists_survey' => 'Aptauja',
 
     'nav_research' => 'PĒTNIECĪBA',
-    'nav_research_clinical_trials' => 'Klīniskie pētījumi',
+    'nav_research_clinical_trials' => 'Pētījumi',
     'nav_research_postdoc' => 'PostDoc anketa',
     'nav_research_code' => 'Koda anketa',
     'nav_research_documents' => 'Dokumentu datubāze',
