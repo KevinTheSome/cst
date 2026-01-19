@@ -57,7 +57,7 @@ const copy = {
             {
                 title: 'Pētniecība',
                 items: [
-                    { label: 'Klīniskie pētījumi', href: '/clinical-trials' },
+                    { label: 'Pētījumi', href: '/clinical-trials' },
                     { label: 'PostDock anketa', href: '/postdock-anketa?role=patients' },
                     { label: 'Koda anketa', href: '/anketa-kods' },
                     { label: 'Dokumentu datubāze', href: '/datubaze' },
@@ -112,7 +112,7 @@ const copy = {
                 items: [
                     { label: 'PostDock survey', href: '/postdock-anketa?role=patients' },
                     { label: 'Code survey', href: '/anketa-kods' },
-                    { label: 'Clinical trials', href: '/clinical-trials' },
+                    { label: 'Studies', href: '/clinical-trials' },
                     { label: 'Publications', href: '/datubaze' },
                 ],
             },
@@ -145,22 +145,22 @@ export default function Footer() {
             <div className="relative z-10 mx-auto max-w-7xl px-6 py-16 lg:px-8">
                 {/* --- Top Section: Brand & Navigation Grid --- */}
                 <div className="mb-16 grid grid-cols-1 gap-y-12 gap-x-8 lg:grid-cols-12">
-                    
                     {/* Brand Column (Left) */}
                     <div className="lg:col-span-4 xl:col-span-3">
                         <Link href="/" className="mb-6 block">
-                           <span className="text-xl font-bold text-slate-900">
-                               {t.brand.line1}
-                               <span className="block text-emerald-600">{t.brand.line2}</span>
-                           </span>
+                            <span className="text-xl font-bold text-slate-900">
+                                {t.brand.line1}
+                                <span className="block text-emerald-600">{t.brand.line2}</span>
+                            </span>
                         </Link>
-                        <p className="mb-6 text-sm leading-relaxed text-slate-500">
-                            {t.brand.description}
-                        </p>
-                        
+                        <p className="mb-6 text-sm leading-relaxed text-slate-500">{t.brand.description}</p>
+
                         {/* Contact Cards */}
                         <div className="space-y-4">
-                            <a href="tel:+37129252975" className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm transition-all hover:border-emerald-500/30 hover:shadow-md">
+                            <a
+                                href="tel:+37129252975"
+                                className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm transition-all hover:border-emerald-500/30 hover:shadow-md"
+                            >
                                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-50 text-slate-400 transition-colors group-hover:bg-emerald-50 group-hover:text-emerald-600">
                                     <Icons.Phone className="h-5 w-5" />
                                 </div>
@@ -169,8 +169,11 @@ export default function Footer() {
                                     <p className="text-sm font-semibold text-slate-700">+371 29252975</p>
                                 </div>
                             </a>
-                            
-                            <a href="mailto:uldis.berzins_4@rtu.lv" className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm transition-all hover:border-sky-500/30 hover:shadow-md">
+
+                            <a
+                                href="mailto:uldis.berzins_4@rtu.lv"
+                                className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm transition-all hover:border-sky-500/30 hover:shadow-md"
+                            >
                                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-50 text-slate-400 transition-colors group-hover:bg-sky-50 group-hover:text-sky-600">
                                     <Icons.Mail className="h-5 w-5" />
                                 </div>
@@ -217,9 +220,7 @@ export default function Footer() {
                 {/* --- Bottom Section: Copyright --- */}
                 <div className="mt-12 flex flex-col items-center justify-between gap-6 border-t border-slate-200 pt-8 md:flex-row">
                     <div className="text-center md:text-right">
-                        <p className="text-xs text-slate-400">
-                            &copy; {new Date().getFullYear()} {t.copyright}
-                        </p>
+                        <p className="text-xs text-slate-400">&copy; {new Date().getFullYear()} {t.copyright}</p>
                     </div>
                 </div>
             </div>
