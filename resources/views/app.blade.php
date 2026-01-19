@@ -8,9 +8,9 @@
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
-    <link rel="icon" href="/CST_FAV_icon.png" sizes="any">
-    <link rel="icon" href="/CST_FAV_icon.png" type="image/png">
-    <link rel="apple-touch-icon" href="/CST_FAV_icon.png">
+    <link rel="icon" href="/TestIcon.png" sizes="any">
+    <link rel="icon" href="/TestIcon.png" type="image/png">
+    <link rel="apple-touch-icon" href="/TestIcon.png">
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
