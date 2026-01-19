@@ -267,7 +267,6 @@ export default function OnlineTraining({
     const durationLabel = formatDuration(lecture.starts_at, lecture.ends_at, lecture.duration);
     const startsLabel = formatDate(lecture.starts_at);
     const endsLabel = formatDate(lecture.ends_at);
-    const isModalOpenForCard = activeLectureId === lecture.id;
 
     return (
       <div
@@ -422,7 +421,7 @@ export default function OnlineTraining({
         <div className="relative z-10 space-y-4">
           
           {/* Code Input Form */}
-          {!isModalOpenForCard && isSelected && !unlocked && (
+          {isSelected && !unlocked && (
             <div className="mt-6 animate-in fade-in slide-in-from-top-2 duration-300">
               <form onSubmit={handleSubmitCode} className="relative">
                 <div className="relative flex items-center">
@@ -452,7 +451,7 @@ export default function OnlineTraining({
           )}
 
           {/* --- RATING FORM --- */}
-          {!isModalOpenForCard && showLectureRating && unlocked && (
+          {showLectureRating && unlocked && (
             <div className="mt-6 animate-in fade-in slide-in-from-top-4 duration-500 rounded-2xl bg-amber-50/50 p-5 ring-1 ring-amber-100 backdrop-blur-sm">
                <div className="mb-4 flex items-center justify-between">
                  <p className="text-xs font-bold uppercase tracking-wider text-amber-700/70">
@@ -634,7 +633,6 @@ export default function OnlineTraining({
                           className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-5 py-2.5 text-sm font-semibold text-emerald-700 hover:border-emerald-300 hover:bg-emerald-100"
                         >
                           <Icons.Play className="h-4 w-4" />
-                          Play
                         </a>
                       ) : (
                         <button
