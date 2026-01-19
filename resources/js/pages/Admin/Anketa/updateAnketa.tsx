@@ -584,49 +584,59 @@ export default function UpdateAnketa() {
           </div>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
-          {/* --- LEFT COLUMN --- */}
-          <div className="space-y-8">
-            {/* General Info Card */}
-            <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
-              <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
-                <Globe className="h-5 w-5 text-blue-400" />
-                <h2 className="text-lg font-bold text-white">{isLv ? 'Pamatinformācija' : 'Basic information'}</h2>
-              </div>
+      <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
+  {/* --- LEFT COLUMN --- */}
+  <div className="space-y-8">
+    {/* General Info Card */}
+    <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-6 shadow-xl backdrop-blur-md">
+      <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
+        <Globe className="h-5 w-5 text-blue-400" />
+        <h2 className="text-lg font-bold text-white">{isLv ? 'Pamatinformācija' : 'Basic information'}</h2>
+      </div>
 
-              <div className="grid gap-5">
-                {/* ✅ ALWAYS show both LV/EN editable fields */}
-                <div className="grid gap-5 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Nosaukums (LV)</label>
-                    <input
-                      type="text"
-                      placeholder="Piem., Klientu apmierinātība"
-                      value={title.lv}
-                      onChange={(e) => setTitle((t) => ({ ...t, lv: e.target.value }))}
-                      className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:outline-none focus:ring-1 ${
-                        errors.titleLv ? 'border-rose-500 focus:border-rose-500' : 'border-white/10 focus:border-emerald-500'
-                      }`}
-                    />
-                    {errors.titleLv && <p className="text-xs text-rose-400">{errors.titleLv}</p>}
-                  </div>
+      <div className="grid gap-5">
+        <div className="grid gap-5 md:grid-cols-2">
+          {/* Latvian Title */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Nosaukums (LV)</label>
+            <input
+              type="text"
+              placeholder="Piem., Klientu apmierinātība"
+              value={title.lv}
+              onChange={(e) => setTitle((t) => ({ ...t, lv: e.target.value }))}
+              // Accessing error with bracket notation if it contains a dot
+              className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white transition-all focus:outline-none focus:ring-1 ${
+                (errors.titleLv || errors['titleLv']) ? 'border-rose-500 focus:ring-rose-500/50' : 'border-white/10 focus:border-emerald-500 focus:ring-emerald-500/50'
+              }`}
+            />
+            {(errors.titleLv || errors['titleLv']) && (
+              <p className="text-xs font-medium text-rose-400">
+                {errors.titleLv || errors['titleLv']}
+              </p>
+            )}
+          </div>
 
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Title (EN)</label>
-                    <input
-                      type="text"
-                      placeholder="e.g., Customer Satisfaction"
-                      value={title.en}
-                      onChange={(e) => setTitle((t) => ({ ...t, en: e.target.value }))}
-                      className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white focus:outline-none focus:ring-1 ${
-                        errors.titleEn ? 'border-rose-500 focus:border-rose-500' : 'border-white/10 focus:border-emerald-500'
-                      }`}
-                    />
-                    {errors.titleEn && <p className="text-xs text-rose-400">{errors.titleEn}</p>}
-                  </div>
-                </div>
-              </div>
-            </div>
+          {/* English Title */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Title (EN)</label>
+            <input
+              type="text"
+              placeholder="e.g., Customer Satisfaction"
+              value={title.en}
+              onChange={(e) => setTitle((t) => ({ ...t, en: e.target.value }))}
+              className={`w-full rounded-xl border bg-black/20 px-4 py-3 text-white transition-all focus:outline-none focus:ring-1 ${
+                (errors.titleEn || errors['titleEn']) ? 'border-rose-500 focus:ring-rose-500/50' : 'border-white/10 focus:border-emerald-500 focus:ring-emerald-500/50'
+              }`}
+            />
+            {(errors.titleEn || errors['titleEn']) && (
+              <p className="text-xs font-medium text-rose-400">
+                {errors.titleEn || errors['titleEn']}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+  </div>
 
             {/* Questions Builder */}
             <div className="space-y-6">

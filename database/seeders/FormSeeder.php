@@ -18,8 +18,8 @@ class FormSeeder extends Seeder
             [
                 'code' => 'public',
                 'title' => [
-                    'lv' => 'Anketa par psoriāzi un attieksmi pret ATMP/MSC terapijām',
-                    'en' => 'Questionnaire about psoriasis and attitude to ATMP/MSC therapies',
+                    'lv' => 'Anketa par psoriāzi un attieksmi pret Advanced Therapy Medicinal Products (ATMP) un Mesenchymal Stem Cell (MSC) terapijām',
+                    'en' => 'Questionnaire on psoriasis and attitudes toward Advanced Therapy Medicinal Products (ATMP) and Mesenchymal Stem Cell (MSC) therapies',
                 ],
                 'data' => [
                     'fields' => [
@@ -76,8 +76,8 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => '2.4. Kuras ķermeņa zonas visvairāk skar psoriāze? (var atzīmēt vairākas)', 'en' => '2.4. Which body areas are most affected? (multiple)'],
                             'type' => 'checkbox',
                             'options' => [
-                                'lv' => ['Galvas matainā daļa', 'Elkoņi, ceļgali', 'Mugura / rumpis', 'Plaukstas / pēdas', 'Nāgas', 'Citi (lūdzu, norādiet)'],
-                                'en' => ['Scalp', 'Elbows, knees', 'Back / trunk', 'Palms / soles', 'Nails', 'Other (please specify)'],
+                                'lv' => ['Galvas matainā daļa', 'Elkoņi, ceļgali', 'Mugura / rumpis', 'Plaukstas / pēdas', 'Nagus','Kājas', 'Citi (lūdzu, norādiet)'],
+                                'en' => ['Scalp', 'Elbows, knees', 'Back / trunk', 'Palms / soles', 'Nails', 'Legs','Other (please specify)'],
                             ],
                         ],
                         [
@@ -99,7 +99,7 @@ class FormSeeder extends Seeder
                         // 3. Līdzšinējā ārstēšana
                         [
                             'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '3.1. Kādas ārstēšanas metodes Jūs esat lietojis/la psoriāzes dēļ? (atzīmējiet visu, kas attiecas)', 'en' => '3.1. Which treatments have you used? (select all that apply)'],
+                            'label' => ['lv' => '3.1. Kādas ārstēšanas metodes Jūs esat saņēmis/usi psoriāzes dēļ? (atzīmējiet visu, kas attiecas)', 'en' => '3.1. Which treatments have you used? (select all that apply)'],
                             'type' => 'checkbox',
                             'options' => [
                                 'lv' => [
@@ -157,7 +157,7 @@ class FormSeeder extends Seeder
                         // 4. Finansiālais atbalsts un izmaksas
                         [
                             'id' => (string) Str::uuid(),
-                            'label' => ['lv' => '4.1. Vai līdz šim Jūsu psoriāzes ārstēšanas izdevumus ir sedzusi valsts?', 'en' => '4.1. Have treatment costs been covered by the state?'],
+                            'label' => ['lv' => '4.1. Vai līdz šim Jūsu psoriāzes ārstēšanas izdevumus ir segusi valsts?', 'en' => '4.1. Have treatment costs been covered by the state?'],
                             'type' => 'radio',
                             'options' => [
                                 'lv' => ['Jā, lielākā daļa izdevumu', 'Jā, daļa izdevumu', 'Nē, pārsvarā maksāju pats/pati', 'Nezinu / neesmu pārliecināts(a)'],
@@ -232,7 +232,7 @@ class FormSeeder extends Seeder
                             'id' => (string) Str::uuid(),
                             'type' => 'scale',
                             'label' => [
-                                'lv' => '7.1.1. Cik lielā mērā Jūs interesētu iespēja nākotnē apsvērt ATMP (MSC šūnu) terapiju savai psoriāzei? (1–10)',
+                                'lv' => '7.1.1. Cik lielā mērā Jūs interesētu iespēja nākotnē apsvērt ATMP (MSC šūnu) terapiju? (1–10)',
                                 'en' => '7.1.1. How interested would you be to consider ATMP therapy in future? (1–10)',
                             ],
                             'options' => [],
@@ -286,7 +286,7 @@ class FormSeeder extends Seeder
                             'label' => ['lv' => '7.3.1. Vai Jūs būtu gatavs/gatava saņemt vairāk informācijas par ATMP / MSC iespējām psoriāzes ārstēšanā?', 'en' => '7.3.1. Would you be willing to receive more info about ATMP/MSC options?'],
                             'type' => 'radio',
                             'options' => [
-                                'lv' => ['Jā, noteikti – es gribētu būt informēts(a) pirmais(a)', 'Varbūt – ja informācija būs skaidra un saprotama', 'Nē – pašlaik mani tas neinteresē'],
+                                'lv' => ['Jā, noteikti – es gribētu būt informēts(a) pirmais(ā)', 'Varbūt – ja informācija būs skaidra un saprotama', 'Nē – pašlaik mani tas neinteresē'],
                                 'en' => ['Yes, definitely – I want to be informed first', 'Maybe – if information is clear and understandable', 'No – not interested currently'],
                             ],
                         ],
