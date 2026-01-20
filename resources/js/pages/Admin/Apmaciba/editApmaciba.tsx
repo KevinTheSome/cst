@@ -16,6 +16,8 @@ const copy = {
         titleEnPlaceholder: 'Apmācības nosaukums angliski',
         description: 'Apraksts',
         descriptionPlaceholder: 'Ievadiet detalizētu aprakstu...',
+        owner: 'Īpašnieks',
+        ownerPlaceholder: 'Leniņš Ozols',
         externalResources: 'Ārējie resursi',
         externalUrl: 'Ārējais URL',
         activeStatus: 'Aktīvs statuss',
@@ -36,6 +38,8 @@ const copy = {
         titleEnPlaceholder: 'Training Title',
         description: 'Description',
         descriptionPlaceholder: 'Enter detailed description...',
+        owner: 'Owner',
+        ownerPlaceholder: 'John Doe',
         externalResources: 'External Resources',
         externalUrl: 'External URL',
         activeStatus: 'Active Status',
@@ -59,6 +63,7 @@ const EditApmaciba: React.FC = () => {
             lv: training?.title?.lv ?? '',
             en: training?.title?.en ?? '',
         },
+        owner: training?.owner ?? '',
         description: training?.description ?? '',
         url: training?.url ?? '',
         is_active: training?.is_active ?? true,
@@ -151,6 +156,22 @@ const EditApmaciba: React.FC = () => {
                                 />
                             </div>
                         </div>
+
+                        {/* Owner */}
+                                <div>
+                                    <label className={labelClass}>
+                                        {t.owner}
+                                    </label>
+                                    <textarea
+                                        value={data.owner}
+                                        onChange={(e) =>
+                                            setData((d: any) => ({ ...d, owner: e.target.value }))
+                                        }
+                                        rows={1}
+                                        className={`${inputClass} min-h-[20px] resize-y py-3`}
+                                        placeholder={t.ownerPlaceholder}
+                                    />
+                                </div>
 
                         <hr className="border-gray-700" />
 

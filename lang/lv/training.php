@@ -20,6 +20,9 @@ return [
 
         'required' => 'Obligāts lauks',
 
+        'owner' => 'Īpašnieks',
+        'ownerPlaceholder' => 'Leniņš Ozols',
+
         'description' => 'Apraksts',
         'descriptionPlaceholder' => 'Ievadiet detalizētu apmācības moduļa aprakstu...',
 

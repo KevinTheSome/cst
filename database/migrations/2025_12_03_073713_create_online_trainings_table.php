@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->json('title');
             $table->text('description')->nullable();
             $table->string('url')->nullable();    
+            $table->string('owner')->nullable();
 
             // schedule
             $table->timestamp('starts_at')->nullable();
