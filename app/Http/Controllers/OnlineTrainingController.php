@@ -21,7 +21,8 @@ class OnlineTrainingController extends Controller
             $query->where(function ($sub) use ($q) {
                 $sub->where('title->lv', 'like', "%{$q}%")
                     ->orWhere('title->en', 'like', "%{$q}%")
-                    ->orWhere('description', 'like', "%{$q}%");
+                    ->orWhere('description', 'like', "%{$q}%")
+                    ->orWhere('owner', 'like', "%{$q}%");
             });
         }
 
@@ -80,6 +81,7 @@ class OnlineTrainingController extends Controller
                 'id' => $t->id,
                 'title' => (array) $t->title,
                 'description' => $t->description,
+                'owner' => $t->owner,
                 'url' => $t->url,
                 'starts_at' => $t->starts_at,
                 'ends_at' => $t->ends_at,
@@ -108,6 +110,7 @@ public function lectures()
                 'id' => $training->id,
                 'title' => $training->title,
                 'description' => $training->description,
+                'owner' => $training->owner,
                 'url' => $training->url,
                 'starts_at' => $training->starts_at,
                 'ends_at' => $training->ends_at,
@@ -140,6 +143,7 @@ public function lectures()
         $validated = $request->validate([
             'title.lv' => 'required|string|max:255',
             'title.en' => 'required|string|max:255',
+            'owner' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'url' => 'nullable|url|max:1024',
             'is_active' => 'nullable|boolean',
@@ -158,6 +162,7 @@ public function lectures()
                 'lv' => $validated['title']['lv'] ?? null,
                 'en' => $validated['title']['en'] ?? null,
             ],
+            'owner' => $validated['owner'] ?? null,
             'description' => $validated['description'] ?? null,
             'url' => $validated['url'] ?? null,
             'starts_at' => $validated['starts_at'] ?? null,
@@ -198,6 +203,7 @@ public function lectures()
         $validated = $request->validate([
             'title.lv' => 'required|string|max:255',
             'title.en' => 'required|string|max:255',
+            'owner' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'url' => 'nullable|url|max:1024',
             'starts_at' => 'nullable|date',
@@ -217,6 +223,7 @@ public function lectures()
                 'lv' => $validated['title']['lv'] ?? ($training->title['lv'] ?? null),
                 'en' => $validated['title']['en'] ?? ($training->title['en'] ?? null),
             ],
+            'owner' => $validated['owner'] ?? $training->owner,
             'description' => $validated['description'] ?? $training->description,
             'url' => $validated['url'] ?? $training->url,
             'starts_at' => $validated['starts_at'] ?? $training->starts_at,

@@ -10,6 +10,7 @@ class OnlineTraining extends Model
         'title',
         'description',
         'url',
+        'owner',
         'starts_at',
         'ends_at',
         'is_active',
