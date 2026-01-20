@@ -11,6 +11,7 @@ type Lecture = {
   id: number; // ✅ make this number (matches Laravel default)
   title: string | MultilingualTitle;
   description?: string;
+  owner?: string;
   duration?: string;
   url?: string;
   starts_at?: string;
@@ -23,6 +24,7 @@ type Training = {
   id: number;
   title: string | MultilingualTitle;
   description?: string | null;
+  owner?: string | null;
   url?: string | null;
   starts_at?: string | null;
   ends_at?: string | null;
@@ -91,6 +93,7 @@ export default function OnlineTraining({
             id: t.id,
             title: t.title,
             description: t.description ?? undefined,
+            owner: t.owner ?? undefined,
             url: t.url ?? undefined,
             starts_at: t.starts_at ?? undefined,
             ends_at: t.ends_at ?? undefined,
@@ -199,6 +202,11 @@ export default function OnlineTraining({
             <h3 className={`mb-1 text-base font-bold ${isSelected ? 'text-emerald-300' : 'text-white'}`}>
               {renderTitle(lecture.title)}
             </h3>
+            {lecture.owner && (
+              <div className="mb-1 text-xs font-medium text-slate-500">
+                {__('training.create.owner')}: <span className="text-slate-300">{lecture.owner}</span>
+              </div>
+            )}
             <p className="line-clamp-2 text-xs text-slate-400">{lecture.description}</p>
 
             {lecture.rating_avg !== undefined && (

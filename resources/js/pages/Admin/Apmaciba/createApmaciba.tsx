@@ -11,6 +11,7 @@ const CreateApmaciba: React.FC = () => {
         title: { lv: '', en: '' },
         description: '',
         url: '',
+        owner: '',
         is_active: true,
     });
 
@@ -121,6 +122,21 @@ const CreateApmaciba: React.FC = () => {
                                         rows={5}
                                         className={`${baseInputClass} min-h-[140px] resize-y py-3`}
                                         placeholder={__('training.create.descriptionPlaceholder')}
+                                    />
+                                </div>
+
+                                {/* Owner */}
+                                <div>
+                                    <label className={labelClass}>
+                                        {__('training.create.owner')}
+                                    </label>
+                                    <input
+                                        value={data.owner}
+                                        onChange={(e) =>
+                                            setData((d: any) => ({ ...d, owner: e.target.value }))
+                                        }
+                                        className={`${baseInputClass} min-h-[20px] resize-y py-3`}
+                                        placeholder={__('training.create.ownerPlaceholder')}
                                     />
                                 </div>
                             </div>

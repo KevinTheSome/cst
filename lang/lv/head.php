@@ -26,6 +26,8 @@ return [
     'nav_about' => 'PAR MUMS',
     'nav_about_team' => 'Komanda',
     'nav_about_contacts' => 'Kontakti',
-    'nav_about_join' => 'Sazinies',
+    'nav_about_join' => 'Pievienojies mums',
     'nav_about_lab' => 'Laboratorija',
+
+    'early_access' => 'Mājaslapa atrodas agrā piekļuvē',
 ];
