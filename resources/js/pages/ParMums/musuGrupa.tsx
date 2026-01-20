@@ -58,8 +58,8 @@ export default function MusuGrupa() {
         {
             name: 'Kristians Miķelsons',
             title: 'Programmētājs',
-            description: 'Iztrādā uzdevumus, ko vadītājs ir uzdevis izpildīt',
-            image: '/bzl-3.jpg',
+            description: 'Iztrādāja mājaslapas funkcionalitāti.',
+            image: '/KristiansMikelsons3.png',
         },
         {
             name: 'Adrians Raitums',

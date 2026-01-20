@@ -18,7 +18,7 @@ return [
     'nav_specialists_survey' => 'Survey form',
 
     'nav_research' => 'RESEARCH',
-    'nav_research_clinical_trials' => 'Clinical trials',
+    'nav_research_clinical_trials' => 'Studies',
     'nav_research_postdoc' => 'PostDoc form',
     'nav_research_code' => 'Code form',
     'nav_research_documents' => 'Document database',
@@ -28,4 +28,6 @@ return [
     'nav_about_contacts' => 'Contacts',
     'nav_about_join' => 'Get in touch',
     'nav_about_lab' => 'Laboratory',
+
+    'early_access' => 'Website in early access',
 ];

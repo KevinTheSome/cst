@@ -3,6 +3,7 @@ import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 
 import BioChipLoader from '@/Components/BioChipLoader';
 import CookieConsent from '@/Components/CookieConsent';
+import EarlyAccessWarning from '@/Components/EarlyAccessWarning';
 import Footer from '@/Components/Footer';
 import Navbar from '@/Components/Navbar';
 
@@ -84,6 +85,7 @@ export default function AppLayout({ children }: PropsWithChildren) {
                     <main className="flex-1">{children}</main>
                     <Footer />
 
+                    <EarlyAccessWarning />
                     <CookieConsent />
                 </div>
             </div>

@@ -18,7 +18,7 @@ return [
     'nav_specialists_survey' => 'Aptauja',
 
     'nav_research' => 'PĒTNIECĪBA',
-    'nav_research_clinical_trials' => 'Klīniskie pētījumi',
+    'nav_research_clinical_trials' => 'Pētījumi',
     'nav_research_postdoc' => 'PostDoc anketa',
     'nav_research_code' => 'Koda anketa',
     'nav_research_documents' => 'Dokumentu datubāze',
@@ -26,6 +26,8 @@ return [
     'nav_about' => 'PAR MUMS',
     'nav_about_team' => 'Komanda',
     'nav_about_contacts' => 'Kontakti',
-    'nav_about_join' => 'Sazinies',
+    'nav_about_join' => 'Pievienojies mums',
     'nav_about_lab' => 'Laboratorija',
+
+    'early_access' => 'Mājaslapa atrodas agrā piekļuvē',
 ];
