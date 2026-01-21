@@ -186,27 +186,6 @@ return [
             ],
             'min_rating' => [
                 'label' => 'Zvaigžņu atsauksmes',
-
-            'rating' => [
-                'submit' => 'Iesniegt Vērtējumu',
-                'saved' => 'Vērtējums saglabāts.',
-                'saving' => 'Saglabā...',
-                'rated' => 'Novērtēts',
-                'review' => 'Vērtējums',
-                'show' => 'Vērtēt',
-                'hide' => 'Slēpt vērtējumu',
-            ],
-            'status' => [
-                'locked' => 'Bloķēts',
-                'unlocked' => 'Atbloķēts',
-            ],
-            'actions' => [
-                'unlock' => 'Atbloķēt',
-                'play' => 'Skatīties',
-                'rate' => 'Novērtēt mācību',
-            ],
-            'unlock' => [
-                'success' => 'Mācība atbloķēta veiksmīgi.',
             ],
             'all' => 'Visi',
             'results' => 'rezultāti',
@@ -220,6 +199,27 @@ return [
 
         'rating' => [
             'submit' => 'Iesniegt Vērtējumu',
+            'saved' => 'Vērtējums saglabāts.',
+            'saving' => 'Saglabā...',
+            'rated' => 'Novērtēts',
+            'review' => 'Vērtējums',
+            'show' => 'Vērtēt',
+            'hide' => 'Slēpt vērtējumu',
+        ],
+
+        'status' => [
+            'locked' => 'Bloķēts',
+            'unlocked' => 'Atbloķēts',
+        ],
+
+        'actions' => [
+            'unlock' => 'Atbloķēt',
+            'play' => 'Skatīties',
+            'rate' => 'Novērtēt mācību',
+        ],
+
+        'unlock' => [
+            'success' => 'Mācība atbloķēta veiksmīgi.',
         ],
     ],
 
