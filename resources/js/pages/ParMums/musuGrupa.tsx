@@ -64,7 +64,7 @@ export default function MusuGrupa() {
         {
             name: 'Adrians Raitums',
             title: 'UI/UX Dizainers Front-end izstrādātājs',
-            description: 'Izdomāt dizainu kā piesaistīt lietotājus uz Tīmekļa vietni.',
+            description: 'Izdomāt dizainu kā piesaistīt lietotājus uz Tīmekļa vietni, the Goat.',
             image: '/Adrians_Raitums.jpeg',
         },
         {
