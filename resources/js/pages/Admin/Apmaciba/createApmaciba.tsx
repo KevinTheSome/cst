@@ -11,6 +11,7 @@ const CreateApmaciba: React.FC = () => {
         title: { lv: '', en: '' },
         description: '',
         url: '',
+        owner: '',
         is_active: true,
     });
 
@@ -123,6 +124,21 @@ const CreateApmaciba: React.FC = () => {
                                         placeholder={__('training.create.descriptionPlaceholder')}
                                     />
                                 </div>
+
+                                {/* Owner */}
+                                <div>
+                                    <label className={labelClass}>
+                                        {__('training.create.owner')}
+                                    </label>
+                                    <input
+                                        value={data.owner}
+                                        onChange={(e) =>
+                                            setData((d: any) => ({ ...d, owner: e.target.value }))
+                                        }
+                                        className={`${baseInputClass} min-h-[20px] resize-y py-3`}
+                                        placeholder={__('training.create.ownerPlaceholder')}
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -190,11 +206,11 @@ const CreateApmaciba: React.FC = () => {
     );
 };
 
-const LayoutWrapper = ({ children }: { children: React.ReactNode }) => (
-    <AdminLayout title={('training.create.layoutTitle')}>
-        {children}
-    </AdminLayout>
-);
+const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
+  const { __ } = useLang();
+  return <AdminLayout title={__('training.create.layoutTitle')}>{children}</AdminLayout>;
+};
+
 
 (CreateApmaciba as any).layout = (page: React.ReactNode) => <LayoutWrapper>{page}</LayoutWrapper>;
 

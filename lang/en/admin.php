@@ -55,4 +55,12 @@ return [
     'a11y' => [
         'toggle_menu' => 'Open menu',
     ],
+        'trainings' => [
+        'index' => [
+            'subtitle' => 'View / edit / delete trainings.',
+            'empty' => 'No trainings found.',
+            'empty_hint' => 'Click “Create” to add your first training.',
+        ],
+    ],
+
 ];

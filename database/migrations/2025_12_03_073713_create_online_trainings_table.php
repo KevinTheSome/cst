@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->json('title');
             $table->text('description')->nullable();
-            $table->string('url')->nullable();    
+            $table->string('url')->nullable();
 
             // schedule
             $table->timestamp('starts_at')->nullable();

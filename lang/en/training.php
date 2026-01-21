@@ -20,6 +20,9 @@ return [
 
         'required' => 'Required field',
 
+        'owner' => 'Owner',
+        'ownerPlaceholder' => 'John Doe',
+
         'description' => 'Description',
         'descriptionPlaceholder' => 'Enter a detailed description of the training module...',
 
