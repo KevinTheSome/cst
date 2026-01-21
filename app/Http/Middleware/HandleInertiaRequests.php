@@ -46,6 +46,7 @@ class HandleInertiaRequests extends Middleware
 
             // All translation bundles you want in JS
             'lang' => [
+                'common' => Lang::get('common'),
                 'test' => Lang::get('test'),
                 'head' => Lang::get('head'),
                 'anketa' => Lang::get('anketa'),

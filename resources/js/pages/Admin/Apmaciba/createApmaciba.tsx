@@ -206,11 +206,11 @@ const CreateApmaciba: React.FC = () => {
     );
 };
 
-const LayoutWrapper = ({ children }: { children: React.ReactNode }) => (
-    <AdminLayout title={('training.create.layoutTitle')}>
-        {children}
-    </AdminLayout>
-);
+const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
+  const { __ } = useLang();
+  return <AdminLayout title={__('training.create.layoutTitle')}>{children}</AdminLayout>;
+};
+
 
 (CreateApmaciba as any).layout = (page: React.ReactNode) => <LayoutWrapper>{page}</LayoutWrapper>;
 

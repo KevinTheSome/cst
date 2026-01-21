@@ -55,4 +55,12 @@ return [
     'a11y' => [
         'toggle_menu' => 'Atvērt izvēlni',
     ],
+
+    'trainings' => [
+        'index' => [
+            'subtitle' => 'Skatīt / rediģēt / dzēst apmācības.',
+            'empty' => 'Nav atrastas apmācības.',
+            'empty_hint' => 'Spiediet “Izveidot”, lai pievienotu pirmo apmācību.',
+        ],
+    ],
 ];

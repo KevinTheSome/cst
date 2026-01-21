@@ -98,36 +98,129 @@ class OnlineTrainingController extends Controller
             'filters' => ['q' => $q ?? ''],
         ]);
     }
-public function lectures()
-{
-    $trainings = OnlineTraining::query()
-        ->withCount('ratings')
-        ->withAvg('ratings', 'score')
-        ->orderBy('starts_at', 'desc')
-        ->get()
-        ->map(function ($training) {
-            return [
-                'id' => $training->id,
-                'title' => $training->title,
-                'description' => $training->description,
-                'owner' => $training->owner,
-                'url' => $training->url,
-                'starts_at' => $training->starts_at,
-                'ends_at' => $training->ends_at,
-                'ratings_count' => $training->ratings_count ?? 0,
-                'rating_avg' => $training->ratings_avg_score !== null ? round($training->ratings_avg_score, 1) : 0,
+    public function lectures(Request $request)
+    {
+        $title = trim((string) $request->query('title', ''));
+        $author = trim((string) $request->query('author', ''));
+        $minRating = $request->query('min_rating');
+        $minRating = is_numeric($minRating) ? (float) $minRating : 0;
+        $debugEnabled = (string) $request->query('debug', '') === '1';
+
+        $ratingsAgg = DB::table('ratings')
+            ->select(
+                'online_training_id',
+                DB::raw('count(*) as ratings_count'),
+                DB::raw('avg(score) as ratings_avg_score')
+            )
+            ->groupBy('online_training_id');
+
+        $query = OnlineTraining::query()
+            ->leftJoinSub($ratingsAgg, 'r', function ($join) {
+                $join->on('r.online_training_id', '=', 'online_trainings.id');
+            })
+            ->select('online_trainings.*')
+            ->addSelect(DB::raw('COALESCE(r.ratings_count, 0) as ratings_count'))
+            ->addSelect(DB::raw('COALESCE(r.ratings_avg_score, 0) as ratings_avg_score'));
+
+        if ($title !== '') {
+            $titleNormalized = preg_replace('/\s+/', ' ', $title);
+            $titleNormalized = trim((string) $titleNormalized);
+            $titleLower = function_exists('mb_strtolower') ? mb_strtolower($titleNormalized) : strtolower($titleNormalized);
+            $tokens = preg_split('/\s+/', $titleLower, -1, PREG_SPLIT_NO_EMPTY);
+
+            $driver = DB::connection()->getDriverName();
+            if ($driver === 'sqlite') {
+                $lvExpr = "lower(json_extract(online_trainings.title, '$.lv'))";
+                $enExpr = "lower(json_extract(online_trainings.title, '$.en'))";
+            } elseif ($driver === 'mysql') {
+                $lvExpr = "lower(JSON_UNQUOTE(JSON_EXTRACT(online_trainings.title, '$.lv')))";
+                $enExpr = "lower(JSON_UNQUOTE(JSON_EXTRACT(online_trainings.title, '$.en')))";
+            } else {
+                $lvExpr = "lower(online_trainings.title->>'lv')";
+                $enExpr = "lower(online_trainings.title->>'en')";
+            }
+
+            foreach ($tokens as $token) {
+                $query->where(function ($sub) use ($lvExpr, $enExpr, $token) {
+                    $like = "%{$token}%";
+                    $sub->whereRaw("{$lvExpr} like ?", [$like])
+                        ->orWhereRaw("{$enExpr} like ?", [$like]);
+                });
+            }
+        }
+
+        if ($author !== '') {
+            $query->where('owner', $author);
+        }
+
+        if ($minRating > 0) {
+            $query->where('r.ratings_avg_score', '>=', $minRating);
+        }
+
+        $debug = null;
+        if ($debugEnabled) {
+            $debug = [
+                'min_rating' => $minRating,
+                'ratings_total' => (int) DB::table('ratings')->count(),
+                'ratings_by_training' => DB::table('ratings')
+                    ->select('online_training_id', DB::raw('count(*) as cnt'), DB::raw('avg(score) as avg_score'))
+                    ->groupBy('online_training_id')
+                    ->orderBy('online_training_id')
+                    ->get(),
+                'matching_training_ids' => $minRating > 0
+                    ? DB::table('ratings')
+                        ->select('online_training_id')
+                        ->groupBy('online_training_id')
+                        ->havingRaw('avg(score) >= ?', [$minRating])
+                        ->pluck('online_training_id')
+                        ->values()
+                    : [],
             ];
-        });
+        }
 
-    $unlocked = session('unlocked_lectures', []);
-    if (!is_array($unlocked)) $unlocked = [];
-    $unlocked = array_values(array_unique(array_map('intval', $unlocked)));
+        $trainings = $query
+            ->orderBy('starts_at', 'desc')
+            ->get()
+            ->map(function ($training) {
+                return [
+                    'id' => $training->id,
+                    'title' => $training->title,
+                    'description' => $training->description,
+                    'owner' => $training->owner,
+                    'teacher' => $training->owner,
+                    'url' => $training->url,
+                    'starts_at' => $training->starts_at,
+                    'ends_at' => $training->ends_at,
+                    'ratings_count' => (int) ($training->ratings_count ?? 0),
+                    'rating_avg' => $training->ratings_avg_score !== null ? round((float) $training->ratings_avg_score, 1) : 0,
+                ];
+            });
 
-    return Inertia::render('Specialistiem/apmaciba', [
-        'initialLectures' => $trainings,
-        'unlockedLectures' => $unlocked,
-    ]);
-}
+        $authors = OnlineTraining::query()
+            ->whereNotNull('owner')
+            ->where('owner', '!=', '')
+            ->distinct()
+            ->orderBy('owner')
+            ->pluck('owner')
+            ->values();
+
+        $unlocked = session('unlocked_lectures', []);
+        if (!is_array($unlocked))
+            $unlocked = [];
+        $unlocked = array_values(array_unique(array_map('intval', $unlocked)));
+
+        return Inertia::render('Specialistiem/apmaciba', [
+            'initialLectures' => $trainings,
+            'unlockedLectures' => $unlocked,
+            'filters' => [
+                'title' => $title,
+                'author' => $author,
+                'min_rating' => $minRating,
+            ],
+            'authors' => $authors,
+            'debug' => $debug,
+        ]);
+    }
 
     // GET /admin/trainings/create
     public function create()
