@@ -185,6 +185,24 @@ return [
 
         'rating' => [
             'submit' => 'Submit Rating',
+            'saved' => 'Rating saved.',
+            'saving' => 'Saving...',
+            'rated' => 'Rated',
+            'review' => 'Review',
+            'show' => 'Rate',
+            'hide' => 'Hide rating',
+        ],
+        'status' => [
+            'locked' => 'Locked',
+            'unlocked' => 'Unlocked',
+        ],
+        'actions' => [
+            'unlock' => 'Unlock',
+            'play' => 'Play',
+            'rate' => 'Rate this training',
+        ],
+        'unlock' => [
+            'success' => 'Training unlocked successfully.',
         ],
     ],
 ];

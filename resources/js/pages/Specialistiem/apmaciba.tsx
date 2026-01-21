@@ -202,7 +202,7 @@ export default function OnlineTraining({
         return Array.from(set);
       });
 
-      setBanner({ type: 'success', text: 'Training unlocked successfully.' });
+      setBanner({ type: 'success', text: __('specialistiem.apmaciba.unlock.success') });
       setSelectedLectureId(null);
       setCode('');
       // Auto show rating for the just unlocked item
@@ -243,7 +243,7 @@ export default function OnlineTraining({
           return { ...lec, ratings_count: newCount, rating_avg: newAvg };
         }),
       );
-      setBanner({ type: 'success', text: __('specialistiem.apmaciba.rating.submit') + ' saved.' });
+      setBanner({ type: 'success', text: __('specialistiem.apmaciba.rating.saved') });
     } catch (err: any) {
       console.error(err);
       if (err?.response?.status === 409) {
@@ -296,11 +296,11 @@ export default function OnlineTraining({
               <div className="mb-3 flex items-center gap-2">
                  {unlocked ? (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
-                      <Icons.Check className="h-3 w-3" /> Unlocked
+                      <Icons.Check className="h-3 w-3" /> {__('specialistiem.apmaciba.status.unlocked')}
                     </span>
                  ) : (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                      <Icons.Lock className="h-3 w-3" /> Locked
+                      <Icons.Lock className="h-3 w-3" /> {__('specialistiem.apmaciba.status.locked')}
                     </span>
                  )}
               </div>
@@ -324,7 +324,7 @@ export default function OnlineTraining({
                         ? 'border-amber-400 bg-amber-50 text-amber-500' 
                         : 'border-slate-100 bg-white text-slate-400 hover:border-amber-200 hover:text-amber-500'
                     }`}
-                    title="Rate this training"
+                    title={__('specialistiem.apmaciba.actions.rate')}
                    >
                      <Icons.Star filled={showLectureRating} className="h-5 w-5" />
                    </button>
@@ -455,7 +455,7 @@ export default function OnlineTraining({
             <div className="mt-6 animate-in fade-in slide-in-from-top-4 duration-500 rounded-2xl bg-amber-50/50 p-5 ring-1 ring-amber-100 backdrop-blur-sm">
                <div className="mb-4 flex items-center justify-between">
                  <p className="text-xs font-bold uppercase tracking-wider text-amber-700/70">
-                   Review
+                   {__('specialistiem.apmaciba.rating.review')}
                  </p>
                   <button
                     onClick={(e) => {
@@ -480,7 +480,7 @@ export default function OnlineTraining({
                     disabled={alreadyRated || isRatingLoading || !userRatings[lecture.id]}
                     className="w-full rounded-xl bg-slate-900 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-emerald-600 hover:shadow-emerald-500/20 active:translate-y-0.5 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
                   >
-                    {alreadyRated ? 'Rated' : isRatingLoading ? 'Saving...' : __('specialistiem.apmaciba.rating.submit')}
+                    {alreadyRated ? __('specialistiem.apmaciba.rating.rated') : isRatingLoading ? __('specialistiem.apmaciba.rating.saving') : __('specialistiem.apmaciba.rating.submit')}
                   </button>
                </div>
             </div>
@@ -645,7 +645,7 @@ export default function OnlineTraining({
                           className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 hover:border-slate-300"
                         >
                           <Icons.Lock className="h-4 w-4" />
-                          Unlock
+                          {__('specialistiem.apmaciba.actions.unlock')}
                         </button>
                       )}
 
@@ -656,7 +656,7 @@ export default function OnlineTraining({
                           className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-5 py-2.5 text-sm font-semibold text-amber-700 hover:border-amber-300"
                         >
                           <Icons.Star filled className="h-4 w-4" />
-                          {showLectureRating ? 'Hide rating' : 'Rate'}
+                          {showLectureRating ? __('specialistiem.apmaciba.rating.hide') : __('specialistiem.apmaciba.rating.show')}
                         </button>
                       )}
                     </div>
@@ -703,7 +703,9 @@ export default function OnlineTraining({
                     {showLectureRating && unlocked && (
                       <div className="mt-6 rounded-2xl bg-amber-50/50 p-5 ring-1 ring-amber-100">
                         <div className="mb-4 flex items-center justify-between">
-                          <p className="text-xs font-bold uppercase tracking-wider text-amber-700/70">Review</p>
+                          <p className="text-xs font-bold uppercase tracking-wider text-amber-700/70">
+                            {__('specialistiem.apmaciba.rating.review')}
+                          </p>
                           <button
                             onClick={() => setShowRating((p) => ({ ...p, [lecture.id]: false }))}
                             className="text-amber-400 hover:text-amber-600"
@@ -726,7 +728,7 @@ export default function OnlineTraining({
                             disabled={alreadyRated || isRatingLoading || !userRatings[lecture.id]}
                             className="w-full rounded-xl bg-slate-900 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-emerald-600 hover:shadow-emerald-500/20 active:translate-y-0.5 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
                           >
-                            {alreadyRated ? 'Rated' : isRatingLoading ? 'Saving...' : __('specialistiem.apmaciba.rating.submit')}
+                            {alreadyRated ? __('specialistiem.apmaciba.rating.rated') : isRatingLoading ? __('specialistiem.apmaciba.rating.saving') : __('specialistiem.apmaciba.rating.submit')}
                           </button>
                         </div>
                       </div>
