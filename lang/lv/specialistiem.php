@@ -11,7 +11,7 @@ return [
 
         'hero' => [
             'title' => 'Medicīnas speciālistu tiesiskais regulējums',
-            'text'  => 'Eiropas Savienības un Latvijas normatīvie akti, kas regulē medicīnisko praksi, pacientu tiesības un datu aizsardzību.',
+            'text' => 'Eiropas Savienības un Latvijas normatīvie akti, kas regulē medicīnisko praksi, pacientu tiesības un datu aizsardzību.',
         ],
 
         'eu' => [
@@ -19,27 +19,27 @@ return [
 
             1 => [
                 'title' => 'Regula (ES) 2017/745',
-                'text'  => 'Medicīnisko ierīču regula (MDR), kas nosaka medicīnisko ierīču drošību un veiktspēju.',
+                'text' => 'Medicīnisko ierīču regula (MDR), kas nosaka medicīnisko ierīču drošību un veiktspēju.',
             ],
 
             2 => [
                 'title' => 'Regula (ES) 2017/746',
-                'text'  => 'In vitro diagnostikas medicīnisko ierīču regula (IVDR).',
+                'text' => 'In vitro diagnostikas medicīnisko ierīču regula (IVDR).',
             ],
 
             3 => [
                 'title' => 'GDPR',
-                'text'  => 'Vispārīgā datu aizsardzības regula personas datu aizsardzībai.',
+                'text' => 'Vispārīgā datu aizsardzības regula personas datu aizsardzībai.',
             ],
 
             4 => [
                 'title' => 'Klīnisko pētījumu regula',
-                'text'  => 'Noteikumi par zāļu klīnisko pētījumu veikšanu Eiropas Savienībā.',
+                'text' => 'Noteikumi par zāļu klīnisko pētījumu veikšanu Eiropas Savienībā.',
             ],
 
             5 => [
                 'title' => 'Farmakovigilance',
-                'text'  => 'Zāļu drošuma uzraudzības sistēma blakusparādību novērtēšanai un novēršanai.',
+                'text' => 'Zāļu drošuma uzraudzības sistēma blakusparādību novērtēšanai un novēršanai.',
             ],
         ],
 
@@ -48,22 +48,22 @@ return [
 
             1 => [
                 'title' => 'Ārstniecības likums',
-                'text'  => 'Regulē veselības aprūpes sniegšanu, ārstniecības personu kvalifikāciju un pacientu drošību Latvijā.',
+                'text' => 'Regulē veselības aprūpes sniegšanu, ārstniecības personu kvalifikāciju un pacientu drošību Latvijā.',
             ],
 
             2 => [
                 'title' => 'Pacientu tiesību likums',
-                'text'  => 'Nosaka pacientu tiesības, informētu piekrišanu un piekļuvi medicīniskajai informācijai.',
+                'text' => 'Nosaka pacientu tiesības, informētu piekrišanu un piekļuvi medicīniskajai informācijai.',
             ],
 
             3 => [
                 'title' => 'Personas datu apstrādes likums',
-                'text'  => 'Nacionālais regulējums personas datu apstrādei saskaņā ar GDPR.',
+                'text' => 'Nacionālais regulējums personas datu apstrādei saskaņā ar GDPR.',
             ],
 
             4 => [
                 'title' => 'Ministru kabineta noteikumi',
-                'text'  => 'Detalizētas procedūras un prasības, ko izdod Latvijas Republikas Ministru kabinets.',
+                'text' => 'Detalizētas procedūras un prasības, ko izdod Latvijas Republikas Ministru kabinets.',
             ],
         ],
     ],
@@ -79,23 +79,23 @@ return [
             'title' => 'ATMP ražotnes Eiropā',
             'title1' => 'ATMP',
             'title2' => 'ražotnes Eiropā',
-            'text'  => 'Apskats Eiropas vadošajām Advanced Therapy Medicinal Products (ATMP) ražotnēm un to ieguldījumu reģeneratīvajā medicīnā.',
+            'text' => 'Apskats Eiropas vadošajām Advanced Therapy Medicinal Products (ATMP) ražotnēm un to ieguldījumu reģeneratīvajā medicīnā.',
         ],
 
         'overview' => [
             'title' => 'Eiropas ATMP ražošanas apskats',
-            'text'  => 'Eiropa ir viens no pasaules vadošajiem ATMP ražošanas centriem ar vairāk nekā 50 GMP sertificētām ražotnēm 15 valstīs. Šīs ražotnes nodrošina kritiskas terapijas pacientiem ar retām slimībām un onkoloģiskām saslimšanām.',
+            'text' => 'Eiropa ir viens no pasaules vadošajiem ATMP ražošanas centriem ar vairāk nekā 50 GMP sertificētām ražotnēm 15 valstīs. Šīs ražotnes nodrošina kritiskas terapijas pacientiem ar retām slimībām un onkoloģiskām saslimšanām.',
         ],
 
         'stats' => [
             'facilities' => 'GMP ražotnes',
-            'countries'  => 'Eiropas valstis',
-            'patients'   => 'Pacienti gadā',
+            'countries' => 'Eiropas valstis',
+            'patients' => 'Pacienti gadā',
         ],
 
         'facilities' => [
             'title' => 'Vadošās ražotnes',
-            'text'  => 'Izvēlieties ražotni, lai iegūtu detalizētu informāciju par tās darbību.',
+            'text' => 'Izvēlieties ražotni, lai iegūtu detalizētu informāciju par tās darbību.',
             'f1' => [
                 'name' => 'Milānas Bioterhnoloģiju Centrs',
                 'country' => 'Itālija',
@@ -131,30 +131,30 @@ return [
         ],
 
         'details' => [
-            'country'     => 'Valsts',
-            'type'        => 'Tips',
-            'capacity'    => 'Kapacitāte',
+            'country' => 'Valsts',
+            'type' => 'Tips',
+            'capacity' => 'Kapacitāte',
             'established' => 'Dibināta',
-            'close'       => 'Aizvērt',
+            'close' => 'Aizvērt',
         ],
 
         'regulatory' => [
             'title' => 'Regulatīvais ietvars',
-            'text'  => 'ATMP ražošanu Eiropā regulē stingri noteikumi, lai nodrošinātu pacientu drošību un zāļu kvalitāti.',
+            'text' => 'ATMP ražošanu Eiropā regulē stingri noteikumi, lai nodrošinātu pacientu drošību un zāļu kvalitāti.',
 
             'ema' => [
                 'title' => 'EMA regulācija',
-                'text'  => 'Eiropas Zāļu aģentūra (EMA) ir atbildīga par ATMP centralizētu apstiprināšanu visā Eiropas Savienībā.',
+                'text' => 'Eiropas Zāļu aģentūra (EMA) ir atbildīga par ATMP centralizētu apstiprināšanu visā Eiropas Savienībā.',
             ],
 
             'gmp' => [
                 'title' => 'GMP sertifikācija',
-                'text'  => 'Visām ražotnēm jāatbilst Good Manufacturing Practice (GMP) standartiem.',
+                'text' => 'Visām ražotnēm jāatbilst Good Manufacturing Practice (GMP) standartiem.',
             ],
 
             'national' => [
                 'title' => 'Nacionālie regulatori',
-                'text'  => 'Katra valsts izveido savas nacionālās iestādes ATMP uzraudzībai.',
+                'text' => 'Katra valsts izveido savas nacionālās iestādes ATMP uzraudzībai.',
             ],
         ],
 
@@ -162,29 +162,65 @@ return [
     ],
 
     'apmaciba' => [
-            'meta' => [
-                'title' => 'Online apmācība',
-            ],
-
-            'hero' => [
-                'title' => 'Mācību programma ārstiem un citiem veselības aprūpes speciālistiem',
-                'text'  => 'Jaunieviestās terapijas zālēm (ATMP), arī mezenhimālo stromālo šūnu (MSC) lietošanu izņēmuma gadījumos.',
-            ],
-
-            'form' => [
-                'placeholder'   => 'Ievadiet kodu',
-                'submit'        => 'Atbloķēt',
-                'error_invalid' => 'Lūdzu ievadiet derīgu kodu.',
-            ],
-
-            'lock' => [
-                'title' => 'Pašlaik nav pieejamas mācības',
-                'subtitle' => 'Lūdzu pārbaudiet vēlāk.',
-            ],
-
-            'rating' => [
-                'submit' => 'Iesniegt Vērtējumu',
-            ],
+        'meta' => [
+            'title' => 'Online apmācība',
         ],
-    
+
+        'hero' => [
+            'title' => 'Mācību programma ārstiem un citiem veselības aprūpes speciālistiem',
+            'text' => 'Jaunieviestās terapijas zālēm (ATMP), arī mezenhimālo stromālo šūnu (MSC) lietošanu izņēmuma gadījumos.',
+        ],
+
+        'form' => [
+            'placeholder' => 'Mācību nosaukums',
+            'submit' => 'Atbloķēt',
+            'error_invalid' => 'Lūdzu ievadiet derīgu kodu.',
+        ],
+
+        'filters' => [
+            'search_title' => [
+                'label' => 'Meklēt pēc nosaukuma',
+            ],
+            'teacher' => [
+                'label' => 'Skolotājs',
+            ],
+            'min_rating' => [
+                'label' => 'Zvaigžņu atsauksmes',
+            ],
+            'all' => 'Visi',
+            'results' => 'rezultāti',
+            'clear' => 'Izdzēst filtrus',
+        ],
+
+        'lock' => [
+            'title' => 'Pašlaik nav pieejamas mācības',
+            'subtitle' => 'Lūdzu pārbaudiet vēlāk.',
+        ],
+
+        'rating' => [
+            'submit' => 'Iesniegt Vērtējumu',
+            'saved' => 'Vērtējums saglabāts.',
+            'saving' => 'Saglabā...',
+            'rated' => 'Novērtēts',
+            'review' => 'Vērtējums',
+            'show' => 'Vērtēt',
+            'hide' => 'Slēpt vērtējumu',
+        ],
+
+        'status' => [
+            'locked' => 'Bloķēts',
+            'unlocked' => 'Atbloķēts',
+        ],
+
+        'actions' => [
+            'unlock' => 'Atbloķēt',
+            'play' => 'Skatīties',
+            'rate' => 'Novērtēt mācību',
+        ],
+
+        'unlock' => [
+            'success' => 'Mācība atbloķēta veiksmīgi.',
+        ],
+    ],
+
 ];
