@@ -156,7 +156,7 @@ Route::post('/ratings', [RatingController::class, 'store']);
 Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
     // <<<<<<<<<<<<<<<< ADMIN PAGES >>>>>>>>>>>>>>>>>>
-    Route::get('/', fn() => Inertia::render('Admin/dashboard'))->name('admin.dashboard');
+    Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/content-studio', fn() => Inertia::render('Admin/contentStudio'))->name('admin.content');
     Route::get('/insights', fn() => Inertia::render('Admin/insights'))->name('admin.insights');
     Route::get('/integrations', fn() => Inertia::render('Admin/integrations'))->name('admin.integrations');
