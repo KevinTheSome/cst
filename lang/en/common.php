@@ -16,4 +16,5 @@ return [
     'untitled' => 'Untitled',
 
     'delete_confirm' => 'Are you sure you want to delete?',
+    'close' => 'Close',
 ];
