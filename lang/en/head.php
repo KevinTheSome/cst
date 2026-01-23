@@ -2,6 +2,9 @@
 
 return [
     'title' => 'Biochip scientific laboratory',
+
+    'menu' => 'Menu',
+
     'nav_patients' => 'FOR PATIENTS',
     'nav_patients_atmp' => 'What is ATMP?',
     'nav_patients_psoriasis' => 'Psoriasis and new therapies',
@@ -12,8 +15,10 @@ return [
     'nav_specialists_laws' => 'EU regulation and laws',
     'nav_specialists_plants' => 'ATMP manufacturing in Europe',
     'nav_specialists_training' => 'Training',
+    'nav_specialists_survey' => 'Survey form',
 
     'nav_research' => 'RESEARCH',
+    'nav_research_clinical_trials' => 'Studies',
     'nav_research_postdoc' => 'PostDoc form',
     'nav_research_code' => 'Code form',
     'nav_research_documents' => 'Document database',
@@ -23,4 +28,6 @@ return [
     'nav_about_contacts' => 'Contacts',
     'nav_about_join' => 'Get in touch',
     'nav_about_lab' => 'Laboratory',
+
+    'early_access' => 'Website in early access',
 ];

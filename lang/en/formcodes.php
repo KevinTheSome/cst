@@ -4,12 +4,15 @@ return [
     'title' => 'Access codes',
     'subtitle' => 'Generate and monitor time–limited access codes for the patient form.',
 
-    'back' => '← Back to panel',
+    'back' => 'Back to panel',
 
     'create_title' => 'Create new code',
     'create_step' => 'Step 1',
     'create_description' => 'Specify maximum usage count and validity time.',
 
+    'select_survey' => 'Select form',
+    'custom_code_title' => 'Custom Code (optional)',
+    'custom_code_example' => '12 characters, no spaces',
     'max_uses' => 'Maximum uses',
     'valid_hours' => 'Validity in hours',
     'preset_hint' => 'For example: 24 = 24 hours, 48 = 2 days.',
@@ -22,10 +25,12 @@ return [
     'stats_avg_uses' => 'Average allowed uses',
     'stats_last_created' => 'Last created code',
     'stats_hint' => 'Codes can be shared with patients so they can fill in the form within a limited time.',
+    'total_code' => 'Total code',
 
     'table_existing' => 'Existing codes',
     'table_title' => 'Active code list',
     'table_sorted' => 'Sorted by newest',
+    'col_survey' => 'Form',
     'col_code' => 'Code',
     'col_uses' => 'Uses',
     'col_created_by' => 'Created by',

@@ -1,7 +1,14 @@
 import { useLang } from '@/hooks/useLang';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
-import { ClipboardEvent, FormEvent, KeyboardEvent, useMemo, useRef, useState } from 'react';
+import {
+    ClipboardEvent,
+    FormEvent,
+    KeyboardEvent,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 
 // --- ICONS ---
 const Icons = {
@@ -58,6 +65,7 @@ const CODE_LENGTH = 12;
 const CODE_GROUP_SIZE = 4;
 
 type FieldType = 'radio' | 'checkbox' | 'dropdown' | 'text' | 'scale';
+
 type Lang = 'lv' | 'en';
 
 interface DynamicField {
@@ -80,27 +88,13 @@ interface LoadedForm {
     fields: DynamicField[];
 }
 
-const highlightCards = [
-    {
-        title: 'Soli pa solim',
-        accent: 'Dinamiski jautājumi',
-        description: 'Jautājumi tiek ielādēti no anketas, kas piesaistīta jūsu kodam.',
-    },
-    {
-        title: 'Datu drošība',
-        accent: 'Šifrēta sūtīšana',
-        description: 'Jūsu sensitīvie dati tiek apstrādāti droši un konfidenciāli.',
-    },
-    {
-        title: 'Atbalsts',
-        accent: 'Rūpes par pacientu',
-        description: 'Mūsu komanda palīdz interpretēt atbildes un sniedz ieteikumus.',
-    },
-];
-
 export default function Anketa() {
-    const { locale } = useLang();
-    const activeLang: Lang = locale === 'en' ? 'en' : 'lv';
+    // useLang is expected to provide: __ (translator function) and lang (translations object)
+    const { __, lang, locale } = useLang() as { __: (k: string, r?: Record<string, any>) => string; lang: any; locale?: string };
+    const activeLang: Lang = (locale === 'en' ? 'en' : 'lv') as Lang;
+
+    // pull the questions bundle (shared via Inertia::share -> 'lang' prop)
+    const questionsBundle = lang?.questions ?? {};
 
     // State
     const [codeDigits, setCodeDigits] = useState<string[]>(() => Array(CODE_LENGTH).fill(''));
@@ -188,7 +182,7 @@ export default function Anketa() {
     const verifyCode = async () => {
         const normalized = filledCode.toUpperCase();
         if (normalized.length < CODE_LENGTH) {
-            setCodeError('Kods satur 12 simbolus.');
+            setCodeError(__('questions.code.errors.length'));
             focusInput(normalized.length);
             return;
         }
@@ -205,13 +199,13 @@ export default function Anketa() {
                 if (form) {
                     setLoadedForm({ id: form.id, title: form.title, fields: form.fields || [] });
                 } else {
-                    setCodeError('Šim kodam nav piesaistīta anketa.');
+                    setCodeError(__('questions.code.errors.no_form'));
                 }
             } else {
-                setCodeError(resp.data?.message ?? 'Kods nav derīgs.');
+                setCodeError(resp.data?.message ?? __('questions.code.errors.invalid'));
             }
         } catch (err: any) {
-            setCodeError('Servera kļūda. Mēģiniet vēlāk.');
+            setCodeError(__('questions.code.errors.server'));
         } finally {
             setVerifying(false);
         }
@@ -289,7 +283,7 @@ export default function Anketa() {
             await axios.post('/anketa/store-answers', { form_id: loadedForm.id, code: usedCode, answers });
             setSubmitted(true);
         } catch (err) {
-            setSubmitError('Kļūda saglabājot atbildes.');
+            setSubmitError(__('questions.submit.error'));
         }
     };
 
@@ -299,9 +293,12 @@ export default function Anketa() {
     const currentField = loadedForm?.fields[currentQuestionIndex];
     const progress = totalQuestions > 0 ? ((currentQuestionIndex + 1) / totalQuestions) * 100 : 0;
 
+    // Highlights come from shared translations if present
+    const highlightCards = questionsBundle?.highlights ?? [];
+
     return (
         <>
-            <Head title="Anketa" />
+            <Head title={__('questions.meta.title')} />
 
             {/* CONSENT MODAL */}
             {showConsentModal && (
@@ -310,22 +307,20 @@ export default function Anketa() {
                         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
                             <Icons.ShieldCheck className="h-6 w-6" />
                         </div>
-                        <h2 className="text-2xl font-bold text-slate-900">Datu apstrādes piekrišana</h2>
-                        <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                            Anketa apkopo sensitīvu veselības informāciju, lai sagatavotu personalizētu terapijas piedāvājumu.
-                        </p>
+                        <h2 className="text-2xl font-bold text-slate-900">{__('questions.consent.title')}</h2>
+                        <p className="mt-3 text-sm leading-relaxed text-slate-600">{__('questions.consent.description')}</p>
                         <div className="mt-8 grid gap-3 sm:grid-cols-2">
                             <button
                                 onClick={() => setConsentChoice('declined')}
                                 className="rounded-xl border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50"
                             >
-                                Nepiekrītu
+                                {__('questions.consent.decline')}
                             </button>
                             <button
                                 onClick={() => setConsentChoice('accepted')}
                                 className="rounded-xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition-all hover:bg-emerald-700"
                             >
-                                Piekrītu
+                                {__('questions.consent.accept')}
                             </button>
                         </div>
                     </div>
@@ -348,12 +343,10 @@ export default function Anketa() {
                         <header className="mb-12 text-center">
                             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 px-3 py-1 text-xs font-semibold text-emerald-700 backdrop-blur">
                                 <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-                                Drošais Pacientu Portāls
+                                {__('questions.portal.badge')}
                             </div>
-                            <h1 className="mb-4 text-4xl font-bold tracking-tight text-slate-900">Anketa Pacientiem</h1>
-                            <p className="mx-auto max-w-2xl text-lg text-slate-600">
-                                Ievadiet unikālo piekļuves kodu, lai ielādētu anketas jautājumus.
-                            </p>
+                            <h1 className="mb-4 text-4xl font-bold tracking-tight text-slate-900">{__('questions.portal.title')}</h1>
+                            <p className="mx-auto max-w-2xl text-lg text-slate-600">{__('questions.portal.subtitle')}</p>
                         </header>
                     )}
 
@@ -363,7 +356,7 @@ export default function Anketa() {
                             <div className="mb-8 text-center">
                                 <h3 className="flex items-center justify-center gap-2 text-lg font-bold text-slate-900">
                                     <Icons.Lock className="h-5 w-5 text-slate-400" />
-                                    Ievadiet 12 zīmju kodu
+                                    {__('questions.code.title')}
                                 </h3>
                             </div>
 
@@ -410,26 +403,24 @@ export default function Anketa() {
                                         disabled={verifying || filledCode.length < CODE_LENGTH}
                                         className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-8 py-3 text-sm font-bold text-white shadow-lg transition-all hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
-                                        {verifying ? (
-                                            'Pārbauda...'
-                                        ) : (
-                                            <>
-                                                Atbloķēt <Icons.Unlock className="h-4 w-4" />
-                                            </>
-                                        )}
+                                        {verifying ? __('questions.code.verifying') : (<><span>{__('questions.code.unlock')}</span> <Icons.Unlock className="h-4 w-4" /></>)}
                                     </button>
                                     <button
                                         onClick={resetCode}
                                         className="rounded-xl border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50"
                                     >
-                                        Notīrīt
+                                        {__('questions.code.reset')}
                                     </button>
+                                </div>
+
+                                <div className="text-xs text-slate-400 mt-1">
+                                    {charactersRemaining > 0 ? `${charactersRemaining} ${__('questions.code.title')}` : null}
                                 </div>
                             </div>
 
                             <div className="mt-12 grid gap-4 border-t border-slate-100 pt-8 sm:grid-cols-3">
-                                {highlightCards.map((card) => (
-                                    <div key={card.title} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                                {(highlightCards.length > 0 ? highlightCards : questionsBundle?.highlights ?? []).map((card: any) => (
+                                    <div key={card.title ?? Math.random()} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
                                         <p className="mb-1 text-xs font-bold tracking-wider text-emerald-600 uppercase">{card.accent}</p>
                                         <h4 className="mb-1 text-sm font-semibold text-slate-900">{card.title}</h4>
                                         <p className="text-xs leading-relaxed text-slate-500">{card.description}</p>
@@ -445,10 +436,10 @@ export default function Anketa() {
                             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
                                 <Icons.Lock className="h-8 w-8" />
                             </div>
-                            <h2 className="text-2xl font-bold text-slate-900">Piekļuve liegta</h2>
-                            <p className="mt-2 text-slate-600">Jūs atteicāties no datu apstrādes. Anketa netika ielādēta.</p>
+                            <h2 className="text-2xl font-bold text-slate-900">{__('questions.declined.title')}</h2>
+                            <p className="mt-2 text-slate-600">{__('questions.declined.description')}</p>
                             <button onClick={resetCode} className="mt-8 text-sm font-bold text-emerald-600 hover:underline">
-                                Sākt no jauna
+                                {__('questions.declined.restart')}
                             </button>
                         </div>
                     )}
@@ -466,7 +457,7 @@ export default function Anketa() {
                                                 : loadedForm.title}
                                         </h2>
                                         <button onClick={resetCode} className="text-xs font-semibold text-rose-500 hover:underline">
-                                            Iziet
+                                            {__('questions.form.exit')}
                                         </button>
                                     </div>
 
@@ -485,7 +476,7 @@ export default function Anketa() {
                                             <div className="space-y-6">
                                                 <div className="space-y-2">
                                                     <span className="text-xs font-bold tracking-widest text-slate-400 uppercase">
-                                                        Jautājums {currentQuestionIndex + 1} no {totalQuestions}
+                                                        {__('questions.form.question_counter', { current: currentQuestionIndex + 1, total: totalQuestions })}
                                                     </span>
                                                     <h3 className="text-2xl leading-tight font-bold text-slate-900 sm:text-3xl">
                                                         {(currentField.label?.[activeLang] ?? currentField.label?.lv) || '...'}
@@ -536,7 +527,7 @@ export default function Anketa() {
                                                             className="w-full rounded-2xl border-2 border-slate-200 bg-slate-50 p-4 text-lg text-slate-900 transition-all outline-none placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:ring-0"
                                                             placeholder={
                                                                 (currentField.placeholder?.[activeLang] ?? currentField.placeholder?.lv) ||
-                                                                'Rakstiet atbildi šeit...'
+                                                                __('questions.form.placeholder_text')
                                                             }
                                                             value={(answers[currentField.id] as string) || ''}
                                                             onChange={(e) => handleTextAnswer(currentField.id, e.target.value)}
@@ -550,7 +541,7 @@ export default function Anketa() {
                                                                 value={(answers[currentField.id] as string) || ''}
                                                                 onChange={(e) => handleDropdownAnswer(currentField.id, e.target.value)}
                                                             >
-                                                                <option value="">Izvēlieties...</option>
+                                                                <option value="">{__('questions.form.select_placeholder')}</option>
                                                                 {(currentField.options?.[activeLang] ?? currentField.options?.lv ?? []).map((opt) => (
                                                                     <option key={opt} value={opt}>
                                                                         {opt}
@@ -580,11 +571,7 @@ export default function Anketa() {
                                                                             key={val}
                                                                             type="button"
                                                                             onClick={() => handleScaleAnswer(currentField.id, String(val))}
-                                                                            className={`flex-1 rounded-xl py-4 text-lg font-bold transition-all duration-200 ${
-                                                                                isSelected
-                                                                                    ? 'scale-105 bg-emerald-600 text-white shadow-lg shadow-emerald-500/30'
-                                                                                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700'
-                                                                            }`}
+                                                                            className={`flex-1 rounded-xl py-4 text-lg font-bold transition-all duration-200 ${isSelected ? 'scale-105 bg-emerald-600 text-white shadow-lg shadow-emerald-500/30' : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700'}`}
                                                                         >
                                                                             {val}
                                                                         </button>
@@ -603,7 +590,7 @@ export default function Anketa() {
                                                         onClick={handlePrev}
                                                         className="flex items-center gap-2 text-sm font-bold text-slate-500 transition-colors hover:text-slate-800"
                                                     >
-                                                        <Icons.ArrowLeft className="h-4 w-4" /> Atpakaļ
+                                                        <Icons.ArrowLeft className="h-4 w-4" /> {__('questions.navigation.back')}
                                                     </button>
                                                 ) : (
                                                     <div /> /* Spacer */
@@ -614,14 +601,14 @@ export default function Anketa() {
                                                         onClick={handleNext}
                                                         className="flex items-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/10 transition-all hover:bg-emerald-600"
                                                     >
-                                                        Tālāk <Icons.ArrowRight className="h-4 w-4" />
+                                                        {__('questions.navigation.next')} <Icons.ArrowRight className="h-4 w-4" />
                                                     </button>
                                                 ) : (
                                                     <button
                                                         onClick={() => handleSubmitAnswers()}
                                                         className="flex items-center gap-2 rounded-full bg-emerald-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/30 transition-all hover:bg-emerald-700"
                                                     >
-                                                        Iesniegt <Icons.Check className="h-4 w-4" />
+                                                        {__('questions.navigation.submit')} <Icons.Check className="h-4 w-4" />
                                                     </button>
                                                 )}
                                             </div>
@@ -642,13 +629,13 @@ export default function Anketa() {
                                     <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-emerald-50 text-emerald-500 shadow-sm">
                                         <Icons.Check className="h-12 w-12" />
                                     </div>
-                                    <h2 className="mb-4 text-3xl font-bold text-slate-900">Paldies!</h2>
-                                    <p className="text-lg text-slate-600">Jūsu atbildes ir veiksmīgi saglabātas drošajā datu bāzē.</p>
+                                    <h2 className="mb-4 text-3xl font-bold text-slate-900">{__('questions.submit.success_title')}</h2>
+                                    <p className="text-lg text-slate-600">{__('questions.submit.success_text')}</p>
                                     <button
                                         onClick={() => window.location.reload()}
                                         className="mt-8 inline-flex items-center justify-center rounded-full border border-slate-200 px-6 py-3 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50"
                                     >
-                                        Atgriezties sākumā
+                                        {__('questions.submit.restart')}
                                     </button>
                                 </div>
                             )}

@@ -37,14 +37,66 @@ const Icons = {
     ),
 };
 
+const copy = {
+    lv: {
+        metaTitle: 'Sākumlapa',
+        cards: [
+            {
+                title: 'Pacientu aptaujas anketa',
+                text: 'Meklēju risinājumu imunitātei, locītavām vai atlabšanai.',
+                action: 'Aizpildīt anketu',
+            },
+            {
+                title: 'Speciālistu/Ārstu aptajuas anketa',
+                text: 'Vēlos sadarboties pētniecībā vai nosūtīt pacientus.',
+                action: 'Ispaust savu viedokli',
+            },
+            {
+                title: 'Mācību programmas ārstiem/speciālistiem',
+                text: 'Programmas nav konkrētu ārstēšanas metožu vai medicīnisku pakalpojumu reklāma.',
+                action: 'Uzzināt vairāk',
+            },
+        ],
+        completedLabel: 'Izpildīto anketu skaits',
+        finalTitle: 'Uzzināt vairāk?',
+        finalFaq: 'Biežāk uzdotie jautājumi',
+        finalContact: 'Sazināties ar mums',
+    },
+    en: {
+        metaTitle: 'Home',
+        cards: [
+            {
+                title: 'Patient survey form',
+                text: 'I am looking for solutions for immunity, joints, or recovery.',
+                action: 'Fill out the form',
+            },
+            {
+                title: 'Specialist/doctor survey form',
+                text: 'I want to collaborate in research or refer patients.',
+                action: 'Share your opinion',
+            },
+            {
+                title: 'Training programs for doctors/specialists',
+                text: 'Programs are not advertising specific treatments or medical services.',
+                action: 'Learn more',
+            },
+        ],
+        completedLabel: 'Completed forms count',
+        finalTitle: 'Learn more?',
+        finalFaq: 'Frequently asked questions',
+        finalContact: 'Contact us',
+    },
+} as const;
+
 export default function Welcome() {
-    const { __ } = useLang();
+    const { locale } = useLang();
+    const t = copy[locale === 'en' ? 'en' : 'lv'];
     const { props } = usePage<any>();
     const completedFormsCount = props.completedFormsCount || 0;
 
     return (
         <>
-            <Head title={__('Sākumlapa')} />
+            <Head title={t.metaTitle} />
 
             {/* MAIN WRAPPER */}
             <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
@@ -63,18 +115,18 @@ export default function Welcome() {
                         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-3">
                             {/* 1. Patient Card (Emerald) */}
                             <Link
-                                href="/postdock-anketa"
+                                href="/postdock-anketa?role=patients"
                                 className="group relative flex h-full flex-col items-start justify-between rounded-2xl border border-slate-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-400 hover:shadow-xl hover:shadow-emerald-500/10"
                             >
                                 <div>
                                     <div className="mb-5 inline-flex rounded-xl bg-emerald-50 p-3 text-emerald-600 ring-1 ring-emerald-100 transition-colors group-hover:bg-emerald-600 group-hover:text-white group-hover:ring-emerald-600">
                                         <Icons.User className="h-6 w-6" />
                                     </div>
-                                    <h3 className="mb-2 text-xl font-bold text-slate-900">Pacientu aptaujas anketa</h3>
-                                    <p className="text-sm leading-relaxed text-slate-500">Meklēju risinājumu imunitātei, locītavām vai atlabšanai.</p>
+                                    <h3 className="mb-2 text-xl font-bold text-slate-900">{t.cards[0].title}</h3>
+                                    <p className="text-sm leading-relaxed text-slate-500">{t.cards[0].text}</p>
                                 </div>
                                 <div className="mt-6 flex items-center text-sm font-bold text-emerald-600 transition-colors group-hover:text-emerald-700">
-                                    Aizpildīt anketu <Icons.ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    {t.cards[0].action} <Icons.ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                                 </div>
                             </Link>
 
@@ -87,11 +139,11 @@ export default function Welcome() {
                                     <div className="mb-5 inline-flex rounded-xl bg-sky-50 p-3 text-sky-600 ring-1 ring-sky-100 transition-colors group-hover:bg-sky-600 group-hover:text-white group-hover:ring-sky-600">
                                         <Icons.Clipboard className="h-6 w-6" />
                                     </div>
-                                    <h3 className="mb-2 text-xl font-bold text-slate-900">Speciālistu/Ārstu aptajuas anketa</h3>
-                                    <p className="text-sm leading-relaxed text-slate-500">Vēlos sadarboties pētniecībā vai nosūtīt pacientus.</p>
+                                    <h3 className="mb-2 text-xl font-bold text-slate-900">{t.cards[1].title}</h3>
+                                    <p className="text-sm leading-relaxed text-slate-500">{t.cards[1].text}</p>
                                 </div>
                                 <div className="mt-6 flex items-center text-sm font-bold text-sky-600 transition-colors group-hover:text-sky-700">
-                                    Ispaust savu viedokli <Icons.ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    {t.cards[1].action} <Icons.ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                                 </div>
                             </Link>
 
@@ -105,13 +157,11 @@ export default function Welcome() {
                                     <div className="mb-5 inline-flex rounded-xl bg-violet-50 p-3 text-violet-600 ring-1 ring-violet-100 transition-colors group-hover:bg-violet-600 group-hover:text-white group-hover:ring-violet-600">
                                         <Icons.Book className="h-6 w-6" />
                                     </div>
-                                    <h3 className="mb-2 text-xl font-bold text-slate-900">Mācību programmas ārstiem/speciālistiem</h3>
-                                    <p className="text-sm leading-relaxed text-slate-500">
-                                        Programmas nav konkrētu ārstēšanas metožu vai medicīnisku pakalpojumu reklāma.
-                                    </p>
+                                    <h3 className="mb-2 text-xl font-bold text-slate-900">{t.cards[2].title}</h3>
+                                    <p className="text-sm leading-relaxed text-slate-500">{t.cards[2].text}</p>
                                 </div>
                                 <div className="mt-6 flex items-center text-sm font-bold text-violet-600 transition-colors group-hover:text-violet-700">
-                                    Uzzināt vairāk <Icons.ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    {t.cards[2].action} <Icons.ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                                 </div>
                             </Link>
                         </div>
@@ -120,26 +170,26 @@ export default function Welcome() {
                     {/* --- COMPLETED FORMS COUNT --- */}
                     <div className="py-8 text-center">
                         <div className="mx-auto max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                            <div className="mb-1 text-sm font-medium text-slate-600">Izpildīto anketu skaits</div>
+                            <div className="mb-1 text-sm font-medium text-slate-600">{t.completedLabel}</div>
                             <div className="text-3xl font-bold text-emerald-600">{completedFormsCount.toLocaleString()}</div>
                         </div>
                     </div>
 
                     {/* --- FINAL CTA --- */}
                     <div className="py-12 text-center">
-                        <h2 className="text-2xl font-bold text-slate-900">Uzzināt vairāk?</h2>
+                        <h2 className="text-2xl font-bold text-slate-900">{t.finalTitle}</h2>
                         <div className="mt-6 flex justify-center gap-4">
                             <Link
                                 href="/pacientiem/faq"
                                 className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"
                             >
-                                Lidz biežāk jautātie jautājumi
+                                {t.finalFaq}
                             </Link>
                             <a
                                 href="/ParMums/contacts"
                                 className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-slate-100"
                             >
-                                Sazināties ar mums
+                                {t.finalContact}
                             </a>
                         </div>
                     </div>

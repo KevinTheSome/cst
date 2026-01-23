@@ -18,6 +18,8 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\StoredFileController;
 use App\Models\FormResult;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\ClinicalTrialsController;
+use App\Http\Controllers\PostDockAnketaController;
 
 if (!function_exists('findPageComponent')) {
 
@@ -101,10 +103,13 @@ Route::get('ParMums/musu-grupa', fn() => Inertia::render('ParMums/musuGrupa'))->
 Route::get('ParMums/lablife', fn() => Inertia::render('ParMums/lablife'))->name('lablife');
 
 Route::get('/anketa', fn() => Inertia::render('anketa'))->name('anketa');
-Route::get('/postdock-anketa', fn() => Inertia::render('PostDockanketa'))->name('postdock-anketa');
+Route::get('/postdock-anketa', [PostDockAnketaController::class, 'index'])
+    ->name('postdock-anketa');
 
 // <<<<<<<<<<<< ANKETAS >>>>>>>>>>>>>
-Route::get('/clinical-trials', fn() => Inertia::render('clinicalTrials'))->name('clinicalTrials');
+Route::get('/clinical-trials', [\App\Http\Controllers\ClinicalTrialsController::class, 'index'])
+    ->name('clinicalTrials');
+
 Route::get(
     '/anketa-specialiste',
     fn() =>
@@ -166,7 +171,7 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
     Route::get('/form-codes', [FormCodeController::class, 'index'])->name('admin.formCodes');
     Route::post('/form-codes', [FormCodeController::class, 'store'])->name('admin.formCodes.store');
-    Route::delete('/form-codes/{formCode}', [FormCodeController::class, 'destroy'])->name('admin.formCodes.destroy');
+    Route::post('/form-codes/{formCode}', [FormCodeController::class, 'destroy'])->name('admin.formCodes.destroy');
 
     Route::get('/anketa', [AnketaController::class, 'index'])->name('admin.anketa');
     Route::get('/anketa/create', [AnketaController::class, 'create'])->name('admin.anketa.create');
@@ -175,7 +180,7 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::get('/anketa/show/{id}', [AnketaController::class, 'show'])->name('admin.anketa.show');
     Route::get('/anketa/edit/{id}', [AnketaController::class, 'edit'])->name('admin.anketa.edit');
     Route::post('/anketa/update/{id}', [AnketaController::class, 'update'])->name('admin.anketa.update');
-    Route::delete('/anketa/{id}/delete', [AnketaController::class, 'destroy'])->name('admin.anketa.destroy');
+    Route::post('/anketa/delete/{id}', [AnketaController::class, 'destroy'])->name('admin.anketa.destroy');
 
     Route::get('/selector', [FormTypeController::class, 'index'])->name('admin.selector');
     Route::post('/selector/add', [FormTypeController::class, 'add'])->name('admin.selector.add');
@@ -197,7 +202,7 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
     Route::post('/lecture/codes', [LectureController::class, 'store'])->name('codes.store');
     Route::get('/lecture/codes/{id}', [LectureController::class, 'show'])->name('codes.show');
     Route::put('/lecture/codes/{id}', [LectureController::class, 'update'])->name('codes.update');
-    Route::delete('/lecture/codes/{id}', [LectureController::class, 'destroy'])->name('codes.destroy');
+    Route::post('/lecture/codes/{id}', [LectureController::class, 'destroy'])->name('codes.destroy');
     Route::post('/lecture/codes/{id}/regenerate', [LectureController::class, 'regenerate'])->name('codes.regenerate');
 
     Route::get('/files/upload', [StoredFileController::class, 'create'])->name('files.create');

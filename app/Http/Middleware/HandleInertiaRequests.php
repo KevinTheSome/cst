@@ -32,33 +32,44 @@ class HandleInertiaRequests extends Middleware
     {
         // Determine locale from session, or use default
         $locale = $request->session()->get('locale', config('app.locale'));
-        logger('Current locale: ' . $locale);
 
         // Set Laravel locale **before any translations**
         App::setLocale($locale);
 
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
-        
 
         return [
             ...parent::share($request),
 
             // current locale for frontend
             'locale' => $locale,
-            
 
-            // 🔹 All translation bundles you want in JS
+            // All translation bundles you want in JS
             'lang' => [
-                'test'   => Lang::get('test'),
-                'head'   => Lang::get('head'),
+                'common' => Lang::get('common'),
+                'test' => Lang::get('test'),
+                'head' => Lang::get('head'),
                 'anketa' => Lang::get('anketa'),
                 'formcodes' => Lang::get('formcodes'),
+                'clinical_trials' => Lang::get('clinical_trials'),
+                'database' => Lang::get('database'),
+                'post_dockanketa' => Lang::get('post_dockanketa'),
+                'questions' => Lang::get('questions'),
+                'admin' => Lang::get('admin'),
+                'admin_dashboard' => Lang::get('admin_dashboard'),
+                'specialistiem' => Lang::get('specialistiem'),
+                'lecture_codes' => Lang::get('lecture_codes'),
+                'parmums' => Lang::get('parMums'),
+                'files' => Lang::get('files'),
+                'training' => Lang::get('training'),
+                'admin_login' => Lang::get('admin_login'),
+                'forma' => Lang::get('forma'),
             ],
 
-            'name'  => config('app.name'),
+            'name' => config('app.name'),
             'quote' => [
                 'message' => trim($message),
-                'author'  => trim($author),
+                'author' => trim($author),
             ],
 
             'auth' => [

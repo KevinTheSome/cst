@@ -1,230 +1,885 @@
 import { useLang } from '@/hooks/useLang';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
-import { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 // --- TYPES ---
 type MultilingualTitle = { lv?: string; en?: string; [key: string]: string | undefined };
+
 type Lecture = {
-    id: string;
+    id: number;
     title: string | MultilingualTitle;
     description?: string;
     duration?: string;
-    url?: string;
+    level?: string;
+    teacher?: string;
+    tag?: string;
+    thumbnail?: string;
+    url?: string | null;
     starts_at?: string;
     ends_at?: string;
     rating_avg?: number;
     ratings_count?: number;
 };
 
+type VerifyResponse = {
+    valid: boolean;
+    message?: string;
+    lectures?: Array<{ id: number }>;
+};
+
 // --- ICONS ---
 const Icons = {
     Lock: ({ className }: { className?: string }) => (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+            />
+        </svg>
+    ),
+    Unlock: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M13.5 10.5V6.75a4.5 4.5 0 119 0v3.75M3.75 21.75h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+            />
         </svg>
     ),
     Play: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+            <path
+                fillRule="evenodd"
+                d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z"
+                clipRule="evenodd"
+            />
+        </svg>
+    ),
+    Check: ({ className }: { className?: string }) => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={className}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        </svg>
+    ),
+    Star: ({ className, filled }: { className?: string; filled: boolean }) => (
+        <svg
+            viewBox="0 0 24 24"
+            fill={filled ? 'currentColor' : 'none'}
+            stroke="currentColor"
+            strokeWidth={filled ? '0' : '1.5'}
+            className={className}
+        >
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.545.044.77.77.349 1.132l-4.252 3.638a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.252-3.638c-.421-.362-.196-1.088.349-1.132l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+            />
+        </svg>
+    ),
+    Rate: ({ className }: { className?: string }) => (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.545.044.77.77.349 1.132l-4.252 3.638a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.252-3.638c-.421-.362-.196-1.088.349-1.132l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+            />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8.25v-2.25m0 0V3.75m0 2.25h-2.25m2.25 0h2.25" />
         </svg>
     ),
 };
 
-// --- STAR RATING ---
-const StarRating = ({ value, onChange }: { value: number; onChange: (v: number) => void }) => (
-    <div className="flex gap-1 mt-2">
-        {[1, 2, 3, 4, 5].map((star) => (
-            <svg
-                key={star}
-                onClick={() => onChange(star)}
-                className={`h-6 w-6 cursor-pointer ${star <= value ? 'fill-amber-400 text-amber-400' : 'fill-none text-slate-400'}`}
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-            >
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-            </svg>
-        ))}
-    </div>
-);
+// --- STAR RATING COMPONENT ---
+const StarRating = ({ value, onChange, readOnly = false }: { value: number; onChange?: (v: number) => void; readOnly?: boolean }) => {
+    const [hover, setHover] = useState<number | null>(null);
 
-export default function OnlineTraining({ initialLectures = [] as Lecture[] }) {
+    return (
+        <div className="flex gap-1" onMouseLeave={() => !readOnly && setHover(null)}>
+            {[1, 2, 3, 4, 5].map((star) => {
+                const isFilled = hover !== null ? star <= hover : star <= value;
+                return (
+                    <button
+                        key={star}
+                        type="button"
+                        disabled={readOnly}
+                        onClick={() => !readOnly && onChange?.(star)}
+                        onMouseEnter={() => !readOnly && setHover(star)}
+                        className={`group relative transition-transform ${readOnly ? 'cursor-default' : 'cursor-pointer hover:scale-110 active:scale-90'}`}
+                    >
+                        <Icons.Star
+                            filled={isFilled}
+                            className={`h-8 w-8 transition-colors duration-200 ${isFilled ? 'text-amber-400 drop-shadow-sm' : 'text-slate-300'}`}
+                        />
+                    </button>
+                );
+            })}
+        </div>
+    );
+};
+
+export default function OnlineTraining({
+    initialLectures = [] as Lecture[],
+    unlockedLectures = [] as number[],
+    filters = { title: '', author: '', min_rating: 0 } as { title?: string; author?: string; min_rating?: number | string },
+    authors = [] as string[],
+    debug = null as any,
+}: {
+    initialLectures: Lecture[];
+    unlockedLectures?: number[];
+    filters?: { title?: string; author?: string; min_rating?: number | string };
+    authors?: string[];
+    debug?: any;
+}) {
     const { __, locale } = useLang();
+    const [lectures, setLectures] = useState<Lecture[]>(initialLectures);
+    const [ratedLectureIds, setRatedLectureIds] = useState<Set<number>>(new Set());
 
-    const [selectedLecture, setSelectedLecture] = useState<string | null>(null);
-    const [unlockedLectures, setUnlockedLectures] = useState<string[]>([]);
+    useEffect(() => {
+        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (token) axios.defaults.headers.common['X-CSRF-TOKEN'] = token;
+        axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+    }, []);
+
+    useEffect(() => {
+        setLectures(initialLectures);
+    }, [initialLectures]);
+
+    // --- STATE ---
+    const [selectedLectureId, setSelectedLectureId] = useState<number | null>(null);
+    const [activeLectureId, setActiveLectureId] = useState<number | null>(null);
+    const [unlockedLectureIds, setUnlockedLectureIds] = useState<number[]>(
+        Array.isArray(unlockedLectures) ? unlockedLectures.map((x) => Number(x)).filter(Number.isFinite) : [],
+    );
+    const unlockedSet = useMemo(() => new Set(unlockedLectureIds), [unlockedLectureIds]);
+    const [filterTitle, setFilterTitle] = useState(String(filters?.title ?? ''));
+    const [filterAuthor, setFilterAuthor] = useState(String(filters?.author ?? ''));
+    const [filterMinRating, setFilterMinRating] = useState<number>(
+        typeof filters?.min_rating === 'number' ? filters.min_rating : Number(filters?.min_rating) || 0,
+    );
+
     const [code, setCode] = useState('');
     const [error, setError] = useState<string | null>(null);
-    const [submitting, setSubmitting] = useState(false);
-    const [userRatings, setUserRatings] = useState<{ [key: string]: number }>({});
-    const [showRating, setShowRating] = useState<{ [key: string]: boolean }>({}); // to show rating only after clicking play
+    const [banner, setBanner] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+    const [submittingCode, setSubmittingCode] = useState(false);
+    const [submittingRating, setSubmittingRating] = useState<number | null>(null);
+
+    const [userRatings, setUserRatings] = useState<{ [key: number]: number }>({});
+    const [showRating, setShowRating] = useState<{ [key: number]: boolean }>({});
+
+    // --- HELPERS ---
     const renderTitle = (title: string | MultilingualTitle) =>
-        typeof title === 'string' ? title : title[locale] || title['lv'] || title['en'] || Object.values(title)[0] || '';
+        typeof title === 'string' ? title : title[locale] || title.lv || title.en || Object.values(title)[0] || '';
+
+    useEffect(() => {
+        setFilterTitle(String(filters?.title ?? ''));
+        setFilterAuthor(String(filters?.author ?? ''));
+        setFilterMinRating(typeof filters?.min_rating === 'number' ? filters.min_rating : Number(filters?.min_rating) || 0);
+    }, [filters?.title, filters?.author, filters?.min_rating]);
 
     const validateCode = (c: string) => (c ?? '').trim().length >= 3;
 
+    const formatDate = (iso?: string) => {
+        if (!iso) return null;
+        const date = new Date(iso);
+        if (Number.isNaN(date.getTime())) return null;
+        return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    };
+
+    const formatDuration = (start?: string, end?: string, fallback?: string) => {
+        if (fallback) return fallback;
+        if (!start || !end) return null;
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) return null;
+        const minutes = Math.max(0, Math.round((endDate.getTime() - startDate.getTime()) / 60000));
+        if (!minutes) return null;
+        return minutes < 60 ? `${minutes} min` : `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
+    };
+
+    const authorOptions = useMemo(() => authors ?? [], [authors]);
+
+    const hasActiveFilters = useMemo(() => {
+        return (filterTitle ?? '').trim().length > 0 || (filterAuthor ?? '').trim().length > 0 || (Number(filterMinRating) || 0) > 0;
+    }, [filterAuthor, filterMinRating, filterTitle]);
+
+    const filteredLectures = useMemo(() => {
+        const titleQuery = (filterTitle ?? '').trim();
+        const authorQuery = (filterAuthor ?? '').trim();
+        const minRating = Number(filterMinRating) || 0;
+
+        const tokens = titleQuery ? titleQuery.toLowerCase().replace(/\s+/g, ' ').trim().split(' ').filter(Boolean) : [];
+
+        return (lectures ?? []).filter((lec) => {
+            if (authorQuery) {
+                const owner = String(lec.teacher ?? '').trim();
+                if (owner !== authorQuery) return false;
+            }
+
+            if (minRating > 0) {
+                const avg = Number(lec.rating_avg ?? 0);
+                if (!avg) return false;
+                if (Math.floor(avg) !== minRating) return false;
+            }
+
+            if (tokens.length > 0) {
+                const t = renderTitle(lec.title);
+                const hay = String(t ?? '').toLowerCase();
+                for (const token of tokens) {
+                    if (!hay.includes(token)) return false;
+                }
+            }
+
+            return true;
+        });
+    }, [filterAuthor, filterMinRating, filterTitle, lectures, locale]);
+
+    // --- SUBMIT CODE ---
     const handleSubmitCode = async (e?: React.FormEvent) => {
         e?.preventDefault();
-        if (!selectedLecture) return;
-
+        if (selectedLectureId === null) return;
         setError(null);
-        if (!validateCode(code)) {
-            setError('Lūdzu ievadiet derīgu kodu.');
+        setBanner(null);
+
+        const cleaned = (code ?? '').trim();
+        if (!validateCode(cleaned)) {
+            setError(__('specialistiem.apmaciba.form.error_invalid'));
             return;
         }
 
-        setSubmitting(true);
+        setSubmittingCode(true);
         try {
-            const { data } = await axios.post('/lecture-codes/verify', { code: code.trim() });
-            if (data.valid) {
-                setUnlockedLectures((prev) => [...prev, selectedLecture]);
-                setError(null);
-            } else setError(data.message || 'Nederīgs kods');
-        } catch (err: any) {
-            setError(err?.response?.data?.message || 'Kļūda pārbaudē.');
-        } finally {
-            setSubmitting(false);
+            const { data } = await axios.post<VerifyResponse>('/lecture-codes/verify', { code: cleaned });
+            if (!data?.valid) {
+                const msg = data?.message || __('specialistiem.apmaciba.form.error_invalid');
+                setError(msg);
+                setBanner({ type: 'error', text: msg });
+                return;
+            }
+
+            const ids = Array.isArray(data.lectures) ? data.lectures.map((l) => Number(l.id)).filter(Number.isFinite) : [];
+            if (ids.length === 0) ids.push(selectedLectureId);
+
+            setUnlockedLectureIds((prev) => {
+                const set = new Set(prev);
+                ids.forEach((id) => set.add(id));
+                return Array.from(set);
+            });
+
+            setBanner({ type: 'success', text: __('specialistiem.apmaciba.unlock.success') });
+            setSelectedLectureId(null);
             setCode('');
+            // Auto show rating for the just unlocked item
+            ids.forEach((id) => setShowRating((prev) => ({ ...prev, [id]: true })));
+            setActiveLectureId(selectedLectureId);
+        } catch (err: any) {
+            const msg = err?.response?.data?.message || __('specialistiem.apmaciba.form.error_invalid');
+            setError(msg);
+            setBanner({ type: 'error', text: msg });
+        } finally {
+            setSubmittingCode(false);
         }
     };
 
-    const handleSubmitRating = async (lectureId: string) => {
-        const lecture = initialLectures.find((l) => l.id === lectureId);
+    // --- SUBMIT RATING (FIXED) ---
+    const handleSubmitRating = async (lectureId: number) => {
         const rating = userRatings[lectureId];
-        if (!lecture || !rating) return;
+        if (!rating) return;
 
+        setSubmittingRating(lectureId);
         try {
-            await axios.post('/ratings', { lectureId: lecture.id, rating });
-            alert('Vērtējums veiksmīgi nosūtīts!');
-        } catch {
-            alert('Kļūda nosūtot vērtējumu');
+            // Sending both camelCase and snake_case to ensure backend compatibility
+            await axios.post('/ratings', {
+                lectureId: lectureId,
+                lecture_id: lectureId, // Added this for Laravel compatibility
+                rating: rating,
+            });
+
+            setRatedLectureIds((prev) => new Set(prev).add(lectureId));
+            setLectures((prev) =>
+                prev.map((lec) => {
+                    if (lec.id !== lectureId) return lec;
+                    const currentCount = lec.ratings_count ?? 0;
+                    const currentAvg = lec.rating_avg ?? 0;
+                    const newCount = currentCount + 1;
+                    const newAvg = Number(((currentAvg * currentCount + rating) / newCount).toFixed(1));
+                    return { ...lec, ratings_count: newCount, rating_avg: newAvg };
+                }),
+            );
+            setBanner({ type: 'success', text: __('specialistiem.apmaciba.rating.saved') });
+        } catch (err: any) {
+            console.error(err);
+            if (err?.response?.status === 409) {
+                setRatedLectureIds((prev) => new Set(prev).add(lectureId));
+            }
+            const msg = err?.response?.data?.message || 'Error saving rating. Try again.';
+            setBanner({ type: 'error', text: msg });
+        } finally {
+            setSubmittingRating(null);
         }
     };
 
+    // --- CARD COMPONENT ---
     const LectureCard = ({ lecture }: { lecture: Lecture }) => {
-        const isSelected = selectedLecture === lecture.id;
-        const unlocked = unlockedLectures.includes(lecture.id);
-        const showLectureRating = showRating[lecture.id] || false;
+        const isSelected = selectedLectureId === lecture.id;
+        const unlocked = unlockedSet.has(lecture.id);
+        // Logic: If unlocked, user can manually toggle. If locked, hidden.
+        const showLectureRating = unlocked ? (showRating[lecture.id] ?? true) : false;
+        const isRatingLoading = submittingRating === lecture.id;
+        const alreadyRated = ratedLectureIds.has(lecture.id);
+        const durationLabel = formatDuration(lecture.starts_at, lecture.ends_at, lecture.duration);
+        const startsLabel = formatDate(lecture.starts_at);
+        const endsLabel = formatDate(lecture.ends_at);
 
         return (
             <div
-                className={`group relative rounded-2xl border p-5 transition-all ${
-                    isSelected ? 'border-emerald-500 bg-emerald-50 ring-1 ring-emerald-500' : 'border-slate-200 bg-white hover:border-emerald-300 hover:shadow-lg'
+                className={`group relative flex flex-col justify-between overflow-hidden rounded-3xl border bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+                    isSelected ? 'border-emerald-500 ring-2 ring-emerald-500 ring-offset-2' : 'border-slate-100 hover:border-emerald-200'
                 }`}
+                role="button"
+                tabIndex={0}
+                onClick={() => setActiveLectureId(lecture.id)}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setActiveLectureId(lecture.id);
+                    }
+                }}
             >
-                {/* Header */}
-                <div className="flex items-start justify-between gap-3">
-                    <div>
-                        <h3 className={`mb-1 text-base font-bold ${isSelected ? 'text-emerald-900' : 'text-slate-900'}`}>
-                            {renderTitle(lecture.title)}
-                        </h3>
-                        <p className="line-clamp-2 text-xs text-slate-500">{lecture.description}</p>
+                {/* Glow effect for unlocked */}
+                {unlocked && (
+                    <div className="absolute top-0 right-0 -mt-10 -mr-10 h-32 w-32 rounded-full bg-gradient-to-br from-emerald-100/50 to-teal-50 blur-2xl transition-opacity group-hover:opacity-100" />
+                )}
 
-                        {/* Avg Rating */}
-                        {lecture.rating_avg !== undefined && (
-                            <div className="mt-2 flex items-center gap-2 text-xs text-amber-600">
-                                {[1, 2, 3, 4, 5].map((i) => (
-                                    <svg
-                                        key={i}
-                                        className={`h-3 w-3 ${i <= Math.round(lecture.rating_avg!) ? 'fill-amber-400' : 'fill-transparent stroke-amber-400'}`}
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
+                <div className="relative z-10">
+                    <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                            <div className="mb-3 flex items-center gap-2">
+                                {unlocked ? (
+                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-bold tracking-wider text-emerald-700 uppercase">
+                                        <Icons.Check className="h-3 w-3" /> {__('specialistiem.apmaciba.status.unlocked')}
+                                    </span>
+                                ) : (
+                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold tracking-wider text-slate-500 uppercase">
+                                        <Icons.Lock className="h-3 w-3" /> {__('specialistiem.apmaciba.status.locked')}
+                                    </span>
+                                )}
+                            </div>
+                            <h3 className="font-display text-lg leading-tight font-bold text-slate-900 transition-colors group-hover:text-emerald-700">
+                                {renderTitle(lecture.title)}
+                            </h3>
+                        </div>
+
+                        {/* ACTION BUTTONS */}
+                        <div className="flex flex-shrink-0 items-center gap-2">
+                            {unlocked ? (
+                                <>
+                                    {/* RATE BUTTON (New) */}
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setShowRating((prev) => ({ ...prev, [lecture.id]: !prev[lecture.id] }));
+                                        }}
+                                        className={`flex h-10 w-10 items-center justify-center rounded-full border transition-all ${
+                                            showLectureRating
+                                                ? 'border-amber-400 bg-amber-50 text-amber-500'
+                                                : 'border-slate-100 bg-white text-slate-400 hover:border-amber-200 hover:text-amber-500'
+                                        }`}
+                                        title={__('specialistiem.apmaciba.actions.rate')}
                                     >
-                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                                    </svg>
-                                ))}
-                                <span className="ml-1">({lecture.rating_avg?.toFixed(1)} / {lecture.ratings_count})</span>
-                            </div>
+                                        <Icons.Star filled={showLectureRating} className="h-5 w-5" />
+                                    </button>
+
+                                    {/* PLAY BUTTON */}
+                                    {lecture.url ? (
+                                        <a
+                                            href={lecture.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="flex h-12 w-12 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 shadow-lg shadow-emerald-500/20 transition-transform hover:scale-110 active:scale-95"
+                                        >
+                                            <Icons.Play className="ml-1 h-6 w-6" />
+                                        </a>
+                                    ) : (
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                                            <Icons.Check className="h-6 w-6" />
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                // LOCKED BUTTON
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedLectureId(isSelected ? null : lecture.id);
+                                        setError(null);
+                                        setCode('');
+                                    }}
+                                    className={`flex h-10 w-10 items-center justify-center rounded-full transition-all ${
+                                        isSelected
+                                            ? 'bg-slate-900 text-white'
+                                            : 'bg-slate-50 text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-600'
+                                    }`}
+                                >
+                                    {isSelected ? <Icons.Unlock className="h-5 w-5" /> : <Icons.Lock className="h-5 w-5" />}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-slate-500">{lecture.description}</p>
+
+                    <div className="mt-4 flex flex-wrap items-center gap-2 text-[10px] font-semibold tracking-wider text-slate-500 uppercase">
+                        {lecture.level && <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1">Level: {lecture.level}</span>}
+                        {lecture.teacher && (
+                            <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1">Teacher: {lecture.teacher}</span>
+                        )}
+                        {durationLabel && (
+                            <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1">Duration: {durationLabel}</span>
+                        )}
+                        {startsLabel && <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1">Starts: {startsLabel}</span>}
+                        {endsLabel && <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1">Ends: {endsLabel}</span>}
+                        {lecture.tag && (
+                            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-emerald-700">{lecture.tag}</span>
                         )}
                     </div>
 
-                    {/* Play / Lock button */}
-                    <div className="flex flex-col items-center gap-2">
-                        {unlocked && lecture.url ? (
-                            <a
-                                href={lecture.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={() => setShowRating((prev) => ({ ...prev, [lecture.id]: true }))}
-                                className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg transition hover:scale-105"
-                            >
-                                <Icons.Play className="ml-0.5 h-5 w-5" />
-                            </a>
-                        ) : (
-                            <div
-                                className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-400 group-hover:bg-emerald-500 group-hover:text-white cursor-pointer"
-                                onClick={() => setSelectedLecture(lecture.id)}
-                            >
-                                <Icons.Lock className="h-5 w-5" />
+                    {/* Rating Display (Read Only) */}
+                    {lecture.ratings_count && lecture.rating_avg !== undefined ? (
+                        <div className="mt-4 flex items-center gap-2 border-t border-slate-50 pt-3">
+                            <span className="text-lg font-bold text-slate-900">{lecture.rating_avg?.toFixed(1)}</span>
+                            <div className="flex text-amber-400">
+                                {[1, 2, 3, 4, 5].map((i) => (
+                                    <Icons.Star key={i} filled={i <= Math.round(lecture.rating_avg!)} className="h-4 w-4" />
+                                ))}
                             </div>
-                        )}
-                    </div>
+                            <span className="text-xs text-slate-400">({lecture.ratings_count})</span>
+                        </div>
+                    ) : null}
                 </div>
 
-                {/* Unlock code input or rating */}
-                {isSelected && !unlocked && (
-                    <form className="mt-4 flex gap-2" onSubmit={handleSubmitCode}>
-                        <input
-                            value={code}
-                            onChange={(e) => setCode(e.target.value)}
-                            placeholder="Ievadiet kodu"
-                            className="w-full rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-                        />
-                        <button
-                            type="submit"
-                            disabled={submitting}
-                            className={`rounded-2xl px-6 py-3 text-sm font-semibold text-white shadow-lg transition ${
-                                submitting ? 'cursor-wait bg-slate-400' : 'bg-slate-900 hover:bg-emerald-600'
-                            }`}
-                        >
-                            {submitting ? '...' : 'Atbloķēt'}
-                        </button>
-                        {error && <div className="text-sm text-rose-600 mt-2">{error}</div>}
-                    </form>
-                )}
+                <div className="relative z-10 space-y-4">
+                    {/* Code Input Form */}
+                    {isSelected && !unlocked && (
+                        <div className="animate-in fade-in slide-in-from-top-2 mt-6 duration-300">
+                            <form onSubmit={handleSubmitCode} className="relative">
+                                <div className="relative flex items-center">
+                                    <input
+                                        autoFocus
+                                        type="text"
+                                        value={code}
+                                        onChange={(e) => setCode(e.target.value)}
+                                        placeholder={__('specialistiem.apmaciba.form.placeholder')}
+                                        className={`w-full rounded-xl border-0 bg-slate-50 py-3.5 pr-14 pl-4 text-sm font-medium text-slate-900 shadow-inner ring-1 ring-slate-200 transition-all placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 ${error ? 'bg-red-50 ring-red-200' : ''}`}
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={submittingCode}
+                                        className="absolute top-2 right-2 bottom-2 aspect-square rounded-lg bg-slate-900 text-white shadow-md transition-all hover:bg-emerald-600 disabled:opacity-70"
+                                    >
+                                        {submittingCode ? (
+                                            <div className="mx-auto h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                                        ) : (
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="m-auto h-5 w-5">
+                                                <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                            </svg>
+                                        )}
+                                    </button>
+                                </div>
+                                {error && <p className="mt-2 text-xs font-medium text-red-500">{error}</p>}
+                            </form>
+                        </div>
+                    )}
 
-                {showLectureRating && unlocked && (
-                    <div className="mt-4">
-                        <StarRating
-                            value={userRatings[lecture.id] || 0}
-                            onChange={(v) => setUserRatings((prev) => ({ ...prev, [lecture.id]: v }))}
-                        />
-                        <button
-                            onClick={() => handleSubmitRating(lecture.id)}
-                            className="mt-2 rounded-2xl bg-slate-900 px-6 py-3 text-white hover:bg-emerald-600"
-                        >
-                            Iesniegt Vērtējumu
-                        </button>
-                    </div>
-                )}
+                    {/* --- RATING FORM --- */}
+                    {showLectureRating && unlocked && (
+                        <div className="animate-in fade-in slide-in-from-top-4 mt-6 rounded-2xl bg-amber-50/50 p-5 ring-1 ring-amber-100 backdrop-blur-sm duration-500">
+                            <div className="mb-4 flex items-center justify-between">
+                                <p className="text-xs font-bold tracking-wider text-amber-700/70 uppercase">
+                                    {__('specialistiem.apmaciba.rating.review')}
+                                </p>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setShowRating((prev) => ({ ...prev, [lecture.id]: false }));
+                                    }}
+                                    className="text-amber-400 hover:text-amber-600"
+                                >
+                                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div className="flex flex-col items-center gap-4">
+                                <StarRating
+                                    value={userRatings[lecture.id] || 0}
+                                    onChange={(v) => setUserRatings((prev) => ({ ...prev, [lecture.id]: v }))}
+                                    readOnly={alreadyRated}
+                                />
+
+                                <button
+                                    onClick={() => handleSubmitRating(lecture.id)}
+                                    disabled={alreadyRated || isRatingLoading || !userRatings[lecture.id]}
+                                    className="w-full rounded-xl bg-slate-900 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-emerald-600 hover:shadow-emerald-500/20 active:translate-y-0.5 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
+                                >
+                                    {alreadyRated
+                                        ? __('specialistiem.apmaciba.rating.rated')
+                                        : isRatingLoading
+                                          ? __('specialistiem.apmaciba.rating.saving')
+                                          : __('specialistiem.apmaciba.rating.submit')}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
         );
     };
 
     return (
         <>
-            <Head title={__('Online apmācība')} />
-            <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-[#eaf3ff] via-white to-[#e7f7f1]">
-                <section className="relative z-10 mx-auto min-h-screen max-w-5xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-                    <div className="mx-auto mb-8 max-w-2xl text-center">
-                        <h1 className="mt-5 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-                            Mācību programma ārstiem un citiem veselības aprūpes speciālistiem
+            <Head title={__('specialistiem.apmaciba.meta.title')} />
+            <div className="min-h-screen bg-slate-50 selection:bg-emerald-200 selection:text-emerald-900">
+                {/* Background Gradients */}
+                <div className="pointer-events-none fixed inset-0 z-0 opacity-40">
+                    <div className="absolute top-[-10%] left-[-10%] h-[50vh] w-[50vw] rounded-full bg-blue-200 blur-[120px]" />
+                    <div className="absolute right-[-10%] bottom-[-10%] h-[50vh] w-[50vw] rounded-full bg-emerald-200 blur-[120px]" />
+                </div>
+
+                <section className="relative z-10 mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+                    <div className="mx-auto mb-16 max-w-3xl text-center">
+                        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+                            {__('specialistiem.apmaciba.hero.title')}
                         </h1>
-                        <p className="mt-3 text-sm text-slate-600 sm:text-base">
-                            Jaunieviestās terapijas zālēm (ATMP), arī mezenhimālo stromālo šūnu (MSC) lietošanu izņēmuma gadījumos.
-                        </p>
+                        <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">{__('specialistiem.apmaciba.hero.text')}</p>
                     </div>
 
-                    <div className="grid gap-4 sm:grid-cols-2">
-                        {initialLectures.map((lec) => (
+                    {/* Banner */}
+                    {banner && (
+                        <div
+                            className={`animate-in slide-in-from-bottom-5 fixed right-8 bottom-8 z-50 flex max-w-sm items-center gap-3 rounded-2xl border p-4 shadow-2xl backdrop-blur-md ${
+                                banner.type === 'success'
+                                    ? 'border-emerald-200 bg-emerald-50/90 text-emerald-800'
+                                    : 'border-red-200 bg-red-50/90 text-red-800'
+                            }`}
+                        >
+                            {banner.type === 'success' ? <Icons.Check className="h-5 w-5" /> : <Icons.Lock className="h-5 w-5" />}
+                            <span className="text-sm font-medium">{banner.text}</span>
+                        </div>
+                    )}
+
+                    <div className="mb-8 rounded-3xl border border-slate-100 bg-white/80 p-4 shadow-sm backdrop-blur sm:p-6">
+                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <div>
+                                <label className="mb-1 block text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                                    {__('specialistiem.apmaciba.filters.search_title.label')}
+                                </label>
+                                <input
+                                    value={filterTitle}
+                                    onChange={(e) => setFilterTitle(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                        }
+                                    }}
+                                    placeholder={__('specialistiem.apmaciba.form.placeholder')}
+                                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-inner placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="mb-1 block text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                                    {__('specialistiem.apmaciba.filters.teacher.label')}
+                                </label>
+                                <select
+                                    value={filterAuthor}
+                                    onChange={(e) => setFilterAuthor(e.target.value)}
+                                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-inner focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                >
+                                    <option value="">{__('specialistiem.apmaciba.filters.all')}</option>
+                                    {authorOptions.map((a) => (
+                                        <option key={a} value={a}>
+                                            {a}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="mb-1 block text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                                    {__('specialistiem.apmaciba.filters.min_rating.label')}
+                                </label>
+                                <select
+                                    value={String(filterMinRating)}
+                                    onChange={(e) => setFilterMinRating(Number(e.target.value) || 0)}
+                                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-inner focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                >
+                                    <option value="0">{__('specialistiem.apmaciba.filters.all')}</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+                            {hasActiveFilters ? (
+                                <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-slate-600">
+                                    <span className="font-semibold text-slate-900">{filteredLectures.length}</span>
+                                    <span>{__('specialistiem.apmaciba.filters.results')}</span>
+                                </div>
+                            ) : (
+                                <div />
+                            )}
+                            <div className="flex flex-wrap items-center gap-2">
+                                <button
+                                    type="button"
+                                    disabled={!hasActiveFilters}
+                                    onClick={() => {
+                                        if (!hasActiveFilters) return;
+                                        setFilterTitle('');
+                                        setFilterAuthor('');
+                                        setFilterMinRating(0);
+                                    }}
+                                    className={`rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 ${
+                                        hasActiveFilters ? 'hover:border-slate-300 hover:bg-slate-50' : 'cursor-not-allowed opacity-60'
+                                    }`}
+                                >
+                                    {__('specialistiem.apmaciba.filters.clear')}
+                                </button>
+                            </div>
+                        </div>
+
+                        {debug ? (
+                            <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                <div className="mb-2 text-xs font-bold tracking-wider text-slate-500 uppercase">Debug</div>
+                                <pre className="max-h-64 overflow-auto text-xs break-words whitespace-pre-wrap text-slate-700">
+                                    {JSON.stringify(debug, null, 2)}
+                                </pre>
+                            </div>
+                        ) : null}
+                    </div>
+
+                    {/* Grid */}
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-8">
+                        {filteredLectures.map((lec) => (
                             <LectureCard key={lec.id} lecture={lec} />
                         ))}
                     </div>
                 </section>
+
+                {activeLectureId !== null && (
+                    <div
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
+                        onClick={() => setActiveLectureId(null)}
+                    >
+                        <div className="w-full max-w-2xl rounded-3xl bg-white p-6 shadow-2xl sm:p-8" onClick={(e) => e.stopPropagation()}>
+                            {(() => {
+                                const lecture = lectures.find((l) => l.id === activeLectureId);
+                                if (!lecture) return null;
+                                const unlocked = unlockedSet.has(lecture.id);
+                                const durationLabel = formatDuration(lecture.starts_at, lecture.ends_at, lecture.duration);
+                                const startsLabel = formatDate(lecture.starts_at);
+                                const endsLabel = formatDate(lecture.ends_at);
+                                const alreadyRated = ratedLectureIds.has(lecture.id);
+                                const showLectureRating = unlocked ? (showRating[lecture.id] ?? true) : false;
+                                const isRatingLoading = submittingRating === lecture.id;
+
+                                return (
+                                    <div>
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div>
+                                                <p className="text-[11px] tracking-[0.35em] text-slate-400 uppercase">Masterclass</p>
+                                                <h2 className="mt-2 text-2xl font-semibold text-slate-900">{renderTitle(lecture.title)}</h2>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => setActiveLectureId(null)}
+                                                className="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                                                aria-label="Close"
+                                            >
+                                                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <path d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        </div>
+
+                                        {lecture.description && <p className="mt-4 text-sm leading-relaxed text-slate-600">{lecture.description}</p>}
+
+                                        <div className="mt-5 flex flex-wrap items-center gap-2 text-[10px] font-semibold tracking-wider text-slate-500 uppercase">
+                                            {lecture.level && (
+                                                <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1">
+                                                    Level: {lecture.level}
+                                                </span>
+                                            )}
+                                            {lecture.teacher && (
+                                                <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1">
+                                                    Teacher: {lecture.teacher}
+                                                </span>
+                                            )}
+                                            {durationLabel && (
+                                                <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1">
+                                                    Duration: {durationLabel}
+                                                </span>
+                                            )}
+                                            {startsLabel && (
+                                                <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1">
+                                                    Starts: {startsLabel}
+                                                </span>
+                                            )}
+                                            {endsLabel && (
+                                                <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1">Ends: {endsLabel}</span>
+                                            )}
+                                            {lecture.tag && (
+                                                <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-emerald-700">
+                                                    {lecture.tag}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {lecture.ratings_count && lecture.rating_avg !== undefined ? (
+                                            <div className="mt-6 flex items-center gap-2 border-t border-slate-100 pt-4">
+                                                <span className="text-lg font-bold text-slate-900">{lecture.rating_avg?.toFixed(1)}</span>
+                                                <div className="flex text-amber-400">
+                                                    {[1, 2, 3, 4, 5].map((i) => (
+                                                        <Icons.Star key={i} filled={i <= Math.round(lecture.rating_avg!)} className="h-4 w-4" />
+                                                    ))}
+                                                </div>
+                                                <span className="text-xs text-slate-400">({lecture.ratings_count})</span>
+                                            </div>
+                                        ) : null}
+
+                                        <div className="mt-6 flex flex-wrap items-center gap-3">
+                                            {unlocked && lecture.url ? (
+                                                <a
+                                                    href={lecture.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-5 py-2.5 text-sm font-semibold text-emerald-700 hover:border-emerald-300 hover:bg-emerald-100"
+                                                >
+                                                    <Icons.Play className="h-4 w-4" />
+                                                </a>
+                                            ) : (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setSelectedLectureId(lecture.id);
+                                                        setError(null);
+                                                        setCode('');
+                                                    }}
+                                                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 hover:border-slate-300"
+                                                >
+                                                    <Icons.Lock className="h-4 w-4" />
+                                                    {__('specialistiem.apmaciba.actions.unlock')}
+                                                </button>
+                                            )}
+
+                                            {unlocked && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowRating((prev) => ({ ...prev, [lecture.id]: !showLectureRating }))}
+                                                    className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-5 py-2.5 text-sm font-semibold text-amber-700 hover:border-amber-300"
+                                                >
+                                                    <Icons.Star filled className="h-4 w-4" />
+                                                    {showLectureRating
+                                                        ? __('specialistiem.apmaciba.rating.hide')
+                                                        : __('specialistiem.apmaciba.rating.show')}
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        {selectedLectureId === lecture.id && !unlocked && (
+                                            <div className="mt-6">
+                                                <form onSubmit={handleSubmitCode} className="relative">
+                                                    <div className="relative flex items-center">
+                                                        <input
+                                                            autoFocus
+                                                            type="text"
+                                                            value={code}
+                                                            onChange={(e) => setCode(e.target.value)}
+                                                            placeholder={__('specialistiem.apmaciba.form.placeholder')}
+                                                            className={`w-full rounded-xl border-0 bg-slate-50 py-3.5 pr-14 pl-4 text-sm font-medium text-slate-900 shadow-inner ring-1 ring-slate-200 transition-all placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 ${
+                                                                error ? 'bg-red-50 ring-red-200' : ''
+                                                            }`}
+                                                        />
+                                                        <button
+                                                            type="submit"
+                                                            disabled={submittingCode}
+                                                            className="absolute top-2 right-2 bottom-2 aspect-square rounded-lg bg-slate-900 text-white shadow-md transition-all hover:bg-emerald-600 disabled:opacity-70"
+                                                        >
+                                                            {submittingCode ? (
+                                                                <div className="mx-auto h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                                                            ) : (
+                                                                <svg
+                                                                    viewBox="0 0 24 24"
+                                                                    fill="none"
+                                                                    stroke="currentColor"
+                                                                    strokeWidth="2"
+                                                                    className="m-auto h-5 w-5"
+                                                                >
+                                                                    <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                                                </svg>
+                                                            )}
+                                                        </button>
+                                                    </div>
+                                                    {error && <p className="mt-2 text-xs font-medium text-red-500">{error}</p>}
+                                                </form>
+                                            </div>
+                                        )}
+
+                                        {showLectureRating && unlocked && (
+                                            <div className="mt-6 rounded-2xl bg-amber-50/50 p-5 ring-1 ring-amber-100">
+                                                <div className="mb-4 flex items-center justify-between">
+                                                    <p className="text-xs font-bold tracking-wider text-amber-700/70 uppercase">
+                                                        {__('specialistiem.apmaciba.rating.review')}
+                                                    </p>
+                                                    <button
+                                                        onClick={() => setShowRating((p) => ({ ...p, [lecture.id]: false }))}
+                                                        className="text-amber-400 hover:text-amber-600"
+                                                    >
+                                                        <svg
+                                                            className="h-4 w-4"
+                                                            viewBox="0 0 24 24"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            strokeWidth="2"
+                                                        >
+                                                            <path d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+
+                                                <div className="flex flex-col items-center gap-4">
+                                                    <StarRating
+                                                        value={userRatings[lecture.id] || 0}
+                                                        onChange={(v) => setUserRatings((prev) => ({ ...prev, [lecture.id]: v }))}
+                                                        readOnly={alreadyRated}
+                                                    />
+
+                                                    <button
+                                                        onClick={() => handleSubmitRating(lecture.id)}
+                                                        disabled={alreadyRated || isRatingLoading || !userRatings[lecture.id]}
+                                                        className="w-full rounded-xl bg-slate-900 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-emerald-600 hover:shadow-emerald-500/20 active:translate-y-0.5 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
+                                                    >
+                                                        {alreadyRated
+                                                            ? __('specialistiem.apmaciba.rating.rated')
+                                                            : isRatingLoading
+                                                              ? __('specialistiem.apmaciba.rating.saving')
+                                                              : __('specialistiem.apmaciba.rating.submit')}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })()}
+                        </div>
+                    </div>
+                )}
             </div>
         </>
     );

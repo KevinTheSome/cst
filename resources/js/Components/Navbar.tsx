@@ -1,547 +1,308 @@
 import { useLang } from '@/hooks/useLang';
 import { Link, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function Navbar() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
 
     const { props } = usePage<any>();
-    const currentLocale = props.locale; // always defined from middleware
+    const currentLocale = props.locale || 'lv';
+    const { __ } = useLang();
 
-    const { __ } = useLang(); // <--- translation helper
+    const getCsrfToken = () =>
+        (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null)?.content || '';
+
+    // 1. Detect scroll for styling changes (Shadow only, background stays white)
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 20);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // 2. Lock body scroll when mobile sidebar is open
+    useEffect(() => {
+        if (sidebarOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+
+        // Cleanup function to reset overflow if component unmounts
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [sidebarOpen]);
 
     const switchLanguage = async (locale: string) => {
         if (currentLocale === locale) return;
-
         try {
-            await axios.post('/locale', { locale });
-            router.visit(window.location.pathname, { replace: true });
+            const csrf = getCsrfToken();
+            await axios.post('/locale', { locale }, { headers: { 'X-CSRF-TOKEN': csrf } });
+            router.reload({ only: ['lang', 'locale'] });
         } catch (error) {
             console.error('Language switch failed:', error);
-            alert('Failed to switch language. Please try again.');
         }
     };
 
     return (
-        <nav className="z-50 flex w-full flex-col items-start justify-between bg-white px-4 py-4 shadow-sm lg:flex-row lg:items-center lg:px-8 lg:py-6">
-            <div className="flex w-full items-center justify-between gap-6 lg:w-auto">
-                <Link href="/" className="flex items-center gap-4">
-                    <img src="/bzl-site-icon-01.png" alt="Biočipu zinātniskā laboratorija" className="h-16 w-auto md:h-20" />
-                    <span className="text-xl leading-tight font-semibold text-green-700 md:text-2xl">
-                        Cilmes Šūnu
-                        <br />
-                        Tehnoloģijas SIA
-                    </span>
+        <nav
+            className={`sticky top-0 z-50 w-full bg-white transition-shadow duration-300 ease-in-out ${
+                scrolled ? 'shadow-md' : 'border-b border-slate-100'
+            } py-5 lg:py-6`}
+        >
+            <div className="mx-auto flex max-w-[90rem] items-center justify-between px-6 lg:px-12">
+                {/* --- LOGO --- */}
+                <Link href="/" className="group flex items-center gap-5 transition-transform duration-300 hover:scale-[1.02]">
+                    <div className="relative">
+                        <img
+                            src="/bzl-site-icon-01.png"
+                            alt="Logo"
+                            className="relative h-16 transition-all duration-500 lg:h-20"
+                        />
+                    </div>
+                    <div className="flex flex-col leading-none">
+                        <span className="font-extrabold tracking-tight text-slate-900 transition-all duration-300 text-2xl lg:text-3xl">
+                            Cilmes Šūnu
+                        </span>
+                        <span className="font-bold text-emerald-600 transition-all duration-300 text-base lg:text-lg">
+                            Tehnoloģijas SIA
+                        </span>
+                    </div>
                 </Link>
 
-                {/* Hamburger menu for mobile + tablet + small desktops */}
-                <button className="btn z-30 p-2 lg:hidden" aria-label="Open menu" aria-expanded={sidebarOpen} onClick={() => setSidebarOpen(true)}>
-                    <svg className="h-7 w-7 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                {/* --- DESKTOP NAVIGATION (Hidden on mobile) --- */}
+                <ul className="hidden items-center gap-2 lg:flex">
+                    <NavDropdown label={__('head.nav_patients')}>
+                        <DropdownLink href="/pacientiem/atmp">{__('head.nav_patients_atmp')}</DropdownLink>
+                        <DropdownLink href="/pacientiem/psoriaze-terapija">{__('head.nav_patients_psoriasis')}</DropdownLink>
+                        <DropdownLink href="/pacientiem/krona-terapija">{__('head.nav_patients_crohn')}</DropdownLink>
+                        <DropdownLink href="/pacientiem/faq">{__('head.nav_patients_faq')}</DropdownLink>
+                    </NavDropdown>
+
+                    <NavDropdown label={__('head.nav_specialists')}>
+                        <DropdownLink href="/specialistiem/likumi">{__('head.nav_specialists_laws')}</DropdownLink>
+                        <DropdownLink href="/specialistiem/atmp">{__('head.nav_specialists_plants')}</DropdownLink>
+                        <DropdownLink href="/specialistiem/apmaciba">{__('head.nav_specialists_training')}</DropdownLink>
+                        <DropdownLink href="/postdock-anketa?role=specialists">{__('head.nav_specialists_survey')}</DropdownLink>
+                    </NavDropdown>
+
+                    <NavDropdown label={__('head.nav_research')}>
+                        <DropdownLink href="/clinical-trials">{__('head.nav_research_clinical_trials')}</DropdownLink>
+                        <DropdownLink href="/postdock-anketa?role=patients">{__('head.nav_research_postdoc')}</DropdownLink>
+                        <DropdownLink href="/anketa-kods">{__('head.nav_research_code')}</DropdownLink>
+                        <DropdownLink href="/datubaze">{__('head.nav_research_documents')}</DropdownLink>
+                    </NavDropdown>
+
+                    <NavDropdown label={__('head.nav_about')}>
+                        <DropdownLink href="/ParMums/musu-grupa">{__('head.nav_about_team')}</DropdownLink>
+                        <DropdownLink href="/ParMums/contacts">{__('head.nav_about_contacts')}</DropdownLink>
+                        <DropdownLink href="/ParMums/pievienojies-mums">{__('head.nav_about_join')}</DropdownLink>
+                        <DropdownLink href="/ParMums/lablife">{__('head.nav_about_lab')}</DropdownLink>
+                    </NavDropdown>
+
+                    <div className="ml-8 flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 p-1.5 shadow-sm transition-all hover:border-emerald-200">
+                        <LangBtn locale="lv" current={currentLocale} onClick={switchLanguage}>
+                            🇱🇻
+                        </LangBtn>
+                        <LangBtn locale="en" current={currentLocale} onClick={switchLanguage}>
+                            🇬🇧
+                        </LangBtn>
+                    </div>
+                </ul>
+
+                {/* --- MOBILE TOGGLE BUTTON --- */}
+                <button
+                    className="group flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-slate-800 transition-all duration-300 hover:bg-emerald-500 hover:text-white lg:hidden"
+                    onClick={() => setSidebarOpen(true)}
+                    aria-label="Open Menu"
+                >
+                    <svg className="h-7 w-7 transition-transform duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 8h16M4 16h16" />
                     </svg>
                 </button>
             </div>
 
-            {/* Desktop nav – only on large screens and up */}
-            <ul className="m-0 hidden w-auto list-none flex-row items-center gap-4 p-0 lg:flex">
-                {/* PACIENTIEM */}
-                <li>
-                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
-                        <label
-                            tabIndex={0}
-                            className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
-                        >
-                            {__('head.nav_patients')}{' '}
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </label>
-                        <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
-                            <li>
-                                <Link
-                                    href="/pacientiem/atmp"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    {__('head.nav_patients_atmp')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/pacientiem/psoriaze-terapija"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    {__('head.nav_patients_psoriasis')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/pacientiem/krona-terapija"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    {__('head.nav_patients_crohn')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/pacientiem/faq"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    {__('head.nav_patients_faq')}
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                {/* Speciālistiem */}
-                <li>
-                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
-                        <label
-                            tabIndex={0}
-                            className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
-                        >
-                            {__('head.nav_specialists')}{' '}
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </label>
-                        <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
-                            <li>
-                                <Link
-                                    href="/specialistiem/likumi"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    {__('head.nav_specialists_laws')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/specialistiem/atmp"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    {__('head.nav_specialists_plants')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/specialistiem/apmaciba"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    {__('head.nav_specialists_training')}
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                {/* PĒTNIECĪBA */}
-                <li>
-                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
-                        <label
-                            tabIndex={0}
-                            className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
-                        >
-                            {__('head.nav_research')}{' '}
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </label>
-                        <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
-                            <li>
-                                <Link
-                                    href="/clinical-trials"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    Klīniskie pētijumi
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/postdock-anketa"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    {__('head.nav_research_postdoc')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/anketa-kods"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    {__('head.nav_research_code')}
-                                </Link>
-                            </li>
-                            {/* NEW: document DB */}
-                            <li>
-                                <Link href="/datubaze" className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl">
-                                    {__('head.nav_research_documents')}
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                {/* PAR MUMS */}
-                <li>
-                    <div className="group dropdown btn dropdown-end dropdown-bottom btn-ghost lg:w-auto">
-                        <label
-                            tabIndex={0}
-                            className="flex cursor-pointer items-center gap-2 text-lg font-semibold text-green-700 transition group-hover:text-orange-400 hover:text-orange-400 lg:text-xl"
-                        >
-                            {__('head.nav_about')}{' '}
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 text-green-700 transition group-hover:text-orange-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </label>
-                        <ul tabIndex={0} className="dropdown-content menu w-96 rounded-box bg-base-100 p-2 shadow">
-                            <li>
-                                <Link
-                                    href="/ParMums/musu-grupa"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    {__('head.nav_about_team')}
-                                </Link>
-                            </li>
-
-                            <li>
-                                <Link
-                                    href="/ParMums/contacts"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    {__('head.nav_about_contacts')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/ParMums/pievienojies-mums"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    {__('head.nav_about_join')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/ParMums/lablife"
-                                    className="text-lg font-semibold text-green-700 transition hover:text-orange-400 lg:text-xl"
-                                >
-                                    {__('head.nav_about_lab')}
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                {/* Language buttons */}
-                <li className="flex items-center gap-1">
-                    <button
-                        className={`btn flex h-10 min-h-0 w-10 items-center justify-center border-none p-0 text-lg font-semibold btn-ghost transition lg:text-xl ${
-                            currentLocale === 'lv' ? 'btn btn-success' : 'text-green-700 hover:text-orange-400'
-                        }`}
-                        onClick={() => switchLanguage('lv')}
-                        disabled={currentLocale === 'lv'}
-                        aria-current={currentLocale === 'lv' ? 'page' : undefined}
-                        title="Latviešu"
-                    >
-                        <span className="text-xl">🇱🇻</span>
-                    </button>
-                    <button
-                        className={`btn flex h-10 min-h-0 w-10 items-center justify-center border-none p-0 text-lg font-semibold btn-ghost transition lg:text-xl ${
-                            currentLocale === 'en' ? 'btn btn-success' : 'text-green-700 hover:text-orange-400'
-                        }`}
-                        onClick={() => switchLanguage('en')}
-                        disabled={currentLocale === 'en'}
-                        aria-current={currentLocale === 'en' ? 'page' : undefined}
-                        title="English"
-                    >
-                        <span className="text-xl">🇬🇧</span>
-                    </button>
-                </li>
-            </ul>
-
-            {/* Sidebar + overlay for mobile & tablet */}
+            {/* --- MOBILE SIDEBAR OVERLAY --- */}
             {sidebarOpen && (
-                <div className="fixed inset-0 z-40 flex lg:hidden">
-                    <div className="absolute inset-0 bg-black/40" onClick={() => setSidebarOpen(false)} aria-hidden="true" />
+                <div className="fixed inset-0 z-[100] lg:hidden">
+                    {/* Dark Backdrop */}
+                    <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onClick={() => setSidebarOpen(false)} />
 
-                    <aside className="animate-slide-in-sidebar-left relative z-50 flex h-full w-80 max-w-full translate-x-0 flex-col bg-white text-green-700 shadow-lg transition-transform duration-300 ease-in-out">
-                        <div className="flex items-center justify-between border-b border-green-700/10 px-6 py-4">
-                            <img src="/bzl-site-icon-01.png" alt="Logo" className="h-8 w-auto" />
-                            <button className="btn text-green-700 btn-sm" aria-label="Close menu" onClick={() => setSidebarOpen(false)}>
-                                ✕
-                            </button>
+                    {/* Sidebar Content */}
+                    <aside className="absolute right-0 h-full w-[85vw] max-w-md transform bg-white shadow-2xl transition-transform duration-300 ease-out">
+                        <div className="flex h-full flex-col">
+                            {/* Mobile Header */}
+                            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
+                                <span className="text-xl font-extrabold text-slate-900">{__('head.menu')}</span>
+                                <button
+                                    onClick={() => setSidebarOpen(false)}
+                                    className="rounded-full bg-slate-100 p-3 text-slate-500 transition hover:bg-rose-100 hover:text-rose-600"
+                                    aria-label="Close Menu"
+                                >
+                                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            {/* Mobile Links (Scrollable) */}
+                            <div className="flex-1 overflow-y-auto px-5 py-6 overscroll-contain">
+                                <div className="space-y-4">
+                                    <MobileSection label={__('head.nav_patients')} icon={<IconUser />}>
+                                        <MobileLink href="/pacientiem/atmp">{__('head.nav_patients_atmp')}</MobileLink>
+                                        <MobileLink href="/pacientiem/psoriaze-terapija">{__('head.nav_patients_psoriasis')}</MobileLink>
+                                        <MobileLink href="/pacientiem/krona-terapija">{__('head.nav_patients_crohn')}</MobileLink>
+                                        <MobileLink href="/pacientiem/faq">{__('head.nav_patients_faq')}</MobileLink>
+                                    </MobileSection>
+
+                                    <MobileSection label={__('head.nav_specialists')} icon={<IconDoctor />}>
+                                        <MobileLink href="/specialistiem/likumi">{__('head.nav_specialists_laws')}</MobileLink>
+                                        <MobileLink href="/specialistiem/atmp">{__('head.nav_specialists_plants')}</MobileLink>
+                                        <MobileLink href="/specialistiem/apmaciba">{__('head.nav_specialists_training')}</MobileLink>
+                                        <MobileLink href="/postdock-anketa?role=specialists">{__('head.nav_specialists_survey')}</MobileLink>
+                                    </MobileSection>
+
+                                    <MobileSection label={__('head.nav_research')} icon={<IconResearch />}>
+                                        <MobileLink href="/clinical-trials">{__('head.nav_research_clinical_trials')}</MobileLink>
+                                        <MobileLink href="/postdock-anketa?role=patients">{__('head.nav_research_postdoc')}</MobileLink>
+                                        <MobileLink href="/anketa-kods">{__('head.nav_research_code')}</MobileLink>
+                                        <MobileLink href="/datubaze">{__('head.nav_research_documents')}</MobileLink>
+                                    </MobileSection>
+
+                                    <MobileSection label={__('head.nav_about')} icon={<IconInfo />}>
+                                        <MobileLink href="/ParMums/musu-grupa">{__('head.nav_about_team')}</MobileLink>
+                                        <MobileLink href="/ParMums/contacts">{__('head.nav_about_contacts')}</MobileLink>
+                                        <MobileLink href="/ParMums/pievienojies-mums">{__('head.nav_about_join')}</MobileLink>
+                                        <MobileLink href="/ParMums/lablife">{__('head.nav_about_lab')}</MobileLink>
+                                    </MobileSection>
+                                </div>
+                            </div>
+
+                            {/* Mobile Footer */}
+                            <div className="border-t border-slate-100 bg-slate-50 p-6">
+                                <div className="flex justify-center gap-3">
+                                    <MobileLangBtn locale="lv" current={currentLocale} onClick={switchLanguage}>
+                                        Latviešu 🇱🇻
+                                    </MobileLangBtn>
+                                    <MobileLangBtn locale="en" current={currentLocale} onClick={switchLanguage}>
+                                        English 🇬🇧
+                                    </MobileLangBtn>
+                                </div>
+                            </div>
                         </div>
-
-                        <nav className="flex-1 overflow-y-auto px-2 py-4">
-                            <ul className="menu w-full gap-1 text-green-700">
-                                {/* PĒTNIECĪBA */}
-                                <li>
-                                    <details className="w-full">
-                                        <summary className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-lg font-semibold">
-                                            <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                                <path d="M9 3h6v6H9z" />
-                                                <path d="M4 21h16M7 9h10l-1 12H8z" />
-                                            </svg>
-                                            {__('head.nav_research')}
-                                        </summary>
-                                        <ul className="mt-1 ml-6 w-full">
-                                            <li>
-                                                <Link
-                                                    href="/clinical-trials"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    Klīniskie pētijumi
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link href="/" className="block w-full hover:text-orange-400" onClick={() => setSidebarOpen(false)}>
-                                                    PostDock anketa
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    href="/postdock-anketa"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    {__('head.nav_research_postdoc')}
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    href="/anketa-kods"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    {__('head.nav_research_code')}
-                                                </Link>
-                                            </li>
-                                            {/* NEW: document DB */}
-                                            <li>
-                                                <Link
-                                                    href="/datubaze"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    {__('head.nav_research_documents')}
-                                                </Link>
-                                            </li>
-                                        </ul>
-                                    </details>
-                                </li>
-
-                                {/* SPECIĀLISTIEM */}
-                                <li>
-                                    <details className="w-full">
-                                        <summary className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-lg font-semibold">
-                                            <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                                <path d="M9 3h6v6H9z" />
-                                                <path d="M4 21h16M7 9h10l-1 12H8z" />
-                                            </svg>
-                                            {__('head.nav_specialists')}
-                                        </summary>
-                                        <ul className="mt-1 ml-6 w-full">
-                                            <li>
-                                                <Link
-                                                    href="/specialistiem/likumi"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    {__('head.nav_specialists_laws')}
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    href="/specialistiem/atmp"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    {__('head.nav_specialists_plants')}
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    href="specialistiem/apmaciba"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    {__('head.nav_specialists_training')}
-                                                </Link>
-                                            </li>
-                                        </ul>
-                                    </details>
-                                </li>
-
-                                {/* PACIENTIEM */}
-                                <li>
-                                    <details className="w-full">
-                                        <summary className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-lg font-semibold">
-                                            <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                                <path d="M12 6v12M6 12h12" />
-                                                <circle cx="12" cy="12" r="9" />
-                                            </svg>
-                                            {__('head.nav_patients')}
-                                        </summary>
-                                        <ul className="mt-1 ml-6 w-full">
-                                            <li>
-                                                <Link
-                                                    href="/pacientiem/atmp"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    {__('head.nav_patients_atmp')}
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    href="/pacientiem/psoriaze-terapija"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    {__('head.nav_patients_psoriasis')}
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    href="/pacientiem/krona-terapija"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    {__('head.nav_patients_crohn')}
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    href="/pacientiem/faq"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    {__('head.nav_patients_faq')}
-                                                </Link>
-                                            </li>
-                                        </ul>
-                                    </details>
-                                </li>
-
-                                {/* PAR MUMS */}
-                                <li>
-                                    <details className="w-full">
-                                        <summary className="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-lg font-semibold">
-                                            <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                                <path d="M17 20v-2a4 4 0 00-3-3.87" />
-                                                <path d="M9 20v-2a4 4 0 013-3.87" />
-                                                <circle cx="12" cy="7" r="4" />
-                                            </svg>
-                                            {__('head.nav_about')}
-                                        </summary>
-                                        <ul className="mt-1 ml-6 w-full">
-                                            <li>
-                                                <Link
-                                                    href="/ParMums/lablife"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    {__('head.nav_about_lab')}
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    href="/ParMums/musu-grupa"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    {__('head.nav_about_team')}
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    href="/ParMums/pievienojies-mums"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    {__('head.nav_about_join')}
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link
-                                                    href="/ParMums/contacts"
-                                                    className="block w-full hover:text-orange-400"
-                                                    onClick={() => setSidebarOpen(false)}
-                                                >
-                                                    {__('head.nav_about_contacts')}
-                                                </Link>
-                                            </li>
-                                        </ul>
-                                    </details>
-                                </li>
-
-                                {/* Language buttons */}
-                                <li className="mt-4 ml-4 flex w-full flex-row gap-2">
-                                    <button
-                                        className={`btn flex h-10 min-h-0 w-10 items-center justify-center border-none p-0 text-lg font-semibold btn-ghost transition md:text-xl ${
-                                            currentLocale === 'lv' ? 'btn btn-success' : 'text-green-700 hover:text-orange-400'
-                                        }`}
-                                        onClick={() => switchLanguage('lv')}
-                                        disabled={currentLocale === 'lv'}
-                                        aria-current={currentLocale === 'lv' ? 'page' : undefined}
-                                        title="Latviešu"
-                                    >
-                                        <span className="text-xl">🇱🇻</span>
-                                    </button>
-                                    <button
-                                        className={`btn flex h-10 min-h-0 w-10 items-center justify-center border-none p-0 text-lg font-semibold btn-ghost transition md:text-xl ${
-                                            currentLocale === 'en' ? 'btn btn-success' : 'text-green-700 hover:text-orange-400'
-                                        }`}
-                                        onClick={() => switchLanguage('en')}
-                                        disabled={currentLocale === 'en'}
-                                        aria-current={currentLocale === 'en' ? 'page' : undefined}
-                                        title="English"
-                                    >
-                                        <span className="text-xl">🇬🇧</span>
-                                    </button>
-                                </li>
-                            </ul>
-                        </nav>
                     </aside>
-
-                    <style>{`
-                        @keyframes slide-in-sidebar-left {
-                            from { transform: translateX(-100%); opacity: 0; }
-                            to { transform: translateX(0); opacity: 1; }
-                        }
-                        .animate-slide-in-sidebar-left {
-                            animation: slide-in-sidebar-left 0.3s cubic-bezier(0.4,0,0.2,1);
-                        }
-                    `}</style>
                 </div>
             )}
         </nav>
     );
 }
+
+/* --- REUSABLE COMPONENTS --- */
+
+const NavDropdown = ({ label, children }: { label: string; children: React.ReactNode }) => (
+    <li className="group relative px-1">
+        <button className="flex items-center gap-2 rounded-full px-5 py-3 text-lg font-bold text-slate-700 transition-all duration-300 hover:bg-emerald-50 hover:text-emerald-700">
+            {label}
+            <svg className="h-5 w-5 text-slate-400 transition-transform duration-300 ease-out group-hover:rotate-180 group-hover:text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+        </button>
+        <div className="absolute left-1/2 top-full mt-2 w-80 -translate-x-1/2 origin-top scale-95 opacity-0 invisible transition-all duration-300 ease-out group-hover:visible group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100">
+            <div className="absolute -top-4 h-4 w-full bg-transparent"></div>
+            <div className="overflow-hidden rounded-3xl border border-slate-100 bg-white p-3 shadow-2xl ring-1 ring-black/5">
+                <div className="flex flex-col gap-1">{children}</div>
+            </div>
+        </div>
+    </li>
+);
+
+const DropdownLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
+    <Link href={href} className="block rounded-2xl px-6 py-3.5 text-base font-semibold text-slate-600 transition-all duration-200 hover:bg-emerald-50 hover:pl-7 hover:text-emerald-700">
+        {children}
+    </Link>
+);
+
+const LangBtn = ({ locale, current, onClick, children }: any) => (
+    <button
+        onClick={() => onClick(locale)}
+        className={`flex h-10 w-10 items-center justify-center rounded-full text-base transition-all duration-300 ${
+            current === locale ? 'bg-white text-slate-900 shadow-md ring-1 ring-black/5 scale-105' : 'text-slate-400 grayscale hover:bg-white/60 hover:grayscale-0 hover:text-slate-600'
+        }`}
+    >
+        {children}
+    </button>
+);
+
+const MobileSection = ({ label, icon, children }: any) => {
+    const [open, setOpen] = useState(false);
+    return (
+        <div className={`overflow-hidden rounded-2xl border transition-all duration-300 ${open ? 'border-emerald-100 bg-emerald-50/30' : 'border-slate-100 bg-white'}`}>
+            <button onClick={() => setOpen(!open)} className="flex w-full items-center justify-between px-5 py-4 text-left text-lg font-bold text-slate-800 hover:bg-slate-50/50">
+                <div className="flex items-center gap-4">
+                    <div className={`rounded-xl p-2 transition-colors ${open ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>{icon}</div>
+                    <span>{label}</span>
+                </div>
+                <svg className={`h-6 w-6 text-slate-400 transition-transform duration-300 ${open ? 'rotate-180 text-emerald-600' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+            <div className={`flex flex-col gap-2 px-5 transition-all duration-300 ease-in-out ${open ? 'max-h-[500px] pb-5 pt-2 opacity-100' : 'max-h-0 py-0 opacity-0 overflow-hidden'}`}>
+                {children}
+            </div>
+        </div>
+    );
+};
+
+const MobileLink = ({ href, children }: any) => (
+    <Link href={href} className="block rounded-xl border border-transparent px-4 py-3 text-base font-semibold text-slate-600 transition-all hover:border-emerald-100 hover:bg-white hover:text-emerald-700 hover:shadow-sm">
+        {children}
+    </Link>
+);
+
+const MobileLangBtn = ({ locale, current, onClick, children }: any) => (
+    <button
+        onClick={() => onClick(locale)}
+        className={`w-full rounded-xl px-4 py-3 text-base font-bold shadow-sm transition-all active:scale-95 ${
+            current === locale ? 'bg-emerald-500 text-white shadow-emerald-200' : 'bg-white text-slate-600 hover:bg-slate-100'
+        }`}
+    >
+        {children}
+    </button>
+);
+
+// --- Icons ---
+const IconUser = () => (
+    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+    </svg>
+);
+
+const IconDoctor = () => (
+    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+        />
+    </svg>
+);
+
+const IconResearch = () => (
+    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+        />
+    </svg>
+);
+
+const IconInfo = () => (
+    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+);
 
 export default Navbar;
