@@ -1,21 +1,9 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { useLang } from '@/hooks/useLang';
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Calendar, Edit, Eye, FileText, Filter, Hash, Plus, RotateCcw, Search, Trash2, X } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import {
-    Search,
-    Filter,
-    Plus,
-    FileText,
-    Calendar,
-    Trash2,
-    Edit,
-    Eye,
-    Hash,
-    X,
-    RotateCcw,
-} from 'lucide-react';
 
 interface FormResultType {
     id: number;
@@ -122,13 +110,9 @@ function FormsList() {
                         <div>
                             <div className="mb-1 flex items-center gap-2">
                                 <FileText className="h-4 w-4 text-emerald-400" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
-                                    {__('anketa.index.label')}
-                                </span>
+                                <span className="text-[10px] font-bold tracking-widest text-emerald-400 uppercase">{__('anketa.index.label')}</span>
                             </div>
-                            <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-                                {__('anketa.index.heading')}
-                            </h1>
+                            <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">{__('anketa.index.heading')}</h1>
                         </div>
                     </div>
                 </div>
@@ -258,7 +242,7 @@ function FormsList() {
                     </div>
 
                     {forms.length === 0 && (
-                        <div className="p-12 text-center text-slate-400 rounded-2xl border border-dashed border-white/10 bg-slate-900/30">
+                        <div className="rounded-2xl border border-dashed border-white/10 bg-slate-900/30 p-12 text-center text-slate-400">
                             <FileText className="mx-auto mb-3 h-12 w-12 opacity-20" />
                             <p>{__('anketa.index.empty')}</p>
                             <button onClick={resetFilters} className="mt-2 text-emerald-400 hover:underline">
@@ -281,11 +265,8 @@ function FormsList() {
             {/* Filter Modal */}
             {isFilterModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center sm:p-4">
-                    <div
-                        className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
-                        onClick={() => setIsFilterModalOpen(false)}
-                    />
-                    <div className="relative w-full animate-in slide-in-from-bottom duration-300 sm:duration-200 sm:zoom-in-95 sm:max-w-lg rounded-t-3xl sm:rounded-3xl border-t sm:border border-white/10 bg-slate-900 shadow-2xl">
+                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onClick={() => setIsFilterModalOpen(false)} />
+                    <div className="animate-in slide-in-from-bottom sm:zoom-in-95 relative w-full rounded-t-3xl border-t border-white/10 bg-slate-900 shadow-2xl duration-300 sm:max-w-lg sm:rounded-3xl sm:border sm:duration-200">
                         <div className="mx-auto mt-3 h-1.5 w-12 rounded-full bg-white/20 sm:hidden" />
 
                         <div className="flex items-center justify-between border-b border-white/10 px-6 py-5">
@@ -298,7 +279,7 @@ function FormsList() {
                             </button>
                         </div>
 
-                        <form onSubmit={applyFilters} className="space-y-5 p-6 pb-safe">
+                        <form onSubmit={applyFilters} className="pb-safe space-y-5 p-6">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="col-span-2 sm:col-span-1">
                                     <label className="mb-2 block text-xs font-bold uppercase text-slate-400">

@@ -79,11 +79,16 @@ export default function AdminLayout({ children, title }: PropsWithChildren<Admin
         return () => clearInterval(id);
     }, []);
 
+    // ✅ FIXED: full reload after locale change (prevents stale props / disappearing anketas / raw translation keys)
     const switchLanguage = async (locale: string) => {
         if (currentLocale === locale) return;
         try {
             await axios.post('/locale', { locale });
-            router.reload({ only: ['lang', 'locale'] });
+
+            router.reload({
+                preserveScroll: true,
+                preserveState: false, // 👈 force remount so translations + props refresh correctly
+            });
         } catch (error) {
             console.error('Language switch failed:', error);
         }
@@ -320,7 +325,7 @@ export default function AdminLayout({ children, title }: PropsWithChildren<Admin
             </div>
 
             <div className={`relative flex flex-col transition-opacity duration-500 ${loaderVisible ? 'opacity-0' : 'opacity-100'}`}>
-                {/* --- Mobile Header --- */}
+                {/* Mobile Header */}
                 <div className="lg:hidden sticky top-0 z-40 border-b border-white/5 bg-slate-950/80 px-4 py-4 backdrop-blur-md">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -340,9 +345,9 @@ export default function AdminLayout({ children, title }: PropsWithChildren<Admin
                     </div>
                 </div>
 
-                {/* --- Main Layout --- */}
+                {/* Main Layout */}
                 <div className="mx-auto flex w-full max-w-[1600px] items-start gap-8 p-4 sm:p-6 lg:p-8">
-                    {/* --- Sidebar --- */}
+                    {/* Sidebar */}
                     <aside
                         className={`fixed inset-y-0 left-0 z-50 w-72 transform bg-slate-950/95 p-4 transition-transform duration-300 lg:static lg:block lg:w-72 lg:translate-x-0 lg:bg-transparent lg:p-0 ${
                             mobileNavOpen ? 'translate-x-0 border-r border-white/10' : '-translate-x-full'
