@@ -304,7 +304,7 @@ export default function Anketa() {
             {showConsentModal && (
                 <div className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 px-4 backdrop-blur-sm">
                     <div className="w-full max-w-lg rounded-3xl border border-white/40 bg-white/95 p-8 text-center shadow-2xl shadow-slate-900/20">
-                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600">
                             <Icons.ShieldCheck className="h-6 w-6" />
                         </div>
                         <h2 className="text-2xl font-bold text-slate-900">{__('questions.consent.title')}</h2>
@@ -318,7 +318,7 @@ export default function Anketa() {
                             </button>
                             <button
                                 onClick={() => setConsentChoice('accepted')}
-                                className="rounded-xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition-all hover:bg-emerald-700"
+                                className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition-all hover:bg-blue-700"
                             >
                                 {__('questions.consent.accept')}
                             </button>
@@ -328,21 +328,21 @@ export default function Anketa() {
             )}
 
             <div
-                className={`min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-900 ${showConsentModal ? 'blur-sm grayscale-[0.5]' : ''}`}
+                className={`min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-blue-100 selection:text-blue-900 ${showConsentModal ? 'blur-sm grayscale-[0.5]' : ''}`}
             >
                 {/* BACKGROUND */}
                 <div className="pointer-events-none fixed inset-0 z-0">
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-                    <div className="absolute top-0 right-0 -z-10 h-[500px] w-[500px] rounded-full bg-emerald-400 opacity-10 blur-[120px]"></div>
-                    <div className="absolute bottom-0 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-sky-400 opacity-10 blur-[120px]"></div>
+                    <div className="absolute top-0 right-0 -z-10 h-[500px] w-[500px] rounded-full bg-blue-400 opacity-10 blur-[120px]"></div>
+                    <div className="absolute bottom-0 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-indigo-400 opacity-10 blur-[120px]"></div>
                 </div>
 
                 <div className="relative z-10 mx-auto max-w-5xl px-4 py-16 sm:px-6">
                     {/* Header */}
                     {!isCodeVerified && (
                         <header className="mb-12 text-center">
-                            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 px-3 py-1 text-xs font-semibold text-emerald-700 backdrop-blur">
-                                <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+                            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/80 px-3 py-1 text-xs font-semibold text-blue-700 backdrop-blur">
+                                <span className="h-2 w-2 animate-pulse rounded-full bg-blue-500" />
                                 {__('questions.portal.badge')}
                             </div>
                             <h1 className="mb-4 text-4xl font-bold tracking-tight text-slate-900">{__('questions.portal.title')}</h1>
@@ -367,7 +367,7 @@ export default function Anketa() {
                                     focusInput(i === -1 ? CODE_LENGTH - 1 : i);
                                 }}
                             >
-                                <div className="flex items-center justify-center gap-2 sm:gap-3">
+                                <div className="flex w-full max-w-md flex-wrap items-center justify-center gap-x-2 gap-y-3 sm:max-w-none sm:flex-nowrap sm:gap-3">
                                     {codeDigits.map((digit, index) => (
                                         <div key={index} className="flex items-center">
                                             <input
@@ -382,10 +382,10 @@ export default function Anketa() {
                                                 onKeyDown={(e) => handleKeyDown(e, index)}
                                                 onPaste={(e) => handlePaste(e, index)}
                                                 disabled={verifying}
-                                                className={`h-12 w-10 rounded-xl border text-center text-xl font-bold tracking-widest transition-all outline-none sm:h-14 sm:w-12 ${digit ? 'border-emerald-500 bg-emerald-50 text-emerald-900' : 'border-slate-200 bg-slate-50 text-slate-900 focus:border-emerald-400 focus:bg-white focus:ring-4 focus:ring-emerald-500/10'}`}
+                                                className={`h-12 w-10 rounded-xl border text-center text-xl font-bold tracking-widest transition-all outline-none sm:h-14 sm:w-12 ${digit ? 'border-blue-500 bg-blue-50 text-blue-900' : 'border-slate-200 bg-slate-50 text-slate-900 focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-500/10'}`}
                                             />
                                             {(index + 1) % CODE_GROUP_SIZE === 0 && index < CODE_LENGTH - 1 && (
-                                                <div className="mx-1 h-1 w-2 rounded bg-slate-200 sm:w-4"></div>
+                                                <div className="mx-1 hidden h-1 w-4 rounded bg-slate-200 sm:block"></div>
                                             )}
                                         </div>
                                     ))}
@@ -401,7 +401,7 @@ export default function Anketa() {
                                     <button
                                         onClick={verifyCode}
                                         disabled={verifying || filledCode.length < CODE_LENGTH}
-                                        className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-8 py-3 text-sm font-bold text-white shadow-lg transition-all hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-8 py-3 text-sm font-bold text-white shadow-lg transition-all hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         {verifying ? __('questions.code.verifying') : (<><span>{__('questions.code.unlock')}</span> <Icons.Unlock className="h-4 w-4" /></>)}
                                     </button>
@@ -421,7 +421,7 @@ export default function Anketa() {
                             <div className="mt-12 grid gap-4 border-t border-slate-100 pt-8 sm:grid-cols-3">
                                 {(highlightCards.length > 0 ? highlightCards : questionsBundle?.highlights ?? []).map((card: any) => (
                                     <div key={card.title ?? Math.random()} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                                        <p className="mb-1 text-xs font-bold tracking-wider text-emerald-600 uppercase">{card.accent}</p>
+                                        <p className="mb-1 text-xs font-bold tracking-wider text-blue-600 uppercase">{card.accent}</p>
                                         <h4 className="mb-1 text-sm font-semibold text-slate-900">{card.title}</h4>
                                         <p className="text-xs leading-relaxed text-slate-500">{card.description}</p>
                                     </div>
@@ -438,7 +438,7 @@ export default function Anketa() {
                             </div>
                             <h2 className="text-2xl font-bold text-slate-900">{__('questions.declined.title')}</h2>
                             <p className="mt-2 text-slate-600">{__('questions.declined.description')}</p>
-                            <button onClick={resetCode} className="mt-8 text-sm font-bold text-emerald-600 hover:underline">
+                            <button onClick={resetCode} className="mt-8 text-sm font-bold text-blue-600 hover:underline">
                                 {__('questions.declined.restart')}
                             </button>
                         </div>
@@ -466,7 +466,7 @@ export default function Anketa() {
                                         {/* Progress Bar */}
                                         <div className="h-1.5 w-full bg-slate-100">
                                             <div
-                                                className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 transition-all duration-500 ease-out"
+                                                className="h-full bg-gradient-to-r from-blue-500 to-blue-400 transition-all duration-500 ease-out"
                                                 style={{ width: `${progress}%` }}
                                             />
                                         </div>
@@ -497,10 +497,10 @@ export default function Anketa() {
                                                                 return (
                                                                     <label
                                                                         key={opt}
-                                                                        className={`flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition-all duration-200 ${isSelected ? 'border-emerald-500 bg-emerald-50 text-emerald-900' : 'border-slate-100 bg-white hover:border-emerald-200 hover:bg-slate-50'}`}
+                                                                        className={`flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition-all duration-200 ${isSelected ? 'border-blue-500 bg-blue-50 text-blue-900' : 'border-slate-100 bg-white hover:border-blue-200 hover:bg-slate-50'}`}
                                                                     >
                                                                         <div
-                                                                            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${isSelected ? 'border-emerald-500 bg-emerald-500' : 'border-slate-300 bg-white'}`}
+                                                                            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${isSelected ? 'border-blue-500 bg-blue-500' : 'border-slate-300 bg-white'}`}
                                                                         >
                                                                             {isSelected && <Icons.Check className="h-3 w-3 text-white" />}
                                                                         </div>
@@ -524,7 +524,7 @@ export default function Anketa() {
                                                     {currentField.type === 'text' && (
                                                         <textarea
                                                             rows={4}
-                                                            className="w-full rounded-2xl border-2 border-slate-200 bg-slate-50 p-4 text-lg text-slate-900 transition-all outline-none placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:ring-0"
+                                                            className="w-full rounded-2xl border-2 border-slate-200 bg-slate-50 p-4 text-lg text-slate-900 transition-all outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-0"
                                                             placeholder={
                                                                 (currentField.placeholder?.[activeLang] ?? currentField.placeholder?.lv) ||
                                                                 __('questions.form.placeholder_text')
@@ -537,7 +537,7 @@ export default function Anketa() {
                                                     {currentField.type === 'dropdown' && (
                                                         <div className="relative">
                                                             <select
-                                                                className="w-full appearance-none rounded-2xl border-2 border-slate-200 bg-white p-4 text-lg text-slate-900 transition-all outline-none focus:border-emerald-500"
+                                                                className="w-full appearance-none rounded-2xl border-2 border-slate-200 bg-white p-4 text-lg text-slate-900 transition-all outline-none focus:border-blue-500"
                                                                 value={(answers[currentField.id] as string) || ''}
                                                                 onChange={(e) => handleDropdownAnswer(currentField.id, e.target.value)}
                                                             >
@@ -571,7 +571,7 @@ export default function Anketa() {
                                                                             key={val}
                                                                             type="button"
                                                                             onClick={() => handleScaleAnswer(currentField.id, String(val))}
-                                                                            className={`flex-1 rounded-xl py-4 text-lg font-bold transition-all duration-200 ${isSelected ? 'scale-105 bg-emerald-600 text-white shadow-lg shadow-emerald-500/30' : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700'}`}
+                                                                            className={`flex-1 rounded-xl py-4 text-lg font-bold transition-all duration-200 ${isSelected ? 'scale-105 bg-blue-600 text-white shadow-lg shadow-blue-500/30' : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700'}`}
                                                                         >
                                                                             {val}
                                                                         </button>
@@ -599,14 +599,14 @@ export default function Anketa() {
                                                 {currentQuestionIndex < totalQuestions - 1 ? (
                                                     <button
                                                         onClick={handleNext}
-                                                        className="flex items-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/10 transition-all hover:bg-emerald-600"
+                                                        className="flex items-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/10 transition-all hover:bg-blue-600"
                                                     >
                                                         {__('questions.navigation.next')} <Icons.ArrowRight className="h-4 w-4" />
                                                     </button>
                                                 ) : (
                                                     <button
                                                         onClick={() => handleSubmitAnswers()}
-                                                        className="flex items-center gap-2 rounded-full bg-emerald-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/30 transition-all hover:bg-emerald-700"
+                                                        className="flex items-center gap-2 rounded-full bg-blue-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-blue-600/30 transition-all hover:bg-blue-700"
                                                     >
                                                         {__('questions.navigation.submit')} <Icons.Check className="h-4 w-4" />
                                                     </button>
@@ -625,8 +625,8 @@ export default function Anketa() {
 
                             {/* SUCCESS STATE */}
                             {submitted && (
-                                <div className="animate-fade-in mx-auto max-w-2xl rounded-3xl border border-emerald-100 bg-white p-12 text-center shadow-xl">
-                                    <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-emerald-50 text-emerald-500 shadow-sm">
+                                <div className="animate-fade-in mx-auto max-w-2xl rounded-3xl border border-blue-100 bg-white p-12 text-center shadow-xl">
+                                    <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-blue-50 text-blue-500 shadow-sm">
                                         <Icons.Check className="h-12 w-12" />
                                     </div>
                                     <h2 className="mb-4 text-3xl font-bold text-slate-900">{__('questions.submit.success_title')}</h2>

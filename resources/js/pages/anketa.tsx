@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
-import { FormEvent, useMemo, useState } from 'react';
+import { useLang } from '@/hooks/useLang';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 
 // --- ICONS ---
 const Icons = {
@@ -54,6 +55,7 @@ const diseaseOptions = [
 const severityLevels = ['Viegls', 'Vidējs', 'Smags'];
 
 export default function Anketa() {
+    const { __ } = useLang();
     const [formData, setFormData] = useState<Questionnaire>({
         gender: '',
         ageGroup: '',
@@ -65,11 +67,16 @@ export default function Anketa() {
         therapy: '',
     });
     const [currentStep, setCurrentStep] = useState(0);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [attemptedSubmit, setAttemptedSubmit] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
+    const [validationMessage, setValidationMessage] = useState<string | null>(null);
+    const [touched, setTouched] = useState<Partial<Record<keyof Questionnaire, boolean>>>({});
     const [isFinished, setIsFinished] = useState(false);
 
     const setField = (field: keyof Questionnaire, value: string) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
+        setTouched((prev) => ({ ...prev, [field]: true }));
+        setSubmitError(null);
     };
 
     const handleCheckboxChange = (value: string) => {
@@ -80,7 +87,63 @@ export default function Anketa() {
                 diseases: exists ? prev.diseases.filter((item) => item !== value) : [...prev.diseases, value],
             };
         });
+        setTouched((prev) => ({ ...prev, diseases: true }));
+        setSubmitError(null);
     };
+
+    const getStepErrors = (step: number, data: Questionnaire) => {
+        const errors: Partial<Record<keyof Questionnaire, string>> = {};
+
+        if (step === 0) {
+            if (!data.gender) errors.gender = __('pacientu_anketa.errors.gender');
+            if (!data.ageGroup) errors.ageGroup = __('pacientu_anketa.errors.age');
+            if (!data.country) errors.country = __('pacientu_anketa.errors.country');
+            if (data.country === 'Cita' && !data.countryOther.trim()) {
+                errors.countryOther = __('pacientu_anketa.errors.country_other');
+            }
+        } else if (step === 1) {
+            if (data.diseases.length === 0) errors.diseases = __('pacientu_anketa.errors.diseases');
+            if (data.diseases.includes('Cita') && !data.otherDisease.trim()) {
+                errors.otherDisease = __('pacientu_anketa.errors.other_disease');
+            }
+        } else if (step === 2) {
+            if (!data.severity) errors.severity = __('pacientu_anketa.errors.severity');
+            if (!data.therapy) errors.therapy = __('pacientu_anketa.errors.therapy');
+        }
+
+        return errors;
+    };
+
+    const getStepBanner = (step: number, errors: Partial<Record<keyof Questionnaire, string>>) => {
+        if (Object.keys(errors).length === 0) return null;
+        if (step === 1) return errors.diseases ?? __('pacientu_anketa.errors.diseases');
+        if (step === 2) return __('pacientu_anketa.errors.required');
+        return __('pacientu_anketa.errors.required_all');
+    };
+
+    const stepErrors = useMemo(() => getStepErrors(currentStep, formData), [currentStep, formData]);
+    const visibleErrors = useMemo(() => {
+        const errors: Partial<Record<keyof Questionnaire, string>> = {};
+        (Object.keys(stepErrors) as (keyof Questionnaire)[]).forEach((key) => {
+            if (attemptedSubmit || touched[key]) {
+                errors[key] = stepErrors[key];
+            }
+        });
+        return errors;
+    }, [attemptedSubmit, stepErrors, touched]);
+
+    useEffect(() => {
+        if (attemptedSubmit && Object.keys(stepErrors).length === 0) {
+            setValidationMessage(null);
+        }
+    }, [attemptedSubmit, stepErrors]);
+
+    useEffect(() => {
+        setAttemptedSubmit(false);
+        setValidationMessage(null);
+        setSubmitError(null);
+        setTouched({});
+    }, [currentStep]);
 
     const slides = useMemo(
         () => [
@@ -90,7 +153,7 @@ export default function Anketa() {
                 content: (
                     <div className="space-y-8">
                         {/* Gender */}
-                        <div className="space-y-3">
+                        <div className="space-y-3" data-field="gender">
                             <label className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-500">
                                 <Icons.User className="h-4 w-4" /> Dzimums
                             </label>
@@ -100,8 +163,10 @@ export default function Anketa() {
                                         key={option}
                                         className={`cursor-pointer relative flex items-center justify-center rounded-xl border p-4 text-sm font-semibold transition-all duration-200 ${
                                             formData.gender === option
-                                                ? 'border-emerald-500 bg-emerald-50 text-emerald-800 shadow-sm ring-1 ring-emerald-500'
-                                                : 'border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:bg-slate-50'
+                                                ? 'border-teal-500 bg-teal-50 text-teal-800 shadow-sm ring-1 ring-teal-500'
+                                                : visibleErrors.gender
+                                                    ? 'border-rose-300 bg-rose-50/60 text-rose-700'
+                                                    : 'border-slate-200 bg-white text-slate-600 hover:border-teal-300 hover:bg-slate-50'
                                         }`}
                                     >
                                         <input
@@ -116,10 +181,13 @@ export default function Anketa() {
                                     </label>
                                 ))}
                             </div>
+                            {visibleErrors.gender && (
+                                <p className="text-xs text-rose-600 font-semibold">{visibleErrors.gender}</p>
+                            )}
                         </div>
 
                         {/* Age */}
-                        <div className="space-y-3">
+                        <div className="space-y-3" data-field="ageGroup">
                             <label className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-500">
                                 <Icons.Calendar className="h-4 w-4" /> Vecums
                             </label>
@@ -129,8 +197,10 @@ export default function Anketa() {
                                         key={option}
                                         className={`cursor-pointer relative flex items-center justify-center rounded-xl border p-3 text-sm font-semibold transition-all duration-200 ${
                                             formData.ageGroup === option
-                                                ? 'border-emerald-500 bg-emerald-50 text-emerald-800 shadow-sm ring-1 ring-emerald-500'
-                                                : 'border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:bg-slate-50'
+                                                ? 'border-teal-500 bg-teal-50 text-teal-800 shadow-sm ring-1 ring-teal-500'
+                                                : visibleErrors.ageGroup
+                                                    ? 'border-rose-300 bg-rose-50/60 text-rose-700'
+                                                    : 'border-slate-200 bg-white text-slate-600 hover:border-teal-300 hover:bg-slate-50'
                                         }`}
                                     >
                                         <input
@@ -145,10 +215,13 @@ export default function Anketa() {
                                     </label>
                                 ))}
                             </div>
+                            {visibleErrors.ageGroup && (
+                                <p className="text-xs text-rose-600 font-semibold">{visibleErrors.ageGroup}</p>
+                            )}
                         </div>
 
                         {/* Country */}
-                        <div className="space-y-3">
+                        <div className="space-y-3" data-field="country">
                             <label className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-500">
                                 <Icons.Globe className="h-4 w-4" /> Valsts
                             </label>
@@ -163,7 +236,10 @@ export default function Anketa() {
                                             setField('countryOther', '');
                                         }
                                     }}
-                                    className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base text-slate-900 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-500"
+                                    onBlur={() => setTouched((prev) => ({ ...prev, country: true }))}
+                                    className={`w-full appearance-none rounded-xl border bg-slate-50 px-4 py-3.5 text-base text-slate-900 outline-none transition focus:bg-white focus:ring-1 focus:ring-teal-500 ${
+                                        visibleErrors.country ? 'border-rose-300 focus:border-rose-400' : 'border-slate-200 focus:border-teal-500'
+                                    }`}
                                 >
                                     <option value="">Izvēlieties valsti...</option>
                                     {countries.map((country) => (
@@ -176,16 +252,25 @@ export default function Anketa() {
                                     <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
                                 </div>
                             </div>
+                            {visibleErrors.country && (
+                                <p className="text-xs text-rose-600 font-semibold">{visibleErrors.country}</p>
+                            )}
                             
                             {formData.country === 'Cita' && (
-                                <div className="animate-fade-in-up">
+                                <div className="animate-fade-in-up" data-field="countryOther">
                                     <input
                                         type="text"
                                         value={formData.countryOther}
                                         onChange={(event) => setField('countryOther', event.target.value)}
+                                        onBlur={() => setTouched((prev) => ({ ...prev, countryOther: true }))}
                                         placeholder="Ierakstiet valsts nosaukumu"
-                                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                                        className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-900 outline-none focus:ring-1 ${
+                                            visibleErrors.countryOther ? 'border-rose-300 focus:border-rose-400 focus:ring-rose-200' : 'border-slate-200 focus:border-teal-500 focus:ring-teal-500'
+                                        }`}
                                     />
+                                    {visibleErrors.countryOther && (
+                                        <p className="mt-2 text-xs text-rose-600 font-semibold">{visibleErrors.countryOther}</p>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -196,7 +281,7 @@ export default function Anketa() {
                 title: 'Veselības profils',
                 description: 'Atzīmējiet diagnosticētās slimības.',
                 content: (
-                    <div className="space-y-6">
+                    <div className="space-y-6" data-field="diseases">
                          <label className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-500">
                             <Icons.Activity className="h-4 w-4" /> Slimību vēsture
                         </label>
@@ -209,11 +294,13 @@ export default function Anketa() {
                                         key={option}
                                         className={`cursor-pointer relative flex items-center gap-4 rounded-xl border p-4 text-sm font-semibold transition-all duration-200 ${
                                             isChecked
-                                                ? 'border-emerald-500 bg-emerald-50 text-emerald-900 shadow-sm ring-1 ring-emerald-500'
-                                                : 'border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:bg-slate-50'
+                                                ? 'border-teal-500 bg-teal-50 text-teal-900 shadow-sm ring-1 ring-teal-500'
+                                                : visibleErrors.diseases
+                                                    ? 'border-rose-300 bg-rose-50/60 text-rose-700'
+                                                    : 'border-slate-200 bg-white text-slate-600 hover:border-teal-300 hover:bg-slate-50'
                                         }`}
                                     >
-                                        <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-colors ${isChecked ? 'bg-emerald-500 border-emerald-500' : 'border-slate-300 bg-white'}`}>
+                                        <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-colors ${isChecked ? 'bg-teal-500 border-teal-500' : 'border-slate-300 bg-white'}`}>
                                             {isChecked && <Icons.Check className="h-3.5 w-3.5 text-white" />}
                                         </div>
                                         <input
@@ -227,16 +314,25 @@ export default function Anketa() {
                                 );
                             })}
                         </div>
+                        {visibleErrors.diseases && (
+                            <p className="text-xs text-rose-600 font-semibold">{visibleErrors.diseases}</p>
+                        )}
                         {formData.diseases.includes('Cita') && (
-                            <div className="animate-fade-in-up">
+                            <div className="animate-fade-in-up" data-field="otherDisease">
                                 <label className="block mb-2 text-xs font-semibold text-slate-500">Citas slimības apraksts</label>
                                 <input
                                     type="text"
                                     value={formData.otherDisease}
                                     onChange={(event) => setField('otherDisease', event.target.value)}
+                                    onBlur={() => setTouched((prev) => ({ ...prev, otherDisease: true }))}
                                     placeholder="Lūdzu precizējiet..."
-                                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                                    className={`w-full rounded-xl border bg-white px-4 py-3 text-slate-900 outline-none focus:ring-1 ${
+                                        visibleErrors.otherDisease ? 'border-rose-300 focus:border-rose-400 focus:ring-rose-200' : 'border-slate-200 focus:border-teal-500 focus:ring-teal-500'
+                                    }`}
                                 />
+                                {visibleErrors.otherDisease && (
+                                    <p className="mt-2 text-xs text-rose-600 font-semibold">{visibleErrors.otherDisease}</p>
+                                )}
                             </div>
                         )}
                     </div>
@@ -247,7 +343,7 @@ export default function Anketa() {
                 description: 'Informācija par slimības gaitu un iepriekšējo ārstēšanu.',
                 content: (
                     <div className="space-y-8">
-                        <div className="space-y-3">
+                        <div className="space-y-3" data-field="severity">
                             <label className="text-sm font-bold uppercase tracking-wider text-slate-500">
                                 Smaguma pakāpe
                             </label>
@@ -257,8 +353,10 @@ export default function Anketa() {
                                         key={option}
                                         className={`cursor-pointer relative flex items-center justify-center rounded-xl border p-4 text-sm font-semibold transition-all duration-200 ${
                                             formData.severity === option
-                                                ? 'border-emerald-500 bg-emerald-50 text-emerald-800 shadow-sm ring-1 ring-emerald-500'
-                                                : 'border-slate-200 bg-white text-slate-600 hover:border-emerald-300'
+                                                ? 'border-teal-500 bg-teal-50 text-teal-800 shadow-sm ring-1 ring-teal-500'
+                                                : visibleErrors.severity
+                                                    ? 'border-rose-300 bg-rose-50/60 text-rose-700'
+                                                    : 'border-slate-200 bg-white text-slate-600 hover:border-teal-300'
                                         }`}
                                     >
                                         <input
@@ -273,9 +371,12 @@ export default function Anketa() {
                                     </label>
                                 ))}
                             </div>
+                            {visibleErrors.severity && (
+                                <p className="text-xs text-rose-600 font-semibold">{visibleErrors.severity}</p>
+                            )}
                         </div>
 
-                        <div className="space-y-3">
+                        <div className="space-y-3" data-field="therapy">
                             <label className="text-sm font-bold uppercase tracking-wider text-slate-500">
                                 Vai iepriekš saņemta cilmes šūnu terapija?
                             </label>
@@ -285,8 +386,10 @@ export default function Anketa() {
                                         key={option}
                                         className={`cursor-pointer relative flex items-center justify-center rounded-xl border p-4 text-sm font-semibold transition-all duration-200 ${
                                             formData.therapy === option
-                                                ? 'border-emerald-500 bg-emerald-50 text-emerald-800 shadow-sm ring-1 ring-emerald-500'
-                                                : 'border-slate-200 bg-white text-slate-600 hover:border-emerald-300'
+                                                ? 'border-teal-500 bg-teal-50 text-teal-800 shadow-sm ring-1 ring-teal-500'
+                                                : visibleErrors.therapy
+                                                    ? 'border-rose-300 bg-rose-50/60 text-rose-700'
+                                                    : 'border-slate-200 bg-white text-slate-600 hover:border-teal-300'
                                         }`}
                                     >
                                         <input
@@ -301,6 +404,9 @@ export default function Anketa() {
                                     </label>
                                 ))}
                             </div>
+                            {visibleErrors.therapy && (
+                                <p className="text-xs text-rose-600 font-semibold">{visibleErrors.therapy}</p>
+                            )}
                         </div>
                     </div>
                 ),
@@ -315,42 +421,49 @@ export default function Anketa() {
             formData.otherDisease,
             formData.severity,
             formData.therapy,
+            visibleErrors,
         ],
     );
 
-    const validateStep = (step: number): boolean => {
-        if (step === 0) {
-            if (!formData.gender || !formData.ageGroup || !formData.country) {
-                setErrorMessage('Lūdzu, aizpildiet visus obligātos laukus.');
-                return false;
+    const focusFirstError = (errors: Partial<Record<keyof Questionnaire, string>>, step: number) => {
+        const order: (keyof Questionnaire)[] =
+            step === 0
+                ? ['gender', 'ageGroup', 'country', 'countryOther']
+                : step === 1
+                    ? ['diseases', 'otherDisease']
+                    : ['severity', 'therapy'];
+        const firstKey = order.find((key) => errors[key]);
+        if (!firstKey) return;
+
+        const container = document.querySelector(`[data-field="${firstKey}"]`);
+        if (!container) return;
+
+        container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const focusable = container.querySelector('input, select, textarea, button');
+        if (focusable instanceof HTMLElement) {
+            focusable.focus();
+        }
+    };
+
+    const validateStep = (step: number, shouldShowErrors: boolean): boolean => {
+        const errors = getStepErrors(step, formData);
+        if (Object.keys(errors).length > 0) {
+            if (shouldShowErrors) {
+                setAttemptedSubmit(true);
+                setValidationMessage(getStepBanner(step, errors));
+                focusFirstError(errors, step);
             }
-            if (formData.country === 'Cita' && !formData.countryOther.trim()) {
-                setErrorMessage('Lūdzu, norādiet valsti.');
-                return false;
-            }
-        } else if (step === 1) {
-            if (formData.diseases.length === 0) {
-                setErrorMessage('Lūdzu, atzīmējiet vismaz vienu slimību.');
-                return false;
-            }
-            if (formData.diseases.includes('Cita') && !formData.otherDisease.trim()) {
-                setErrorMessage('Lūdzu, aprakstiet citu slimību.');
-                return false;
-            }
-        } else if (step === 2) {
-            if (!formData.severity || !formData.therapy) {
-                setErrorMessage('Lūdzu, aizpildiet visus laukus.');
-                return false;
-            }
+            return false;
         }
 
-        setErrorMessage(null);
+        setValidationMessage(null);
         return true;
     };
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (!validateStep(currentStep)) return;
+        setAttemptedSubmit(true);
+        if (!validateStep(currentStep, true)) return;
 
         const payload = {
             code: 'anketa',
@@ -373,7 +486,7 @@ export default function Anketa() {
             });
 
             if (!res.ok) {
-                setErrorMessage('Kļūda saglabājot atbildes. Mēģiniet vēlreiz.');
+                setSubmitError(__('pacientu_anketa.errors.submit_error'));
                 return;
             }
 
@@ -381,16 +494,16 @@ export default function Anketa() {
             if (json?.ok) {
                 setIsFinished(true);
             } else {
-                setErrorMessage(json?.message ?? 'Nezināma kļūda.');
+                setSubmitError(json?.message ?? __('pacientu_anketa.errors.unknown_error'));
             }
         } catch (err) {
             console.error(err);
-            setErrorMessage('Savienojuma kļūda. Pārbaudiet internetu.');
+            setSubmitError(__('pacientu_anketa.errors.connection_error'));
         }
     };
 
     const nextStep = () => {
-        if (!validateStep(currentStep)) return;
+        if (!validateStep(currentStep, false)) return;
         setCurrentStep((prev) => Math.min(prev + 1, slides.length - 1));
     };
 
@@ -402,20 +515,20 @@ export default function Anketa() {
         <>
             <Head title="Anketa" />
             
-            <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
+            <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-teal-100 selection:text-teal-900">
                 
                 {/* BACKGROUND TECH GRID */}
                 <div className="fixed inset-0 pointer-events-none z-0">
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-                    <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-emerald-400 opacity-20 blur-[100px]"></div>
-                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-sky-400 opacity-10 blur-[120px]"></div>
+                    <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-teal-400 opacity-20 blur-[100px]"></div>
+                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-cyan-400 opacity-10 blur-[120px]"></div>
                 </div>
 
                 <section className="relative z-10 mx-auto min-h-screen max-w-3xl px-4 py-12 sm:px-6">
                     <div className="mb-6 flex">
                         <Link
                             href="/"
-                            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:text-emerald-600 hover:border-emerald-200"
+                            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:text-teal-600 hover:border-teal-200"
                         >
                             <Icons.ChevronLeft className="h-4 w-4" />
                             Uz sākumlapu
@@ -424,8 +537,8 @@ export default function Anketa() {
 
                     {/* Header */}
                     <div className="text-center mb-10">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-emerald-700 mb-6">
-                            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <div className="inline-flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-teal-700 mb-6">
+                            <span className="h-2 w-2 rounded-full bg-teal-500 animate-pulse" />
                             Pacientu Portāls
                         </div>
                         <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -444,7 +557,7 @@ export default function Anketa() {
                                 </div>
                                 <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
                                     <div 
-                                        className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 transition-all duration-500 ease-out" 
+                                        className="h-full bg-gradient-to-r from-teal-500 to-teal-400 transition-all duration-500 ease-out" 
                                         style={{ width: `${progress}%` }} 
                                     />
                                 </div>
@@ -452,10 +565,10 @@ export default function Anketa() {
 
                             <form onSubmit={handleSubmit} className="p-8">
                                 
-                                {errorMessage && (
+                                {(submitError || (attemptedSubmit && validationMessage)) && (
                                     <div className="mb-6 flex items-center gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
                                         <Icons.Alert className="h-5 w-5 shrink-0" />
-                                        {errorMessage}
+                                        {submitError ?? validationMessage}
                                     </div>
                                 )}
 
@@ -485,7 +598,7 @@ export default function Anketa() {
                                     {isLastStep ? (
                                         <button
                                             type="submit"
-                                            className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition hover:bg-emerald-600 hover:shadow-emerald-500/30"
+                                            className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition hover:bg-teal-600 hover:shadow-teal-500/30"
                                         >
                                             Iesniegt datus <Icons.Check className="h-4 w-4" />
                                         </button>
@@ -493,7 +606,7 @@ export default function Anketa() {
                                         <button
                                             type="button"
                                             onClick={nextStep}
-                                            className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition hover:bg-emerald-600 hover:shadow-emerald-500/30"
+                                            className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition hover:bg-teal-600 hover:shadow-teal-500/30"
                                         >
                                             Turpināt <Icons.ArrowRight className="h-4 w-4" />
                                         </button>
@@ -502,8 +615,8 @@ export default function Anketa() {
                             </form>
                         </div>
                     ) : (
-                        <div className="rounded-3xl border border-emerald-100 bg-white p-12 text-center shadow-xl shadow-emerald-100/50">
-                            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50 text-emerald-500">
+                        <div className="rounded-3xl border border-teal-100 bg-white p-12 text-center shadow-xl shadow-teal-100/50">
+                            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-teal-50 text-teal-500">
                                 <Icons.Check className="h-10 w-10" />
                             </div>
                             <h2 className="text-3xl font-bold text-slate-900 mb-2">Paldies!</h2>
@@ -513,7 +626,7 @@ export default function Anketa() {
                             </p>
                             <button 
                                 onClick={() => window.location.reload()}
-                                className="mt-8 text-sm font-semibold text-emerald-600 hover:text-emerald-700 hover:underline"
+                                className="mt-8 text-sm font-semibold text-teal-600 hover:text-teal-700 hover:underline"
                             >
                                 Atgriezties sākumā
                             </button>

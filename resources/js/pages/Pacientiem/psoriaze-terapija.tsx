@@ -1,11 +1,10 @@
 import { useLang } from '@/hooks/useLang';
-import { Head, Link } from '@inertiajs/react';
+import ProcessTimeline from '@/Components/ProcessTimeline';
+import TherapyHero from '@/Components/TherapyHero';
+import { Head } from '@inertiajs/react';
 
 // --- ICONS ---
 const Icons = {
-    ArrowRight: ({ className }: { className?: string }) => (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
-    ),
     Check: ({ className }: { className?: string }) => (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
     ),
@@ -30,6 +29,12 @@ const copy = {
             description:
                 'Mēs apvienojam klīnisko pieredzi un modernus medikamentus, lai samazinātu plāksterus, niezi un uzlabotu dzīves kvalitāti ilgtermiņā.',
             cta: 'Aizpildīt anketu',
+            icon: 'drop',
+            facts: [
+                { title: 'Plāksteru kontrole', text: 'Mērķēts plāksteru un iekaisuma mazinājums.', icon: 'sun' },
+                { title: 'Nieze un komforts', text: 'Ikdienas komforts ar mazāku kairinājumu.', icon: 'drop' },
+                { title: 'Remisijas uzturēšana', text: 'Stabils rezultāts ar ilgtermiņa uzraudzību.', icon: 'shield' },
+            ],
         },
         stats: [
             { value: '85%', label: 'Pacienti ar uzlabojumiem' },
@@ -78,6 +83,12 @@ const copy = {
             description:
                 'We combine clinical experience and modern medications to reduce plaques, itching, and improve long-term quality of life.',
             cta: 'Fill out the form',
+            icon: 'drop',
+            facts: [
+                { title: 'Plaque control', text: 'Targeted reduction of plaques and inflammation.', icon: 'sun' },
+                { title: 'Itch relief', text: 'Daily comfort with less irritation.', icon: 'drop' },
+                { title: 'Sustained remission', text: 'Stable results with ongoing monitoring.', icon: 'shield' },
+            ],
         },
         stats: [
             { value: '85%', label: 'Patients with improvements' },
@@ -122,67 +133,54 @@ const copy = {
 export default function PsoriasisTherapy() {
     const { locale } = useLang();
     const t = copy[locale === 'en' ? 'en' : 'lv'];
+    const heroTheme = {
+        badge: 'border-rose-100 bg-rose-50/80 text-rose-700',
+        badgeDot: 'bg-rose-500',
+        highlight: 'from-rose-600 to-amber-500',
+        cta: 'from-rose-600 to-rose-500 shadow-rose-500/20 hover:shadow-rose-500/30',
+        iconFrame: 'border-rose-100',
+        keyFactCard: 'border-rose-100/60 hover:border-rose-200/80 transition-colors',
+        keyFactIcon: 'bg-rose-50 text-rose-600',
+        statsDivider: 'bg-slate-200',
+    };
+    const heroIcons = {
+        drop: <Icons.Drop className="h-6 w-6" />,
+        shield: <Icons.Shield className="h-6 w-6" />,
+        sun: <Icons.Sun className="h-6 w-6" />,
+    } as const;
+    const heroFacts = t.hero.facts.map((fact) => ({
+        ...fact,
+        icon: heroIcons[fact.icon as keyof typeof heroIcons],
+    }));
 
     return (
         <>
             <Head title={t.metaTitle} />
 
             {/* MAIN WRAPPER */}
-            <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
+            <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-rose-100 selection:text-rose-900">
                 
                 {/* BACKGROUND TECH GRID */}
                 <div className="fixed inset-0 pointer-events-none z-0">
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-                    <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-emerald-400 opacity-20 blur-[100px]"></div>
-                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-sky-400 opacity-10 blur-[120px]"></div>
+                    <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-rose-400 opacity-20 blur-[100px]"></div>
+                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-amber-300 opacity-10 blur-[120px]"></div>
                 </div>
 
                 <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     
-                    {/* --- HERO SECTION --- */}
-                    <main className="py-16 lg:py-24 text-center">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-emerald-700 mb-6">
-                            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                            {t.badge}
-                        </div>
-                        
-                        <h1 className="mx-auto max-w-4xl text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl mb-6">
-                            {t.hero.title} <br className="hidden sm:block" />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-sky-600">
-                                {t.hero.highlight}
-                            </span>
-                        </h1>
-                        
-                        <p className="mx-auto max-w-2xl text-lg text-slate-600 leading-relaxed mb-10">
-                            {t.hero.description}
-                        </p>
-
-                        {/* CTA Button */}
-                        <div className="flex justify-center mb-16">
-                            <Link href="/anketa?role=pacients" className="group inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-500/20 transition-all hover:-translate-y-0.5 hover:shadow-emerald-500/30">
-                                {t.hero.cta}
-                                <Icons.ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                            </Link>
-                        </div>
-
-                        {/* Stats Bar */}
-                        <div className="flex flex-wrap justify-center gap-8 md:gap-16 text-slate-500">
-                             <div className="flex flex-col items-center">
-                                <span className="text-3xl font-bold text-slate-900">{t.stats[0].value}</span>
-                                <span className="text-sm font-medium">{t.stats[0].label}</span>
-                             </div>
-                             <div className="h-12 w-px bg-slate-200 hidden sm:block"></div>
-                             <div className="flex flex-col items-center">
-                                <span className="text-3xl font-bold text-slate-900">{t.stats[1].value}</span>
-                                <span className="text-sm font-medium">{t.stats[1].label}</span>
-                             </div>
-                             <div className="h-12 w-px bg-slate-200 hidden sm:block"></div>
-                             <div className="flex flex-col items-center">
-                                <span className="text-3xl font-bold text-slate-900">{t.stats[2].value}</span>
-                                <span className="text-sm font-medium">{t.stats[2].label}</span>
-                             </div>
-                        </div>
-                    </main>
+                    <TherapyHero
+                        badge={t.badge}
+                        title={t.hero.title}
+                        highlight={t.hero.highlight}
+                        description={t.hero.description}
+                        ctaLabel={t.hero.cta}
+                        ctaHref="/anketa?role=pacients"
+                        stats={t.stats}
+                        keyFacts={heroFacts}
+                        theme={heroTheme}
+                        icon={heroIcons[t.hero.icon as keyof typeof heroIcons]}
+                    />
 
                     {/* --- BENTO GRID FEATURES --- */}
                     <section className="py-16 border-t border-slate-200/60">
@@ -195,16 +193,16 @@ export default function PsoriasisTherapy() {
                             
                             {/* Big Card - Therapy Types */}
                             <div className="md:col-span-2 rounded-3xl bg-white p-8 shadow-sm border border-slate-200 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-rose-50 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
                                 <div className="relative z-10">
-                                    <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/50 px-3 py-1 text-xs text-emerald-700 mb-4">
+                                    <div className="inline-flex items-center gap-2 rounded-full border border-rose-100 bg-rose-50/50 px-3 py-1 text-xs text-rose-700 mb-4">
                                         {t.methods.badge}
                                     </div>
                                     <h3 className="text-2xl font-bold text-slate-900 mb-4">{t.methods.title}</h3>
                                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-6">
                                         {t.methods.items.map((item, i) => (
-                                            <div key={i} className="bg-slate-50/80 rounded-xl p-4 border border-slate-100 hover:border-emerald-200 transition-colors">
-                                                <div className="h-2 w-2 rounded-full bg-emerald-500 mb-2"></div>
+                                            <div key={i} className="bg-slate-50/80 rounded-xl p-4 border border-slate-100 hover:border-rose-200 transition-colors">
+                                                <div className="h-2 w-2 rounded-full bg-rose-500 mb-2"></div>
                                                 <h4 className="font-semibold text-slate-900 text-sm">{item.t}</h4>
                                                 <p className="text-xs text-slate-600 mt-1 leading-relaxed">{item.d}</p>
                                             </div>
@@ -217,38 +215,22 @@ export default function PsoriasisTherapy() {
                             <div className="md:row-span-2 rounded-3xl bg-white p-8 shadow-sm border border-slate-200 relative overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-b from-white to-slate-50/50 pointer-events-none"></div>
 
-                                <div className="relative z-10 h-full flex flex-col">
-                                    <h3 className="text-xl font-bold mb-6 text-slate-900">{t.process.title}</h3>
-                                    
-                                    <div className="space-y-8 flex-1">
-                                        {t.process.steps.map((step, i) => (
-                                            <div key={i} className="flex gap-4 group">
-                                                <div className="flex flex-col items-center">
-                                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs shadow-sm">
-                                                        {i + 1}
-                                                    </div>
-                                                    {i !== 2 && <div className="h-full w-0.5 bg-slate-200 my-2 group-hover:bg-emerald-300 transition-colors"></div>}
-                                                </div>
-                                                <div>
-                                                    <h4 className="font-semibold text-slate-900">{step.title}</h4>
-                                                    <p className="text-sm text-slate-600 mt-1">{step.text}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="mt-8 pt-6 border-t border-slate-200">
-                                        <p className="text-xs font-semibold text-emerald-700 flex items-center gap-2">
+                                <ProcessTimeline
+                                    title={t.process.title}
+                                    steps={t.process.steps}
+                                    currentStep={2}
+                                    footer={(
+                                        <p className="text-xs font-semibold text-rose-700 flex items-center gap-2">
                                             <Icons.Check className="h-4 w-4" />
                                             {t.process.footer}
                                         </p>
-                                    </div>
-                                </div>
+                                    )}
+                                />
                             </div>
 
                             {/* Small Card 1 - Comfort */}
-                            <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200 hover:border-emerald-300 transition-colors">
-                                <div className="h-10 w-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
+                            <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200 hover:border-rose-300 transition-colors">
+                                <div className="h-10 w-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center mb-4">
                                     <Icons.Drop className="w-6 h-6" />
                                 </div>
                                 <h4 className="font-bold text-slate-900">{t.cards[0].title}</h4>
@@ -256,8 +238,8 @@ export default function PsoriasisTherapy() {
                             </div>
 
                             {/* Small Card 2 - Immunity */}
-                            <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200 hover:border-sky-300 transition-colors">
-                                <div className="h-10 w-10 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center mb-4">
+                            <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200 hover:border-amber-300 transition-colors">
+                                <div className="h-10 w-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
                                     <Icons.Shield className="w-6 h-6" />
                                 </div>
                                 <h4 className="font-bold text-slate-900">{t.cards[1].title}</h4>
