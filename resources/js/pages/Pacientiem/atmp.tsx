@@ -1,4 +1,5 @@
 import { useLang } from '@/hooks/useLang';
+import ProcessTimeline from '@/Components/ProcessTimeline';
 import { Head, Link } from '@inertiajs/react';
 
 // --- ICONS ---
@@ -263,33 +264,17 @@ export default function Welcome() {
                                 {/* Subtle gradient background */}
                                 <div className="absolute inset-0 bg-gradient-to-b from-white to-slate-50/50 pointer-events-none"></div>
 
-                                <div className="relative z-10 h-full flex flex-col">
-                                    <h3 className="text-xl font-bold mb-6 text-slate-900">{t.technology.processTitle}</h3>
-                                    
-                                    <div className="space-y-8 flex-1">
-                                        {t.technology.steps.map((step, i) => (
-                                            <div key={i} className="flex gap-4 group">
-                                                <div className="flex flex-col items-center">
-                                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs shadow-sm">
-                                                        {i + 1}
-                                                    </div>
-                                                    {i !== 2 && <div className="h-full w-0.5 bg-slate-200 my-2 group-hover:bg-emerald-300 transition-colors"></div>}
-                                                </div>
-                                                <div>
-                                                    <h4 className="font-semibold text-slate-900">{step.title}</h4>
-                                                    <p className="text-sm text-slate-600 mt-1">{step.text}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="mt-8 pt-6 border-t border-slate-200">
+                                <ProcessTimeline
+                                    title={t.technology.processTitle}
+                                    steps={t.technology.steps}
+                                    currentStep={2}
+                                    footer={(
                                         <p className="text-xs font-semibold text-emerald-700 flex items-center gap-2">
-                                            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                            <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
                                             {t.technology.processFooter}
                                         </p>
-                                    </div>
-                                </div>
+                                    )}
+                                />
                             </div>
 
                             {/* Small Card 1 */}

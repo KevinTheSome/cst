@@ -54,7 +54,7 @@ export default function ClinicalTrials() {
         },
         {
             icon: Icons.Beaker,
-            iconColor: 'text-sky-600 bg-sky-50',
+            iconColor: 'text-green-600 bg-green-50',
             condition: trialsData.crohns.name,
             summary: trialsData.crohns.summary,
             dataPoints: trialsData.crohns.points,
@@ -93,25 +93,25 @@ export default function ClinicalTrials() {
         <>
             <Head title={lang.clinical_trials.meta.page_title} />
 
-            <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
+            <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-lime-100 selection:text-lime-900">
                 {/* BACKGROUND */}
                 <div className="fixed inset-0 pointer-events-none z-0">
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-                    <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-emerald-400 opacity-20 blur-[100px]"></div>
-                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-sky-400 opacity-10 blur-[120px]"></div>
+                    <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-lime-400 opacity-20 blur-[100px]"></div>
+                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-green-400 opacity-10 blur-[120px]"></div>
                 </div>
 
                 <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     {/* HERO */}
                     <main className="py-16 lg:py-24 text-center">
                         <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/60 backdrop-blur px-3 py-1 text-xs font-semibold text-slate-600 mb-6">
-                            <Icons.FileChart className="h-4 w-4 text-emerald-600" />
+                            <Icons.FileChart className="h-4 w-4 text-lime-600" />
                             {lang.clinical_trials.hero.badge}
                         </div>
 
                         <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl mb-6">
                             {lang.clinical_trials.hero.title_line_1} <br className="hidden sm:block" />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-sky-600">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-lime-600 to-green-600">
                                 {lang.clinical_trials.hero.title_line_2}
                             </span>
                         </h1>
@@ -127,17 +127,17 @@ export default function ClinicalTrials() {
                             href="https://www.frontiersin.org/articles/10.3389/fbioe.2025.1687461"
                             target="_blank"
                             rel="noreferrer"
-                            className="group relative isolate flex flex-col gap-6 overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-900/5 md:flex-row md:items-center md:p-8"
+                            className="group relative isolate flex flex-col gap-6 overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-lime-300 hover:shadow-xl hover:shadow-lime-900/5 md:flex-row md:items-center md:p-8"
                         >
                             {/* Decorative Blur Background inside card */}
-                            <div className="absolute -right-20 -top-20 -z-10 h-64 w-64 rounded-full bg-emerald-50/50 blur-3xl transition-colors duration-500 group-hover:bg-emerald-100/60" />
+                            <div className="absolute -right-20 -top-20 -z-10 h-64 w-64 rounded-full bg-lime-50/50 blur-3xl transition-colors duration-500 group-hover:bg-lime-100/60" />
                             
                             {/* Content Section */}
                             <div className="flex-1">
-                                <div className="mb-2 inline-flex items-center gap-2 rounded-md border border-emerald-100 bg-emerald-50/80 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+                                <div className="mb-2 inline-flex items-center gap-2 rounded-md border border-lime-100 bg-lime-50/80 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-lime-700">
                                     <span className="relative flex h-2 w-2 mr-1">
-                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lime-400 opacity-75"></span>
+                                      <span className="relative inline-flex rounded-full h-2 w-2 bg-lime-500"></span>
                                     </span>
                                     {featured.badge}
                                 </div>
@@ -151,7 +151,7 @@ export default function ClinicalTrials() {
 
                             {/* Button Section */}
                             <div className="shrink-0">
-                                <div className="flex items-center gap-2 rounded-xl bg-slate-50 border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-900 transition-all duration-300 group-hover:border-emerald-500 group-hover:bg-emerald-600 group-hover:text-white group-hover:shadow-md">
+                                <div className="flex items-center gap-2 rounded-xl bg-slate-50 border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-900 transition-all duration-300 group-hover:border-lime-500 group-hover:bg-lime-600 group-hover:text-white group-hover:shadow-md">
                                     {featured.action}
                                     <Icons.ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                                 </div>
@@ -162,7 +162,7 @@ export default function ClinicalTrials() {
                     {/* TRIAL CARDS */}
                     <section className="pb-20 grid gap-6 md:grid-cols-2">
                         {trials.map((trial) => (
-                            <div key={trial.condition} className="group rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition-all hover:border-emerald-300 hover:shadow-lg hover:-translate-y-1">
+                            <div key={trial.condition} className="group rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition-all hover:border-lime-300 hover:shadow-lg hover:-translate-y-1">
                                 <div className="flex items-center gap-4 mb-6">
                                     <div className={`h-12 w-12 rounded-2xl flex items-center justify-center ${trial.iconColor}`}>
                                         <trial.icon className="w-6 h-6" />
@@ -175,7 +175,7 @@ export default function ClinicalTrials() {
                                 <ul className="space-y-3">
                                     {trial.dataPoints.map((dp) => (
                                         <li key={dp} className="flex items-start gap-3 text-sm font-medium text-slate-700">
-                                            <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                                            <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-lime-100 text-lime-600">
                                                 <Icons.Check className="h-3 w-3" />
                                             </span>
                                             {dp}
@@ -187,7 +187,7 @@ export default function ClinicalTrials() {
 
                         {/* Challenges */}
                         <div className="md:col-span-2 rounded-3xl border border-slate-200 bg-gradient-to-b from-slate-50 to-white p-8 shadow-sm relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-bl-full -mr-16 -mt-16 opacity-50"></div>
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-lime-50 rounded-bl-full -mr-16 -mt-16 opacity-50"></div>
                             <div className="relative z-10">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="h-10 w-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-lg shadow-slate-900/20">
@@ -203,7 +203,7 @@ export default function ClinicalTrials() {
                                     <ul className="space-y-3">
                                         {challengeData.dataPoints.map((dp: string) => (
                                             <li key={dp} className="flex items-start gap-3 text-sm text-slate-600">
-                                                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
+                                                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-lime-500" />
                                                 {dp}
                                             </li>
                                         ))}

@@ -98,12 +98,12 @@ export default function DatabaseIndex() {
         <>
             <Head title={__('database.index.page_title')} />
 
-            <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
+            <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-purple-100 selection:text-purple-900">
                 {/* Background decorations */}
                 <div className="pointer-events-none fixed inset-0 z-0">
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
-                    <div className="absolute top-0 right-0 left-0 -z-10 m-auto h-[260px] w-[260px] rounded-full bg-emerald-400 opacity-20 blur-[100px]" />
-                    <div className="absolute right-0 bottom-0 -z-10 h-[360px] w-[360px] rounded-full bg-sky-400 opacity-10 blur-[120px]" />
+                    <div className="absolute top-0 right-0 left-0 -z-10 m-auto h-[260px] w-[260px] rounded-full bg-purple-400 opacity-20 blur-[100px]" />
+                    <div className="absolute right-0 bottom-0 -z-10 h-[360px] w-[360px] rounded-full bg-violet-400 opacity-10 blur-[120px]" />
                 </div>
 
                 <div className="relative z-10 mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
@@ -135,7 +135,7 @@ export default function DatabaseIndex() {
                                         value={searchTitle}
                                         onChange={(e) => setSearchTitle(e.target.value)}
                                         placeholder={__('database.search.placeholder')}
-                                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 pr-10 text-sm text-slate-900 shadow-sm transition outline-none focus:border-emerald-400 focus:ring focus:ring-emerald-100"
+                                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 pr-10 text-sm text-slate-900 shadow-sm transition outline-none focus:border-purple-400 focus:ring focus:ring-purple-100"
                                     />
                                     <svg
                                         className="pointer-events-none absolute top-2.5 right-3 h-5 w-5 text-slate-400"
@@ -187,8 +187,8 @@ export default function DatabaseIndex() {
                                                 onClick={() => toggleTag(tagName)}
                                                 className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition ${
                                                     active
-                                                        ? 'border-emerald-500 bg-emerald-500 text-white shadow-sm'
-                                                        : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-emerald-400 hover:bg-emerald-50'
+                                                        ? 'border-purple-500 bg-purple-500 text-white shadow-sm'
+                                                        : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-purple-400 hover:bg-purple-50'
                                                 }`}
                                             >
                                                 {tagName}
@@ -220,7 +220,7 @@ export default function DatabaseIndex() {
                                     </thead>
                                     <tbody className="divide-y divide-slate-100">
                                         {filteredDocuments.map((doc) => (
-                                            <tr key={doc.id} className="transition hover:bg-emerald-50/40">
+                                            <tr key={doc.id} className="transition hover:bg-purple-50/40">
                                                 {/* Title */}
                                                 <td className="px-6 py-4 align-top">
                                                     <div className="flex flex-col gap-0.5">
@@ -264,7 +264,7 @@ export default function DatabaseIndex() {
                                                     {doc.download_url ? (
                                                         <a
                                                             href={`/admin/files/${doc.id}/download`}
-                                                            className="inline-flex items-center rounded-xl bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-600 hover:shadow-md"
+                                                            className="inline-flex items-center rounded-xl bg-purple-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-purple-600 hover:shadow-md"
                                                         >
                                                             {__('database.table.download_btn')}
                                                             <svg
