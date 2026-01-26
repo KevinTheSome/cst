@@ -74,20 +74,20 @@ export default function PievienojiesMums() {
         <>
             <Head title="Sazinies ar mums" />
 
-            <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
+            <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-cyan-100 selection:text-cyan-900">
                 
                 {/* BACKGROUND TECH GRID */}
                 <div className="fixed inset-0 pointer-events-none z-0">
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-                    <div className="absolute top-0 right-0 -z-10 h-[500px] w-[500px] rounded-full bg-emerald-400 opacity-10 blur-[120px]"></div>
-                    <div className="absolute bottom-0 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-sky-400 opacity-10 blur-[120px]"></div>
+                    <div className="absolute top-0 right-0 -z-10 h-[500px] w-[500px] rounded-full bg-cyan-400 opacity-10 blur-[120px]"></div>
+                    <div className="absolute bottom-0 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-blue-400 opacity-10 blur-[120px]"></div>
                 </div>
 
                 <div className="relative z-10 mx-auto min-h-screen flex flex-col justify-center max-w-4xl px-4 py-16 sm:px-6">
                     
                     {/* Header */}
                     <div className="text-center mb-12">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-emerald-700 mb-6">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-cyan-100 bg-cyan-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-cyan-700 mb-6">
                             <Icons.Mail className="h-4 w-4" />
                             {__('parmums.contact_badge')}
                         </div>
@@ -102,9 +102,9 @@ export default function PievienojiesMums() {
                     {/* Messages */}
                     <div className="space-y-4 mb-8">
                         {recentlySuccessful && (
-                            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 flex items-center gap-3 text-emerald-800 shadow-sm animate-fade-in">
-                                <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                                    <Icons.Check className="h-5 w-5 text-emerald-600" />
+                            <div className="rounded-2xl border border-cyan-200 bg-cyan-50 p-4 flex items-center gap-3 text-cyan-800 shadow-sm animate-fade-in">
+                                <div className="h-8 w-8 rounded-full bg-cyan-100 flex items-center justify-center shrink-0">
+                                    <Icons.Check className="h-5 w-5 text-cyan-600" />
                                 </div>
                                 <div>
                                     <p className="font-semibold">{__('parmums.contact_success_title')}</p>
@@ -160,7 +160,7 @@ export default function PievienojiesMums() {
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
                                         placeholder={__('parmums.contact_name_placeholder')}
-                                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none focus:bg-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
                                     />
                                 </div>
 
@@ -178,7 +178,7 @@ export default function PievienojiesMums() {
                                         className={`w-full rounded-xl border px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition-all ${
                                             errors.email 
                                             ? 'border-rose-300 bg-rose-50 focus:border-rose-500 focus:ring-1 focus:ring-rose-500' 
-                                            : 'border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500'
+                                            : 'border-slate-200 bg-slate-50 focus:bg-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500'
                                         }`}
                                     />
                                 </div>
@@ -191,7 +191,7 @@ export default function PievienojiesMums() {
                                         value={data.subject}
                                         onChange={(e) => setData('subject', e.target.value)}
                                         placeholder={__('parmums.contact_subject_placeholder')}
-                                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none focus:bg-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
                                     />
                                 </div>
 
@@ -209,7 +209,7 @@ export default function PievienojiesMums() {
                                         className={`w-full rounded-xl border px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition-all resize-y min-h-[120px] ${
                                             errors.message 
                                             ? 'border-rose-300 bg-rose-50 focus:border-rose-500 focus:ring-1 focus:ring-rose-500' 
-                                            : 'border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500'
+                                            : 'border-slate-200 bg-slate-50 focus:bg-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500'
                                         }`}
                                     />
                                 </div>
@@ -222,7 +222,7 @@ export default function PievienojiesMums() {
                                 <button
                                     type="submit"
                                     disabled={isDisabled}
-                                    className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition-all hover:bg-emerald-600 hover:shadow-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto justify-center"
+                                    className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/20 transition-all hover:bg-cyan-600 hover:shadow-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto justify-center"
                                 >
                                     {processing ? __('parmums.contact_submitting') : <>{__('parmums.contact_submit')} <Icons.Send className="h-4 w-4" /></>}
                                 </button>

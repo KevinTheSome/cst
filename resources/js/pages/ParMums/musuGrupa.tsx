@@ -184,18 +184,18 @@ export default function MusuGrupa() {
         <>
             <Head title="Musu Grupa" />
 
-            <main className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
+            <main className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-rose-100 selection:text-rose-900">
                 {/* BACKGROUND TECH GRID */}
                 <div className="pointer-events-none fixed inset-0 z-0">
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-                    <div className="absolute top-20 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-emerald-400 opacity-10 blur-[120px]"></div>
-                    <div className="absolute right-0 bottom-40 -z-10 h-[500px] w-[500px] rounded-full bg-sky-400 opacity-10 blur-[120px]"></div>
+                    <div className="absolute top-20 left-0 -z-10 h-[500px] w-[500px] rounded-full bg-rose-400 opacity-10 blur-[120px]"></div>
+                    <div className="absolute right-0 bottom-40 -z-10 h-[500px] w-[500px] rounded-full bg-pink-400 opacity-10 blur-[120px]"></div>
                 </div>
 
                 <div className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
                     {/* Header */}
                     <div className="mb-16 text-center lg:mb-24">
-                        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 px-3 py-1 text-xs font-semibold text-emerald-700 backdrop-blur">
+                        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-rose-100 bg-rose-50/80 px-3 py-1 text-xs font-semibold text-rose-700 backdrop-blur">
                             <Icons.Users className="h-4 w-4" />
                             {__('parmums.team_badge')}
                         </div>
@@ -208,7 +208,7 @@ export default function MusuGrupa() {
                         <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/50 md:p-12">
                             <div className="flex flex-col items-center gap-10 md:flex-row">
                                 <div className="group relative shrink-0">
-                                    <div className="absolute inset-0 rotate-3 rounded-2xl bg-emerald-500 opacity-20 transition-transform group-hover:rotate-6"></div>
+                                    <div className="absolute inset-0 rotate-3 rounded-2xl bg-rose-500 opacity-20 transition-transform group-hover:rotate-6"></div>
                                     <img
                                         src="\Uldis_2019-copy.jpg"
                                         alt="Uldis Bērziņš"
@@ -220,7 +220,7 @@ export default function MusuGrupa() {
                                         {__('parmums.team_leader_badge')}
                                     </div>
                                     <h2 className="mb-2 text-3xl font-bold text-slate-900">{__('parmums.team_leader_name')}</h2>
-                                    <p className="mb-6 font-medium text-emerald-700">{__('parmums.team_leader_title')}</p>
+                                    <p className="mb-6 font-medium text-rose-700">{__('parmums.team_leader_title')}</p>
                                     <p className="mb-8 max-w-2xl text-lg leading-relaxed text-slate-600">{__('parmums.team_leader_bio')}</p>
 
                                     <div className="flex justify-center md:justify-start">
@@ -243,7 +243,7 @@ export default function MusuGrupa() {
                             <div className="rounded-3xl border border-slate-200 bg-white/60 p-8 backdrop-blur lg:p-10">
                                 <div className="flex flex-col items-center gap-10 lg:flex-row">
                                     <div className="relative shrink-0">
-                                        <div className="absolute -inset-2 rounded-2xl bg-gradient-to-r from-emerald-400 to-sky-400 opacity-20 blur-lg"></div>
+                                        <div className="absolute -inset-2 rounded-2xl bg-gradient-to-r from-rose-400 to-pink-400 opacity-20 blur-lg"></div>
                                         <img
                                             src="\vtdt.png"
                                             alt="VTDT Logo"
@@ -252,12 +252,12 @@ export default function MusuGrupa() {
                                     </div>
                                     <div className="flex-1 text-center lg:text-left">
                                         <h2 className="mb-2 text-2xl font-bold text-slate-900">{__('parmums.team_vtdt_title')}</h2>
-                                        <h3 className="mb-4 font-medium text-emerald-700">{__('parmums.team_vtdt_subtitle')}</h3>
+                                        <h3 className="mb-4 font-medium text-rose-700">{__('parmums.team_vtdt_subtitle')}</h3>
                                         <p className="mb-8 leading-relaxed text-slate-600">{__('parmums.team_vtdt_bio')}</p>
 
                                         <button
                                             onClick={() => setShowVtdtStudents((prev) => !prev)}
-                                            className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition-all hover:bg-emerald-600 hover:shadow-emerald-500/30"
+                                            className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition-all hover:bg-rose-600 hover:shadow-rose-500/30"
                                         >
                                             {showVtdtStudents ? __('parmums.team_vtdt_hide') : __('parmums.team_vtdt_show')}
                                             <Icons.ChevronDown
@@ -276,7 +276,7 @@ export default function MusuGrupa() {
                                             {vtdtStudents.map((student) => (
                                                 <div
                                                     key={student.name}
-                                                    className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl"
+                                                    className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all hover:-translate-y-1 hover:border-rose-200 hover:shadow-xl"
                                                 >
                                                     <div className="aspect-[4/3] overflow-hidden bg-slate-100">
                                                         <img
@@ -287,7 +287,7 @@ export default function MusuGrupa() {
                                                     </div>
                                                     <div className="p-6">
                                                         <h4 className="text-lg font-bold text-slate-900">{student.name}</h4>
-                                                        <p className="mt-1 mb-3 text-xs font-bold tracking-wider text-emerald-600 uppercase">
+                                                        <p className="mt-1 mb-3 text-xs font-bold tracking-wider text-rose-600 uppercase">
                                                             {student.title}
                                                         </p>
                                                         <p className="text-sm leading-relaxed text-slate-500">{student.description}</p>
@@ -376,7 +376,7 @@ export default function MusuGrupa() {
                             <div className="rounded-3xl border border-slate-200 bg-white/60 p-8 backdrop-blur lg:p-10">
                                 <div className="flex flex-col items-center gap-10 lg:flex-row">
                                     <div className="relative shrink-0">
-                                        <div className="absolute -inset-2 rounded-2xl bg-gradient-to-r from-indigo-400 to-sky-400 opacity-20 blur-lg"></div>
+                                        <div className="absolute -inset-2 rounded-2xl bg-gradient-to-r from-indigo-400 to-pink-400 opacity-20 blur-lg"></div>
                                         <div className="relative flex h-auto w-64 items-center justify-center rounded-2xl bg-white p-4 shadow-sm">
                                             {rtkLogoOk ? (
                                                 <img
@@ -395,12 +395,12 @@ export default function MusuGrupa() {
                                     </div>
                                     <div className="flex-1 text-center lg:text-left">
                                         <h2 className="mb-2 text-2xl font-bold text-slate-900">{__('parmums.team_rtk_title')}</h2>
-                                        <h3 className="mb-4 font-medium text-sky-700">{__('parmums.team_rtk_subtitle')}</h3>
+                                        <h3 className="mb-4 font-medium text-pink-700">{__('parmums.team_rtk_subtitle')}</h3>
                                         <p className="mb-8 leading-relaxed text-slate-600">{__('parmums.team_rtk_bio')}</p>
 
                                         <button
                                             onClick={() => setShowRtkStudents((prev) => !prev)}
-                                            className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition-all hover:bg-sky-700 hover:shadow-sky-500/30"
+                                            className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition-all hover:bg-pink-700 hover:shadow-pink-500/30"
                                         >
                                             {showRtkStudents ? __('parmums.team_rtk_hide') : __('parmums.team_rtk_show')}
                                             <Icons.ChevronDown
@@ -419,7 +419,7 @@ export default function MusuGrupa() {
                                             {rtkStudents.map((student, index) => (
                                                 <div
                                                     key={index}
-                                                    className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all hover:-translate-y-1 hover:border-sky-200 hover:shadow-xl"
+                                                    className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all hover:-translate-y-1 hover:border-pink-200 hover:shadow-xl"
                                                 >
                                                     <div className="flex aspect-[4/3] items-center justify-center overflow-hidden bg-slate-100">
                                                         {student.image.includes('placeholder') ? (
@@ -434,7 +434,7 @@ export default function MusuGrupa() {
                                                     </div>
                                                     <div className="p-6">
                                                         <h4 className="text-lg font-bold text-slate-900">{student.name}</h4>
-                                                        <p className="mt-1 mb-3 text-xs font-bold tracking-wider text-sky-600 uppercase">
+                                                        <p className="mt-1 mb-3 text-xs font-bold tracking-wider text-pink-600 uppercase">
                                                             {student.title}
                                                         </p>
                                                         <p className="text-sm leading-relaxed text-slate-500">{student.description}</p>
@@ -471,7 +471,7 @@ export default function MusuGrupa() {
                                         className="mb-6 h-48 w-full rounded-2xl object-cover shadow-sm"
                                     />
                                     <h3 className="mb-1 text-xl font-bold text-slate-900">{__('parmums.team_ralfs_name')}</h3>
-                                    <p className="mb-3 text-xs font-bold text-emerald-600 uppercase">{__('parmums.team_ralfs_title')}</p>
+                                    <p className="mb-3 text-xs font-bold text-rose-600 uppercase">{__('parmums.team_ralfs_title')}</p>
                                     <p className="text-sm text-slate-600">{__('parmums.team_ralfs_bio')}</p>
                                 </div>
                             </div>

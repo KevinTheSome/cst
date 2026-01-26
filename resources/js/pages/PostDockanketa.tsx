@@ -65,32 +65,32 @@ export default function PostDockanketa() {
     }, [serverRole, urlRole]);
 
     const clientButtons = [
-        { key: 'psoriasis', href: '/anketa-psoriāze', icon: Icons.User, colorClass: 'group-hover:border-emerald-400 group-hover:shadow-emerald-100', iconBg: 'bg-emerald-50 text-emerald-600' },
-        { key: 'crohns', href: '/anketa-hroniskas', icon: Icons.Activity, colorClass: 'group-hover:border-emerald-400 group-hover:shadow-emerald-100', iconBg: 'bg-emerald-50 text-emerald-600' },
-        { key: 'codes', href: '/anketa-kods', icon: Icons.Code, colorClass: 'group-hover:border-violet-400 group-hover:shadow-violet-100', iconBg: 'bg-violet-50 text-violet-600' },
+        { key: 'psoriasis', href: '/anketa-psoriāze', icon: Icons.User, colorClass: 'group-hover:border-fuchsia-400 group-hover:shadow-fuchsia-100', iconBg: 'bg-fuchsia-50 text-fuchsia-600' },
+        { key: 'crohns', href: '/anketa-hroniskas', icon: Icons.Activity, colorClass: 'group-hover:border-fuchsia-400 group-hover:shadow-fuchsia-100', iconBg: 'bg-fuchsia-50 text-fuchsia-600' },
+        { key: 'codes', href: '/anketa-kods', icon: Icons.Code, colorClass: 'group-hover:border-purple-400 group-hover:shadow-purple-100', iconBg: 'bg-purple-50 text-purple-600' },
     ];
 
     const specialistButtons = [
-        { key: 'main', href: '/anketa-specialiste', icon: Icons.Stethoscope, colorClass: 'group-hover:border-sky-400 group-hover:shadow-sky-100', iconBg: 'bg-sky-50 text-sky-600' },
-        { key: 'codes', href: '/anketa-kods', icon: Icons.Code, colorClass: 'group-hover:border-violet-400 group-hover:shadow-violet-100', iconBg: 'bg-violet-50 text-violet-600' },
+        { key: 'main', href: '/anketa-specialiste', icon: Icons.Stethoscope, colorClass: 'group-hover:border-rose-400 group-hover:shadow-rose-100', iconBg: 'bg-rose-50 text-rose-600' },
+        { key: 'codes', href: '/anketa-kods', icon: Icons.Code, colorClass: 'group-hover:border-purple-400 group-hover:shadow-purple-100', iconBg: 'bg-purple-50 text-purple-600' },
     ];
 
     return (
         <>
             <Head title={meta?.page_title ?? 'PostDoc anketa'} />
 
-            <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
+            <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-fuchsia-100 selection:text-fuchsia-900">
                 <div className="pointer-events-none fixed inset-0 z-0">
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-                    <div className="absolute top-0 right-0 left-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-emerald-400 opacity-20 blur-[100px]"></div>
-                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-sky-400 opacity-10 blur-[120px]"></div>
+                    <div className="absolute top-0 right-0 left-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-fuchsia-400 opacity-20 blur-[100px]"></div>
+                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-rose-400 opacity-10 blur-[120px]"></div>
                 </div>
 
                 <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-4 py-16 sm:px-6 lg:px-8">
                     <div className="mb-16 text-center">
                         <h1 className="mx-auto mb-6 max-w-4xl text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
                             {intro?.title_line_1 ?? 'Izvēlieties atbilstošo'} <br />
-                            <span className="bg-gradient-to-r from-emerald-600 to-sky-600 bg-clip-text text-transparent">
+                            <span className="bg-gradient-to-r from-fuchsia-600 to-rose-600 bg-clip-text text-transparent">
                                 {intro?.title_highlight ?? 'Anketu'}
                             </span>
                         </h1>
@@ -111,7 +111,7 @@ export default function PostDockanketa() {
                                                 <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${btn.iconBg}`}>
                                                     <btn.icon className="h-6 w-6" />
                                                 </div>
-                                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-colors group-hover:bg-emerald-500 group-hover:text-white">
+                                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-colors group-hover:bg-fuchsia-500 group-hover:text-white">
                                                     <Icons.ArrowRight className="h-4 w-4" />
                                                 </div>
                                             </div>
@@ -141,7 +141,7 @@ export default function PostDockanketa() {
                                                 </h3>
                                                 {buttons?.specialists?.[btn.key]?.subtitle && <p className="text-sm text-slate-500">{buttons.specialists[btn.key].subtitle}</p>}
                                             </div>
-                                            <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-sky-600 group-hover:text-sky-700 sm:mt-0">
+                                            <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-rose-600 group-hover:text-rose-700 sm:mt-0">
                                                 {actions?.open_panel ?? 'Atvērt paneli'} <Icons.ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                                             </div>
                                         </Link>
