@@ -2,6 +2,7 @@ import { useLang } from '@/hooks/useLang';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
+import { FileText, Download } from 'lucide-react';
 
 type ResultPayload = {
     id: number;
@@ -26,6 +27,10 @@ const ResultsShow: React.FC = () => {
             ? result.answers.map((value, index) => [String(index), value])
             : Object.entries(result.answers ?? {});
 
+    const downloadCurrent = () => {
+        window.location.href = `/admin/anketa/results/${result.id}/download`;
+    };
+
     return (
         <>
             <Head title={__('anketa.results.view_title') ?? 'Submission detail'} />
@@ -35,11 +40,23 @@ const ResultsShow: React.FC = () => {
                 <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-slate-900/80 via-slate-900/40 to-slate-900/10 px-6 py-5 shadow-inner shadow-black/20">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <p className="text-xs tracking-[0.3em] text-white/60 uppercase">{__('anketa.results.view_label') ?? 'Submission'}</p>
+                            <p className="text-xs tracking-[0.3em] text-white/60 uppercase">
+                                {__('anketa.results.view_label') ?? 'Submission'}
+                            </p>
                             <h1 className="mt-1 text-2xl font-semibold text-white">{result.title}</h1>
                             <p className="mt-1 text-sm text-white/70">
                                 {__('anketa.results.view_subheading') ?? 'Full answers from one questionnaire submission.'}
                             </p>
+                        </div>
+
+                        <div className="flex gap-2">
+                            <button
+                                onClick={downloadCurrent}
+                                className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+                            >
+                                <Download className="h-4 w-4" />
+                                {__('anketa.results.actions.download')}
+                            </button>
                         </div>
                     </div>
 

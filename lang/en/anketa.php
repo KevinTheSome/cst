@@ -76,6 +76,7 @@ return [
         'actions' => [
             'filters' => 'Filters',
             'view' => 'View',
+            'download'=> 'Download',
             'reset' => 'Reset',
             'clear' => 'Clear',
             'apply' => 'Apply',
