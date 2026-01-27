@@ -589,4 +589,66 @@ class AnketaController extends Controller
             'result' => $payload,
         ]);
     }
+    public function resultsDownload($id)
+{
+    $result = FormResult::findOrFail($id);
+    $res = $result->results ?? [];
+
+    // Build field label mapping (same logic as resultsShow)
+    $fieldMappings = [];
+    if (isset($res['form_id'])) {
+        try {
+            $form = Form::find($res['form_id']);
+            if ($form) {
+                $schema = is_array($form->data)
+                    ? $form->data
+                    : json_decode($form->data ?? '{}', true);
+
+                $fields = $schema['fields'] ?? [];
+                $locale = app()->getLocale();
+
+                foreach ($fields as $field) {
+                    $fieldId = $field['id'] ?? null;
+                    if ($fieldId) {
+                        $label = $field['label'][$locale]
+                            ?? $field['label']['lv']
+                            ?? $field['label']['en']
+                            ?? $fieldId;
+
+                        $fieldMappings[$fieldId] = $label;
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::warning('resultsDownload field mapping failed', [
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    // Final export payload
+    $export = [
+        'id' => $result->id,
+        'code' => $result->code,
+        'title' => $result->title,
+        'type' => $res['form_type'] ?? null,
+        'submitted_at' => $res['submitted_at'] ?? $result->created_at?->toDateTimeString(),
+        'answers' => $res['answers'] ?? [],
+        'field_mappings' => $fieldMappings,
+    ];
+
+    $filename = 'anketa-result-' . $result->id . '.json';
+
+    return response()->streamDownload(
+        function () use ($export) {
+            echo json_encode($export, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        },
+        $filename,
+        [
+            'Content-Type' => 'application/json',
+        ]
+    );
 }
+
+}
+
