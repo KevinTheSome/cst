@@ -6,17 +6,23 @@ use App\Models\Admin;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Models\FormResult;
 
 class AdminController extends Controller
 {
     public function dashboard()
-{
-    syncLangFiles('admin_dashboard');
+    {
+        syncLangFiles('admin_dashboard');
 
-    return Inertia::render('Admin/dashboard', [
-        'locale' => app()->getLocale(),
-    ]);
-}
+        $completedCount = FormResult::whereNotNull('results->answers')
+            ->whereJsonLength('results->answers', '>', 0)
+            ->count();
+
+        return Inertia::render('Admin/dashboard', [
+            'formsCount' => FormResult::count(),
+            'locale' => app()->getLocale(),
+        ]);
+    }
 
     public function adminLogin()
     {

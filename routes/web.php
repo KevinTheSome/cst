@@ -156,7 +156,7 @@ Route::post('/ratings', [RatingController::class, 'store']);
 Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
     // <<<<<<<<<<<<<<<< ADMIN PAGES >>>>>>>>>>>>>>>>>>
-    Route::get('/', fn() => Inertia::render('Admin/dashboard'))->name('admin.dashboard');
+    Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/content-studio', fn() => Inertia::render('Admin/contentStudio'))->name('admin.content');
     Route::get('/insights', fn() => Inertia::render('Admin/insights'))->name('admin.insights');
     Route::get('/integrations', fn() => Inertia::render('Admin/integrations'))->name('admin.integrations');
@@ -187,6 +187,8 @@ Route::prefix('admin')->middleware(AdminMiddleware::class)->group(function () {
 
     Route::get('/anketa/results', [AnketaController::class, 'resultsIndex'])->name('admin.anketa.results');
     Route::get('/anketa/results/{id}', [AnketaController::class, 'resultsShow'])->name('admin.anketa.results.show');
+    Route::get('/anketa/results/{id}/download',[AnketaController::class, 'resultsDownload'])->name('admin.anketa.results.download');
+
 
     Route::get('/trainings', [OnlineTrainingController::class, 'index'])->name('admin.trainings');
     Route::get('/trainings/create', [OnlineTrainingController::class, 'create'])->name('admin.trainings.create');

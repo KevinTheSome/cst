@@ -76,6 +76,7 @@ return [
         'actions' => [
             'filters' => 'Filtri',
             'view' => 'Skatīt',
+            'download'=> 'Lejupielādēt',
             'reset' => 'Atiestatīt',
             'clear' => 'Notīrīt',
             'apply' => 'Pielietot',

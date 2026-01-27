@@ -18,9 +18,9 @@ return [
             'label' => 'Aktīvie dalībnieki',
             'trend' => 'salīdzinājumā ar 7 dienām',
         ],
-        'requests' => [
-            'label' => 'Jauni pieprasījumi',
-            'trend' => 'atbildes laiks',
+        'form_results' => [
+            'label' => 'Anketas atbildes',
+            'trend' => 'Iegūtās atbildes',
         ],
         'delivery' => [
             'label' => 'Piegāde laikā',
