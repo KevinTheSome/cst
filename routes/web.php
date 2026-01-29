@@ -20,6 +20,7 @@ use App\Models\FormResult;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\ClinicalTrialsController;
 use App\Http\Controllers\PostDockAnketaController;
+use App\Http\Controllers\Api\AiChatController;
 
 if (!function_exists('findPageComponent')) {
 
@@ -46,11 +47,11 @@ if (!function_exists('findPageComponent')) {
 
 Route::post('/locale', function (Request $request) {
     $request->validate(['locale' => 'required|in:lv,en']); // adjust allowed locales
-    session(['locale' => $request->locale]);
-    app()->setLocale($request->locale);
+    session(['locale' => $request->input('locale')]);
+    app()->setLocale($request->input('locale'));
 
     // Return JSON so axios resolves successfully
-    return response()->json(['locale' => $request->locale]);
+    return response()->json(['locale' => $request->input('locale')]);
 })->name('locale.switch');
 
 Route::get('/', function (Request $request) {
@@ -224,3 +225,9 @@ Route::post('/admin/logout', function () {
     session()->forget('is_admin');
     return redirect()->route('admin.login');
 })->name('admin.logout');
+
+// <<<<<<<<<< FOR AI STUFF >>>>>>>>>>>>>>>>>>
+Route::get('/ai', function () {
+    return Inertia::render('Ai');
+});
+//Route::post('/ai/chat', [AiChatController::class, 'chat']);
