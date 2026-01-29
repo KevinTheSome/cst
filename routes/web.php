@@ -20,7 +20,8 @@ use App\Models\FormResult;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\ClinicalTrialsController;
 use App\Http\Controllers\PostDockAnketaController;
-use App\Http\Controllers\Api\AiChatController;
+use App\Http\Controllers\Ai\AiPageController;
+use App\Http\Controllers\Ai\AiChatController;
 
 if (!function_exists('findPageComponent')) {
 
@@ -227,7 +228,10 @@ Route::post('/admin/logout', function () {
 })->name('admin.logout');
 
 // <<<<<<<<<< FOR AI STUFF >>>>>>>>>>>>>>>>>>
-Route::get('/ai', function () {
-    return Inertia::render('Ai');
-});
-//Route::post('/ai/chat', [AiChatController::class, 'chat']);
+Route::get('/ai', [AiPageController::class, 'index'])->name('ai.index');
+Route::post('/ai/chat', [AiChatController::class, 'chat']);
+
+// THIS WORKED
+//Route::get('/ai', function () {
+//    return Inertia::render('Ai');
+//});
