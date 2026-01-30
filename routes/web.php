@@ -22,6 +22,9 @@ use App\Http\Controllers\ClinicalTrialsController;
 use App\Http\Controllers\PostDockAnketaController;
 use App\Http\Controllers\Ai\AiPageController;
 use App\Http\Controllers\Ai\AiChatController;
+use App\Http\Middleware\DetectCountry;
+use App\Http\Middleware\TestBlockCountries;
+use App\Http\Middleware\TrackSiteVisits;
 
 if (!function_exists('findPageComponent')) {
 
@@ -229,7 +232,14 @@ Route::post('/admin/logout', function () {
 
 // <<<<<<<<<< FOR AI STUFF >>>>>>>>>>>>>>>>>>
 Route::get('/ai', [AiPageController::class, 'index'])->name('ai.index');
-Route::post('/ai/chat', [AiChatController::class, 'chat']);
+//Route::post('/ai/chat', [AiChatController::class, 'chat']);
+Route::post('/ai/chat', [AiChatController::class, 'chat'])
+    ->withoutMiddleware([
+        \App\Http\Middleware\DetectCountry::class,
+        \App\Http\Middleware\TestBlockCountries::class,
+        \App\Http\Middleware\TrackSiteVisits::class,
+    ]);
+
 
 // THIS WORKED
 //Route::get('/ai', function () {

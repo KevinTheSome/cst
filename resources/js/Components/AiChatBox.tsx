@@ -20,18 +20,37 @@ export default function AiChatBox() {
         setLoading(true);
 
         try {
-            const res = await axios.post('/api/ai/chat', {
-                message: userMessage.content,
-            });
+            // const res = await axios.post('/ai/chat', {
+            //     message: userMessage.content,
+            // });
+            const res = await axios.post(
+                '/ai/chat',
+                { message: userMessage.content },
+                {
+                    headers: {
+                        'X-CSRF-TOKEN': document
+                            .querySelector('meta[name="csrf-token"]')
+                            ?.getAttribute('content') ?? '',
+                    },
+                }
+            );
 
             setMessages((prev) => [
                 ...prev,
                 { role: 'assistant', content: res.data.reply },
             ]);
-        } catch {
+        } catch (error: any) {
+            console.error('AI chat error:', error);
+
             setMessages((prev) => [
                 ...prev,
-                { role: 'assistant', content: 'Something went wrong.' },
+                {
+                    role: 'assistant',
+                    content:
+                        error?.response?.data?.error ??
+                        error?.message ??
+                        'Something went wrong.',
+                },
             ]);
         } finally {
             setLoading(false);
@@ -63,7 +82,13 @@ export default function AiChatBox() {
                 <input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    className="flex-1 rounded-xl border border-slate-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            sendMessage();
+                        }
+                    }}
+                    className="flex-1 rounded-xl border border-slate-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-900"
                     placeholder="Ask something…"
                 />
                 <button
