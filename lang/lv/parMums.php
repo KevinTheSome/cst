@@ -91,7 +91,7 @@ return [
     // Contact Form page
     'contact_badge' => 'Saziņas Forma',
     'contact_title' => 'Sazinies ar mums',
-    'contact_subtitle' => 'Aizpildi formu un pastāsti, kā vari palīdzēt laboratorijai vai uzdod sev interesējošu jautājumu.',
+    'contact_subtitle' => 'Aizpildi formu un pastāsti, kā vari palīdzēt laboratorijai, vai uzdod mums jautājumu, kas tevi interesē.',
     'contact_success_title' => 'Ziņa nosūtīta!',
     'contact_success_text' => 'Paldies par saziņu. Mēs atbildēsim drīzumā.',
     'contact_error_title' => 'Lūdzu, pārbaudiet ievadīto informāciju:',

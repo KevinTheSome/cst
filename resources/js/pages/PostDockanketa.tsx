@@ -19,9 +19,8 @@ const Icons = {
         </svg>
     ),
     Stethoscope: ({ className }: { className?: string }) => (
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" className={className}>
-            <path d="M5.5,7C4.1193,7,3,5.8807,3,4.5v-2c0-0.8284,0.6716-1.5,1.5-1.5h0.5c0.2761,0,0.5,0.2239,0.5,0.5v2c0,1.3807,1.1193,2.5,2.5,2.5s2.5-1.1193,2.5-2.5v-2c0-0.2761,0.2239-0.5,0.5-0.5h0.5c0.8284,0,1.5,0.6716,1.5,1.5v2c0,1.3807-1.1193,2.5,2.5,2.5s-2.5-1.1193-2.5-2.5v-2c0-0.2761-0.2239-0.5-0.5-0.5h-0.5c-0.8284,0-1.5,0.6716-1.5,1.5v2c0,1.3807,1.1193,2.5,2.5,2.5S11,8.8807,11,7.5v-2c0-0.2761-0.2239-0.5-0.5-0.5h-0.5c-0.8284,0-1.5,0.6716-1.5,1.5v2c0,1.3807,1.1193,2.5,2.5,2.5S14,8.8807,14,7.5v-2c0-0.2761-0.2239-0.5-0.5-0.5h-0.5c-0.8284,0-1.5,0.6716-1.5,1.5v2c0,1.3807,1.1193,2.5,2.5,2.5z"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className={className}>
+            <path d="M3 20C2.44772 20 2 20.4477 2 21C2 21.5523 2.44772 22 3 22V20ZM21 22C21.5523 22 22 21.5523 22 21C22 20.4477 21.5523 20 21 20V22ZM7 17C6.44772 17 6 17.4477 6 18C6 18.5523 6.44772 19 7 19V17ZM14 19C14.5523 19 15 18.5523 15 18C15 17.4477 14.5523 17 14 17V19ZM9 14C8.44772 14 8 14.4477 8 15C8 15.5523 8.44772 16 9 16V14ZM12 16C12.5523 16 13 15.5523 13 15C13 14.4477 12.5523 14 12 14V16ZM8 5V4C7.44772 4 7 4.44772 7 5H8ZM13 5H14C14 4.44772 13.5523 4 13 4V5ZM13 12V13C13.5523 13 14 12.5523 14 12H13ZM8 12H7C7 12.5523 7.44772 13 8 13V12ZM9 5V6C9.45887 6 9.85885 5.6877 9.97014 5.24254L9 5ZM11.5 3L12.4701 2.75746C12.3589 2.3123 11.9589 2 11.5 2V3ZM9.5 3V2C9.04113 2 8.64115 2.3123 8.52986 2.75746L9.5 3ZM12 5L11.0299 5.24254C11.1411 5.6877 11.5411 6 12 6V5ZM13 7C12.4477 7 12 7.44772 12 8C12 8.55228 12.4477 9 13 9V7ZM16.0915 20.1435C15.6184 20.4285 15.466 21.0431 15.7511 21.5161C16.0361 21.9892 16.6506 22.1416 17.1237 21.8565L16.0915 20.1435ZM3 22H21V20H3V22ZM7 19H14V17H7V19ZM9 16H12V14H9V16ZM12 5V12H14V5H12ZM13 11H8V13H13V11ZM9 12V5H7V12H9ZM8 6H9V4H8V6ZM9.97014 5.24254L10.4701 3.24254L8.52986 2.75746L8.02986 4.75746L9.97014 5.24254ZM9.5 4H11.5V2H9.5V4ZM10.5299 3.24254L11.0299 5.24254L12.9701 4.75746L12.4701 2.75746L10.5299 3.24254ZM12 6H13V4H12V6ZM13 9C16.3137 9 19 11.6863 19 15H21C21 10.5817 17.4183 7 13 7V9ZM19 15C19 17.1814 17.8365 19.092 16.0915 20.1435L17.1237 21.8565C19.4443 20.4582 21 17.9113 21 15H19Z"/>        </svg>
     ),
     ArrowRight: ({ className }: { className?: string }) => (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
@@ -65,32 +64,32 @@ export default function PostDockanketa() {
     }, [serverRole, urlRole]);
 
     const clientButtons = [
-        { key: 'psoriasis', href: '/anketa-psoriāze', icon: Icons.User, colorClass: 'group-hover:border-emerald-400 group-hover:shadow-emerald-100', iconBg: 'bg-emerald-50 text-emerald-600' },
-        { key: 'crohns', href: '/anketa-hroniskas', icon: Icons.Activity, colorClass: 'group-hover:border-emerald-400 group-hover:shadow-emerald-100', iconBg: 'bg-emerald-50 text-emerald-600' },
-        { key: 'codes', href: '/anketa-kods', icon: Icons.Code, colorClass: 'group-hover:border-violet-400 group-hover:shadow-violet-100', iconBg: 'bg-violet-50 text-violet-600' },
+        { key: 'psoriasis', href: '/anketa-psoriāze', icon: Icons.User, colorClass: 'group-hover:border-fuchsia-400 group-hover:shadow-fuchsia-100', iconBg: 'bg-fuchsia-50 text-fuchsia-600' },
+        { key: 'crohns', href: '/anketa-hroniskas', icon: Icons.Activity, colorClass: 'group-hover:border-fuchsia-400 group-hover:shadow-fuchsia-100', iconBg: 'bg-fuchsia-50 text-fuchsia-600' },
+        { key: 'codes', href: '/anketa-kods', icon: Icons.Code, colorClass: 'group-hover:border-purple-400 group-hover:shadow-purple-100', iconBg: 'bg-purple-50 text-purple-600' },
     ];
 
     const specialistButtons = [
-        { key: 'main', href: '/anketa-specialiste', icon: Icons.Stethoscope, colorClass: 'group-hover:border-sky-400 group-hover:shadow-sky-100', iconBg: 'bg-sky-50 text-sky-600' },
-        { key: 'codes', href: '/anketa-kods', icon: Icons.Code, colorClass: 'group-hover:border-violet-400 group-hover:shadow-violet-100', iconBg: 'bg-violet-50 text-violet-600' },
+        { key: 'main', href: '/anketa-specialiste', icon: Icons.Stethoscope, colorClass: 'group-hover:border-rose-400 group-hover:shadow-rose-100', iconBg: 'bg-rose-50 text-rose-600' },
+        { key: 'codes', href: '/anketa-kods', icon: Icons.Code, colorClass: 'group-hover:border-purple-400 group-hover:shadow-purple-100', iconBg: 'bg-purple-50 text-purple-600' },
     ];
 
     return (
         <>
             <Head title={meta?.page_title ?? 'PostDoc anketa'} />
 
-            <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
+            <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-fuchsia-100 selection:text-fuchsia-900">
                 <div className="pointer-events-none fixed inset-0 z-0">
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-                    <div className="absolute top-0 right-0 left-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-emerald-400 opacity-20 blur-[100px]"></div>
-                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-sky-400 opacity-10 blur-[120px]"></div>
+                    <div className="absolute top-0 right-0 left-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-fuchsia-400 opacity-20 blur-[100px]"></div>
+                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-rose-400 opacity-10 blur-[120px]"></div>
                 </div>
 
                 <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-4 py-16 sm:px-6 lg:px-8">
                     <div className="mb-16 text-center">
                         <h1 className="mx-auto mb-6 max-w-4xl text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
                             {intro?.title_line_1 ?? 'Izvēlieties atbilstošo'} <br />
-                            <span className="bg-gradient-to-r from-emerald-600 to-sky-600 bg-clip-text text-transparent">
+                            <span className="bg-gradient-to-r from-fuchsia-600 to-rose-600 bg-clip-text text-transparent">
                                 {intro?.title_highlight ?? 'Anketu'}
                             </span>
                         </h1>
@@ -111,7 +110,7 @@ export default function PostDockanketa() {
                                                 <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${btn.iconBg}`}>
                                                     <btn.icon className="h-6 w-6" />
                                                 </div>
-                                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-colors group-hover:bg-emerald-500 group-hover:text-white">
+                                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-colors group-hover:bg-fuchsia-500 group-hover:text-white">
                                                     <Icons.ArrowRight className="h-4 w-4" />
                                                 </div>
                                             </div>
@@ -141,7 +140,7 @@ export default function PostDockanketa() {
                                                 </h3>
                                                 {buttons?.specialists?.[btn.key]?.subtitle && <p className="text-sm text-slate-500">{buttons.specialists[btn.key].subtitle}</p>}
                                             </div>
-                                            <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-sky-600 group-hover:text-sky-700 sm:mt-0">
+                                            <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-rose-600 group-hover:text-rose-700 sm:mt-0">
                                                 {actions?.open_panel ?? 'Atvērt paneli'} <Icons.ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                                             </div>
                                         </Link>

@@ -98,8 +98,8 @@ function FAQItem({ item, index }: { item: FAQItemType; index: number }) {
         <div 
             className={`group rounded-2xl border bg-white transition-all duration-300 ${
                 open 
-                ? 'border-emerald-500 shadow-md ring-1 ring-emerald-500/20' 
-                : 'border-slate-200 shadow-sm hover:border-emerald-300 hover:shadow-md'
+                ? 'border-violet-500 shadow-md ring-1 ring-violet-500/20' 
+                : 'border-slate-200 shadow-sm hover:border-violet-300 hover:shadow-md'
             }`}
         >
             <button
@@ -109,7 +109,7 @@ function FAQItem({ item, index }: { item: FAQItemType; index: number }) {
             >
                 <div className="flex gap-4">
                     <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-bold transition-colors ${
-                        open ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500 group-hover:bg-emerald-50 group-hover:text-emerald-600'
+                        open ? 'bg-violet-100 text-violet-700' : 'bg-slate-100 text-slate-500 group-hover:bg-violet-50 group-hover:text-violet-600'
                     }`}>
                         {index + 1 < 10 ? `0${index + 1}` : index + 1}
                     </span>
@@ -120,7 +120,7 @@ function FAQItem({ item, index }: { item: FAQItemType; index: number }) {
                     </h3>
                 </div>
 
-                <span className={`shrink-0 text-slate-400 transition-colors ${open ? 'text-emerald-500' : 'group-hover:text-emerald-500'}`}>
+                <span className={`shrink-0 text-slate-400 transition-colors ${open ? 'text-violet-500' : 'group-hover:text-violet-500'}`}>
                     {open ? <Icons.Minus className="h-5 w-5" /> : <Icons.Plus className="h-5 w-5" />}
                 </span>
             </button>
@@ -146,21 +146,21 @@ export default function ChronicFAQ() {
         <>
             <Head title={t.metaTitle} />
 
-            <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
+            <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-violet-100 selection:text-violet-900">
                 
                 {/* BACKGROUND TECH GRID */}
                 <div className="fixed inset-0 pointer-events-none z-0">
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-                    <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-emerald-400 opacity-20 blur-[100px]"></div>
-                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-sky-400 opacity-10 blur-[120px]"></div>
+                    <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-violet-400 opacity-20 blur-[100px]"></div>
+                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-fuchsia-400 opacity-10 blur-[120px]"></div>
                 </div>
 
                 <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
                     
                     {/* Header Badge */}
                     <div className="mb-8">
-                         <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-emerald-700">
-                            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                         <div className="inline-flex items-center gap-2 rounded-full border border-violet-100 bg-violet-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-violet-700">
+                            <span className="h-2 w-2 rounded-full bg-violet-500 animate-pulse" />
                             {t.badge}
                         </div>
                     </div>
@@ -171,7 +171,7 @@ export default function ChronicFAQ() {
                         <div className="lg:col-span-4 lg:sticky lg:top-8 h-fit">
                             <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-6">
                                 {t.title} <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-sky-600">
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-fuchsia-600">
                                     {t.titleHighlight}
                                 </span>
                             </h1>
@@ -181,16 +181,16 @@ export default function ChronicFAQ() {
 
                             {/* Contact Card */}
                             <div className="rounded-2xl bg-white p-6 border border-slate-200 shadow-sm relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-sky-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-fuchsia-50 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
                                 <div className="relative z-10">
-                                    <div className="h-10 w-10 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center mb-4">
+                                    <div className="h-10 w-10 rounded-lg bg-fuchsia-50 text-fuchsia-600 flex items-center justify-center mb-4">
                                         <Icons.Chat className="w-5 h-5" />
                                     </div>
                                     <h4 className="font-bold text-slate-900">{t.contactTitle}</h4>
                                     <p className="text-sm text-slate-500 mt-2 mb-4">
                                         {t.contactText}
                                     </p>
-                                    <a href="/ParMums/pievienojies-mums" className="text-sm font-semibold text-sky-600 hover:text-sky-700 hover:underline">
+                                    <a href="/ParMums/pievienojies-mums" className="text-sm font-semibold text-fuchsia-600 hover:text-fuchsia-700 hover:underline">
                                         {t.contactLink}
                                     </a>
                                 </div>

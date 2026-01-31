@@ -65,8 +65,8 @@ export default function ATMPProduction() {
             <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-[#eaf3ff] via-white to-[#e7f7f1]">
                 {/* Soft background orbs & grid */}
                 <div className="pointer-events-none absolute inset-0">
-                    <div className="absolute -top-32 left-[-40px] h-72 w-72 rounded-full bg-sky-200/40 blur-3xl" />
-                    <div className="absolute top-1/3 right-[-60px] h-80 w-80 rounded-full bg-emerald-200/40 blur-3xl" />
+                    <div className="absolute -top-32 left-[-40px] h-72 w-72 rounded-full bg-blue-200/40 blur-3xl" />
+                    <div className="absolute top-1/3 right-[-60px] h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
                     <div className="absolute bottom-[-80px] left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-teal-100/40 blur-3xl" />
                     <div className="absolute inset-0 bg-[radial-gradient(#0f172a0d_1px,transparent_1px)] [background-size:18px_18px] opacity-40" />
                 </div>
@@ -74,9 +74,9 @@ export default function ATMPProduction() {
                 <section className="relative mx-auto min-h-screen max-w-5xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
                     {/* Header */}
                     <div className="mx-auto mb-8 max-w-2xl text-center">
-                        <span className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white/80 px-3 py-1 text-[0.7rem] font-semibold tracking-[0.3em] text-emerald-500 uppercase shadow-sm shadow-emerald-100/60">
+                        <span className="inline-flex items-center gap-2 rounded-full border border-cyan-100 bg-white/80 px-3 py-1 text-[0.7rem] font-semibold tracking-[0.3em] text-cyan-500 uppercase shadow-sm shadow-cyan-100/60">
                             {__('specialistiem.atmp.hero.title1')}
-                            <span className="h-1 w-1 rounded-full bg-emerald-400" />
+                            <span className="h-1 w-1 rounded-full bg-cyan-400" />
                             {__('specialistiem.atmp.hero.title2')}
                         </span>
 
@@ -99,9 +99,9 @@ export default function ATMPProduction() {
 
                             {/* Key statistics */}
                             <div className="grid gap-4 sm:grid-cols-3">
-                                <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4">
-                                    <div className="text-2xl font-bold text-emerald-700">50+</div>
-                                    <div className="text-xs text-emerald-600">{__('specialistiem.atmp.stats.facilities')}</div>
+                                <div className="rounded-2xl border border-cyan-100 bg-cyan-50/50 p-4">
+                                    <div className="text-2xl font-bold text-cyan-700">50+</div>
+                                    <div className="text-xs text-cyan-600">{__('specialistiem.atmp.stats.facilities')}</div>
                                 </div>
                                 <div className="rounded-2xl border border-blue-100 bg-blue-50/50 p-4">
                                     <div className="text-2xl font-bold text-blue-700">15</div>
@@ -127,8 +127,8 @@ export default function ATMPProduction() {
                                         key={facility.id}
                                         className={`cursor-pointer rounded-2xl border p-4 transition-all ${
                                             selectedFacility === facility.id
-                                                ? 'border-emerald-500 bg-emerald-50/30'
-                                                : 'border-slate-200 bg-white hover:border-emerald-300'
+                                                ? 'border-cyan-500 bg-cyan-50/30'
+                                                : 'border-slate-200 bg-white hover:border-cyan-300'
                                         }`}
                                         onClick={() => setSelectedFacility(facility.id)}
                                     >
@@ -139,7 +139,7 @@ export default function ATMPProduction() {
                                                     <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600">
                                                         {facility.country}
                                                     </span>
-                                                    <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700">
+                                                    <span className="inline-flex items-center rounded-full bg-cyan-100 px-2 py-1 text-xs font-medium text-cyan-700">
                                                         {facility.type}
                                                     </span>
                                                 </div>
@@ -152,7 +152,7 @@ export default function ATMPProduction() {
 
                             {/* Selected facility details */}
                             {selectedFacilityData && (
-                                <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50/30 p-4">
+                                <div className="mt-6 rounded-2xl border border-cyan-200 bg-cyan-50/30 p-4">
                                     <div className="mb-3 flex items-center justify-between">
                                         <h3 className="text-lg font-semibold text-slate-900">{selectedFacilityData.name}</h3>
                                         <button
@@ -182,7 +182,7 @@ export default function ATMPProduction() {
                                         </div>
                                     </div>
 
-                                    <div className="mt-3 border-t border-emerald-200 pt-3">
+                                    <div className="mt-3 border-t border-cyan-200 pt-3">
                                         <p className="text-sm text-slate-700">{selectedFacilityData.description}</p>
                                     </div>
                                 </div>

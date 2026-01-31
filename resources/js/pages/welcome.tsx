@@ -49,7 +49,7 @@ const copy = {
             {
                 title: 'Speciālistu/Ārstu aptajuas anketa',
                 text: 'Vēlos sadarboties pētniecībā vai nosūtīt pacientus.',
-                action: 'Ispaust savu viedokli',
+                action: 'Izpaust savu viedokli',
             },
             {
                 title: 'Mācību programmas ārstiem/speciālistiem',

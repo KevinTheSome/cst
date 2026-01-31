@@ -18,9 +18,9 @@ return [
             'label' => 'Active members',
             'trend' => 'vs last 7 days',
         ],
-        'requests' => [
-            'label' => 'New requests',
-            'trend' => 'response time',
+        'form_results' => [
+            'label' => 'Form results',
+            'trend' => 'Received responses',
         ],
         'delivery' => [
             'label' => 'On-time delivery',

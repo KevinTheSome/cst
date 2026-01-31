@@ -1,5 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
+import { usePage } from '@inertiajs/react';
 // @ts-ignore - Assuming useLang is available in your project hooks
 import { useLang } from '@/Hooks/useLang'; 
 import AdminLayout from '../../Layouts/AdminLayout';
@@ -27,7 +28,7 @@ type BadgeTone = 'emerald' | 'sky' | 'violet' | 'amber';
 type StatHighlight = {
     id: string;
     label: string;
-    value: string;
+    value: String;
     trend: string;
     trendDescription: string;
     accent: BadgeTone;
@@ -36,6 +37,7 @@ type StatHighlight = {
 
 export default function Dashboard() {
     const { __ } = useLang();
+    const { props } = usePage<{ formsCount: number }>();
     const [activeModal, setActiveModal] = useState<string | null>(null);
 
     // --- Data Definitions (Moved inside to access translation hook) ---
@@ -52,10 +54,10 @@ export default function Dashboard() {
         },
         {
             id: 'requests',
-            label: __('admin_dashboard.stats.requests.label'),
-            value: '43',
+            label: __('admin_dashboard.stats.form_results.label'),
+            value: String(props.formsCount ?? 0),
             trend: '-6%',
-            trendDescription: __('admin_dashboard.stats.requests.trend'),
+            trendDescription: __('admin_dashboard.stats.form_results.trend'),
             accent: 'sky',
             icon: FileText
         },

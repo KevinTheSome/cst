@@ -334,7 +334,7 @@ export default function OnlineTraining({
         return (
             <div
                 className={`group relative flex flex-col justify-between overflow-hidden rounded-3xl border bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
-                    isSelected ? 'border-emerald-500 ring-2 ring-emerald-500 ring-offset-2' : 'border-slate-100 hover:border-emerald-200'
+                    isSelected ? 'border-amber-500 ring-2 ring-amber-500 ring-offset-2' : 'border-slate-100 hover:border-amber-200'
                 }`}
                 role="button"
                 tabIndex={0}
@@ -348,7 +348,7 @@ export default function OnlineTraining({
             >
                 {/* Glow effect for unlocked */}
                 {unlocked && (
-                    <div className="absolute top-0 right-0 -mt-10 -mr-10 h-32 w-32 rounded-full bg-gradient-to-br from-emerald-100/50 to-teal-50 blur-2xl transition-opacity group-hover:opacity-100" />
+                    <div className="absolute top-0 right-0 -mt-10 -mr-10 h-32 w-32 rounded-full bg-gradient-to-br from-amber-100/50 to-teal-50 blur-2xl transition-opacity group-hover:opacity-100" />
                 )}
 
                 <div className="relative z-10">
@@ -356,7 +356,7 @@ export default function OnlineTraining({
                         <div className="flex-1">
                             <div className="mb-3 flex items-center gap-2">
                                 {unlocked ? (
-                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-bold tracking-wider text-emerald-700 uppercase">
+                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-bold tracking-wider text-amber-700 uppercase">
                                         <Icons.Check className="h-3 w-3" /> {__('specialistiem.apmaciba.status.unlocked')}
                                     </span>
                                 ) : (
@@ -365,7 +365,7 @@ export default function OnlineTraining({
                                     </span>
                                 )}
                             </div>
-                            <h3 className="font-display text-lg leading-tight font-bold text-slate-900 transition-colors group-hover:text-emerald-700">
+                            <h3 className="font-display text-lg leading-tight font-bold text-slate-900 transition-colors group-hover:text-amber-700">
                                 {renderTitle(lecture.title)}
                             </h3>
                         </div>
@@ -397,12 +397,12 @@ export default function OnlineTraining({
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             onClick={(e) => e.stopPropagation()}
-                                            className="flex h-12 w-12 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 shadow-lg shadow-emerald-500/20 transition-transform hover:scale-110 active:scale-95"
+                                            className="flex h-12 w-12 items-center justify-center rounded-full border border-amber-200 bg-amber-50 text-amber-700 shadow-lg shadow-amber-500/20 transition-transform hover:scale-110 active:scale-95"
                                         >
                                             <Icons.Play className="ml-1 h-6 w-6" />
                                         </a>
                                     ) : (
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-50 text-amber-600">
                                             <Icons.Check className="h-6 w-6" />
                                         </div>
                                     )}
@@ -419,7 +419,7 @@ export default function OnlineTraining({
                                     className={`flex h-10 w-10 items-center justify-center rounded-full transition-all ${
                                         isSelected
                                             ? 'bg-slate-900 text-white'
-                                            : 'bg-slate-50 text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-600'
+                                            : 'bg-slate-50 text-slate-400 group-hover:bg-amber-50 group-hover:text-amber-600'
                                     }`}
                                 >
                                     {isSelected ? <Icons.Unlock className="h-5 w-5" /> : <Icons.Lock className="h-5 w-5" />}
@@ -441,7 +441,7 @@ export default function OnlineTraining({
                         {startsLabel && <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1">Starts: {startsLabel}</span>}
                         {endsLabel && <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1">Ends: {endsLabel}</span>}
                         {lecture.tag && (
-                            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-emerald-700">{lecture.tag}</span>
+                            <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-amber-700">{lecture.tag}</span>
                         )}
                     </div>
 
@@ -471,12 +471,12 @@ export default function OnlineTraining({
                                         value={code}
                                         onChange={(e) => setCode(e.target.value)}
                                         placeholder={__('specialistiem.apmaciba.form.placeholder')}
-                                        className={`w-full rounded-xl border-0 bg-slate-50 py-3.5 pr-14 pl-4 text-sm font-medium text-slate-900 shadow-inner ring-1 ring-slate-200 transition-all placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 ${error ? 'bg-red-50 ring-red-200' : ''}`}
+                                        className={`w-full rounded-xl border-0 bg-slate-50 py-3.5 pr-14 pl-4 text-sm font-medium text-slate-900 shadow-inner ring-1 ring-slate-200 transition-all placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-amber-500 ${error ? 'bg-red-50 ring-red-200' : ''}`}
                                     />
                                     <button
                                         type="submit"
                                         disabled={submittingCode}
-                                        className="absolute top-2 right-2 bottom-2 aspect-square rounded-lg bg-slate-900 text-white shadow-md transition-all hover:bg-emerald-600 disabled:opacity-70"
+                                        className="absolute top-2 right-2 bottom-2 aspect-square rounded-lg bg-slate-900 text-white shadow-md transition-all hover:bg-amber-600 disabled:opacity-70"
                                     >
                                         {submittingCode ? (
                                             <div className="mx-auto h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
@@ -522,7 +522,7 @@ export default function OnlineTraining({
                                 <button
                                     onClick={() => handleSubmitRating(lecture.id)}
                                     disabled={alreadyRated || isRatingLoading || !userRatings[lecture.id]}
-                                    className="w-full rounded-xl bg-slate-900 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-emerald-600 hover:shadow-emerald-500/20 active:translate-y-0.5 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
+                                    className="w-full rounded-xl bg-slate-900 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-amber-600 hover:shadow-amber-500/20 active:translate-y-0.5 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
                                 >
                                     {alreadyRated
                                         ? __('specialistiem.apmaciba.rating.rated')
@@ -541,11 +541,11 @@ export default function OnlineTraining({
     return (
         <>
             <Head title={__('specialistiem.apmaciba.meta.title')} />
-            <div className="min-h-screen bg-slate-50 selection:bg-emerald-200 selection:text-emerald-900">
+            <div className="min-h-screen bg-slate-50 selection:bg-amber-200 selection:text-amber-900">
                 {/* Background Gradients */}
                 <div className="pointer-events-none fixed inset-0 z-0 opacity-40">
                     <div className="absolute top-[-10%] left-[-10%] h-[50vh] w-[50vw] rounded-full bg-blue-200 blur-[120px]" />
-                    <div className="absolute right-[-10%] bottom-[-10%] h-[50vh] w-[50vw] rounded-full bg-emerald-200 blur-[120px]" />
+                    <div className="absolute right-[-10%] bottom-[-10%] h-[50vh] w-[50vw] rounded-full bg-amber-200 blur-[120px]" />
                 </div>
 
                 <section className="relative z-10 mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
@@ -561,7 +561,7 @@ export default function OnlineTraining({
                         <div
                             className={`animate-in slide-in-from-bottom-5 fixed right-8 bottom-8 z-50 flex max-w-sm items-center gap-3 rounded-2xl border p-4 shadow-2xl backdrop-blur-md ${
                                 banner.type === 'success'
-                                    ? 'border-emerald-200 bg-emerald-50/90 text-emerald-800'
+                                    ? 'border-amber-200 bg-amber-50/90 text-amber-800'
                                     : 'border-red-200 bg-red-50/90 text-red-800'
                             }`}
                         >
@@ -585,7 +585,7 @@ export default function OnlineTraining({
                                         }
                                     }}
                                     placeholder={__('specialistiem.apmaciba.form.placeholder')}
-                                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-inner placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-inner placeholder:text-slate-400 focus:ring-2 focus:ring-amber-500 focus:outline-none"
                                 />
                             </div>
 
@@ -596,7 +596,7 @@ export default function OnlineTraining({
                                 <select
                                     value={filterAuthor}
                                     onChange={(e) => setFilterAuthor(e.target.value)}
-                                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-inner focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-inner focus:ring-2 focus:ring-amber-500 focus:outline-none"
                                 >
                                     <option value="">{__('specialistiem.apmaciba.filters.all')}</option>
                                     {authorOptions.map((a) => (
@@ -614,7 +614,7 @@ export default function OnlineTraining({
                                 <select
                                     value={String(filterMinRating)}
                                     onChange={(e) => setFilterMinRating(Number(e.target.value) || 0)}
-                                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-inner focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-inner focus:ring-2 focus:ring-amber-500 focus:outline-none"
                                 >
                                     <option value="0">{__('specialistiem.apmaciba.filters.all')}</option>
                                     <option value="1">1</option>
@@ -735,7 +735,7 @@ export default function OnlineTraining({
                                                 <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1">Ends: {endsLabel}</span>
                                             )}
                                             {lecture.tag && (
-                                                <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-emerald-700">
+                                                <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-amber-700">
                                                     {lecture.tag}
                                                 </span>
                                             )}
@@ -759,7 +759,7 @@ export default function OnlineTraining({
                                                     href={lecture.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-5 py-2.5 text-sm font-semibold text-emerald-700 hover:border-emerald-300 hover:bg-emerald-100"
+                                                    className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-5 py-2.5 text-sm font-semibold text-amber-700 hover:border-amber-300 hover:bg-amber-100"
                                                 >
                                                     <Icons.Play className="h-4 w-4" />
                                                 </a>
@@ -802,14 +802,14 @@ export default function OnlineTraining({
                                                             value={code}
                                                             onChange={(e) => setCode(e.target.value)}
                                                             placeholder={__('specialistiem.apmaciba.form.placeholder')}
-                                                            className={`w-full rounded-xl border-0 bg-slate-50 py-3.5 pr-14 pl-4 text-sm font-medium text-slate-900 shadow-inner ring-1 ring-slate-200 transition-all placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 ${
+                                                            className={`w-full rounded-xl border-0 bg-slate-50 py-3.5 pr-14 pl-4 text-sm font-medium text-slate-900 shadow-inner ring-1 ring-slate-200 transition-all placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-amber-500 ${
                                                                 error ? 'bg-red-50 ring-red-200' : ''
                                                             }`}
                                                         />
                                                         <button
                                                             type="submit"
                                                             disabled={submittingCode}
-                                                            className="absolute top-2 right-2 bottom-2 aspect-square rounded-lg bg-slate-900 text-white shadow-md transition-all hover:bg-emerald-600 disabled:opacity-70"
+                                                            className="absolute top-2 right-2 bottom-2 aspect-square rounded-lg bg-slate-900 text-white shadow-md transition-all hover:bg-amber-600 disabled:opacity-70"
                                                         >
                                                             {submittingCode ? (
                                                                 <div className="mx-auto h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
@@ -863,7 +863,7 @@ export default function OnlineTraining({
                                                     <button
                                                         onClick={() => handleSubmitRating(lecture.id)}
                                                         disabled={alreadyRated || isRatingLoading || !userRatings[lecture.id]}
-                                                        className="w-full rounded-xl bg-slate-900 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-emerald-600 hover:shadow-emerald-500/20 active:translate-y-0.5 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
+                                                        className="w-full rounded-xl bg-slate-900 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-amber-600 hover:shadow-amber-500/20 active:translate-y-0.5 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
                                                     >
                                                         {alreadyRated
                                                             ? __('specialistiem.apmaciba.rating.rated')

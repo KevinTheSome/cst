@@ -16,4 +16,5 @@ return [
     'untitled' => 'Bez nosaukuma',
 
     'delete_confirm' => 'Vai tiešām vēlaties dzēst?',
+    'close' => 'Aizvērt',
 ];

@@ -46,6 +46,8 @@ function Navbar() {
         }
     };
 
+    const closeSidebar = () => setSidebarOpen(false);
+
     return (
         <nav
             className={`sticky top-0 z-50 w-full bg-white transition-shadow duration-300 ease-in-out ${
@@ -125,19 +127,26 @@ function Navbar() {
             </div>
 
             {/* --- MOBILE SIDEBAR OVERLAY --- */}
-            {sidebarOpen && (
-                <div className="fixed inset-0 z-[100] lg:hidden">
+            <div className={`fixed inset-0 z-[100] transition-all duration-300 lg:hidden ${sidebarOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
                     {/* Dark Backdrop */}
-                    <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onClick={() => setSidebarOpen(false)} />
+                    <div
+                        className={`absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0'}`}
+                        onClick={closeSidebar}
+                    />
 
                     {/* Sidebar Content */}
-                    <aside className="absolute right-0 h-full w-[85vw] max-w-md transform bg-white shadow-2xl transition-transform duration-300 ease-out">
+                    <aside
+                        className={`absolute right-0 h-full w-[85vw] max-w-md transform bg-white shadow-2xl transition-transform duration-300 ease-out ${
+                            sidebarOpen ? 'translate-x-0' : 'translate-x-full'
+                        }`}
+                        aria-hidden={!sidebarOpen}
+                    >
                         <div className="flex h-full flex-col">
                             {/* Mobile Header */}
                             <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
                                 <span className="text-xl font-extrabold text-slate-900">{__('head.menu')}</span>
                                 <button
-                                    onClick={() => setSidebarOpen(false)}
+                                    onClick={closeSidebar}
                                     className="rounded-full bg-slate-100 p-3 text-slate-500 transition hover:bg-rose-100 hover:text-rose-600"
                                     aria-label="Close Menu"
                                 >
@@ -151,31 +160,31 @@ function Navbar() {
                             <div className="flex-1 overflow-y-auto px-5 py-6 overscroll-contain">
                                 <div className="space-y-4">
                                     <MobileSection label={__('head.nav_patients')} icon={<IconUser />}>
-                                        <MobileLink href="/pacientiem/atmp">{__('head.nav_patients_atmp')}</MobileLink>
-                                        <MobileLink href="/pacientiem/psoriaze-terapija">{__('head.nav_patients_psoriasis')}</MobileLink>
-                                        <MobileLink href="/pacientiem/krona-terapija">{__('head.nav_patients_crohn')}</MobileLink>
-                                        <MobileLink href="/pacientiem/faq">{__('head.nav_patients_faq')}</MobileLink>
+                                        <MobileLink href="/pacientiem/atmp" onNavigate={closeSidebar}>{__('head.nav_patients_atmp')}</MobileLink>
+                                        <MobileLink href="/pacientiem/psoriaze-terapija" onNavigate={closeSidebar}>{__('head.nav_patients_psoriasis')}</MobileLink>
+                                        <MobileLink href="/pacientiem/krona-terapija" onNavigate={closeSidebar}>{__('head.nav_patients_crohn')}</MobileLink>
+                                        <MobileLink href="/pacientiem/faq" onNavigate={closeSidebar}>{__('head.nav_patients_faq')}</MobileLink>
                                     </MobileSection>
 
                                     <MobileSection label={__('head.nav_specialists')} icon={<IconDoctor />}>
-                                        <MobileLink href="/specialistiem/likumi">{__('head.nav_specialists_laws')}</MobileLink>
-                                        <MobileLink href="/specialistiem/atmp">{__('head.nav_specialists_plants')}</MobileLink>
-                                        <MobileLink href="/specialistiem/apmaciba">{__('head.nav_specialists_training')}</MobileLink>
-                                        <MobileLink href="/postdock-anketa?role=specialists">{__('head.nav_specialists_survey')}</MobileLink>
+                                        <MobileLink href="/specialistiem/likumi" onNavigate={closeSidebar}>{__('head.nav_specialists_laws')}</MobileLink>
+                                        <MobileLink href="/specialistiem/atmp" onNavigate={closeSidebar}>{__('head.nav_specialists_plants')}</MobileLink>
+                                        <MobileLink href="/specialistiem/apmaciba" onNavigate={closeSidebar}>{__('head.nav_specialists_training')}</MobileLink>
+                                        <MobileLink href="/postdock-anketa?role=specialists" onNavigate={closeSidebar}>{__('head.nav_specialists_survey')}</MobileLink>
                                     </MobileSection>
 
                                     <MobileSection label={__('head.nav_research')} icon={<IconResearch />}>
-                                        <MobileLink href="/clinical-trials">{__('head.nav_research_clinical_trials')}</MobileLink>
-                                        <MobileLink href="/postdock-anketa?role=patients">{__('head.nav_research_postdoc')}</MobileLink>
-                                        <MobileLink href="/anketa-kods">{__('head.nav_research_code')}</MobileLink>
-                                        <MobileLink href="/datubaze">{__('head.nav_research_documents')}</MobileLink>
+                                        <MobileLink href="/clinical-trials" onNavigate={closeSidebar}>{__('head.nav_research_clinical_trials')}</MobileLink>
+                                        <MobileLink href="/postdock-anketa?role=patients" onNavigate={closeSidebar}>{__('head.nav_research_postdoc')}</MobileLink>
+                                        <MobileLink href="/anketa-kods" onNavigate={closeSidebar}>{__('head.nav_research_code')}</MobileLink>
+                                        <MobileLink href="/datubaze" onNavigate={closeSidebar}>{__('head.nav_research_documents')}</MobileLink>
                                     </MobileSection>
 
                                     <MobileSection label={__('head.nav_about')} icon={<IconInfo />}>
-                                        <MobileLink href="/ParMums/musu-grupa">{__('head.nav_about_team')}</MobileLink>
-                                        <MobileLink href="/ParMums/contacts">{__('head.nav_about_contacts')}</MobileLink>
-                                        <MobileLink href="/ParMums/pievienojies-mums">{__('head.nav_about_join')}</MobileLink>
-                                        <MobileLink href="/ParMums/lablife">{__('head.nav_about_lab')}</MobileLink>
+                                        <MobileLink href="/ParMums/musu-grupa" onNavigate={closeSidebar}>{__('head.nav_about_team')}</MobileLink>
+                                        <MobileLink href="/ParMums/contacts" onNavigate={closeSidebar}>{__('head.nav_about_contacts')}</MobileLink>
+                                        <MobileLink href="/ParMums/pievienojies-mums" onNavigate={closeSidebar}>{__('head.nav_about_join')}</MobileLink>
+                                        <MobileLink href="/ParMums/lablife" onNavigate={closeSidebar}>{__('head.nav_about_lab')}</MobileLink>
                                     </MobileSection>
                                 </div>
                             </div>
@@ -194,7 +203,6 @@ function Navbar() {
                         </div>
                     </aside>
                 </div>
-            )}
         </nav>
     );
 }
@@ -255,8 +263,12 @@ const MobileSection = ({ label, icon, children }: any) => {
     );
 };
 
-const MobileLink = ({ href, children }: any) => (
-    <Link href={href} className="block rounded-xl border border-transparent px-4 py-3 text-base font-semibold text-slate-600 transition-all hover:border-emerald-100 hover:bg-white hover:text-emerald-700 hover:shadow-sm">
+const MobileLink = ({ href, children, onNavigate }: any) => (
+    <Link
+        href={href}
+        onClick={onNavigate}
+        className="block rounded-xl border border-transparent px-4 py-3 text-base font-semibold text-slate-600 transition-all hover:border-emerald-100 hover:bg-white hover:text-emerald-700 hover:shadow-sm"
+    >
         {children}
     </Link>
 );

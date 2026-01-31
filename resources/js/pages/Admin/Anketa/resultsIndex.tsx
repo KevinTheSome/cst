@@ -13,6 +13,7 @@ import {
     Hash,
     RotateCcw,
     CheckCircle2,
+    Download,
 } from 'lucide-react';
 
 type ResultRow = {
@@ -83,6 +84,12 @@ const ResultsIndex: React.FC = () => {
         );
     };
 
+    // Download helper — uses server endpoint that returns a .json attachment.
+    const downloadResult = (id: number) => {
+        // navigate to the download route — server responds with attachment/JSON
+        window.location.href = `results/${id}/download`;
+    };
+
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         applyFilters();
@@ -109,7 +116,6 @@ const ResultsIndex: React.FC = () => {
         return val[lang] || val.lv || val.en || Object.values(val)[0] || null;
     };
 
-    // If you want nicer type labels, you can map them here later
     const typeLabel = (t: string | null) => t || __('anketa.results.misc.standard');
 
     const getTypeColor = (type: string | null) => {
@@ -304,7 +310,7 @@ const ResultsIndex: React.FC = () => {
                                                     </span>
                                                 </td>
 
-                                                <td className="px-6 py-4 text-right">
+                                                <td className="px-6 py-4 text-right space-x-2">
                                                     <a
                                                         href={`/admin/anketa/results/${row.id}`}
                                                         className="inline-flex items-center gap-2 rounded-xl border border-white/5 bg-slate-800 px-4 py-2 text-xs font-bold text-white shadow-lg transition-all hover:border-blue-500/50 hover:bg-blue-600 hover:shadow-blue-500/20"
@@ -312,6 +318,15 @@ const ResultsIndex: React.FC = () => {
                                                         <Eye className="h-3.5 w-3.5" />
                                                         {__('anketa.results.actions.view')}
                                                     </a>
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => downloadResult(row.id)}
+                                                        className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-slate-300 transition-all hover:bg-white/10 hover:text-white"
+                                                    >
+                                                        <Download className="h-3.5 w-3.5" />
+                                                        {__('anketa.results.actions.download')}
+                                                    </button>
                                                 </td>
                                             </tr>
                                         );
@@ -349,6 +364,7 @@ const ResultsIndex: React.FC = () => {
 
                         {/* Body */}
                         <form onSubmit={applyFilters} className="space-y-6 p-6">
+                            {/* (filter form unchanged) */}
                             {/* Type + Code */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="col-span-2 sm:col-span-1">

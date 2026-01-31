@@ -76,6 +76,7 @@ return [
         'actions' => [
             'filters' => 'Filtri',
             'view' => 'Skatīt',
+            'download'=> 'Lejupielādēt',
             'reset' => 'Atiestatīt',
             'clear' => 'Notīrīt',
             'apply' => 'Pielietot',
@@ -113,7 +114,6 @@ return [
         ],
     ],
 
-    // ✅ UPDATED for language switching support
     'update' => [
         'page_title' => 'Rediģēt anketu',
         'layout_title' => 'Rediģēt anketu',
@@ -132,10 +132,8 @@ return [
 
         'basic' => [
             'heading' => 'Pamatinformācija',
-
             'title_lv' => 'Nosaukums (LV)',
             'title_en' => 'Nosaukums (EN)',
-
             'title_lv_placeholder' => 'Piem., Klientu apmierinātība',
             'title_en_placeholder' => 'e.g., Customer Satisfaction',
         ],
@@ -186,11 +184,8 @@ return [
         'scale' => [
             'min_value' => 'Min vērtība',
             'max_value' => 'Max vērtība',
-
-            // ✅ new
             'min_label' => 'Min etiķete',
             'max_label' => 'Max etiķete',
-
             'preview'   => 'Priekšskatījums',
             'min_fallback' => 'Min',
             'max_fallback' => 'Max',
@@ -222,6 +217,13 @@ return [
         'error_missing'  => 'Lūdzu, izvēlieties tipu pirms saglabāšanas.',
         'success'        => 'Tips veiksmīgi saglabāts.',
         'error'          => 'Neizdevās saglabāt. Lūdzu, mēģiniet vēlreiz.',
+
+        // ✅ added (used by SelectorAnketa UI)
+        'config'         => 'Konfigurācija',
+        'choose_form'    => 'Izvēlies anketu...',
+        'selected'       => 'Izvēlēts',
+        'none_selected'  => 'Nav izvēlēta anketa',
+        'saving'         => 'Notiek saglabāšana...',
     ],
 
     'create' => [
@@ -232,7 +234,6 @@ return [
         'heading'    => 'Izveidot jaunu anketu',
         'subheading' => 'Iestatiet nosaukumus, redzamību un pievienojiet jautājumus.',
 
-        // ✅ optional: if Create also switches language
         'language' => [
             'label' => 'Valoda',
             'lv' => 'Latviešu',
@@ -248,10 +249,8 @@ return [
 
         'basic' => [
             'heading' => 'Pamatinformācija',
-
             'title_lv' => 'Nosaukums (LV)',
             'title_en' => 'Nosaukums (EN)',
-
             'title_lv_placeholder' => 'Piem., Klientu apmierinātība',
             'title_en_placeholder' => 'e.g., Customer Satisfaction',
         ],
@@ -319,6 +318,7 @@ return [
             'close'    => 'Aizvērt',
         ],
     ],
+
     'show' => [
         'page_title'   => 'Anketas priekšskatījums',
         'preview'      => 'Priekšskatījums',
@@ -326,7 +326,8 @@ return [
         'public'       => 'Publiska',
         'private'      => 'Privāta',
     ],
-        'field' => [
+
+    'field' => [
         'radio'    => 'Izvēle (viens variants)',
         'checkbox' => 'Izvēle (vairāki varianti)',
         'dropdown' => 'Izkrītošais saraksts',

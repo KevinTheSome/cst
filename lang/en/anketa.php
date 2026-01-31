@@ -24,7 +24,6 @@ return [
         'search_placeholder' => 'Search...',
         'na' => 'N/A',
 
-        // Optional alias if any code uses delete_confirm
         'delete_confirm' => 'Are you sure you want to delete this form?',
 
         'filters' => [
@@ -77,6 +76,7 @@ return [
         'actions' => [
             'filters' => 'Filters',
             'view' => 'View',
+            'download'=> 'Download',
             'reset' => 'Reset',
             'clear' => 'Clear',
             'apply' => 'Apply',
@@ -114,7 +114,6 @@ return [
         ],
     ],
 
-    // ✅ UPDATED for language switching support
     'update' => [
         'page_title' => 'Edit form',
         'layout_title' => 'Edit form',
@@ -123,7 +122,6 @@ return [
         'title' => 'Edit form',
         'subtitle' => 'Update questions, titles, and visibility settings.',
 
-        // language toggle
         'language' => [
             'label' => 'Language',
             'lv' => 'Latvian',
@@ -188,11 +186,8 @@ return [
         'scale' => [
             'min_value' => 'Min value',
             'max_value' => 'Max value',
-
-            // ✅ new (because you’re editing scale labels per language)
             'min_label' => 'Min label',
             'max_label' => 'Max label',
-
             'preview' => 'Preview',
             'min_fallback' => 'Min',
             'max_fallback' => 'Max',
@@ -208,7 +203,6 @@ return [
             'error' => 'Error saving changes.',
         ],
 
-        // if you still use these keys somewhere
         'specialist' => 'Specialist',
         'psoriasis'  => 'Psoriasis',
         'chronic'    => 'Chronic',
@@ -225,6 +219,13 @@ return [
         'error_missing'  => 'Please select a type before saving.',
         'success'        => 'Type saved successfully.',
         'error'          => 'Failed to save. Please try again.',
+
+        // ✅ added (used by SelectorAnketa UI)
+        'config'         => 'Configuration',
+        'choose_form'    => 'Choose a form...',
+        'selected'       => 'Selected',
+        'none_selected'  => 'No form selected',
+        'saving'         => 'Saving...',
     ],
 
     'create' => [
@@ -235,7 +236,6 @@ return [
         'heading'    => 'Create a new form',
         'subheading' => 'Configure titles, visibility, and add questions.',
 
-        // ✅ optional: add language toggle here too if your Create page also switches language
         'language' => [
             'label' => 'Language',
             'lv' => 'Latvian',
@@ -322,6 +322,7 @@ return [
             'close'    => 'Close',
         ],
     ],
+
     'show' => [
         'page_title'   => 'Form preview',
         'preview'      => 'Preview',

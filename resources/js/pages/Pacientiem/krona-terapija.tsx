@@ -1,11 +1,10 @@
 import { useLang } from '@/hooks/useLang';
-import { Head, Link } from '@inertiajs/react';
+import ProcessTimeline from '@/Components/ProcessTimeline';
+import TherapyHero from '@/Components/TherapyHero';
+import { Head } from '@inertiajs/react';
 
 // --- ICONS ---
 const Icons = {
-    ArrowRight: ({ className }: { className?: string }) => (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
-    ),
     Check: ({ className }: { className?: string }) => (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
     ),
@@ -22,88 +21,110 @@ const Icons = {
 
 const copy = {
     lv: {
-        metaTitle: 'Hroniskas Nieru Slimības',
-        badge: 'Nieru Veselības Centrs',
+        metaTitle: 'Krona slimība',
+        badge: 'Gastroenteroloģijas centrs',
         hero: {
-            title: 'Hroniskas nieru slimības',
-            highlight: 'Personalizēta Terapija',
+            title: 'Krona slimība',
+            highlight: 'Personalizēta terapija',
             description:
-                'Mēs apvienojam medicīnisko pieredzi un modernus terapijas veidus, lai saglabātu nieru funkciju, kontrolētu simptomus un uzlabotu dzīves kvalitāti.',
+                'Mēs apvienojam gastroenteroloģijas pieredzi un modernu terapiju, lai kontrolētu iekaisumu, mazinātu uzliesmojumus un uzlabotu dzīves kvalitāti ilgtermiņā.',
             cta: 'Aizpildīt anketu',
+            icon: 'activity',
+            facts: [
+                { title: 'Iekaisuma kontrole', text: 'Terapija, kas palīdz samazināt uzliesmojumus.', icon: 'shield' },
+                { title: 'Uztura pielāgojumi', text: 'Atbalsts ikdienas uzturam un komfortam.', icon: 'heart' },
+                { title: 'Ilgtermiņa uzraudzība', text: 'Regulāra kontrole stabilai remisijai.', icon: 'activity' },
+            ],
         },
+        stats: [
+            { value: '70%', label: 'Pacienti ar stabilu remisiju' },
+            { value: '6', label: 'Mēneši līdz rezultātam' },
+            { value: '24/7', label: 'Atbalsta pieeja' },
+        ],
         section: {
             title: 'Terapijas Pieeja',
-            subtitle: 'Kā mēs palīdzam saglabāt nieru funkciju ilgtermiņā.',
+            subtitle: 'Kā mēs palīdzam kontrolēt iekaisumu un uzlabot ikdienu.',
         },
         strategy: {
             badge: 'Risinājumi',
             title: 'Trīs pīlāru stratēģija',
             items: [
-                { t: 'Medikamentozā terapija', d: 'Precīzi dozēti medikamenti nieru atbalstam.' },
-                { t: 'Dzīvesveida pielāgojumi', d: 'Diēta un aktivitātes nieru stabilizēšanai.' },
-                { t: 'Dialīze & Transplantācija', d: 'Sagatavošanās un plānošana smagos gadījumos.' },
+                { t: 'Medikamentozā terapija', d: 'Pretiekaisuma un imūnmodulējoša pieeja.' },
+                { t: 'Uztura stratēģija', d: 'Individuāla diēta simptomu mazināšanai.' },
+                { t: 'Bioloģiskā terapija', d: 'Mērķēti preparāti smagākos gadījumos.' },
             ],
         },
         process: {
             title: 'Terapijas Gaita',
             steps: [
-                { title: '1. Diagnostika', text: 'Analīzes, nieru funkcijas testi un risku novērtējums.' },
-                { title: '2. Plāns', text: 'Individuāla stratēģija ar medikamentiem un diētu.' },
-                { title: '3. Uzraudzība', text: 'Regulāras pārbaudes un terapijas korekcijas.' },
+                { title: '1. Diagnostika', text: 'Anamnēze, analīzes un iekaisuma rādītāji.' },
+                { title: '2. Terapijas plāns', text: 'Individuāla shēma ar zālēm un uztura plānu.' },
+                { title: '3. Uzraudzība', text: 'Regulāras kontroles un terapijas korekcijas.' },
             ],
-            footer: 'Nieru funkcijas saglabāšana',
+            footer: 'Iekaisuma kontrole un remisija',
         },
         cards: [
             {
-                title: 'Asinsspiediena kontrole',
-                text: 'Samazina komplikāciju risku un tieši atbalsta nieru veselību.',
+                title: 'Gremošanas komforts',
+                text: 'Mazināti simptomi un stabilāka pašsajūta.',
             },
             {
-                title: 'Dzīves kvalitāte',
-                text: 'Personalizēts plāns, kas mazina simptomus un ikdienas stresu.',
+                title: 'Enerģija ikdienā',
+                text: 'Stabilāks ritms un mazāki uzliesmojumi.',
             },
         ],
     },
     en: {
-        metaTitle: 'Chronic Kidney Disease',
-        badge: 'Kidney Health Center',
+        metaTitle: "Crohn's disease",
+        badge: 'Gastroenterology center',
         hero: {
-            title: 'Chronic kidney disease',
-            highlight: 'Personalized Therapy',
+            title: "Crohn's disease",
+            highlight: 'Personalized therapy',
             description:
-                'We combine medical expertise and modern therapies to preserve kidney function, control symptoms, and improve quality of life.',
+                'We combine gastroenterology expertise and modern therapy to control inflammation, reduce flare-ups, and improve long-term quality of life.',
             cta: 'Fill out the form',
+            icon: 'activity',
+            facts: [
+                { title: 'Inflammation control', text: 'Therapy focused on reducing flare-ups.', icon: 'shield' },
+                { title: 'Diet support', text: 'Personalized nutrition for daily comfort.', icon: 'heart' },
+                { title: 'Ongoing monitoring', text: 'Regular check-ins for stable remission.', icon: 'activity' },
+            ],
         },
+        stats: [
+            { value: '70%', label: 'Patients with stable remission' },
+            { value: '6', label: 'Months to progress' },
+            { value: '24/7', label: 'Support access' },
+        ],
         section: {
             title: 'Therapy Approach',
-            subtitle: 'How we help preserve kidney function long-term.',
+            subtitle: 'How we help control inflammation long-term.',
         },
         strategy: {
             badge: 'Solutions',
             title: 'Three-pillar strategy',
             items: [
-                { t: 'Medication therapy', d: 'Precisely dosed medications to support the kidneys.' },
-                { t: 'Lifestyle adjustments', d: 'Diet and activity to stabilize kidney function.' },
-                { t: 'Dialysis & Transplantation', d: 'Preparation and planning for severe cases.' },
+                { t: 'Medication therapy', d: 'Anti-inflammatory and immunomodulatory therapy.' },
+                { t: 'Nutrition strategy', d: 'Individual diet plan to reduce symptoms.' },
+                { t: 'Biologic therapy', d: 'Targeted treatments for severe cases.' },
             ],
         },
         process: {
             title: 'Therapy Pathway',
             steps: [
-                { title: '1. Diagnostics', text: 'Tests, kidney function assessments, and risk evaluation.' },
-                { title: '2. Plan', text: 'Personalized strategy with medication and diet.' },
+                { title: '1. Diagnostics', text: 'History, lab tests, and inflammation markers.' },
+                { title: '2. Therapy plan', text: 'Personalized regimen with meds and diet.' },
                 { title: '3. Monitoring', text: 'Regular checkups and therapy adjustments.' },
             ],
-            footer: 'Preserving kidney function',
+            footer: 'Inflammation control and remission',
         },
         cards: [
             {
-                title: 'Blood pressure control',
-                text: 'Reduces complication risk and directly supports kidney health.',
+                title: 'Digestive comfort',
+                text: 'Fewer symptoms and a steadier routine.',
             },
             {
-                title: 'Quality of life',
-                text: 'A personalized plan that eases symptoms and everyday stress.',
+                title: 'Everyday energy',
+                text: 'Stable rhythm with fewer flare-ups.',
             },
         ],
     },
@@ -112,49 +133,54 @@ const copy = {
 export default function ChronTherapy() {
     const { locale } = useLang();
     const t = copy[locale === 'en' ? 'en' : 'lv'];
+    const heroTheme = {
+        badge: 'border-amber-100 bg-amber-50/80 text-amber-700',
+        badgeDot: 'bg-amber-500',
+        highlight: 'from-amber-600 to-teal-600',
+        cta: 'from-amber-600 to-amber-500 shadow-amber-500/20 hover:shadow-amber-500/30',
+        iconFrame: 'border-amber-100',
+        keyFactCard: 'border-amber-100/60 hover:border-amber-200/80 transition-colors',
+        keyFactIcon: 'bg-amber-50 text-amber-600',
+        statsDivider: 'bg-slate-200',
+    };
+    const heroIcons = {
+        activity: <Icons.Activity className="h-6 w-6" />,
+        shield: <Icons.Shield className="h-6 w-6" />,
+        heart: <Icons.Heart className="h-6 w-6" />,
+    } as const;
+    const heroFacts = t.hero.facts.map((fact) => ({
+        ...fact,
+        icon: heroIcons[fact.icon as keyof typeof heroIcons],
+    }));
 
     return (
         <>
             <Head title={t.metaTitle} />
 
             {/* MAIN WRAPPER */}
-            <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
+            <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-amber-100 selection:text-amber-900">
                 
                 {/* BACKGROUND TECH GRID */}
                 <div className="fixed inset-0 pointer-events-none z-0">
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-                    <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-emerald-400 opacity-20 blur-[100px]"></div>
-                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-sky-400 opacity-10 blur-[120px]"></div>
+                    <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-amber-400 opacity-20 blur-[100px]"></div>
+                    <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-teal-400 opacity-10 blur-[120px]"></div>
                 </div>
 
                 <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     
-                    {/* --- HERO SECTION --- */}
-                    <main className="py-16 lg:py-24 text-center">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/80 backdrop-blur px-3 py-1 text-xs font-semibold text-emerald-700 mb-6">
-                            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                            {t.badge}
-                        </div>
-                        
-                        <h1 className="mx-auto max-w-4xl text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl mb-6">
-                            {t.hero.title} <br className="hidden sm:block" />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-sky-600">
-                                {t.hero.highlight}
-                            </span>
-                        </h1>
-                        
-                        <p className="mx-auto max-w-2xl text-lg text-slate-600 leading-relaxed mb-10">
-                            {t.hero.description}
-                        </p>
-
-                        {/* CTA Button */}
-                        <div className="flex justify-center mb-16">
-                            <Link href="/anketa?role=pacients" className="group inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-emerald-500/20 transition-all hover:-translate-y-0.5 hover:shadow-emerald-500/30">
-                                {t.hero.cta}
-                                <Icons.ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                            </Link>
-                        </div>
-                    </main>
+                    <TherapyHero
+                        badge={t.badge}
+                        title={t.hero.title}
+                        highlight={t.hero.highlight}
+                        description={t.hero.description}
+                        ctaLabel={t.hero.cta}
+                        ctaHref="/anketa?role=pacients"
+                        stats={t.stats}
+                        keyFacts={heroFacts}
+                        theme={heroTheme}
+                        icon={heroIcons[t.hero.icon as keyof typeof heroIcons]}
+                    />
 
                     {/* --- BENTO GRID FEATURES --- */}
                     <section className="py-16 border-t border-slate-200/60">
@@ -167,16 +193,16 @@ export default function ChronTherapy() {
                             
                             {/* Big Card - Therapy Types */}
                             <div className="md:col-span-2 rounded-3xl bg-white p-8 shadow-sm border border-slate-200 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-amber-50 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
                                 <div className="relative z-10">
-                                    <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50/50 px-3 py-1 text-xs text-emerald-700 mb-4">
+                                    <div className="inline-flex items-center gap-2 rounded-full border border-amber-100 bg-amber-50/50 px-3 py-1 text-xs text-amber-700 mb-4">
                                         {t.strategy.badge}
                                     </div>
                                     <h3 className="text-2xl font-bold text-slate-900 mb-4">{t.strategy.title}</h3>
                                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-6">
                                         {t.strategy.items.map((item, i) => (
-                                            <div key={i} className="bg-slate-50/80 rounded-xl p-4 border border-slate-100 hover:border-emerald-200 transition-colors">
-                                                <div className="h-2 w-2 rounded-full bg-emerald-500 mb-2"></div>
+                                            <div key={i} className="bg-slate-50/80 rounded-xl p-4 border border-slate-100 hover:border-amber-200 transition-colors">
+                                                <div className="h-2 w-2 rounded-full bg-amber-500 mb-2"></div>
                                                 <h4 className="font-semibold text-slate-900 text-sm">{item.t}</h4>
                                                 <p className="text-xs text-slate-600 mt-1 leading-relaxed">{item.d}</p>
                                             </div>
@@ -189,38 +215,22 @@ export default function ChronTherapy() {
                             <div className="md:row-span-2 rounded-3xl bg-white p-8 shadow-sm border border-slate-200 relative overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-b from-white to-slate-50/50 pointer-events-none"></div>
 
-                                <div className="relative z-10 h-full flex flex-col">
-                                    <h3 className="text-xl font-bold mb-6 text-slate-900">{t.process.title}</h3>
-                                    
-                                    <div className="space-y-8 flex-1">
-                                        {t.process.steps.map((step, i) => (
-                                            <div key={i} className="flex gap-4 group">
-                                                <div className="flex flex-col items-center">
-                                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs shadow-sm">
-                                                        {i + 1}
-                                                    </div>
-                                                    {i !== 2 && <div className="h-full w-0.5 bg-slate-200 my-2 group-hover:bg-emerald-300 transition-colors"></div>}
-                                                </div>
-                                                <div>
-                                                    <h4 className="font-semibold text-slate-900">{step.title}</h4>
-                                                    <p className="text-sm text-slate-600 mt-1">{step.text}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="mt-8 pt-6 border-t border-slate-200">
-                                        <p className="text-xs font-semibold text-emerald-700 flex items-center gap-2">
+                                <ProcessTimeline
+                                    title={t.process.title}
+                                    steps={t.process.steps}
+                                    currentStep={2}
+                                    footer={(
+                                        <p className="text-xs font-semibold text-amber-700 flex items-center gap-2">
                                             <Icons.Check className="h-4 w-4" />
                                             {t.process.footer}
                                         </p>
-                                    </div>
-                                </div>
+                                    )}
+                                />
                             </div>
 
                             {/* Small Card 1 - Blood Pressure */}
-                            <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200 hover:border-emerald-300 transition-colors">
-                                <div className="h-10 w-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
+                            <div className="rounded-3xl bg-white p-6 shadow-sm border border-slate-200 hover:border-amber-300 transition-colors">
+                                <div className="h-10 w-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
                                     <Icons.Activity className="w-6 h-6" />
                                 </div>
                                 <h4 className="font-bold text-slate-900">{t.cards[0].title}</h4>

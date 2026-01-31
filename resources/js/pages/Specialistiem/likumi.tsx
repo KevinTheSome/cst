@@ -79,7 +79,7 @@ export default function Likumi() {
                     {/* HERO */}
                     <main className="py-20 text-center">
                         <div className="mb-6 inline-flex items-center gap-2 rounded-full border bg-white px-4 py-1 text-xs font-semibold">
-                            <Icons.Scale className="h-4 w-4 text-emerald-600" />
+                            <Icons.Scale className="h-4 w-4 text-indigo-600" />
                             {__('specialistiem.likumi.badge')}
                         </div>
 
@@ -103,11 +103,11 @@ export default function Likumi() {
                                     href={r.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="group relative block rounded-2xl border bg-white p-6 transition-all hover:border-emerald-500 hover:shadow-md"
+                                    className="group relative block rounded-2xl border bg-white p-6 transition-all hover:border-indigo-500 hover:shadow-md"
                                 >
                                     <div className="flex items-start justify-between gap-4">
-                                        <h4 className="text-lg font-bold mb-2 group-hover:text-emerald-700">{r.title}</h4>
-                                        <Icons.ExternalLink className="h-5 w-5 text-slate-400 group-hover:text-emerald-500 flex-shrink-0" />
+                                        <h4 className="text-lg font-bold mb-2 group-hover:text-indigo-700">{r.title}</h4>
+                                        <Icons.ExternalLink className="h-5 w-5 text-slate-400 group-hover:text-indigo-500 flex-shrink-0" />
                                     </div>
                                     <p className="text-sm text-slate-600">{r.text}</p>
                                 </a>
@@ -126,11 +126,11 @@ export default function Likumi() {
                                     href={l.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="group relative block rounded-2xl border bg-white p-6 transition-all hover:border-emerald-500 hover:shadow-md"
+                                    className="group relative block rounded-2xl border bg-white p-6 transition-all hover:border-indigo-500 hover:shadow-md"
                                 >
                                     <div className="flex items-start justify-between gap-4">
-                                        <h4 className="text-lg font-bold mb-2 group-hover:text-emerald-700">{l.title}</h4>
-                                        <Icons.ExternalLink className="h-5 w-5 text-slate-400 group-hover:text-emerald-500 flex-shrink-0" />
+                                        <h4 className="text-lg font-bold mb-2 group-hover:text-indigo-700">{l.title}</h4>
+                                        <Icons.ExternalLink className="h-5 w-5 text-slate-400 group-hover:text-indigo-500 flex-shrink-0" />
                                     </div>
                                     <p className="text-sm text-slate-600">{l.text}</p>
                                 </a>
