@@ -20,6 +20,11 @@ use App\Models\FormResult;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\ClinicalTrialsController;
 use App\Http\Controllers\PostDockAnketaController;
+use App\Http\Controllers\Ai\AiPageController;
+use App\Http\Controllers\Ai\AiChatController;
+use App\Http\Middleware\DetectCountry;
+use App\Http\Middleware\TestBlockCountries;
+use App\Http\Middleware\TrackSiteVisits;
 
 if (!function_exists('findPageComponent')) {
 
@@ -46,11 +51,11 @@ if (!function_exists('findPageComponent')) {
 
 Route::post('/locale', function (Request $request) {
     $request->validate(['locale' => 'required|in:lv,en']); // adjust allowed locales
-    session(['locale' => $request->locale]);
-    app()->setLocale($request->locale);
+    session(['locale' => $request->input('locale')]);
+    app()->setLocale($request->input('locale'));
 
     // Return JSON so axios resolves successfully
-    return response()->json(['locale' => $request->locale]);
+    return response()->json(['locale' => $request->input('locale')]);
 })->name('locale.switch');
 
 Route::get('/', function (Request $request) {
@@ -226,3 +231,19 @@ Route::post('/admin/logout', function () {
     session()->forget('is_admin');
     return redirect()->route('admin.login');
 })->name('admin.logout');
+
+// <<<<<<<<<< FOR AI STUFF >>>>>>>>>>>>>>>>>>
+Route::get('/ai', [AiPageController::class, 'index'])->name('ai.index');
+//Route::post('/ai/chat', [AiChatController::class, 'chat']);
+Route::post('/ai/chat', [AiChatController::class, 'chat'])
+    ->withoutMiddleware([
+        \App\Http\Middleware\DetectCountry::class,
+        \App\Http\Middleware\TestBlockCountries::class,
+        \App\Http\Middleware\TrackSiteVisits::class,
+    ]);
+
+
+// THIS WORKED
+//Route::get('/ai', function () {
+//    return Inertia::render('Ai');
+//});
