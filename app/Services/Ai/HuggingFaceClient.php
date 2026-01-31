@@ -17,23 +17,20 @@ class HuggingFaceClient
 
     public function chat(string $prompt): string
     {
-        $response = Http::withHeaders([
-            'Authorization' => "Bearer {$this->apiKey}",
-            'Content-Type'  => 'application/json',
-        ])->post(
-            'https://router.huggingface.co/v1/chat/completions',
-            [
+        logger()->info('HF MODEL USED', [
+            'model' => $this->model,
+            'key_present' => !empty($this->apiKey),
+        ]);
+
+        $response = Http::withToken($this->apiKey)
+            ->post('https://router.huggingface.co/v1/chat/completions', [
                 'model' => $this->model,
                 'messages' => [
-                    [
-                        'role' => 'user',
-                        'content' => $prompt,
-                    ],
+                    ['role' => 'user', 'content' => $prompt],
                 ],
-                'temperature' => config('services.huggingface.temperature', 0.7),
-                'max_tokens' => config('services.huggingface.max_tokens', 512),
-            ]
-        );
+                'temperature' => (float) config('services.huggingface.temperature', 0.7),
+                'max_tokens'  => (int) config('services.huggingface.max_tokens', 512),
+            ]);
 
         if ($response->failed()) {
             throw new \Exception($response->body());
@@ -42,3 +39,4 @@ class HuggingFaceClient
         return $response->json('choices.0.message.content') ?? '';
     }
 }
+

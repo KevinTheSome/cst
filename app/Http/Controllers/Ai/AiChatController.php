@@ -14,12 +14,12 @@ class AiChatController extends Controller
         KnowledgeBaseService $knowledge,
         HuggingFaceClient $hf
     ) {
+        logger()->info('AI CHAT HIT', [
+            'message' => $request->input('message'),
+        ]);
+
         try {
             $message = $request->input('message');
-
-            logger()->info('AI CHAT HIT', [
-                'message' => $message,
-            ]);
 
             $context = $knowledge->getContext();
 
